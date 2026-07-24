@@ -1,0 +1,13 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Diccionario raíz del sistema de diseño. El orden importa: Colors va PRIMERO para que los
+         estilos de Typography/Buttons resuelvan sus {ThemeResource ...Color/...Brush}. -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///Resources/Colors.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Resources/Typography.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Resources/Buttons.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Resources/GenericControls.xaml"/>
+        <ResourceDictionary Source="ms-appx:///Resources/Controls.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

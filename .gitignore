@@ -1,0 +1,12 @@
+# Build
+[Bb]in/
+[Oo]bj/
+.vs/
+
+# User-specific
+*.user
+*.suo
+
+# Publish
+[Pp]ublish/
+*.pubxml.user

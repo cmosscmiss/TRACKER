@@ -1,0 +1,559 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Tracker.Controls.Views"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:datagrid="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:datagridprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives">
+
+    <!-- Estilo para los splitters -->
+    <Style x:Key="GridSplitterBaseStyle" TargetType="toolkit:GridSplitter">
+        <Setter Property="ResizeBehavior" Value="BasedOnAlignment"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="toolkit:GridSplitter">
+                    <Grid x:Name="Root" Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <!-- Normal -->
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity" To="1" Duration="0"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SplitterTrack" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Thumb" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentDarkBrushOpacity80}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!-- Pointer over -->
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity" To="1" Duration="0"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SplitterTrack" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentBrushOpacity20}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Thumb" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentLightBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!-- Pressed / drag -->
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity" To="1" Duration="0"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SplitterTrack" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentBrushOpacity40}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Thumb" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!-- Disabled -->
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Root" Storyboard.TargetProperty="Opacity" To="0.35" Duration="0"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SplitterTrack" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Thumb" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentDarkBrushOpacity80}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <!-- Attention: efecto "breathe" entre los colores de acento para que el usuario
+                                 advierta que el splitter es un nuevo elemento interactivo. Grupo independiente
+                                 de CommonStates: anima su propio elemento (HighlightGlow) para no entrar en
+                                 conflicto con el color del grip. -->
+                            <VisualStateGroup x:Name="AttentionStates">
+                                <VisualState x:Name="Idle"/>
+                                <VisualState x:Name="Highlight">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HighlightGlow" Storyboard.TargetProperty="Opacity">
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="0.85"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:2.0" Value="0.85"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:2.4" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="HighlightGlow" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)">
+                                            <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource AccentColor}"/>
+                                            <LinearColorKeyFrame KeyTime="0:0:0.6" Value="{ThemeResource AccentLightColor}"/>
+                                            <LinearColorKeyFrame KeyTime="0:0:1.2" Value="{ThemeResource AccentDarkColor}"/>
+                                            <LinearColorKeyFrame KeyTime="0:0:1.8" Value="{ThemeResource AccentLightColor}"/>
+                                            <LinearColorKeyFrame KeyTime="0:0:2.4" Value="{ThemeResource AccentColor}"/>
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <!-- Full interactive area -->
+                        <Border x:Name="SplitterTrack" Background="Transparent"/>
+                        <!-- Resplandor de atención (entre el track y el grip); invisible en reposo. -->
+                        <Border x:Name="HighlightGlow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="2" Opacity="0" IsHitTestVisible="False">
+                            <Border.Background>
+                                <SolidColorBrush Color="{ThemeResource AccentColor}"/>
+                            </Border.Background>
+                        </Border>
+                        <!-- Visible central grip -->
+                        <Border x:Name="PART_Thumb" Width="{TemplateBinding MinWidth}" Height="{TemplateBinding MinHeight}" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="2" Background="{ThemeResource AccentDarkBrushOpacity80}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="GridSplitterHorizontalStyle" TargetType="toolkit:GridSplitter" BasedOn="{StaticResource GridSplitterBaseStyle}">
+        <!-- Full interactive bar height -->
+        <Setter Property="Height" Value="12"/>
+        <!-- Visible grip size -->
+        <Setter Property="MinWidth" Value="56"/>
+        <Setter Property="MinHeight" Value="3"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="ResizeDirection" Value="Rows"/>
+    </Style>
+    <Style x:Key="GridSplitterVerticalStyle" TargetType="toolkit:GridSplitter" BasedOn="{StaticResource GridSplitterBaseStyle}">
+        <!-- Full interactive bar width -->
+        <Setter Property="Width" Value="12"/>
+        <!-- Visible grip size -->
+        <Setter Property="MinWidth" Value="3"/>
+        <Setter Property="MinHeight" Value="56"/> 
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="ResizeDirection" Value="Columns"/>
+    </Style>
+    <!-- Mismo aspecto que el splitter vertical, pero para la subclase que respeta el ancho mínimo de columna.
+         Referenciar el tipo aquí (TargetType) lo registra en el XamlTypeInfo del proyecto: sin ello WinUI no
+         reconoce el control creado en code-behind y lo trata como su base Control (rompe la asignación del Style). -->
+    <Style x:Key="MinWidthColumnSplitterStyle" TargetType="controls:MinWidthColumnSplitter" BasedOn="{StaticResource GridSplitterVerticalStyle}"/>
+    <Style x:Key="GridSplitterTransparentStyle" TargetType="toolkit:GridSplitter">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="toolkit:GridSplitter">
+                    <Border Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- Estilo global para los ListViewItem -->
+    <Style x:Name="ListViewItemDefaultStyle" TargetType="ListViewItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="0 8 8 0" Margin="0 0 16 0" Padding="16 0 8 0">
+                        <ContentPresenter />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource CardBackgroundLightBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource AccentBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PointerOverSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource AccentLightBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- Estilo base para los items en listas o grids de imágenes -->
+    <ControlTemplate x:Key="GameImagesItemContainerTemplate" TargetType="ContentControl">
+        <Grid x:Name="Root">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Target="BackgroundBorder.Background" Value="Transparent"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource CardBackgroundLightBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentBrushOpacity40}"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentLightBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentBrushOpacity20}"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Selected">
+                        <VisualState.Setters>
+                            <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentDarkBrushOpacity40}"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentDarkBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="SelectedUnfocused">
+                        <VisualState.Setters>
+                            <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentBrushOpacity20}"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOverSelected">
+                        <VisualState.Setters>
+                            <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentBrushOpacity40}"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentLightBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PressedSelected">
+                        <VisualState.Setters>
+                            <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentBrushOpacity20}"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentLightBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Target="Root.Opacity" Value="0.5"/>
+                            <Setter Target="StateBorder.BorderBrush" Value="Transparent"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Border x:Name="BackgroundBorder" Background="Transparent" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+            <Border x:Name="StateBorder" BorderBrush="Transparent" BorderThickness="2" CornerRadius="8" IsHitTestVisible="False"/>
+        </Grid>
+    </ControlTemplate>
+    <!-- Estilo para los ListViewItem en listas de imágenes -->
+    <Style x:Key="GameImagesListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Margin" Value="0 0 8 8"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Template" Value="{StaticResource GameImagesItemContainerTemplate}"/>
+    </Style>
+    <!-- Estilo para los GridViewItem en grids de imágenes -->
+    <Style x:Key="GameImagesGridViewItemStyle" TargetType="GridViewItem">
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Template" Value="{StaticResource GameImagesItemContainerTemplate}"/>
+    </Style>
+    
+    <!-- Estilo para los ComboBoxes -->
+    <!-- Popup -->
+    <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="{ThemeResource BackgroundLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{ThemeResource AccentColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemPillFillBrush" Color="Transparent" />
+    <!-- Normal -->
+    <SolidColorBrush x:Key="ComboBoxItemBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ComboBoxItemForeground" Color="{ThemeResource TextColor}" />
+    <!-- PointerOver -->
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{ThemeResource TextColor}" />
+    <!-- Pressed -->
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushPressed" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPressed" Color="{ThemeResource TextColor}" />
+    <!-- Selected -->
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{ThemeResource AccentColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelected" Color="{ThemeResource AccentColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{ThemeResource TextColor}" />
+    <!-- Selected + PointerOver -->
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver" Color="{ThemeResource TextColor}" />
+    <!-- Selected + Pressed-->
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedPressed" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="{ThemeResource TextColor}" />
+
+    <!-- Caja cerrada (el ComboBox en sí, no los items del popup). El sistema NO adapta su foreground a nuestro tema
+         oscuro, así que el valor seleccionado salía en color oscuro sobre fondo oscuro = invisible. Se fuerza aquí. -->
+    <SolidColorBrush x:Key="ComboBoxForeground" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxForegroundDisabled" Color="{ThemeResource TextSecondaryColor}" Opacity="0.4" />
+    <SolidColorBrush x:Key="ComboBoxForegroundFocused" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxForegroundFocusedPressed" Color="{ThemeResource TextColor}" />
+
+    <SolidColorBrush x:Key="ComboBoxBackground" Color="{ThemeResource CardBackgroundLightColorOpacity60}" />
+    <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="{ThemeResource CardBackgroundLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="{ThemeResource CardBackgroundLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxBackgroundDisabled" Color="{ThemeResource CardBackgroundLightColor}" Opacity="0.35" />
+    <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="{ThemeResource CardBackgroundLightColor}" />
+
+    <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="{ThemeResource CardBackgroundLightColorOpacity60}" />
+    <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="{ThemeResource AccentColor}" />
+    <SolidColorBrush x:Key="ComboBoxBorderBrushDisabled" Color="{ThemeResource CardBackgroundLightColor}" Opacity="0.35" />
+    <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="{ThemeResource AccentColor}" />
+
+    <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground" Color="{ThemeResource AccentColor}" />
+
+    <!-- Estilo para los TextBox -->
+    <!-- Normal -->
+    <SolidColorBrush x:Key="TextControlBorderBrush" Color="{ThemeResource TextSecondaryColor}" />
+    <!-- Hover -->
+    <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <!-- Focus -->
+    <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource AccentColor}" />
+    <!-- Disabled -->
+    <SolidColorBrush x:Key="TextControlBorderBrushDisabled" Color="{ThemeResource TextSecondaryColor}" Opacity="0.35" />
+    <!-- Grosor normal -->
+    <Thickness x:Key="TextControlBorderThemeThickness">0,0,0,1</Thickness>
+    <!-- Grosor con foco -->
+    <Thickness x:Key="TextControlBorderThemeThicknessFocused">0,0,0,2</Thickness>
+
+    <!-- Estilo para los CheckBox (solo colores): marcado = acento, check = fondo (contrasta), borde = texto -->
+    <!-- Sin marcar -->
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="{ThemeResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" Color="{ThemeResource TextColor}" />
+    <!-- Marcado: relleno y borde de acento -->
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{ThemeResource AccentColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="{ThemeResource AccentDarkColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="{ThemeResource AccentColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="{ThemeResource AccentDarkColor}" />
+    <!-- Check (glyph): color de fondo, contrasta con el acento -->
+    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{ThemeResource BackgroundColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="{ThemeResource BackgroundColor}" />
+    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="{ThemeResource BackgroundColor}" />
+
+    <!-- Estilo para los Slider -->
+    <!-- Container state -->
+    <SolidColorBrush x:Key="SliderContainerBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="SliderContainerBackgroundPointerOver" Color="Transparent" />
+    <SolidColorBrush x:Key="SliderContainerBackgroundPressed" Color="Transparent" />
+    <SolidColorBrush x:Key="SliderContainerBackgroundDisabled" Color="Transparent" />
+    <!-- Thumb state -->
+    <SolidColorBrush x:Key="SliderThumbBackground" Color="{ThemeResource AccentColor}" />
+    <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="SliderThumbBackgroundPressed" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="SliderThumbBackgroundDisabled" Color="{ThemeResource TextColor}" Opacity="0.4" />
+    <!-- Track state: parte no recorrida del slider -->
+    <SolidColorBrush x:Key="SliderTrackFill" Color="{ThemeResource AccentDarkColor}" />
+    <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="{ThemeResource AccentDarkColor}" />
+    <SolidColorBrush x:Key="SliderTrackFillPressed" Color="{ThemeResource AccentDarkColor}" />
+    <SolidColorBrush x:Key="SliderTrackFillDisabled" Color="{ThemeResource AccentDarkColor}" Opacity="0.35" />
+    <!-- Track value state: parte recorrida / valor actual del slider -->
+    <SolidColorBrush x:Key="SliderTrackValueFill" Color="{ThemeResource AccentColor}" /> 
+    <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{ThemeResource AccentLightColor}" />
+    <SolidColorBrush x:Key="SliderTrackValueFillDisabled" Color="{ThemeResource TextColor}" Opacity="0.4" />
+    <!-- Header state -->
+    <SolidColorBrush x:Key="SliderHeaderForeground" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="SliderHeaderForegroundDisabled" Color="{ThemeResource TextColor}" Opacity="0.4" />
+    <!-- TickBar state -->
+    <SolidColorBrush x:Key="SliderTickBarFill" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="SliderTickBarFillDisabled" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="SliderInlineTickBarFill" Color="{ThemeResource TextColor}" />
+
+    <!-- Estilo para los DataGrid -->
+    <Style TargetType="datagrid:DataGrid">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundLightBrushOpacity60}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextBrush}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="RowBackground" Value="{ThemeResource BackgroundLightBrush}" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{ThemeResource AccentDarkBrush}" />
+        <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
+        <Setter Property="HeadersVisibility" Value="Column" />
+        <Setter Property="RowHeight" Value="36" />
+        <Setter Property="CanUserSortColumns" Value="True" />
+        <Setter Property="CanUserResizeColumns" Value="True" />
+        <Setter Property="CanUserReorderColumns" Value="False" />
+        <Setter Property="ColumnHeaderStyle" Value="{StaticResource DataGridColumnHeaderStyle}" />
+        <Setter Property="CellStyle" Value="{StaticResource DataGridCellStyle}" />
+        <Setter Property="RowStyle" Value="{StaticResource DataGridRowStyle}" />
+    </Style>
+    <!-- Estilo para la cabecera del DataGrid -->
+    <Style x:Key="DataGridColumnHeaderStyle" TargetType="datagridprimitives:DataGridColumnHeader">
+        <Setter Property="Background" Value="{ThemeResource AccentDarkBrushOpacity40}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBackgroundBrush}" />
+        <!-- Elimina los bordes verticales entre celdas de la cabecera -->
+        <Setter Property="SeparatorVisibility" Value="Collapsed" />
+        <Setter Property="Padding" Value="12 0" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="datagridprimitives:DataGridColumnHeader">
+                    <Grid x:Name="ColumnHeaderRoot" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundLightBrushOpacity60}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundLightBrushOpacity80}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SortStates">
+                                <VisualState x:Name="Unsorted" />
+                                <VisualState x:Name="SortAscending">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="SortIcon" Storyboard.TargetProperty="Opacity" Duration="0" To="1" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SortDescending">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="SortIcon" Storyboard.TargetProperty="Opacity" Duration="0" To="1" />
+                                        <DoubleAnimation Storyboard.TargetName="SortIconTransform" Storyboard.TargetProperty="ScaleY" Duration="0" To="-1" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Rectangle x:Name="BackgroundRectangle" Stretch="Fill" Fill="{ThemeResource CardBackgroundLightBrushOpacity60}" Visibility="Collapsed" />
+                        <Grid Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter Content="{TemplateBinding Content}" />
+                            <!-- Icono de ordenación con color de acento -->
+                            <Path x:Name="SortIcon" Grid.Column="1" Fill="{ThemeResource AccentLightBrush}" Stretch="Uniform" VerticalAlignment="Center" Margin="6 0 0 0" Opacity="0" Width="12" RenderTransformOrigin="0.5,0.5" Data="F1 M 34,57L 42,57L 42,32.25L 52,32.25L 38,18.25L 24,32.25L 34,32.25L 34,57 Z ">
+                                <Path.RenderTransform>
+                                    <ScaleTransform x:Name="SortIconTransform" ScaleX="1" ScaleY="1" />
+                                </Path.RenderTransform>
+                            </Path>
+                        </Grid>
+                        <Rectangle x:Name="VerticalSeparator" Grid.Column="1" Width="1" VerticalAlignment="Stretch" Fill="{TemplateBinding SeparatorBrush}" Visibility="{TemplateBinding SeparatorVisibility}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!-- Estilo para las celdas del DataGrid -->
+    <Style x:Key="DataGridCellStyle" TargetType="datagrid:DataGridCell">
+        <Setter Property="Padding" Value="12 0" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+    <!-- Estilo para las filas del DataGrid (colores de selección y pointer-over) -->
+    <Style x:Key="DataGridRowStyle" TargetType="datagrid:DataGridRow">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="datagrid:DataGridRow">
+                    <datagridprimitives:DataGridFrozenGrid x:Name="RowRoot">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="NormalAlternatingRow" />
+                                <!-- Pointer-over (fila no seleccionada) -->
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Fill" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundLightBrushOpacity60}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!-- Fila seleccionada -->
+                                <VisualState x:Name="NormalSelected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Fill" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentDarkBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!-- Fila seleccionada + pointer-over -->
+                                <VisualState x:Name="PointerOverSelected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Fill" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentLightBrushOpacity60}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!-- Fila seleccionada + pointer-over (grid sin foco) -->
+                                <VisualState x:Name="PointerOverUnfocusedSelected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Fill" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentLightBrushOpacity60}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <!-- Fila seleccionada (grid sin foco) -->
+                                <VisualState x:Name="UnfocusedSelected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Fill" Duration="0">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentDarkBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ValidationStates">
+                                <VisualState x:Name="Valid" />
+                                <VisualState x:Name="Invalid">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="BackgroundRectangle" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimation Storyboard.TargetName="InvalidVisualElement" Storyboard.TargetProperty="Opacity" Duration="0" To="0.4" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle x:Name="BackgroundRectangle" Grid.ColumnSpan="2" Fill="Transparent" />
+                        <Rectangle x:Name="InvalidVisualElement" Grid.ColumnSpan="2" Opacity="0" Fill="{ThemeResource DangerBrush}" />
+                        <datagridprimitives:DataGridRowHeader x:Name="RowHeader" Grid.RowSpan="3" datagridprimitives:DataGridFrozenGrid.IsFrozen="True" />
+                        <datagridprimitives:DataGridCellsPresenter x:Name="CellsPresenter" Grid.Column="1" datagridprimitives:DataGridFrozenGrid.IsFrozen="True" MinHeight="32" AutomationProperties.AccessibilityView="Raw" />
+                        <datagridprimitives:DataGridDetailsPresenter x:Name="DetailsPresenter" Grid.Row="1" Grid.Column="1" Background="Transparent" AutomationProperties.AccessibilityView="Raw" />
+                        <Rectangle x:Name="BottomGridLine" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Height="1" />
+                    </datagridprimitives:DataGridFrozenGrid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

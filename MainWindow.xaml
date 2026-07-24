@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Tracker.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tpl="using:Tracker.Controls.Templates"
+    mc:Ignorable="d">
+
+    <!-- Escaparate del sistema de diseño reutilizado de MM4LB: fondo, tipografía y estilos de botón. -->
+    <Grid Background="{ThemeResource BackgroundBrush}" Padding="32">
+        <StackPanel Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Left" MaxWidth="520">
+            <TextBlock Text="TRACKER" Style="{StaticResource TitleStyle}"/>
+            <TextBlock Text="Sistema de diseño reutilizado" Style="{StaticResource SubTitleStyle}"/>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Foreground="{ThemeResource TextSecondaryBrush}"
+                       Text="Esqueleto WinUI 3 unpackaged con la paleta, la tipografía y los estilos de botón portados de MM4LB. Recolorea la app editando los &lt;Color&gt; base en Resources/Colors.xaml."/>
+
+            <!-- Control Tier 2 (SeparatorEx): degradado con el color de acento, sin necesidad de assets. -->
+            <tpl:SeparatorEx Margin="0 8" HorizontalAlignment="Stretch" Thickness="2" UseGradient="True"
+                             LineBrush="{ThemeResource AccentBrush}"/>
+
+            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0 8 0 0">
+                <Button Content="Botón tema" Style="{StaticResource Button_Theme}"/>
+                <Button Content="Botón default" Style="{StaticResource Button_Default}"/>
+                <Button Content="Icono" Style="{StaticResource Button_Icon}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <ToggleButton Content="Toggle A"/>
+                <ToggleButton Content="Toggle B" IsChecked="True"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
