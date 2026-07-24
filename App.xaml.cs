@@ -80,43 +80,21 @@ public partial class App : Application
             services.AddSingleton<IStatisticsService, StatisticsService>();
             services.AddSingleton<BackupService>();
             services.AddSingleton<FileSystemService>();
-            services.AddSingleton<ImageBinariesCacheService>();
             services.AddSingleton<YoutubeDownloadService>();
             services.AddSingleton<DialogsService>();
-            services.AddSingleton<TemplateService>();
             services.AddSingleton<MediaAuditService>();
 
             // ViewModels (Windows)
             services.AddSingleton<LoadingWindowViewModel>();
-            services.AddSingleton<SetLaunchBoxFoldersViewModel>();
-            services.AddTransient<SettingsDialogViewModel>();
             services.AddSingleton<MainWindowViewModel>();
 
             // ViewModels (Controls)
-            services.AddSingleton<ImageTypeViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ImageTypeViewModel>());
             services.AddSingleton<PlatformListViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<PlatformListViewModel>());
-            services.AddSingleton<PlatformDetailsViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<PlatformDetailsViewModel>());
-            services.AddSingleton<GameImagesDashboardViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<GameImagesDashboardViewModel>());
-            services.AddSingleton<GameImagesRegionDashboardViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<GameImagesRegionDashboardViewModel>());
             services.AddSingleton<StatsPlatformViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<StatsPlatformViewModel>());
-            services.AddSingleton<StatsGlobalViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<StatsGlobalViewModel>());
-            services.AddSingleton<GameListViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<GameListViewModel>());
-            services.AddSingleton<GamesAuditViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<GamesAuditViewModel>());
             services.AddSingleton<GameDetailsViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<GameDetailsViewModel>());
-            services.AddSingleton<ImageAuditViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ImageAuditViewModel>());
-            services.AddSingleton<ImageCollectionImportViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ImageCollectionImportViewModel>());
             services.AddSingleton<ImageGridGameViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ImageGridGameViewModel>());
             services.AddSingleton<ConsoleViewModel>();
@@ -124,16 +102,10 @@ public partial class App : Application
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<LayoutSelectorViewModel>());
             services.AddSingleton<WebViewViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<WebViewViewModel>());
-            services.AddSingleton<ToolsViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ToolsViewModel>());
             services.AddTransient<SearchStringsViewModel>();
-            services.AddSingleton<AuditPanelViewModel>();
-            services.AddSingleton<OrphanToolViewModel>();
-            services.AddSingleton<SharedMediaToolViewModel>();
 
             // Windows            
             services.AddTransient<LoadingWindow>();
-            services.AddTransient<SetLaunchBoxFoldersWindow>();
             services.AddSingleton<MainWindow>();
 
             // Configuration
@@ -305,36 +277,12 @@ public partial class App : Application
         // Resolve application settings configured in DI and store them in a property
         _appSettings = Host.Services.GetRequiredService<IOptions<AppSettings>>().Value;
 
-        // Decide which window to show. Only show the LoadingWindow when LaunchBoxFolder is
-        // configured, not empty, the folder exists and contains Launchbox.exe.
-        var launchBoxFolder = _appSettings?.LaunchBox?.LaunchBoxFolder;
-        bool canShowLoadingWindow = !string.IsNullOrWhiteSpace(launchBoxFolder)
-            && Directory.Exists(launchBoxFolder)
-            && File.Exists(Path.Combine(launchBoxFolder, "Launchbox.exe"));
-
-        Window windowToShow;
-        if (canShowLoadingWindow)
-        {
-            windowToShow = Host.Services.GetRequiredService<LoadingWindow>();
-        }
-        else
-        {
-            // Show a window that allows the user to set the LaunchBox folder when it's not configured
-            windowToShow = Host.Services.GetRequiredService<SetLaunchBoxFoldersWindow>();
-        }
-
-        // Keep reference if needed. Do NOT stop/dispose the host when this initial
-        // window (loading or setup) closes — the host should remain running until the
-        // main window closes. The main window will be responsible for stopping the host.
-        if (windowToShow is LoadingWindow loadingWindow)
-        {
-            loadingWindow.PrepareAndShowWhenReady();
-            _window = loadingWindow;
-        }
-        else
-        {
-            windowToShow.Activate();
-            _window = windowToShow;
-        }
+        // Always show the LoadingWindow at startup.
+        // Do NOT stop/dispose the host when this initial window closes — the host should
+        // remain running until the main window closes. The main window will be responsible
+        // for stopping the host.
+        var loadingWindow = Host.Services.GetRequiredService<LoadingWindow>();
+        loadingWindow.PrepareAndShowWhenReady();
+        _window = loadingWindow;
     }
 }

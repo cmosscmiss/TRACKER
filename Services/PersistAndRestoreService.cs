@@ -12,7 +12,7 @@ namespace MM4LB.Services;
 /// <summary>
 /// Servicio encargado de persistir y restaurar la configuración de la aplicación.
 /// 
-/// - Guarda AppSettings en un archivo JSON local (MM4LB.ini)
+/// - Guarda AppSettings en un archivo JSON local (Tracker.ini)
 /// - Restaura la configuración al iniciar la aplicación
 /// - Utiliza un conversor personalizado para serializar/deserializar tipos basados en Enumeration
 /// 
@@ -25,7 +25,7 @@ public class PersistAndRestoreService
     private readonly ExceptionService _exceptionService;
     private readonly AppSettings _appSettings;
     private static readonly string _settingsFileFolder = "Tracker";
-    private static readonly string _settingsFileName = "MM4LB.ini";
+    private static readonly string _settingsFileName = "Tracker.ini";
     private readonly string _folderPath;
     private readonly string _filePath;
 
@@ -133,26 +133,6 @@ public class PersistAndRestoreService
         }
     };
 
-    /// <summary>Serializa la configuración actual de la app a JSON (indentado). Lo usa la grabación de templates.</summary>
-    public string SerializeCurrentSettings() => JsonConvert.SerializeObject(_appSettings, BuildJsonSettings(indented: true));
-
-    /// <summary>
-    /// Vuelca sobre el <see cref="AppSettings"/> vivo la configuración contenida en <paramref name="json"/> (misma
-    /// mecánica que <see cref="RestoreData"/> pero desde una cadena arbitraria). Lo usa la carga de templates.
-    /// </summary>
-    public void RestoreFromJson(string json, params string[] skipSections)
-    {
-        var properties = JsonConvert.DeserializeObject<IDictionary>(json, BuildJsonSettings(indented: false));
-        if (properties is null)
-            return;
-
-        // Secciones a NO restaurar (p. ej. "Theme" al cargar un template: el tema no forma parte del template).
-        foreach (string section in skipSections)
-            properties.Remove(section);
-
-        _appSettings.BindProperties(properties, Serializer);
-    }
-
     public void PersistData()
     {
         try
@@ -183,14 +163,14 @@ public class PersistAndRestoreService
     }
 
     /// <summary>
-    /// Restaura la configuración de la aplicación leyendo el archivo JSON local (<c>MM4LB.ini</c>).
+    /// Restaura la configuración de la aplicación leyendo el archivo JSON local (<c>Tracker.ini</c>).
     ///
     /// Resiliente a problemas de configuración al arrancar: NUNCA bloquea el arranque ni muestra un diálogo.
     /// - Si el archivo no existe, no hace nada (se arranca con los valores por defecto).
     /// - Si el archivo no se puede leer (bloqueado, permisos…), se arranca con defaults y se deja rastro en el log,
     ///   SIN tocar el fichero (el fallo puede ser transitorio y el próximo arranque podría leerlo bien).
     /// - Si el archivo está corrupto (JSON inválido), se arranca con defaults, se aparta el fichero dañado a
-    ///   <c>MM4LB.ini.corrupt</c> (para no volver a fallar en cada arranque y poder inspeccionarlo) y se registra.
+    ///   <c>Tracker.ini.corrupt</c> (para no volver a fallar en cada arranque y poder inspeccionarlo) y se registra.
     /// - Si el JSON es válido, <see cref="AppSettings.BindProperties"/> aplica cada sección de forma resiliente: si
     ///   una sección falla, la registra y sigue con el resto, de modo que un valor inválido solo descarta ESA sección.
     /// </summary>
@@ -227,7 +207,7 @@ public class PersistAndRestoreService
     }
 
     /// <summary>
-    /// Aparta el <c>MM4LB.ini</c> corrupto renombrándolo a <c>MM4LB.ini.corrupt</c> (sobreescribiendo uno anterior),
+    /// Aparta el <c>Tracker.ini</c> corrupto renombrándolo a <c>Tracker.ini.corrupt</c> (sobreescribiendo uno anterior),
     /// para que el siguiente arranque parta limpio de valores por defecto y el fichero dañado quede para inspección.
     /// Nunca lanza: si no se puede mover, solo se registra.
     /// </summary>

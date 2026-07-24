@@ -7,19 +7,6 @@ using MM4LB.Models;
 
 namespace MM4LB.Services;
 
-/// <summary>Qué widget de dashboard está visible/activo (mutuamente excluyentes en el panel).</summary>
-public enum DashboardMode
-{
-    /// <summary>Ningún dashboard colocado en un slot.</summary>
-    None,
-
-    /// <summary>El GameImagesDashboard estándar (todas las imágenes juntas).</summary>
-    Standard,
-
-    /// <summary>El GameImagesRegionDashboard (imágenes por región).</summary>
-    Region,
-}
-
 /// <summary>
 /// Service to keep a snapshot of the data structures and status being used by the different components.
 /// </summary>
@@ -209,18 +196,6 @@ public class SharedDataService : ObservableObject
         get => _selectedRegion;
         set => SetProperty(ref _selectedRegion, value);
     }
-
-    private DashboardMode _activeDashboardMode = DashboardMode.None;
-    /// <summary>
-    /// Dashboard actualmente visible (los dos dashboards son mutuamente excluyentes en el panel). Lo fija el
-    /// coordinador de <c>MainWindowViewModel</c> al cambiar los slots. Lo consulta el ImportCollection para
-    /// habilitar el import y decidir si pide región de destino.
-    /// </summary>
-    public DashboardMode ActiveDashboardMode
-    {
-        get => _activeDashboardMode;
-        set => SetProperty(ref _activeDashboardMode, value);
-    }
     #endregion
 
     #region Constructors
@@ -273,20 +248,6 @@ public class SharedDataService : ObservableObject
     /// <c>ExclusiveOptionsControl</c> se reconstruyan en caliente. Lo emite la ventana de configuración al aceptar.
     /// </summary>
     public event EventHandler? ToolbarGroupsDisplayModeChanged;
-
-    /// <summary>
-    /// Se dispara cuando se recarga por completo la configuración (al cargar un TEMPLATE), para que los suscriptores
-    /// que cachean estado de AppSettings se realineen: <c>MainWindowViewModel</c> re-aplica el layout de widgets y
-    /// <c>ConsoleViewModel</c> re-evalúa el visor del pie, etc. Lo emite el <c>TemplateService</c>.
-    /// </summary>
-    public event EventHandler? SettingsReloaded;
-
-    /// <summary>
-    /// Se dispara ANTES de serializar la configuración para GRABAR un template, para que los ViewModels vuelquen su
-    /// estado en vivo (layout, slots de widgets, toggles) a <see cref="AppSettings"/> —que normalmente solo se hace al
-    /// cerrar la app—. Sin esto, el template capturaría el estado de arranque, no el actual. Lo emite el TemplateService.
-    /// </summary>
-    public event EventHandler? SaveConfigRequested;
     #endregion
 
     #region Methods (public)
@@ -321,18 +282,6 @@ public class SharedDataService : ObservableObject
     public void NotifyToolbarGroupsDisplayModeChanged()
     {
         ToolbarGroupsDisplayModeChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>Notifica que se recargó toda la configuración (carga de template), para realinear a los suscriptores.</summary>
-    public void NotifySettingsReloaded()
-    {
-        SettingsReloaded?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>Pide a los ViewModels que vuelquen su estado en vivo a AppSettings (antes de grabar un template).</summary>
-    public void NotifySaveConfigRequested()
-    {
-        SaveConfigRequested?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }

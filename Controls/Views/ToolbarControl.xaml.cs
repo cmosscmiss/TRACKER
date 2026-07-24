@@ -47,27 +47,6 @@ public sealed partial class ToolbarControl : UserControl
         set => SetValue(PlatformListBehavesAsListProperty, value);
     }
 
-    public static readonly DependencyProperty PlatformDetailsVisibleProperty = DependencyProperty.Register(nameof(PlatformDetailsVisible), typeof(bool), typeof(ToolbarControl), new PropertyMetadata(true, OnPlatformDetailsVisibleChanged));
-
-    public bool PlatformDetailsVisible
-    {
-        get => (bool)GetValue(PlatformDetailsVisibleProperty);
-        set => SetValue(PlatformDetailsVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty GameListDockedAsideProperty =
-        DependencyProperty.Register(
-            nameof(GameListDockedAside),
-            typeof(bool),
-            typeof(ToolbarControl),
-            new PropertyMetadata(false, OnGameListDockedAsideChanged));
-
-    public bool GameListDockedAside
-    {
-        get => (bool)GetValue(GameListDockedAsideProperty);
-        set => SetValue(GameListDockedAsideProperty, value);
-    }
-
     public static readonly DependencyProperty SplittersEnabledProperty = DependencyProperty.Register(nameof(SplittersEnabled), typeof(bool), typeof(ToolbarControl), new PropertyMetadata(false, OnSplittersEnabledChanged));
 
     public bool SplittersEnabled
@@ -76,14 +55,6 @@ public sealed partial class ToolbarControl : UserControl
         set => SetValue(SplittersEnabledProperty, value);
     }
 
-    public static readonly DependencyProperty ImageTypeBandVisibleProperty = DependencyProperty.Register(nameof(ImageTypeBandVisible), typeof(bool), typeof(ToolbarControl), new PropertyMetadata(true, OnImageTypeBandVisibleChanged));
-
-    /// <summary>Visibilidad de la banda fija del selector de tipo de medio (parte alta del WidgetPanel).</summary>
-    public bool ImageTypeBandVisible
-    {
-        get => (bool)GetValue(ImageTypeBandVisibleProperty);
-        set => SetValue(ImageTypeBandVisibleProperty, value);
-    }
     #endregion
 
     #region Constructor
@@ -109,18 +80,6 @@ public sealed partial class ToolbarControl : UserControl
         // ajustes), por lo que el bucle anterior no lo alcanza; se engancha aquí explícitamente.
         SplittersToggle.Clicked += (_, __) => OnToggleClicked(SplittersToggle);
 
-        // El botón de ajustes abre la configuración de la app (diálogo sobre el overlay; vive en el grupo derecho,
-        // fuera de ToolbarButtonsPanel, así que no lo alcanza el bucle de botones de selector).
-        SettingsButton.Clicked += (_, __) => OpenSettings();
-
-        // Grabar template: captura pantallazo + elige slot + nombre + guarda. Vive en el grupo derecho.
-        TemplateSaveButton.Clicked += (_, __) => SaveTemplate();
-
-        // Al activar un template en el selector (app o usuario), se carga por su ruta. El panel se deja abierto para
-        // poder probar varios templates seguidos sin reabrirlo.
-        ucTemplateSlots.TemplateActivated += (_, jsonPath) =>
-            App.GetService<TemplateService>().LoadTemplate(jsonPath);
-
         await Task.Yield();
 
         _collapsedHeight = ToolbarBorder.ActualHeight;
@@ -131,17 +90,13 @@ public sealed partial class ToolbarControl : UserControl
         ToolbarSelectedItemLine.Width = 0;
         ToolbarSelectedItemLineTranslate.X = 0;
 
-        ApplyGameListToggleState(GameListDockedAside);
-        ApplyPlatformDetailsToggleState(PlatformDetailsVisible);
         ApplyPlatformListToggleState(PlatformListBehavesAsList);
         ApplySplittersToggleState(SplittersEnabled);
-        ApplyImageTypeBandToggleState(ImageTypeBandVisible);
         ApplySwitchesEnabledState(!TogglesDisabled);
 
         _panelDefinitions.Clear();
         _panelDefinitions[LayoutSelectorButton.Name] = new ToolbarPanelDefinition(LayoutSelectorButton, ToolbarLayoutSelector, 1000, 414);
         _panelDefinitions[WidgetSelectorButton.Name] = new ToolbarPanelDefinition(WidgetSelectorButton, ToolbarWidgetSelector, 1200, 600);
-        _panelDefinitions[TemplateSelectorButton.Name] = new ToolbarPanelDefinition(TemplateSelectorButton, ToolbarTemplateSelector, 1100, 660);
         _panelDefinitions[SettingsSelectorButton.Name] = new ToolbarPanelDefinition(SettingsSelectorButton, ToolbarSettingsSelector, 980, 630);
 
         _initialized = true;
@@ -187,29 +142,14 @@ public sealed partial class ToolbarControl : UserControl
 
         switch (sw.Name)
         {
-            case "PlatformDetailsToggle":
-                sw.IsChecked = !sw.IsChecked;
-                PlatformDetailsVisible = sw.IsChecked;
-                break;
-
             case "PlatformListToggle":
                 sw.IsChecked = !sw.IsChecked;
                 PlatformListBehavesAsList = sw.IsChecked;
                 break;
 
-            case "GameListToggle":
-                sw.IsChecked = !sw.IsChecked;
-                GameListDockedAside = sw.IsChecked;
-                break;
-
             case "SplittersToggle":
                 sw.IsChecked = !sw.IsChecked;
                 SplittersEnabled = sw.IsChecked;
-                break;
-
-            case "ImageTypeBandToggle":
-                sw.IsChecked = !sw.IsChecked;
-                ImageTypeBandVisible = sw.IsChecked;
                 break;
 
             default:
@@ -226,28 +166,6 @@ public sealed partial class ToolbarControl : UserControl
         if (e.NewValue is bool disabled)
         {
             control.ApplySwitchesEnabledState(!disabled);
-        }
-    }
-
-    private static void OnGameListDockedAsideChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is not ToolbarControl control)
-            return;
-
-        if (e.NewValue is bool dockedAside)
-        {
-            control.ApplyGameListToggleState(dockedAside);
-        }
-    }
-
-    private static void OnPlatformDetailsVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is not ToolbarControl control)
-            return;
-
-        if (e.NewValue is bool isVisible)
-        {
-            control.ApplyPlatformDetailsToggleState(isVisible);
         }
     }
 
@@ -273,36 +191,9 @@ public sealed partial class ToolbarControl : UserControl
         }
     }
 
-    private static void OnImageTypeBandVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is not ToolbarControl control)
-            return;
-
-        if (e.NewValue is bool isVisible)
-        {
-            control.ApplyImageTypeBandToggleState(isVisible);
-        }
-    }
-
     #endregion
 
     #region Methods (private) - Switches
-
-    private void ApplyGameListToggleState(bool dockedAside)
-    {
-        if (GameListToggle is null)
-            return;
-
-        GameListToggle.IsChecked = dockedAside;
-    }
-
-    private void ApplyPlatformDetailsToggleState(bool isVisible)
-    {
-        if (PlatformDetailsToggle is null)
-            return;
-
-        PlatformDetailsToggle.IsChecked = isVisible;
-    }
 
     private void ApplyPlatformListToggleState(bool behavesAsList)
     {
@@ -320,30 +211,16 @@ public sealed partial class ToolbarControl : UserControl
         SplittersToggle.IsChecked = enabled;
     }
 
-    private void ApplyImageTypeBandToggleState(bool isVisible)
-    {
-        if (ImageTypeBandToggle is null)
-            return;
-
-        ImageTypeBandToggle.IsChecked = isVisible;
-    }
-
     private void ApplySwitchesEnabledState(bool enabled)
     {
-        if (PlatformDetailsToggle is null || PlatformListToggle is null || GameListToggle is null || SplittersToggle is null || ImageTypeBandToggle is null)
+        if (PlatformListToggle is null || SplittersToggle is null)
             return;
 
-        PlatformDetailsToggle.IsEnabled = enabled;
         PlatformListToggle.IsEnabled = enabled;
-        GameListToggle.IsEnabled = enabled;
         SplittersToggle.IsEnabled = enabled;
-        ImageTypeBandToggle.IsEnabled = enabled;
 
-        PlatformDetailsToggle.Opacity = enabled ? 1.0 : 0.45;
         PlatformListToggle.Opacity = enabled ? 1.0 : 0.45;
-        GameListToggle.Opacity = enabled ? 1.0 : 0.45;
         SplittersToggle.Opacity = enabled ? 1.0 : 0.45;
-        ImageTypeBandToggle.Opacity = enabled ? 1.0 : 0.45;
     }
 
     #endregion
@@ -388,10 +265,6 @@ public sealed partial class ToolbarControl : UserControl
 
             previousPanel.Visibility = Visibility.Collapsed;
         }
-
-        // Al abrir el selector de templates, recarga los slots (para ver los recién grabados).
-        if (ReferenceEquals(nextPanel, ToolbarTemplateSelector))
-            await ucTemplateSlots.RefreshAsync();
 
         nextPanel.Visibility = Visibility.Visible;
         nextPanel.Opacity = 0;
@@ -607,42 +480,6 @@ public sealed partial class ToolbarControl : UserControl
     #endregion
 
     #region Methods (private) - Settings
-
-    /// <summary>Abre la configuración de la app como diálogo (AppDialog) sobre el overlay de la aplicación.</summary>
-    private async void OpenSettings()
-    {
-        if (XamlRoot is null)
-            return;
-
-        await App.GetService<DialogsService>().ShowSettingsAsync(XamlRoot);
-    }
-
-    /// <summary>
-    /// Graba un template: primero captura un pantallazo de la app (antes de abrir ningún diálogo, para que la imagen
-    /// refleje el estado actual), luego pide SLOT + nombre y guarda JSON + JPG en ese slot (sobreescribe si está
-    /// ocupado). Refresca los slots del selector por si está abierto.
-    /// </summary>
-    private async void SaveTemplate()
-    {
-        if (XamlRoot is null)
-            return;
-
-        // 1) Elegir slot + nombre. Si se cancela, no se captura nada (se evita un screenshot que no se usaría).
-        (int Slot, string Name)? choice = await App.GetService<DialogsService>().ShowSaveTemplateAsync(XamlRoot);
-        if (choice is null)
-            return;
-
-        // 2) Fuerza el cierre de la toolbar (colapsa el selector expandido) y captura DESPUÉS de cerrar el diálogo, de
-        //    modo que ni el diálogo ni el panel expandido salgan en la imagen. Se dejan pasar unos frames para que el
-        //    popup y la animación de colapso salgan de la composición antes de capturar.
-        await CollapseExpandedSelectorAsync();
-        await Task.Delay(80);
-        byte[]? screenshot = await App.GetService<WindowService>().CaptureActiveWindowJpegAsync();
-
-        // 3) Guardar en el slot (sobreescribe json + jpg) y refrescar el selector.
-        await App.GetService<TemplateService>().SaveToSlotAsync(choice.Value.Slot, choice.Value.Name, screenshot);
-        await ucTemplateSlots.RefreshAsync();
-    }
 
     #endregion
 

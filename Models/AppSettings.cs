@@ -35,7 +35,6 @@ public class AppSettings
     public ImageGridControlSettings ImageGridControl { get; set; } = new ImageGridControlSettings();
     public ImageTypeControlSettings ImageTypeControl { get; set; } = new ImageTypeControlSettings();
     public LayoutSelectorControlSettings LayoutSelectorControl { get; set; } = new LayoutSelectorControlSettings();
-    public PlatformDetailsControlSettings PlatformDetailsControl { get; set; } = new PlatformDetailsControlSettings();
     public PlatformListControlSettings PlatformListControl { get; set; } = new PlatformListControlSettings();
     public StatsGlobalControlSettings StatsGlobalControl { get; set; } = new StatsGlobalControlSettings();
     public StatsPlatformControlSettings StatsPlatformControl { get; set; } = new StatsPlatformControlSettings();
@@ -368,11 +367,6 @@ public class AppSettings
 
     public class GameListControlSettings
     {
-        /// <summary>
-        /// Indica si la lista de juegos está acoplada en su propia columna lateral
-        /// (a la derecha de la columna de plataformas) en lugar de bajo la lista de plataformas.
-        /// </summary>
-        public bool IsDockedAside { get; set; } = false;
         public string SelectedGame { get; set; } = "";
     }
 
@@ -481,12 +475,6 @@ public class AppSettings
         {
             get; set;
         }
-
-        /// <summary>
-        /// Si la banda fija del selector de tipo de medio (parte alta del WidgetPanel) está visible. Por defecto true.
-        /// La controla un toggle de la barra de herramientas.
-        /// </summary>
-        public bool IsBandVisible { get; set; } = true;
     }
 
     public class LayoutSelectorControlSettings
@@ -526,23 +514,6 @@ public class AppSettings
         public Dictionary<int, double> RowRatiosByColumn { get; set; } = new();
     }
 
-    public class PlatformDetailsControlSettings
-    {
-        public bool IsVisible { get; set; } = false;
-        public double Width { get; set; } = 300;
-
-        /// <summary>Índice de la gráfica de cobertura visible en el FlipView (0..3).</summary>
-        public int SelectedChartIndex { get; set; }
-
-        /// <summary>Gráfica "Coverage distribution - Platforms" (nº de plataformas por tramo de cobertura de tipos propios).</summary>
-        public ChartViewSettings CoverageDistributionChart { get; set; } = new ChartViewSettings();
-
-        /// <summary>Gráfica "Coverage - Platform image type" (% de plataformas con cada tipo de imagen propia).</summary>
-        public ChartViewSettings CoverageByTypeChart { get; set; } = new ChartViewSettings();
-
-        /// <summary>Gráfica "Own images - Platform image type" (nº total de imágenes propias por tipo en todas las plataformas).</summary>
-        public ChartViewSettings ImagesByTypeChart { get; set; } = new ChartViewSettings();
-    }
 
     public class PlatformListControlSettings
     {

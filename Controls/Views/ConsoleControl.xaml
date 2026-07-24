@@ -68,7 +68,6 @@
             <uc:WidgetStatCardControl Grid.Column="0" VisualStyle="LateralAccentBar" ColorVariant="ThemeAccent">
                 <StackPanel Margin="0 4">                    
                     <StackPanel Orientation="Horizontal" Spacing="24">
-                        <uc:WidgetStatCardControl Grid.Column="0" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{loc:Str Key=Console_CachedMedia_Label}" Value="{x:Bind sys:String.Format(x:Null,'{0} / {1} MB', ViewModel.ImageBinariesCacheService.CachedImagesCount, ViewModel.ImageBinariesCacheService.CachedImagesSize), Mode=OneWay}" Description="{loc:Str Key=Console_MediaTotalSize_Description}" HasBorder="False"/>
                         <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{loc:Str Key=Console_BackupMedia_Label}" Value="{x:Bind sys:String.Format(x:Null,'{0} / {1} MB', ViewModel.BackupService.ImagesCount, ViewModel.BackupService.SizeMb), Mode=OneWay}" Description="{loc:Str Key=Console_MediaTotalSize_Description}" HasBorder="False"/>
                         <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                         <AppBarButton Label="{loc:Str Key=Console_Backup_Label}" Command="{x:Bind ViewModel.ClearBackupCommand}" IsEnabled="{x:Bind ViewModel.BackupService.HasBackups, Mode=OneWay}" help:Help.Key="Console_Backup_Tooltip" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -77,19 +76,8 @@
                             </AppBarButton.Content>
                         </AppBarButton>
                     </StackPanel>
-                    <template:SeparatorEx Grid.Row="1" Margin="0 8" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock Text="{loc:Str Key=Common_CacheUsage_Label}" FontSize="20" FontWeight="SemiBold" Opacity="0.8"/>
-                        <TextBlock Text="{x:Bind sys:String.Format(x:Null,'{0}%', ViewModel.ImageBinariesCacheService.CacheUsage), Mode=OneWay}" Foreground="{ThemeResource AccentLightBrush}" FontSize="22" FontWeight="SemiBold"/>
-                    </StackPanel>                    
-                    <Grid Height="32" Margin="0 4 0 0">
-                        <Border Background="{ThemeResource AccentDarkBrush}" CornerRadius="8" Opacity="0.5" Margin="0 4"/>
-                        <ProgressBar Value="{x:Bind ViewModel.ImageBinariesCacheService.CacheUsage, Mode=OneWay}" Maximum="100" Margin="0 8" Background="Transparent" Foreground="{ThemeResource AccentBrush}" MinHeight="16" CornerRadius="8"/>
-                    </Grid>                    
                 </StackPanel>
             </uc:WidgetStatCardControl>
-
-            <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="Cache usage" Value="{x:Bind sys:String.Format(x:Null,'{0}%', ViewModel.ImageBinariesCacheService.CacheUsage), Mode=OneWay}" Description="% used" Glyph="&#xF16A;" Visibility="Collapsed"/>
         </Grid>
     </Grid>
 </UserControl>

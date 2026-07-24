@@ -23,19 +23,12 @@
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Controls\Dialogs\ImportImagesDialog.xaml" />
 	  <None Remove="Controls\Views\ConsoleControl.xaml" />
 	  <None Remove="Controls\Views\GameImageControl.xaml" />
-	  <None Remove="Controls\Views\GamesAuditControl.xaml" />
 	  <None Remove="Controls\Views\GameDetailsControl.xaml" />
-	  <None Remove="Controls\Views\ImageAuditControl.xaml" />
 	  <None Remove="Controls\Views\ChartTypeSelectorControl.xaml" />
-	  <None Remove="Controls\Views\ImageCollectionImportControl.xaml" />
 	  <None Remove="Controls\Views\ImageGridControl.xaml" />
-	  <None Remove="Controls\Views\ImageTypeControl.xaml" />
-	  <None Remove="Controls\Views\PlatformDetailsControl.xaml" />
 	  <None Remove="Controls\Views\StatsPlatformControl.xaml" />
-	  <None Remove="Controls\Views\StatsGlobalControl.xaml" />
 	  <None Remove="Controls\Views\PlatformListControl.xaml" />
 	  <None Remove="Controls\Views\SearchStringsControl.xaml" />
 	  <None Remove="Controls\Views\SettingsControl.xaml" />
@@ -68,21 +61,6 @@
 	     YoutubeDownloadService al directorio de settings (%LocalAppData%\MM4LB\Tools\ffmpeg) la primera vez que
 	     se necesita. Por eso no se copia ningún binario al output. -->
 	<ItemGroup>
-	  <Page Update="Controls\Views\ImageCollectionImportControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Controls\Views\ImageAuditControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Controls\Views\GamesAuditControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
 	  <Page Update="Controls\Views\GameDetailsControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -103,9 +81,6 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Views\ImageTypeControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
 	  <Page Update="Controls\Views\ConsoleControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -120,19 +95,11 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Views\PlatformDetailsControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
 	  <Page Update="Controls\Views\PlatformListControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Views\GameListControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
 	  <Page Update="Resources\Buttons.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>
@@ -152,32 +119,12 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Views\SetLaunchBoxFoldersWindow.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
 	  <Page Update="Resources\Theme.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Views\GameImagesDashboardControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Controls\Views\GameImagesRegionDashboardControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
 	  <Page Update="Controls\Views\StatsPlatformControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Controls\Views\StatsGlobalControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
@@ -207,23 +154,6 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Dialogs\ImportImagesDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Controls\Dialogs\SelectRegionDialog.xaml" />
-	  <Page Update="Controls\Dialogs\SelectRegionDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Controls\Dialogs\DashboardSettingsDialog.xaml" />
-	  <Page Update="Controls\Dialogs\DashboardSettingsDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
 	  <None Remove="Controls\Views\ExclusiveOptionsControl.xaml" />
 	  <Page Update="Controls\Views\ExclusiveOptionsControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
@@ -241,14 +171,4 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>-->
-	<ItemGroup>
-	  <None Remove="Controls\Views\AuditPanelControl.xaml" />
-	  <Page Update="Controls\Views\AuditPanelControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <None Remove="Controls\Views\ToolsControl.xaml" />
-	  <Page Update="Controls\Views\ToolsControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
 </Project>

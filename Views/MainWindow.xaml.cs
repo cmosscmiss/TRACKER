@@ -83,8 +83,6 @@ public sealed partial class MainWindow : Window
         _themeService = App.GetService<ThemeService>();
         _themeService.ThemeChanged += OnThemeChanged;
 
-        RestorePlatformDetailsLayout();
-        RestoreGameListLayout();
         RestorePlatformListLayout();
 
         if (Content is FrameworkElement root)
@@ -93,7 +91,6 @@ public sealed partial class MainWindow : Window
             root.Loaded += OnWindowLoaded;
         }
 
-        InitializeGameListBehavior();
         InitializeToolbarBehavior();
 
         Activated += OnWindowActivated;
@@ -123,20 +120,12 @@ public sealed partial class MainWindow : Window
 
     /// <summary>
     /// Refresca en caliente los elementos cuyos recursos son de tipo Uri/Color (no brushes) y por tanto no se
-    /// propagan solos: el logo de la app y el fondo/borde del indicador de uso de cache del footer.
+    /// propagan solos: el logo de la app y el overlay tintado del fondo.
     /// </summary>
     private void OnThemeChanged(object? sender, System.EventArgs e)
     {
         if (_themeService.LogoImageUri is System.Uri logo)
             AppLogoImage.Source = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(logo);
-
-        // Fondo del progreso de cache (la opacidad del brush la fija el XAML; aquí solo el color).
-        CacheProgressBackground.Color = _themeService.AccentDarkColor;
-
-        // Borde del progreso de cache (gradiente, alpha 0.8 como los recursos ...Opacity80).
-        CacheBorderStopDark.Color = A(_themeService.AccentDarkColor, 0.8);
-        CacheBorderStopMid.Color = A(_themeService.AccentColor, 0.8);
-        CacheBorderStopLight.Color = A(_themeService.AccentLightColor, 0.8);
 
         // Overlay tintado del fondo: sus propiedades vienen de recursos Uri/Color/double (no brushes), así que se
         // reasignan aquí al cambiar de tema o sus parámetros de tinte (ventana de configuración -> ApplyTheme).
@@ -149,26 +138,15 @@ public sealed partial class MainWindow : Window
         TintedImage.Opacity = _themeService.OverlayImageOpacity;
     }
 
-    /// <summary>Devuelve el color con la componente alfa ajustada a <paramref name="opacity"/> (0..1).</summary>
-    private static Windows.UI.Color A(Windows.UI.Color color, double opacity)
-        => Windows.UI.Color.FromArgb((byte)System.Math.Round(255 * opacity), color.R, color.G, color.B);
-
     private async void OnWindowLoaded(object? sender, RoutedEventArgs e)
     {
         var widgetEntries = new List<WidgetPanelControl.WidgetEntry>
         {
-            new(ucGameImagesDashboardControl.ViewModel!, ucGameImagesDashboardWidget),
-            new(ucGameImagesRegionDashboardControl.ViewModel!, ucGameImagesRegionDashboardWidget),
             new(ucStatsPlatformControl.ViewModel!, ucStatsPlatformWidget),
-            new(ucStatsGlobalControl.ViewModel!, ucStatsGlobalWidget),
             new(ucConsoleControl.ViewModel!, ucConsoleWidget),
             new(ucWebViewControl.ViewModel!, ucWebViewWidget),
             new(ucImageGridControl.ViewModel!, ucImageGridWidget),
-            new(ucGamesAuditControl.ViewModel!, ucGamesAuditWidget),
             new(ucGameDetailsControl.ViewModel!, ucGameDetailsWidget),
-            new(ucImageAuditControl.ViewModel!, ucImageAuditWidget),
-            new(ucImageCollectionImportControl.ViewModel!, ucImageCollectionImportWidget),
-            new(ucToolsControl.ViewModel!, ucToolsWidget),
         };
 
         WidgetPanel.SetWidgets(widgetEntries);
@@ -184,12 +162,9 @@ public sealed partial class MainWindow : Window
         await Task.Yield();
 
         // Reaplica el estado inicial sin animación una vez que el árbol visual ya está cargado.
-        RestoreGameListLayout();
         RestorePlatformListLayout();
 
         // A partir de aquí, los cambios ya se consideran interacción posterior.
-        _viewModel.PlatformDetailsVisibilityChanged += OnPlatformDetailsVisibilityChanged;
-        _viewModel.GameListDockedAsideChanged += OnGameListDockedAsideChanged;
         _viewModel.PlatformListViewModel.PropertyChanged += OnPlatformListViewModelPropertyChanged;
 
         // Ya con la UI montada: si falta ffmpeg, se descarga en segundo plano (no se espera) y se cachea, para
@@ -199,8 +174,6 @@ public sealed partial class MainWindow : Window
 
     private void OnClosed(object sender, WindowEventArgs e)
     {
-        CapturePlatformDetailsLayout();
-
         var placement = _windowService.GetWindowPlacement(this);
 
         _viewModel.SaveWindowPlacement(placement);
@@ -211,11 +184,8 @@ public sealed partial class MainWindow : Window
 
         _sharedDataService.PropertyChanged -= OnSharedDataServicePropertyChanged;
 
-        DisposeGameListBehavior();
         DisposeToolbarBehavior();
 
-        _viewModel.GameListDockedAsideChanged -= OnGameListDockedAsideChanged;
-        _viewModel.PlatformDetailsVisibilityChanged -= OnPlatformDetailsVisibilityChanged;
         _viewModel.PlatformListViewModel.PropertyChanged -= OnPlatformListViewModelPropertyChanged;
 
         _viewModel.Dispose();

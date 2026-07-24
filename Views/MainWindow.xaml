@@ -32,7 +32,6 @@
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="350" />
-                    <ColumnDefinition x:Name="colGamesSide" Width="0" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -45,7 +44,6 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition x:Name="rowPlatformList" Height="Auto" />
-                                <RowDefinition x:Name="rowGameList" Height="3*" />
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" Padding="12 12 0 0">
@@ -55,36 +53,12 @@
                             <template:SeparatorEx Grid.Row="1" Margin="0 0 0 16" VerticalAlignment="Bottom" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
 
                             <uc:PlatformListControl Grid.Row="2" x:Name="plPlatforms" ViewModel="{Binding PlatformListViewModel}"/>
-
-                            <Grid Grid.Row="3" x:Name="glGamesRevealHost" Visibility="Collapsed" Opacity="0" Height="0" VerticalAlignment="Bottom">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <template:SeparatorEx Grid.Row="0" x:Name="spPlatformGameList" Margin="0 8 0 8" VerticalAlignment="Bottom" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                                <uc:GameListControl Grid.Row="1" x:Name="glGames" ViewModel="{Binding GameListViewModel}" ShowImageTypeSelector="{Binding IsLeftImageTypeSelectorVisible, Mode=OneWay}"/>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Grid>
-
-                <!-- Games side column (acoplada a la derecha de plataformas) -->
-                <Grid Grid.Column="1">
-                    <Rectangle Fill="{ThemeResource BackgroundLightBrush}" Opacity="0.75"/>
-                    <Border BorderThickness="0 0 1 0" BorderBrush="{ThemeResource CardBackgroundLightBrush}">
-                        <Grid x:Name="glGamesSideRevealHost" Visibility="Collapsed" Opacity="0" Height="0" VerticalAlignment="Bottom" Padding="12 12 0 0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <template:SeparatorEx Grid.Row="0" Margin="0 0 0 8" VerticalAlignment="Bottom" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                            <uc:GameListControl Grid.Row="1" x:Name="glGamesSide" ViewModel="{Binding GameListViewModel}" ShowImageTypeSelector="{Binding IsLeftImageTypeSelectorVisible, Mode=OneWay}"/>
                         </Grid>
                     </Border>
                 </Grid>
 
                 <!-- Center column -->
-                <Grid Grid.Column="2">
+                <Grid Grid.Column="1">
                     <Rectangle Fill="{ThemeResource AccentLightBrush}" Opacity="0.1"/>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -102,30 +76,9 @@
 
                         <!-- Widgets area -->
                         <Grid Grid.Row="0" Grid.RowSpan="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition x:Name="colPlatformDetails" MinWidth="400" MaxWidth="600" Width="400"/>
-                            </Grid.ColumnDefinitions>
-
-                            <uc:WidgetPanelControl x:Name="WidgetPanel" Layout="{Binding LayoutSelectorViewModel.SelectedLayout}" SplittersVisible="{Binding LayoutSelectorViewModel.SplittersVisible, Mode=OneWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}" TopBandVisible="{Binding IsImageTypeBandVisible, Mode=OneWay}" Margin="{Binding LayoutSelectorViewModel.WidgetPanelMargin}">
-                                <!-- Banda fija superior a ancho completo: selector de tipo de medio.  -->
-                                <uc:WidgetPanelControl.TopBandContent>
-                                    <uc:WidgetBaseControl DisplayMode="Fixed" Margin="{Binding LayoutSelectorViewModel.WidgetBandMargin}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                        <uc:ImageTypeControl DisplayMode="Full" ViewModel="{Binding ImageTypeViewModel}"/>
-                                    </uc:WidgetBaseControl>
-                                </uc:WidgetPanelControl.TopBandContent>
-                                <uc:WidgetBaseControl x:Name="ucGameImagesDashboardWidget" HelpDescriptionKey="GameImagesDashboard_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_DashboardWidget_Title}" Title="{Binding SharedDataService.SelectedGame.Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:GameImagesDashboardControl x:Name="ucGameImagesDashboardControl" ViewModel="{Binding GameImagesDashboardViewModel}"></uc:GameImagesDashboardControl>
-                                </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucGameImagesRegionDashboardWidget" HelpDescriptionKey="GameImagesRegionDashboard_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_RegionsWidget_Title}" Title="{Binding SharedDataService.SelectedGame.Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:GameImagesRegionDashboardControl x:Name="ucGameImagesRegionDashboardControl" ViewModel="{Binding GameImagesRegionDashboardViewModel}"></uc:GameImagesRegionDashboardControl>
-                                </uc:WidgetBaseControl>
+                            <uc:WidgetPanelControl x:Name="WidgetPanel" Layout="{Binding LayoutSelectorViewModel.SelectedLayout}" SplittersVisible="{Binding LayoutSelectorViewModel.SplittersVisible, Mode=OneWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}" Margin="{Binding LayoutSelectorViewModel.WidgetPanelMargin}">
                                 <uc:WidgetBaseControl x:Name="ucStatsPlatformWidget" HelpDescriptionKey="StatsPlatform_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_GameStatsWidget_Title}" Title="{Binding SharedDataService.SelectedPlatform.Name, Mode=OneWay}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:StatsPlatformControl x:Name="ucStatsPlatformControl" ViewModel="{Binding StatsPlatformViewModel}"></uc:StatsPlatformControl>
-                                </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucStatsGlobalWidget" HelpDescriptionKey="StatsGlobal_WidgetHelp_Description" Title="{loc:Str Key=MainWindow_GlobalStatsWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:StatsGlobalControl x:Name="ucStatsGlobalControl" ViewModel="{Binding StatsGlobalViewModel}"></uc:StatsGlobalControl>
                                 </uc:WidgetBaseControl>
                                 <uc:WidgetBaseControl x:Name="ucConsoleWidget" HelpDescriptionKey="Console_WidgetHelp_Description" Title="{loc:Str Key=MainWindow_ActivityLogWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:ConsoleControl x:Name="ucConsoleControl" ViewModel="{Binding ConsoleViewModel}"></uc:ConsoleControl>
@@ -136,28 +89,10 @@
                                 <uc:WidgetBaseControl x:Name="ucImageGridWidget" HelpDescriptionKey="ImageGrid_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_GalleryWidget_Title}" Title="{Binding SharedDataService.SelectedGame.Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:ImageGridControl x:Name="ucImageGridControl" ViewModel="{Binding ImageGridGameViewModel}"></uc:ImageGridControl>
                                 </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucGamesAuditWidget" HelpDescriptionKey="GamesAudit_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_GamesAuditWidget_Title}" Title="{Binding SharedDataService.SelectedPlatform.Name}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:GamesAuditControl x:Name="ucGamesAuditControl" ViewModel="{Binding GamesAuditViewModel}"></uc:GamesAuditControl>
-                                </uc:WidgetBaseControl>
                                 <uc:WidgetBaseControl x:Name="ucGameDetailsWidget" HelpDescriptionKey="GameDetails_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_GameDetailsWidget_Title}" Title="{Binding SharedDataService.SelectedGame.Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:GameDetailsControl x:Name="ucGameDetailsControl" ViewModel="{Binding GameDetailsViewModel}"></uc:GameDetailsControl>
                                 </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucImageAuditWidget" HelpDescriptionKey="ImageAudit_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_MediaAuditWidget_Title}" Title="{Binding SharedDataService.SelectedPlatform.Name}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:ImageAuditControl x:Name="ucImageAuditControl" ViewModel="{Binding ImageAuditViewModel}"></uc:ImageAuditControl>
-                                </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucImageCollectionImportWidget" HelpDescriptionKey="ImageCollectionImport_WidgetHelp_Description" Title="{loc:Str Key=MainWindow_ImportWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:ImageCollectionImportControl x:Name="ucImageCollectionImportControl" ViewModel="{Binding ImageCollectionImportViewModel}"></uc:ImageCollectionImportControl>
-                                </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucToolsWidget" HelpDescriptionKey="Tools_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_ToolsWidget_Title}" Title="{Binding ToolsViewModel.CurrentToolTitle, Mode=OneWay}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:ToolsControl x:Name="ucToolsControl" ViewModel="{Binding ToolsViewModel}"></uc:ToolsControl>
-                                </uc:WidgetBaseControl>
                             </uc:WidgetPanelControl>
-
-                            <toolkit:GridSplitter Grid.Column="1" x:Name="gsPlatformDetails" ResizeDirection="Columns" ResizeBehavior="BasedOnAlignment" Width="5" HorizontalAlignment="Stretch" Margin="-8 0 0 0" Style="{StaticResource GridSplitterTransparentStyle}">
-                            </toolkit:GridSplitter>
-                            <Grid Grid.Column="2">
-                                <uc:PlatformDetailsControl Grid.Row="0" x:Name="pdcPlatformDetails" ViewModel="{Binding PlatformDetailsViewModel}"/>
-                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -186,44 +121,18 @@
                 <Border BorderThickness="0 1 0 0" BorderBrush="{ThemeResource CardBackgroundLightBrush}">
                     <Grid Padding="4 0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4*" />
-                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <Grid Grid.Column="0">
-                            <!-- Fondo (SolidColorBrush) y borde (gradiente) usan recursos de tipo Color: no se propagan
-                                 solos al cambiar de tema en caliente; se refrescan por código en RefreshThemedElements. -->
-                            <Border CornerRadius="6" Padding="0 1 0 0">
-                                <Border.Background>
-                                    <SolidColorBrush x:Name="CacheProgressBackground" Color="{ThemeResource AccentDarkColor}" Opacity="0.5"/>
-                                </Border.Background>
-                                <Border.BorderThickness>2 1 1 2</Border.BorderThickness>
-                                <Border.BorderBrush>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                        <GradientStop x:Name="CacheBorderStopDark" Color="{ThemeResource AccentDarkColorOpacity80}" Offset="0"/>
-                                        <GradientStop x:Name="CacheBorderStopMid" Color="{ThemeResource AccentColorOpacity80}" Offset="0.5"/>
-                                        <GradientStop x:Name="CacheBorderStopLight" Color="{ThemeResource AccentLightColorOpacity80}" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Border.BorderBrush>
-                                <Grid>
-                                    <ProgressBar Value="{x:Bind ViewModel.ImageBinariesCacheService.CacheUsage, Mode=OneWay}" Maximum="100" Background="Transparent" Foreground="{ThemeResource AccentBrush}" MinHeight="40"/>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
-                                        <TextBlock Text="{loc:Str Key=Common_CacheUsage_Label}" FontSize="20" FontWeight="SemiBold" Opacity="0.8"/>
-                                        <TextBlock Text="{x:Bind sys:String.Format(x:Null,'{0}%', ViewModel.ImageBinariesCacheService.CacheUsage), Mode=OneWay}" FontSize="22" FontWeight="SemiBold"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </Grid>
                         <!-- Visor del evento del log: solo cuando la consola NO está como widget visible (SlotIndex == -1).
                              Encapsulado en su propio control (FrameworkElement) para poder usar x:Bind con converters y la
                              animación de transición. ViewModel se pasa por Binding (DataContext del root = MainWindowViewModel). -->
-                        <uc:FooterEventViewerControl Grid.Column="1" Margin="8 0 0 0" ViewModel="{Binding ConsoleViewModel}" Visibility="{Binding ConsoleViewModel.IsFooterViewerVisible, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                        <uc:FooterEventViewerControl Grid.Column="0" ViewModel="{Binding ConsoleViewModel}" Visibility="{Binding ConsoleViewModel.IsFooterViewerVisible, Converter={StaticResource VisibleIfTrueConverter}}"/>
 
                         <!-- Barra de herramientas del footer (a la derecha, anchura automática): toggle de ayuda + sonido. -->
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
                             <uc:FooterHelpControl/>
-                            <uc:FooterSoundControl ViewModel="{Binding GameImagesDashboardViewModel}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -233,7 +142,7 @@
         <!-- Toolbar -->
         <Grid>
             <Border x:Name="ucToolbarHoverZone" Height="32" VerticalAlignment="Top" Margin="140 8" Background="Transparent"/>
-            <uc:ToolbarControl x:Name="ucToolbar" GameListDockedAside="{Binding IsGameListDockedAside, Mode=TwoWay}" PlatformDetailsVisible="{Binding IsPlatformDetailsVisible, Mode=TwoWay}" TogglesDisabled="{Binding IsAnimating, Mode=OneWay}" PlatformListBehavesAsList="{Binding PlatformListViewModel.BehavesAsList, Mode=TwoWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}" ImageTypeBandVisible="{Binding IsImageTypeBandVisible, Mode=TwoWay}">
+            <uc:ToolbarControl x:Name="ucToolbar" TogglesDisabled="{Binding IsAnimating, Mode=OneWay}" PlatformListBehavesAsList="{Binding PlatformListViewModel.BehavesAsList, Mode=TwoWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}">
                 <UserControl.RenderTransform>
                     <TranslateTransform x:Name="ucToolbarTransform" Y="-140"/>
                 </UserControl.RenderTransform>

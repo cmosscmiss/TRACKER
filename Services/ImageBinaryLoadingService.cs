@@ -18,16 +18,14 @@ namespace MM4LB.Services;
 public sealed class ImageBinaryLoadingService
 {
     #region Attributes
-    private readonly ImageBinariesCacheService _imageBinariesCacheService;
     private readonly ProgressService _progressService;
     private readonly SharedDataService _sharedDataService;
     private readonly AppSettings _appSettings;
     #endregion
 
     #region Constructor
-    public ImageBinaryLoadingService(ImageBinariesCacheService imageBinariesCacheService, ProgressService progressService, SharedDataService sharedDataService, IOptions<AppSettings> appSettings)
+    public ImageBinaryLoadingService(ProgressService progressService, SharedDataService sharedDataService, IOptions<AppSettings> appSettings)
     {
-        _imageBinariesCacheService = imageBinariesCacheService;
         _progressService = progressService;
         _sharedDataService = sharedDataService;
         _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
@@ -63,8 +61,6 @@ public sealed class ImageBinaryLoadingService
                 return;
             }
 
-            _imageBinariesCacheService.RemoveImage(image);
-
             // Decode from a managed file stream instead of Windows.Storage.StorageFile.
             // StorageFile.GetFileFromPathAsync fail-fasts intermittently (STATUS_STOWED_EXCEPTION
             // 0xc000027b) in this unpackaged app when called from the grid's ContainerContentChanging
@@ -88,7 +84,6 @@ public sealed class ImageBinaryLoadingService
             await bmp.SetSourceAsync(stream);
             image.Binary = bmp;
             image.Resolution = imageResolution;
-            _imageBinariesCacheService.AddImage(image);
         }
         catch (Exception e)
         {
@@ -141,11 +136,6 @@ public sealed class ImageBinaryLoadingService
             video.Binary = bmp;
             frame.Dispose();
 
-            // The video itself holds no RAM until played, but the extracted frame is a decoded bitmap that does:
-            // charge it to the cache like any image binary (DecodedSizeMb is the frame's size, not the video's),
-            // so usage reflects loaded video thumbnails and they get evicted under pressure like the rest.
-            _imageBinariesCacheService.AddImage(video);
-
             // The binary is a 320px thumbnail, not the video, so it does not carry the real resolution (the
             // Binary setter leaves the dimensions untouched for videos). Read the native resolution from the
             // file once so the per-item dimensions (Game Image overlay) are correct; the pill/chart of the
@@ -179,13 +169,10 @@ public sealed class ImageBinaryLoadingService
     }
 
     /// <summary>
-    /// Frees an image's decoded binary and drops it from the cache in a single step, so the reported cache
-    /// usage always reflects the memory actually held. Clearing the binary directly (ImageAsset.ClearBinary)
-    /// would free the bitmap but leave the image counted in the cache.
+    /// Frees an image's decoded binary.
     /// </summary>
     public void ReleaseBinary(ImageAsset image)
     {
-        _imageBinariesCacheService.RemoveImage(image);
         image.ClearBinary();
     }
 

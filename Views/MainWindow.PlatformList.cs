@@ -35,9 +35,6 @@ public sealed partial class MainWindow
         _viewModel.IsAnimating = true;
         bool behavesAsList = _viewModel.PlatformListViewModel.BehavesAsList;
 
-        // The GameList row depends on the PlatformList display mode when the GameList is hidden.
-        ApplyGameListRowHeightForCurrentState(behavesAsList);
-
         double startHeight = rowPlatformList.ActualHeight;
         if (startHeight <= 0)
         {

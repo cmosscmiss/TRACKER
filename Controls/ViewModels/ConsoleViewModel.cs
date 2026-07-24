@@ -17,7 +17,6 @@ namespace MM4LB.Controls.ViewModels;
 public class ConsoleViewModel : WidgetViewModelBase
 {
     #region Attributes
-    private readonly ImageBinariesCacheService _imageBinariesCacheService;
     private readonly BackupService _backupService;
     private readonly DialogsService _dialogsService;
     private readonly WindowService _windowService;
@@ -26,8 +25,6 @@ public class ConsoleViewModel : WidgetViewModelBase
     #endregion
 
     #region Properties
-    public ImageBinariesCacheService ImageBinariesCacheService => _imageBinariesCacheService;
-
     /// <summary>Estadísticas de la carpeta de backup (nº de imágenes y tamaño) para la pastilla del log.</summary>
     public BackupService BackupService => _backupService;
 
@@ -61,9 +58,8 @@ public class ConsoleViewModel : WidgetViewModelBase
     #endregion
 
     #region Constructor
-    public ConsoleViewModel(ImageBinariesCacheService imageBinariesCacheService, BackupService backupService, DialogsService dialogsService, WindowService windowService, SharedDataService sharedDataService, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
+    public ConsoleViewModel(BackupService backupService, DialogsService dialogsService, WindowService windowService, SharedDataService sharedDataService, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
     {
-        _imageBinariesCacheService = imageBinariesCacheService;
         _backupService = backupService;
         _dialogsService = dialogsService;
         _windowService = windowService;
@@ -81,9 +77,6 @@ public class ConsoleViewModel : WidgetViewModelBase
                 OnPropertyChanged(nameof(IsFooterViewerVisible));
             }
         };
-
-        // Al cargar un template, el ajuste FooterEventViewerAlwaysVisible puede cambiar: re-evalúa la visibilidad.
-        SharedDataService.SettingsReloaded += (_, _) => OnPropertyChanged(nameof(IsFooterViewerVisible));
     }
     #endregion
 

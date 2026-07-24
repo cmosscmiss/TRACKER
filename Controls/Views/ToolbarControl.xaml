@@ -22,25 +22,18 @@
                     <StackPanel x:Name="ToolbarButtonsPanel" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16">
                         <template:ToolbarButtonIcon x:Name="LayoutSelectorButton" IconName="Icon-layout" help:Help.Key="Toolbar_Layout_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                         <template:ToolbarButtonIcon x:Name="WidgetSelectorButton" IconName="Icon-widgets" help:Help.Key="Toolbar_Widgets_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
-                        <template:ToolbarButtonIcon x:Name="TemplateSelectorButton" IconName="Icon-templates" help:Help.Key="Toolbar_Templates_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                         <template:ToolbarButtonIcon x:Name="SettingsSelectorButton" IconName="Icon-equalizer" help:Help.Key="Toolbar_QuickSettings_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                     </StackPanel>
 
                     <template:SeparatorEx Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <template:ToolbarButtonIcon x:Name="SettingsButton" IconName="Icon-settings" help:Help.Key="Toolbar_Settings_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
-                        <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                         <StackPanel Orientation="Horizontal" Spacing="16">
                             <template:ToolbarButtonIcon x:Name="SplittersToggle" CheckedIconName="Icon-resize" UncheckedIconName="Icon-resize-off" help:Help.Key="Toolbar_Resize_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
-                            <template:ToolbarButtonIcon x:Name="TemplateSaveButton" IconName="Icon-save-template" help:Help.Key="Toolbar_SaveTemplate_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                         </StackPanel>
                         <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                         <StackPanel x:Name="ToolbarSwitchesPanel" Orientation="Horizontal" Spacing="16">
-                            <template:ToolbarButtonIcon x:Name="PlatformDetailsToggle" IconFolder="Widgets" CheckedIconName="PlatformDetailsControl" UncheckedIconName="PlatformDetailsControl-off" help:Help.Key="Toolbar_TogglePlatformDetails_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                             <template:ToolbarButtonIcon x:Name="PlatformListToggle" IconFolder="Widgets" CheckedIconName="PlatformListControl" UncheckedIconName="PlatformListControl-off" help:Help.Key="Toolbar_TogglePlatformList_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
-                            <template:ToolbarButtonIcon x:Name="GameListToggle" IconFolder="Widgets" CheckedIconName="GameListControl" UncheckedIconName="GameListControl-off" help:Help.Key="Toolbar_ToggleGameList_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
-                            <template:ToolbarButtonIcon x:Name="ImageTypeBandToggle" IconFolder="Widgets" CheckedIconName="ImageTypeControl" UncheckedIconName="ImageTypeControl-off" help:Help.Key="Toolbar_ToggleImageTypeBand_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -67,14 +60,6 @@
                     </Grid.RowDefinitions>
                     <template:SeparatorEx Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 0 8" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                     <uc:WidgetSelectorControl Grid.Row="1" x:Name="ucWidgetSelectorControl" SelectedLayout="{Binding ViewModel.SelectedLayout, ElementName=ucLayoutSelectorControl, Mode=OneWay}" Widgets="{Binding Widgets}" HorizontalAlignment="Center" />
-                </Grid>
-                <Grid x:Name="ToolbarTemplateSelector" Grid.Row="1" Margin="0 24 0 0" Visibility="Collapsed">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <template:SeparatorEx Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 0 8" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                    <uc:TemplateSlotsControl Grid.Row="1" x:Name="ucTemplateSlots" SelectionMode="False" Source="AllTemplates" HorizontalAlignment="Center"/>
                 </Grid>
                 <Grid x:Name="ToolbarSettingsSelector" Grid.Row="1" Margin="0 24 0 0" Visibility="Collapsed">
                     <Grid.RowDefinitions>

@@ -46,42 +46,6 @@
                 <TextBlock Text="{loc:Str Key=QuickSettings_GameGallery_Label}" Style="{StaticResource SettingsLabelStyle}" />
                 <Slider Grid.Column="1" Orientation="Horizontal" Minimum="{x:Bind ViewModel.ImageGridGameViewModel.MinimumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" Maximum="{x:Bind ViewModel.ImageGridGameViewModel.MaximumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" LargeChange="50" Value="{x:Bind ViewModel.ImageGridGameViewModel.Width, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}" />
             </Grid>
-            <Grid Style="{StaticResource SettingsRowStyle}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="700" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{loc:Str Key=QuickSettings_MediaAudit_Label}" Style="{StaticResource SettingsLabelStyle}" />
-                <Slider Grid.Column="1" Orientation="Horizontal" Minimum="{x:Bind ViewModel.ImageAuditViewModel.IgViewModel.MinimumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" Maximum="{x:Bind ViewModel.ImageAuditViewModel.IgViewModel.MaximumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" LargeChange="50" Value="{x:Bind ViewModel.ImageAuditViewModel.IgViewModel.Width, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}" />
-            </Grid>
-            <Grid Style="{StaticResource SettingsRowStyle}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="700" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{loc:Str Key=QuickSettings_ImportMedia_Label}" Style="{StaticResource SettingsLabelStyle}" />
-                <Slider Grid.Column="1" Orientation="Horizontal" Minimum="{x:Bind ViewModel.ImageCollectionImportViewModel.MinimumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" Maximum="{x:Bind ViewModel.ImageCollectionImportViewModel.MaximumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" LargeChange="50" Value="{x:Bind ViewModel.ImageCollectionImportViewModel.Width, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}" />
-            </Grid>
-            <Grid Style="{StaticResource SettingsRowStyle}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="700" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{loc:Str Key=QuickSettings_OrphanMedia_Label}" Style="{StaticResource SettingsLabelStyle}" />
-                <Slider Grid.Column="1" Orientation="Horizontal" Minimum="{x:Bind ViewModel.ToolsViewModel.OrphanToolViewModel.IgViewModel.MinimumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" Maximum="{x:Bind ViewModel.ToolsViewModel.OrphanToolViewModel.IgViewModel.MaximumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" LargeChange="50" Value="{x:Bind ViewModel.ToolsViewModel.OrphanToolViewModel.IgViewModel.Width, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}" />
-            </Grid>
-
-            <!-- ==================== SOUND ==================== -->
-            <TextBlock Text="{loc:Str Key=QuickSettings_Sound_Header}" Style="{StaticResource SettingsSectionHeaderStyle}" />
-            <template:SeparatorEx Margin="0 4 0 0" HorizontalAlignment="Stretch" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-            <Grid Style="{StaticResource SettingsRowStyle}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="700" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{loc:Str Key=QuickSettings_VideoVolume_Label}" Style="{StaticResource SettingsLabelStyle}" />
-                <Slider Grid.Column="1" Orientation="Horizontal" Maximum="100" Minimum="0" Value="{x:Bind ViewModel.GameImagesDashboardViewModel.VideoVolume, Mode=TwoWay}" />
-            </Grid>
 
             <!-- ==================== WIDGETS ==================== -->
             <TextBlock Text="{loc:Str Key=QuickSettings_Widgets_Header}" Style="{StaticResource SettingsSectionHeaderStyle}" />
