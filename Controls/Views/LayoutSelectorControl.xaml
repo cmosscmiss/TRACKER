@@ -1,0 +1,16 @@
+<UserControl x:Class="MM4LB.Controls.Views.LayoutSelectorControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:MM4LB.Controls.Views" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="4">
+        <VariableSizedWrapGrid x:Name="RootPanel" Orientation="Horizontal" MaximumRowsOrColumns="5" ItemHeight="132" ItemWidth="194">
+            <local:LayoutItemControl x:Name="Item0" Index="0"/>
+            <local:LayoutItemControl x:Name="Item1" Index="1"/>
+            <local:LayoutItemControl x:Name="Item2" Index="2"/>
+            <local:LayoutItemControl x:Name="Item3" Index="3"/>
+            <local:LayoutItemControl x:Name="Item4" Index="4"/>
+            <local:LayoutItemControl x:Name="Item5" Index="5"/>
+            <local:LayoutItemControl x:Name="Item6" Index="6"/>
+            <local:LayoutItemControl x:Name="Item7" Index="7"/>
+            <local:LayoutItemControl x:Name="Item8" Index="8"/>
+            <local:LayoutItemControl x:Name="Item9" Index="9"/>
+        </VariableSizedWrapGrid>
+    </Grid>    
+</UserControl>

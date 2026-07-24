@@ -1,7 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Tracker.Controls.Templates"
+    xmlns:controls="using:MM4LB.Controls.Templates"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls">
     <!-- Tinted Image -->
     <Style TargetType="controls:TintedImage">
@@ -17,7 +17,7 @@
     <Style TargetType="controls:SeparatorEx">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="LineBrush" Value="{ThemeResource TextSecondaryBrush}" />
+        <Setter Property="LineBrush" Value="{ThemeResource TextSecondaryColor}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SeparatorEx">

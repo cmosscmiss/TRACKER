@@ -1,0 +1,1265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Traducción al ESPAÑOL. Genera el satellite assembly es\MM4LB.resources.dll. Ver docs/Plan-Localizacion-Ayuda.md. -->
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Common_AppName" xml:space="preserve">
+    <value>MM4LB</value>
+  </data>
+  <data name="Common_Cancel_Tooltip" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Common_Undo_Tooltip" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="Common_CacheUsage_Label" xml:space="preserve">
+    <value>Uso de caché:</value>
+  </data>
+  <data name="Common_ShowingXofY_Format" xml:space="preserve">
+    <value>Mostrando {0} de {1}</value>
+  </data>
+  <!-- Console (ACTIVITY LOG) -->
+  <data name="Console_CachedMedia_Label" xml:space="preserve">
+    <value>Media en caché</value>
+  </data>
+  <data name="Console_BackupMedia_Label" xml:space="preserve">
+    <value>Media en backup</value>
+  </data>
+  <data name="Console_MediaTotalSize_Description" xml:space="preserve">
+    <value>Ficheros / tamaño total</value>
+  </data>
+  <data name="Console_Backup_Label" xml:space="preserve">
+    <value>Backup</value>
+  </data>
+  <data name="Console_Backup_Tooltip" xml:space="preserve">
+    <value>Vaciar la carpeta de backup</value>
+  </data>
+  <!-- FooterEventViewer -->
+  <data name="FooterEventViewer_OlderEvent_Tooltip" xml:space="preserve">
+    <value>Evento anterior</value>
+  </data>
+  <data name="FooterEventViewer_NewerEvent_Tooltip" xml:space="preserve">
+    <value>Evento siguiente</value>
+  </data>
+  <data name="FooterEventViewer_LatestEvent_Tooltip" xml:space="preserve">
+    <value>Último evento</value>
+  </data>
+  <!-- FooterSound -->
+  <data name="FooterSound_Sound_Tooltip" xml:space="preserve">
+    <value>Sonido</value>
+  </data>
+  <data name="FooterSound_Mute_Tooltip" xml:space="preserve">
+    <value>Silenciar</value>
+  </data>
+  <!-- MainWindow -->
+  <data name="MainWindow_Platform_Label" xml:space="preserve">
+    <value>Plataforma:</value>
+  </data>
+  <!-- Common auditoría/tools -->
+  <data name="Common_View_Header" xml:space="preserve">
+    <value>Vista</value>
+  </data>
+  <data name="Common_TableView_Label" xml:space="preserve">
+    <value>Vista tabla</value>
+  </data>
+  <data name="Common_GridView_Label" xml:space="preserve">
+    <value>Vista de grid</value>
+  </data>
+  <data name="Common_SelectedType_Label" xml:space="preserve">
+    <value>Tipo seleccionado</value>
+  </data>
+  <data name="Common_Type_Header" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Common_File_Header" xml:space="preserve">
+    <value>Fichero</value>
+  </data>
+  <data name="Common_Region_Header" xml:space="preserve">
+    <value>Región</value>
+  </data>
+  <data name="Common_Game_Header" xml:space="preserve">
+    <value>Juego</value>
+  </data>
+  <data name="Common_Title_Header" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Common_Size_Label" xml:space="preserve">
+    <value>Tamaño</value>
+  </data>
+  <data name="Common_Types_Label" xml:space="preserve">
+    <value>Tipos</value>
+  </data>
+  <!-- GamesAudit -->
+  <data name="GamesAudit_InCollection_Label" xml:space="preserve">
+    <value>En la colección</value>
+  </data>
+  <data name="GamesAudit_InLbDb_Label" xml:space="preserve">
+    <value>En BD de LB</value>
+  </data>
+  <data name="GamesAudit_NotInLbDb_Label" xml:space="preserve">
+    <value>No en BD de LB</value>
+  </data>
+  <data name="GamesAudit_NoMatches_Label" xml:space="preserve">
+    <value>Sin coincidencias</value>
+  </data>
+  <data name="GamesAudit_OneMatch_Label" xml:space="preserve">
+    <value>Una coincidencia</value>
+  </data>
+  <data name="GamesAudit_MoreThanOneMatch_Label" xml:space="preserve">
+    <value>&gt;1 coincidencia</value>
+  </data>
+  <data name="GamesAudit_LaunchboxId_Header" xml:space="preserve">
+    <value>ID de Launchbox</value>
+  </data>
+  <data name="GamesAudit_Rom_Header" xml:space="preserve">
+    <value>Rom</value>
+  </data>
+  <data name="GamesAudit_Version_Header" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="GamesAudit_MatchedImages_Header" xml:space="preserve">
+    <value>Imágenes emparejadas</value>
+  </data>
+  <!-- OrphanTool -->
+  <data name="OrphanTool_DeleteAll_Label" xml:space="preserve">
+    <value>Borrar todos</value>
+  </data>
+  <data name="OrphanTool_Empty_Text" xml:space="preserve">
+    <value>No se ha encontrado media huérfana para esta plataforma.</value>
+  </data>
+  <data name="OrphanTool_Orphans_Label" xml:space="preserve">
+    <value>Huérfanos</value>
+  </data>
+  <data name="OrphanTool_OrphansRatio_Description" xml:space="preserve">
+    <value>Huérfanos/Total de ficheros</value>
+  </data>
+  <data name="OrphanTool_SizeRatio_Description" xml:space="preserve">
+    <value>Huérfanos/Tamaño total</value>
+  </data>
+  <data name="OrphanTool_TypesRatio_Description" xml:space="preserve">
+    <value>Afectados/Total de tipos</value>
+  </data>
+  <data name="OrphanTool_TopTypeRatio_Description" xml:space="preserve">
+    <value>Tipo/Total de huérfanos</value>
+  </data>
+  <!-- SharedMediaTool -->
+  <data name="SharedMediaTool_Empty_Text" xml:space="preserve">
+    <value>No se ha encontrado media compartida para esta plataforma.</value>
+  </data>
+  <data name="SharedMediaTool_Shared_Label" xml:space="preserve">
+    <value>Compartidos</value>
+  </data>
+  <data name="SharedMediaTool_SharedRatio_Description" xml:space="preserve">
+    <value>Compartidos/Total de ficheros</value>
+  </data>
+  <data name="SharedMediaTool_SizeRatio_Description" xml:space="preserve">
+    <value>Compartidos/Tamaño total</value>
+  </data>
+  <data name="SharedMediaTool_TypesRatio_Description" xml:space="preserve">
+    <value>Afectados/Total de tipos</value>
+  </data>
+  <data name="SharedMediaTool_Games_Label" xml:space="preserve">
+    <value>Juegos</value>
+  </data>
+  <data name="SharedMediaTool_GamesRatio_Description" xml:space="preserve">
+    <value>Afectados/Total de juegos</value>
+  </data>
+  <!-- AuditPanel -->
+  <data name="AuditPanel_CheckMedia_Label" xml:space="preserve">
+    <value>Comprobar media</value>
+  </data>
+  <data name="AuditPanel_OnlyDiscrepancies_Label" xml:space="preserve">
+    <value>Solo discrep.</value>
+  </data>
+  <data name="AuditPanel_SelectedMediaType_Label" xml:space="preserve">
+    <value>Tipo de media seleccionado</value>
+  </data>
+  <data name="AuditPanel_ImportedFile_Label" xml:space="preserve">
+    <value>Fichero importado</value>
+  </data>
+  <data name="AuditPanel_Warnings_Title" xml:space="preserve">
+    <value>Avisos</value>
+  </data>
+  <data name="AuditPanel_Category_Header" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="AuditPanel_LaunchBox_Header" xml:space="preserve">
+    <value>LaunchBox</value>
+  </data>
+  <data name="AuditPanel_MM4LB_Header" xml:space="preserve">
+    <value>MM4LB</value>
+  </data>
+  <data name="AuditPanel_Status_Header" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="AuditPanel_Empty_Text" xml:space="preserve">
+    <value>Ejecuta una comprobación para comparar el Excel de auditoría de LaunchBox con la media emparejada por MM4LB.</value>
+  </data>
+  <data name="AuditPanel_Compared_Label" xml:space="preserve">
+    <value>Comparados</value>
+  </data>
+  <data name="AuditPanel_Compared_Description" xml:space="preserve">
+    <value>juegos en ambos</value>
+  </data>
+  <data name="AuditPanel_Discrepancies_Label" xml:space="preserve">
+    <value>Discrepancias</value>
+  </data>
+  <data name="AuditPanel_Discrepancies_Description" xml:space="preserve">
+    <value>juegos que difieren</value>
+  </data>
+  <data name="AuditPanel_WrongFiles_Label" xml:space="preserve">
+    <value>Ficheros erróneos</value>
+  </data>
+  <data name="AuditPanel_WrongFiles_Description" xml:space="preserve">
+    <value>ficheros que difieren</value>
+  </data>
+  <data name="AuditPanel_NotMatched_Label" xml:space="preserve">
+    <value>Sin emparejar</value>
+  </data>
+  <data name="AuditPanel_NotMatched_Description" xml:space="preserve">
+    <value>filas de Excel sin juego</value>
+  </data>
+  <data name="AuditPanel_NotInExcel_Label" xml:space="preserve">
+    <value>No en el Excel</value>
+  </data>
+  <data name="AuditPanel_NotInExcel_Description" xml:space="preserve">
+    <value>juegos sin fila</value>
+  </data>
+  <data name="GeneralSettings_Language_Label" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="GeneralSettings_Language_Tooltip" xml:space="preserve">
+    <value>Elige el idioma de la interfaz.</value>
+  </data>
+  <data name="GeneralSettings_LanguagePilot_Caption" xml:space="preserve">
+    <value>El idioma se aplica en caliente — sin reiniciar.</value>
+  </data>
+  <data name="GeneralSettings_HelpPilot_Tooltip" xml:space="preserve">
+    <value>Este icono de ayuda (y los tooltips) se ocultan cuando la ayuda está desactivada.</value>
+  </data>
+  <data name="FooterHelp_Toggle_Tooltip" xml:space="preserve">
+    <value>Mostrar u ocultar la ayuda (tooltips y paneles de ayuda).</value>
+  </data>
+  <!-- Dashboard_* : compartido por los dos dashboards de imágenes. -->
+  <data name="Dashboard_Layout_Header" xml:space="preserve">
+    <value>Disposición</value>
+  </data>
+  <data name="Dashboard_HorView_Label" xml:space="preserve">
+    <value>Vista hor.</value>
+  </data>
+  <data name="Dashboard_VerView_Label" xml:space="preserve">
+    <value>Vista vert.</value>
+  </data>
+  <data name="Dashboard_VideoQuality_Header" xml:space="preserve">
+    <value>Calidad de vídeo</value>
+  </data>
+  <data name="Dashboard_Quality240_Label" xml:space="preserve">
+    <value>240p (LD)</value>
+  </data>
+  <data name="Dashboard_Quality360_Label" xml:space="preserve">
+    <value>360p (SD)</value>
+  </data>
+  <data name="Dashboard_Quality480_Label" xml:space="preserve">
+    <value>480p (ED)</value>
+  </data>
+  <data name="Dashboard_Quality720_Label" xml:space="preserve">
+    <value>720p (HD)</value>
+  </data>
+  <data name="Dashboard_Quality1080_Label" xml:space="preserve">
+    <value>1080p</value>
+  </data>
+  <data name="Dashboard_Strings_Label" xml:space="preserve">
+    <value>Cadenas</value>
+  </data>
+  <data name="Dashboard_Strings_Tooltip" xml:space="preserve">
+    <value>Muestra u oculta el panel de cadenas de búsqueda.</value>
+  </data>
+  <data name="Dashboard_Delete_Label" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="Dashboard_Delete_Tooltip" xml:space="preserve">
+    <value>Borra el medio seleccionado (se puede deshacer).</value>
+  </data>
+  <data name="Dashboard_Settings_Label" xml:space="preserve">
+    <value>Ajustes</value>
+  </data>
+  <data name="Dashboard_Settings_Tooltip" xml:space="preserve">
+    <value>Ver o cambiar los criterios de preselección y de proceso.</value>
+  </data>
+  <data name="Dashboard_Importing_Text" xml:space="preserve">
+    <value>Importando imagen...</value>
+  </data>
+  <data name="Dashboard_ProcessPrevious_Label" xml:space="preserve">
+    <value>PROCESAR Y ANTERIOR</value>
+  </data>
+  <data name="Dashboard_ProcessNext_Label" xml:space="preserve">
+    <value>PROCESAR Y SIGUIENTE</value>
+  </data>
+  <!-- GameImagesDashboard_* : dashboard estándar. -->
+  <data name="GameImagesDashboard_ProcessPrevious_Tooltip" xml:space="preserve">
+    <value>Procesa este juego y ve al anterior.</value>
+  </data>
+  <data name="GameImagesDashboard_ProcessNext_Tooltip" xml:space="preserve">
+    <value>Procesa este juego y ve al siguiente.</value>
+  </data>
+  <!-- GameImagesRegionDashboard_* : dashboard por regiones. -->
+  <data name="GameImagesRegionDashboard_ProcessRegion_Label" xml:space="preserve">
+    <value>Procesar región</value>
+  </data>
+  <data name="GameImagesRegionDashboard_ProcessRegion_Tooltip" xml:space="preserve">
+    <value>Procesa la región seleccionada (conserva una, borra el resto) sin cambiar de juego.</value>
+  </data>
+  <data name="GameImagesRegionDashboard_ProcessPrevious_Tooltip" xml:space="preserve">
+    <value>Procesa todas las regiones de este juego y ve al anterior.</value>
+  </data>
+  <data name="GameImagesRegionDashboard_ProcessNext_Tooltip" xml:space="preserve">
+    <value>Procesa todas las regiones de este juego y ve al siguiente.</value>
+  </data>
+  <!-- SettingsDialog_* -->
+  <data name="SettingsDialog_General_Title" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsDialog_Regions_Title" xml:space="preserve">
+    <value>Regiones</value>
+  </data>
+  <data name="SettingsDialog_MediaTypes_Title" xml:space="preserve">
+    <value>Tipos de media</value>
+  </data>
+  <data name="SettingsDialog_Theme_Title" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="SettingsDialog_About_Title" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="SettingsDialog_ToolbarGroupsSeparate_Label" xml:space="preserve">
+    <value>Botones separados</value>
+  </data>
+  <data name="SettingsDialog_ToolbarGroupsGrouped_Label" xml:space="preserve">
+    <value>Agrupados (split button)</value>
+  </data>
+  <data name="SettingsDialog_ToolbarGroupsAuto_Label" xml:space="preserve">
+    <value>Automático (según el tamaño)</value>
+  </data>
+  <!-- GeneralSettings_* -->
+  <data name="GeneralSettings_ToolbarGroups_Label" xml:space="preserve">
+    <value>Grupos de botones de la toolbar</value>
+  </data>
+  <data name="GeneralSettings_CacheSize_Label" xml:space="preserve">
+    <value>Tamaño de la caché de imágenes (MB)</value>
+  </data>
+  <data name="GeneralSettings_ShowWidgetHeader_Label" xml:space="preserve">
+    <value>Mostrar la barra de cabecera de los widgets</value>
+  </data>
+  <data name="GeneralSettings_FooterEventViewer_Label" xml:space="preserve">
+    <value>Mostrar siempre el registro de actividad en el pie</value>
+  </data>
+  <data name="GeneralSettings_ConfirmDelete_Label" xml:space="preserve">
+    <value>Confirmar antes de borrar media</value>
+  </data>
+  <data name="GeneralSettings_LogExceptions_Label" xml:space="preserve">
+    <value>Registrar excepciones en fichero (MM4LB.log)</value>
+  </data>
+  <!-- RegionsSettings / MediaTypesSettings -->
+  <data name="RegionsSettings_Intro_Text" xml:space="preserve">
+    <value>Selecciona hasta 3 regiones favoritas (las usa el dashboard de regiones).</value>
+  </data>
+  <data name="MediaTypesSettings_Intro_Text" xml:space="preserve">
+    <value>Selecciona hasta 10 tipos de media favoritos (se muestran como botones rápidos en la banda de tipos).</value>
+  </data>
+  <!-- ThemeSettings_* -->
+  <data name="ThemeSettings_Theme_Label" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="ThemeSettings_RandomTheme_Label" xml:space="preserve">
+    <value>Elegir un tema al azar en cada arranque</value>
+  </data>
+  <data name="ThemeSettings_BackgroundOverlay_Header" xml:space="preserve">
+    <value>Superposición del fondo</value>
+  </data>
+  <data name="ThemeSettings_TintOpacity_Label" xml:space="preserve">
+    <value>Opacidad del tinte</value>
+  </data>
+  <data name="ThemeSettings_TintSaturation_Label" xml:space="preserve">
+    <value>Saturación del tinte</value>
+  </data>
+  <data name="ThemeSettings_TintBrightness_Label" xml:space="preserve">
+    <value>Brillo del tinte</value>
+  </data>
+  <data name="ThemeSettings_OverlayBlur_Label" xml:space="preserve">
+    <value>Desenfoque de la superposición</value>
+  </data>
+  <data name="ThemeSettings_OverlayOpacity_Label" xml:space="preserve">
+    <value>Opacidad de la superposición</value>
+  </data>
+  <data name="ThemeSettings_LoadingBackground_Header" xml:space="preserve">
+    <value>Fondo de la ventana de carga</value>
+  </data>
+  <data name="ThemeSettings_TintBackground_Label" xml:space="preserve">
+    <value>Tintar la imagen de fondo</value>
+  </data>
+  <data name="ThemeSettings_NeonFrame_Label" xml:space="preserve">
+    <value>Mostrar el borde de neón</value>
+  </data>
+  <!-- AboutSettings_* -->
+  <data name="AboutSettings_Tagline_Text" xml:space="preserve">
+    <value>Gestor de media para LaunchBox</value>
+  </data>
+  <data name="AboutSettings_Description_Text" xml:space="preserve">
+    <value>Organiza, empareja y audita la media de tu colección de LaunchBox: imágenes por tipo y región, vídeos, cobertura por plataforma y herramientas de limpieza — todo desde un panel de widgets configurable.</value>
+  </data>
+  <data name="AboutSettings_Details_Header" xml:space="preserve">
+    <value>DETALLES</value>
+  </data>
+  <data name="AboutSettings_Build_Label" xml:space="preserve">
+    <value>Compilación</value>
+  </data>
+  <data name="AboutSettings_Runtime_Label" xml:space="preserve">
+    <value>Entorno de ejecución</value>
+  </data>
+  <data name="AboutSettings_Architecture_Label" xml:space="preserve">
+    <value>Arquitectura</value>
+  </data>
+  <data name="AboutSettings_DataSource_Label" xml:space="preserve">
+    <value>Fuente de datos</value>
+  </data>
+  <data name="AboutSettings_ThirdParty_Header" xml:space="preserve">
+    <value>COMPONENTES DE TERCEROS</value>
+  </data>
+  <data name="AboutSettings_AccentNote_Text" xml:space="preserve">
+    <value>El color de acento sigue al tema activo.</value>
+  </data>
+  <data name="AboutSettings_Copyright_Text" xml:space="preserve">
+    <value>© 2026 MM4LB. No afiliado a LaunchBox / Unbroken Software. Todas las marcas pertenecen a sus respectivos dueños.</value>
+  </data>
+  <!-- *_WidgetHelp_Description : TeachingTip de ayuda de cada widget. -->
+  <data name="GameImagesDashboard_WidgetHelp_Description" xml:space="preserve">
+    <value>Gestiona toda la media del juego seleccionado junta: vista previa grande, tira de miniaturas y procesado (conserva la preferida, borra el resto) con navegación al juego anterior/siguiente.</value>
+  </data>
+  <data name="GameImagesRegionDashboard_WidgetHelp_Description" xml:space="preserve">
+    <value>Gestiona la media del juego seleccionado agrupada por región, con un selector de regiones. Procesa una sola región o todas a la vez, conservando una por región.</value>
+  </data>
+  <data name="StatsPlatform_WidgetHelp_Description" xml:space="preserve">
+    <value>Estadísticas de cobertura y media de la plataforma seleccionada, con gráficas por tipo de media y por juego.</value>
+  </data>
+  <data name="StatsGlobal_WidgetHelp_Description" xml:space="preserve">
+    <value>Estadísticas globales de todas las plataformas: juegos, imágenes y tamaño en disco por plataforma.</value>
+  </data>
+  <data name="Console_WidgetHelp_Description" xml:space="preserve">
+    <value>Registro de actividad de las operaciones, con uso de caché y de backup y deshacer de las acciones recientes.</value>
+  </data>
+  <data name="WebView_WidgetHelp_Description" xml:space="preserve">
+    <value>Navega por Google, SteamGridDB o YouTube para buscar media y añadirla al juego seleccionado.</value>
+  </data>
+  <data name="ImageGrid_WidgetHelp_Description" xml:space="preserve">
+    <value>Galería de la media del juego seleccionado para el tipo de media elegido, con borrado y reordenación arrastrando.</value>
+  </data>
+  <data name="GamesAudit_WidgetHelp_Description" xml:space="preserve">
+    <value>Audita los juegos de la plataforma contra la base de datos de LaunchBox: en la colección, en la base de datos y número de coincidencias.</value>
+  </data>
+  <data name="GameDetails_WidgetHelp_Description" xml:space="preserve">
+    <value>Ficha detallada del juego seleccionado: datos de la base de datos, imágenes conocidas y cadenas de búsqueda.</value>
+  </data>
+  <data name="ImageAudit_WidgetHelp_Description" xml:space="preserve">
+    <value>Audita los ficheros de media de la plataforma (en uso, compartidos, huérfanos) con características y gráficas.</value>
+  </data>
+  <data name="ImageCollectionImport_WidgetHelp_Description" xml:space="preserve">
+    <value>Importa una carpeta de media, emparejando cada fichero con un juego antes de añadirlo a la colección.</value>
+  </data>
+  <data name="Tools_WidgetHelp_Description" xml:space="preserve">
+    <value>Herramientas extra: chequeo de media de LaunchBox, media huérfana y media compartida.</value>
+  </data>
+  <!-- Common (más) -->
+  <data name="Common_Help_Tooltip" xml:space="preserve">
+    <value>Ayuda</value>
+  </data>
+  <data name="Common_ListView_Label" xml:space="preserve">
+    <value>Vista lista</value>
+  </data>
+  <!-- ChartTypeSelector -->
+  <data name="ChartType_Bars_Label" xml:space="preserve">
+    <value>Barras</value>
+  </data>
+  <data name="ChartType_HBars_Label" xml:space="preserve">
+    <value>Barras H</value>
+  </data>
+  <data name="ChartType_Line_Label" xml:space="preserve">
+    <value>Línea</value>
+  </data>
+  <data name="ChartType_Area_Label" xml:space="preserve">
+    <value>Área</value>
+  </data>
+  <data name="ChartType_Pie_Label" xml:space="preserve">
+    <value>Circular</value>
+  </data>
+  <data name="ChartType_Ring_Label" xml:space="preserve">
+    <value>Anillo</value>
+  </data>
+  <data name="ChartType_All_Label" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="ChartType_SortNone_Label" xml:space="preserve">
+    <value>Sin orden</value>
+  </data>
+  <data name="ChartType_SortAsc_Label" xml:space="preserve">
+    <value>Asc ↑</value>
+  </data>
+  <data name="ChartType_SortDesc_Label" xml:space="preserve">
+    <value>Desc ↓</value>
+  </data>
+  <data name="ChartType_TypeButton_Tooltip" xml:space="preserve">
+    <value>Tipo de gráfica</value>
+  </data>
+  <data name="ChartType_TopNButton_Tooltip" xml:space="preserve">
+    <value>Top N</value>
+  </data>
+  <data name="ChartType_SortButton_Tooltip" xml:space="preserve">
+    <value>Orden</value>
+  </data>
+  <!-- ImageAudit (MEDIA AUDIT) -->
+  <data name="ImageAudit_InUse_Label" xml:space="preserve">
+    <value>En uso</value>
+  </data>
+  <data name="ImageAudit_Shared_Label" xml:space="preserve">
+    <value>Compartidas</value>
+  </data>
+  <data name="ImageAudit_Orphan_Label" xml:space="preserve">
+    <value>Huérfanas</value>
+  </data>
+  <data name="ImageAudit_Dimensions_Label" xml:space="preserve">
+    <value>Dimensiones</value>
+  </data>
+  <data name="ImageAudit_Dimensions_Tooltip" xml:space="preserve">
+    <value>Obtiene las dimensiones de las imágenes (tarda)</value>
+  </data>
+  <data name="ImageAudit_Characteristics_Title" xml:space="preserve">
+    <value>Características del set de media - Tipo de media (seleccionado)</value>
+  </data>
+  <data name="ImageAudit_Characteristics_Description" xml:space="preserve">
+    <value>Composición de los ficheros del tipo de media seleccionado por distintos criterios. Cada barra apila el valor más común más 'Otros' (todas las barras cubren el mismo nº de ficheros).</value>
+  </data>
+  <data name="ImageAudit_FileName_Header" xml:space="preserve">
+    <value>Nombre de fichero</value>
+  </data>
+  <data name="ImageAudit_Size_Header" xml:space="preserve">
+    <value>Tamaño (Kb)</value>
+  </data>
+  <data name="ImageAudit_Quality_Header" xml:space="preserve">
+    <value>Calidad</value>
+  </data>
+  <data name="ImageAudit_Dimensions_Header" xml:space="preserve">
+    <value>Dimensiones</value>
+  </data>
+  <data name="ImageAudit_Duration_Header" xml:space="preserve">
+    <value>Duración</value>
+  </data>
+  <data name="ImageAudit_Extension_Header" xml:space="preserve">
+    <value>Extensión</value>
+  </data>
+  <data name="ImageAudit_NumGames_Header" xml:space="preserve">
+    <value># juegos</value>
+  </data>
+  <data name="ImageAudit_Games_Header" xml:space="preserve">
+    <value>Juego(s)</value>
+  </data>
+  <!-- Common (más) -->
+  <data name="Common_Delete_Label" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="Common_Delete_Tooltip" xml:space="preserve">
+    <value>Borra el medio seleccionado (se puede deshacer).</value>
+  </data>
+  <data name="Common_Dimensions_Label" xml:space="preserve">
+    <value>Dimensiones</value>
+  </data>
+  <data name="Common_FileSize_Label" xml:space="preserve">
+    <value>Tamaño</value>
+  </data>
+  <data name="Common_Extension_Label" xml:space="preserve">
+    <value>Extensión</value>
+  </data>
+  <data name="Common_Quality_Label" xml:space="preserve">
+    <value>Calidad</value>
+  </data>
+  <data name="Common_Duration_Label" xml:space="preserve">
+    <value>Duración</value>
+  </data>
+  <data name="Common_GamePlatform_Description" xml:space="preserve">
+    <value>Juego / Plataforma</value>
+  </data>
+  <!-- GameList -->
+  <data name="GameList_Filter_Placeholder" xml:space="preserve">
+    <value>Filtrar juegos</value>
+  </data>
+  <data name="GameList_Missing_Label" xml:space="preserve">
+    <value>Sin media</value>
+  </data>
+  <data name="GameList_OneMedia_Label" xml:space="preserve">
+    <value>1 fichero</value>
+  </data>
+  <data name="GameList_MoreMedia_Label" xml:space="preserve">
+    <value>&gt; 1 fichero</value>
+  </data>
+  <!-- ImageType -->
+  <data name="ImageType_WithImages_Label" xml:space="preserve">
+    <value>Con imágenes</value>
+  </data>
+  <data name="ImageType_WithoutImages_Label" xml:space="preserve">
+    <value>Sin imágenes</value>
+  </data>
+  <data name="ImageType_Favourites_Label" xml:space="preserve">
+    <value>Favoritos</value>
+  </data>
+  <!-- ImageCollectionImport -->
+  <data name="ImageCollectionImport_Folder_Label" xml:space="preserve">
+    <value>Carpeta</value>
+  </data>
+  <data name="ImageCollectionImport_Import_Label" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ImageCollectionImport_Media_Label" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="ImageCollectionImport_Games_Label" xml:space="preserve">
+    <value>Juegos</value>
+  </data>
+  <!-- GameDetails -->
+  <data name="GameDetails_InLaunchBox_Label" xml:space="preserve">
+    <value>En la base de datos de LaunchBox</value>
+  </data>
+  <data name="GameDetails_NotInLaunchBox_Label" xml:space="preserve">
+    <value>No en la base de datos de LaunchBox</value>
+  </data>
+  <data name="GameDetails_KnownImages_Label" xml:space="preserve">
+    <value>Imágenes conocidas</value>
+  </data>
+  <data name="GameDetails_KnownImages_Description" xml:space="preserve">
+    <value>en la base de datos</value>
+  </data>
+  <data name="GameDetails_MediaTypes_Label" xml:space="preserve">
+    <value>Tipos de media</value>
+  </data>
+  <data name="GameDetails_MediaTypes_Description" xml:space="preserve">
+    <value>con imágenes</value>
+  </data>
+  <data name="GameDetails_Empty_Text" xml:space="preserve">
+    <value>Selecciona un juego para ver su ficha</value>
+  </data>
+  <!-- ImageGrid -->
+  <data name="ImageGrid_AspectRatio_Header" xml:space="preserve">
+    <value>Relación de aspecto</value>
+  </data>
+  <data name="ImageGrid_Resolution_Header" xml:space="preserve">
+    <value>Resolución</value>
+  </data>
+  <data name="ImageGrid_Coverage_Label" xml:space="preserve">
+    <value>Cobertura (favs.)</value>
+  </data>
+  <!-- WebView -->
+  <data name="WebView_UsingGoogle_Tooltip" xml:space="preserve">
+    <value>Usando Google. Pulsa para cambiar a SteamGridDB.</value>
+  </data>
+  <data name="WebView_UsingSteamDb_Tooltip" xml:space="preserve">
+    <value>Usando SteamGridDB. Pulsa para cambiar a Google.</value>
+  </data>
+  <data name="WebView_YouTube_Tooltip" xml:space="preserve">
+    <value>Tipo de media vídeo: buscando en YouTube</value>
+  </data>
+  <data name="WebView_Help_Title" xml:space="preserve">
+    <value>Cómo descargar media</value>
+  </data>
+  <data name="WebView_Help_Description" xml:space="preserve">
+    <value>Para tipos de imagen: doble clic o Ctrl+clic en cualquier imagen (o clic derecho &gt; "Añadir a las imágenes del juego") para añadirla al juego seleccionado. Para tipos de vídeo navegas por YouTube: doble clic o Ctrl+clic en un vídeo (o clic derecho &gt; "Añadir a los vídeos del juego") para descargarlo y añadirlo al juego.</value>
+  </data>
+  <data name="WebView_Back_Tooltip" xml:space="preserve">
+    <value>Atrás</value>
+  </data>
+  <data name="WebView_Forward_Tooltip" xml:space="preserve">
+    <value>Adelante</value>
+  </data>
+  <data name="WebView_AddToGameImages_MenuItem" xml:space="preserve">
+    <value>Añadir a las imágenes del juego</value>
+  </data>
+  <data name="WebView_AddToGameVideos_MenuItem" xml:space="preserve">
+    <value>Añadir a los vídeos del juego</value>
+  </data>
+  <data name="WebView_Init_Error" xml:space="preserve">
+    <value>No se pudo inicializar el navegador web (WebView2).</value>
+  </data>
+  <!-- StatsGlobal -->
+  <data name="StatsGlobal_GameSetCollection_Title" xml:space="preserve">
+    <value>Set de juegos - Plataforma (colección vs LaunchBox)</value>
+  </data>
+  <data name="StatsGlobal_GameSetCollection_Help" xml:space="preserve">
+    <value>Los juegos de cada plataforma repartidos en tres conjuntos y apilados al 100%: en tu colección, en la base de datos de LaunchBox, y en tu colección pero no en LaunchBox.</value>
+  </data>
+  <data name="StatsGlobal_GameSet_Title" xml:space="preserve">
+    <value>Set de juegos - Plataforma</value>
+  </data>
+  <data name="StatsGlobal_GameSet_Help" xml:space="preserve">
+    <value>Número total de juegos por plataforma. La plataforma seleccionada va resaltada.</value>
+  </data>
+  <data name="StatsGlobal_ImageSet_Title" xml:space="preserve">
+    <value>Set de imágenes - Plataforma</value>
+  </data>
+  <data name="StatsGlobal_ImageSet_Help" xml:space="preserve">
+    <value>Número total de ficheros de imagen por plataforma. La plataforma seleccionada va resaltada.</value>
+  </data>
+  <data name="StatsGlobal_ImageSetSize_Title" xml:space="preserve">
+    <value>Tamaño del set de imágenes - Plataforma</value>
+  </data>
+  <data name="StatsGlobal_ImageSetSize_Help" xml:space="preserve">
+    <value>Tamaño total en disco (en GB) de todos los ficheros de imagen por plataforma. La plataforma seleccionada va resaltada.</value>
+  </data>
+  <!-- StatsPlatform -->
+  <data name="StatsPlatform_Scope_Header" xml:space="preserve">
+    <value>Ámbito</value>
+  </data>
+  <data name="StatsPlatform_Favourites_Label" xml:space="preserve">
+    <value>Favoritos</value>
+  </data>
+  <data name="StatsPlatform_InPlatform_Label" xml:space="preserve">
+    <value>En la plataforma</value>
+  </data>
+  <data name="StatsPlatform_Coverage_Label" xml:space="preserve">
+    <value>Cobertura</value>
+  </data>
+  <data name="StatsPlatform_Coverage_Tooltip" xml:space="preserve">
+    <value>Muestra u oculta el panel de cobertura</value>
+  </data>
+  <data name="StatsPlatform_CoverageNow_Label" xml:space="preserve">
+    <value>Cobertura:</value>
+  </data>
+  <data name="StatsPlatform_AverageAll_Label" xml:space="preserve">
+    <value>Media (todas las plataformas):</value>
+  </data>
+  <data name="StatsPlatform_CoverageByGame_Title" xml:space="preserve">
+    <value>Cobertura - Juego</value>
+  </data>
+  <data name="StatsPlatform_CoverageByGame_Help" xml:space="preserve">
+    <value>Cobertura por tipo de media de cada juego de la plataforma, un punto por juego. El juego seleccionado va resaltado.</value>
+  </data>
+  <data name="StatsPlatform_CoverageDistribution_Title" xml:space="preserve">
+    <value>Distribución de cobertura - Juegos</value>
+  </data>
+  <data name="StatsPlatform_CoverageDistribution_Help" xml:space="preserve">
+    <value>Número de juegos agrupados por cuánto de los tipos de media cubren (0–20% … 80–100%).</value>
+  </data>
+  <data name="StatsPlatform_CoverageByType_Title" xml:space="preserve">
+    <value>Cobertura - Tipo de media</value>
+  </data>
+  <data name="StatsPlatform_CoverageByType_Help" xml:space="preserve">
+    <value>Porcentaje de los juegos de la plataforma que tienen al menos un fichero (imagen o vídeo) de cada tipo (0–100%).</value>
+  </data>
+  <data name="StatsPlatform_MediaSetByType_Title" xml:space="preserve">
+    <value>Set de media - Tipo de media</value>
+  </data>
+  <data name="StatsPlatform_MediaSetByType_Help" xml:space="preserve">
+    <value>Número total de ficheros (imágenes o vídeos) de la plataforma por tipo de media. La línea de referencia discontinua marca el número de juegos (un fichero por juego).</value>
+  </data>
+  <data name="StatsPlatform_CoveragePill_Label" xml:space="preserve">
+    <value>Cobertura</value>
+  </data>
+  <data name="StatsPlatform_CoveragePill_Description" xml:space="preserve">
+    <value>Plataforma / Todas (media)</value>
+  </data>
+  <!-- PlatformDetails -->
+  <data name="PlatformDetails_DropHint_Text" xml:space="preserve">
+    <value>Arrastra una imagen o vídeo aquí</value>
+  </data>
+  <data name="PlatformDetails_Importing_Text" xml:space="preserve">
+    <value>Importando...</value>
+  </data>
+  <data name="PlatformDetails_CoverageByPlatform_Title" xml:space="preserve">
+    <value>Cobertura - Plataforma</value>
+  </data>
+  <data name="PlatformDetails_CoverageByPlatform_Help" xml:space="preserve">
+    <value>Cobertura de los tipos de media propios de cada plataforma (banner, cajas 3D/planas y cartuchos por defecto, dispositivo, fanart y vídeo). La plataforma seleccionada va resaltada.</value>
+  </data>
+  <data name="PlatformDetails_CoverageDistribution_Title" xml:space="preserve">
+    <value>Distribución de cobertura</value>
+  </data>
+  <data name="PlatformDetails_CoverageDistribution_Help" xml:space="preserve">
+    <value>Número de plataformas agrupadas por cuánto de sus tipos de media propios cubren.</value>
+  </data>
+  <data name="PlatformDetails_CoverageByType_Title" xml:space="preserve">
+    <value>Cobertura - Tipo de media</value>
+  </data>
+  <data name="PlatformDetails_CoverageByType_Help" xml:space="preserve">
+    <value>Porcentaje de todas las plataformas que tienen al menos un fichero propio de cada tipo (0–100%).</value>
+  </data>
+  <data name="PlatformDetails_MediaSetByType_Title" xml:space="preserve">
+    <value>Set de media - Tipo de media</value>
+  </data>
+  <data name="PlatformDetails_MediaSetByType_Help" xml:space="preserve">
+    <value>Número total de ficheros de media propios por tipo en todas las plataformas. La línea de referencia discontinua marca el número de plataformas (un fichero por plataforma).</value>
+  </data>
+  <!-- Common (más): diálogos -->
+  <data name="Common_Discard_Label" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="Common_Keep_Label" xml:space="preserve">
+    <value>Conservar</value>
+  </data>
+  <data name="Common_Close_Label" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="Common_OK_Label" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
+  <data name="Common_NoRegion_Label" xml:space="preserve">
+    <value>Sin región</value>
+  </data>
+  <!-- Diálogos -->
+  <data name="DeleteConfirmDialog_AskBefore_Label" xml:space="preserve">
+    <value>Preguntar confirmación antes de borrar</value>
+  </data>
+  <data name="ImportImagesDialog_ExistingImages_Label" xml:space="preserve">
+    <value>Imágenes existentes del juego:</value>
+  </data>
+  <data name="ImportImagesDialog_Help_Description" xml:space="preserve">
+    <value>Elige si las imágenes se añadirán a la colección de imágenes del juego (o juegos) emparejado o reemplazarán a las existentes. Puedes deshacer esta acción desde el registro de actividad.</value>
+  </data>
+  <data name="PlatformImageDropDialog_TypeLabel" xml:space="preserve">
+    <value>Tipo de imagen de plataforma:</value>
+  </data>
+  <data name="PlatformImageDropDialog_SelectType_Placeholder" xml:space="preserve">
+    <value>Selecciona un tipo</value>
+  </data>
+  <data name="PlatformImageDropDialog_ExistingImages_Label" xml:space="preserve">
+    <value>Imágenes existentes de este tipo:</value>
+  </data>
+  <data name="SelectRegionDialog_Prompt_Text" xml:space="preserve">
+    <value>¿En qué región importar las imágenes emparejadas?</value>
+  </data>
+  <data name="DashboardSettingsDialog_ApplyCriterion_Tooltip" xml:space="preserve">
+    <value>Aplicar este criterio</value>
+  </data>
+  <data name="DashboardSettingsDialog_Preselection_Title" xml:space="preserve">
+    <value>Preselección</value>
+  </data>
+  <data name="DashboardSettingsDialog_Preselection_Description" xml:space="preserve">
+    <value>Qué medio se convierte en la imagen principal. Los criterios activos se aplican en cascada (de arriba abajo): cada uno acota los candidatos del anterior. Si TODOS los criterios están desactivados, se usa el primer medio de la lista.</value>
+  </data>
+  <data name="DashboardSettingsDialog_Processing_Title" xml:space="preserve">
+    <value>Proceso</value>
+  </data>
+  <data name="DashboardSettingsDialog_Processing_Description" xml:space="preserve">
+    <value>Cómo se renombra/mueve el medio conservado al procesar un juego. El proceso SIEMPRE conserva el medio preseleccionado y borra el resto — estos criterios solo controlan el conservado. Si TODOS los criterios están desactivados, el medio conservado mantiene su nombre y ubicación originales (sin renombrar ni mover).</value>
+  </data>
+  <data name="DialogsSettingsControl_Placeholder_Text" xml:space="preserve">
+    <value>Las opciones de esta categoría aparecerán aquí.</value>
+  </data>
+  <data name="TemplateNameDialog_ChooseSlot_Text" xml:space="preserve">
+    <value>Elige un slot (un slot ocupado se sobrescribirá):</value>
+  </data>
+  <data name="TemplateNameDialog_Name_Label" xml:space="preserve">
+    <value>Nombre del template:</value>
+  </data>
+  <data name="TemplateNameDialog_Name_Placeholder" xml:space="preserve">
+    <value>p. ej. Mi diseño cyber</value>
+  </data>
+  <!-- SetLaunchBoxFoldersWindow -->
+  <data name="SetLaunchBoxFolders_Title" xml:space="preserve">
+    <value>Configura la carpeta de LaunchBox</value>
+  </data>
+  <data name="SetLaunchBoxFolders_Folder_Label" xml:space="preserve">
+    <value>Carpeta de LaunchBox</value>
+  </data>
+  <data name="SetLaunchBoxFolders_DataFolder_Label" xml:space="preserve">
+    <value>Carpeta de datos de LaunchBox</value>
+  </data>
+  <data name="SetLaunchBoxFolders_PlatformsFolder_Label" xml:space="preserve">
+    <value>Carpeta de plataformas de LaunchBox</value>
+  </data>
+  <data name="SetLaunchBoxFolders_PlatformsXml_Label" xml:space="preserve">
+    <value>Ruta de platforms.xml de LaunchBox</value>
+  </data>
+  <data name="SetLaunchBoxFolders_SettingsXml_Label" xml:space="preserve">
+    <value>Ruta de settings.xml de LaunchBox</value>
+  </data>
+  <data name="SetLaunchBoxFolders_SelectFolder_Label" xml:space="preserve">
+    <value>Seleccionar carpeta</value>
+  </data>
+  <!-- MainWindow : títulos de widgets -->
+  <data name="MainWindow_DashboardWidget_Title" xml:space="preserve">
+    <value>PANEL</value>
+  </data>
+  <data name="MainWindow_RegionsWidget_Title" xml:space="preserve">
+    <value>REGIONES</value>
+  </data>
+  <data name="MainWindow_GameStatsWidget_Title" xml:space="preserve">
+    <value>ESTADÍSTICAS DEL JUEGO</value>
+  </data>
+  <data name="MainWindow_GlobalStatsWidget_Title" xml:space="preserve">
+    <value>ESTADÍSTICAS GLOBALES</value>
+  </data>
+  <data name="MainWindow_ActivityLogWidget_Title" xml:space="preserve">
+    <value>REGISTRO DE ACTIVIDAD</value>
+  </data>
+  <data name="MainWindow_WebSearchWidget_Title" xml:space="preserve">
+    <value>BÚSQUEDA WEB</value>
+  </data>
+  <data name="MainWindow_GalleryWidget_Title" xml:space="preserve">
+    <value>GALERÍA DE MEDIA</value>
+  </data>
+  <data name="MainWindow_GamesAuditWidget_Title" xml:space="preserve">
+    <value>AUDITORÍA DE JUEGOS</value>
+  </data>
+  <data name="MainWindow_GameDetailsWidget_Title" xml:space="preserve">
+    <value>FICHA DEL JUEGO</value>
+  </data>
+  <data name="MainWindow_MediaAuditWidget_Title" xml:space="preserve">
+    <value>AUDITORÍA DE MEDIA</value>
+  </data>
+  <data name="MainWindow_ImportWidget_Title" xml:space="preserve">
+    <value>IMPORTAR COLECCIÓN</value>
+  </data>
+  <data name="MainWindow_ToolsWidget_Title" xml:space="preserve">
+    <value>HERRAMIENTAS</value>
+  </data>
+  <!-- Common (más): botones de diálogo -->
+  <data name="Common_Cancel_Label" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Common_Import_Label" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="Common_Add_Label" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Common_Save_Label" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Common_Apply_Label" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Common_Empty_Label" xml:space="preserve">
+    <value>Vaciar</value>
+  </data>
+  <!-- DialogsService -->
+  <data name="DialogsService_DeleteMedia_Title" xml:space="preserve">
+    <value>Borrar media</value>
+  </data>
+  <data name="DialogsService_ImportMatchedImages_Title" xml:space="preserve">
+    <value>Importar imágenes emparejadas</value>
+  </data>
+  <data name="DialogsService_ImportRegion_Title" xml:space="preserve">
+    <value>Importar región</value>
+  </data>
+  <data name="DialogsService_AddPlatformImage_Title" xml:space="preserve">
+    <value>Añadir imagen de plataforma</value>
+  </data>
+  <data name="DialogsService_DashboardSettings_Title" xml:space="preserve">
+    <value>Ajustes del dashboard</value>
+  </data>
+  <data name="DialogsService_Settings_Title" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="DialogsService_SaveTemplate_Title" xml:space="preserve">
+    <value>Grabar template</value>
+  </data>
+  <!-- Criterios de los dashboards -->
+  <data name="DashboardCriteria_First_Label" xml:space="preserve">
+    <value>1º:</value>
+  </data>
+  <data name="DashboardCriteria_Second_Label" xml:space="preserve">
+    <value>2º:</value>
+  </data>
+  <data name="DashboardCriteria_Region_Label" xml:space="preserve">
+    <value>Región:</value>
+  </data>
+  <data name="DashboardCriteria_Suffix_Label" xml:space="preserve">
+    <value>Sufijo:</value>
+  </data>
+  <data name="DashboardCriteria_FileName_Label" xml:space="preserve">
+    <value>Nombre:</value>
+  </data>
+  <data name="Common_OtherRegions_Label" xml:space="preserve">
+    <value>Otras regiones</value>
+  </data>
+  <!-- ToolsViewModel -->
+  <data name="Tools_MediaCheck_Title" xml:space="preserve">
+    <value>Chequeo de media de LaunchBox</value>
+  </data>
+  <data name="Tools_Orphan_Title" xml:space="preserve">
+    <value>Media huérfana</value>
+  </data>
+  <data name="Tools_Shared_Title" xml:space="preserve">
+    <value>Media compartida</value>
+  </data>
+  <!-- SearchStrings -->
+  <data name="SearchStrings_DefaultTitle" xml:space="preserve">
+    <value>Cadenas de búsqueda:</value>
+  </data>
+  <data name="SearchStrings_Empty" xml:space="preserve">
+    <value>Sin cadenas de búsqueda.</value>
+  </data>
+  <data name="SearchStrings_GameTitle" xml:space="preserve">
+    <value>Cadenas de búsqueda del juego</value>
+  </data>
+  <data name="SearchStrings_GameImageTitle" xml:space="preserve">
+    <value>Cadenas de búsqueda de la imagen</value>
+  </data>
+  <!-- AuditPanel (VM) -->
+  <data name="AuditPanel_StatusMissing_Label" xml:space="preserve">
+    <value>Faltan</value>
+  </data>
+  <data name="AuditPanel_StatusExtra_Label" xml:space="preserve">
+    <value>Sobran</value>
+  </data>
+  <data name="AuditPanel_StatusOk_Label" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="AuditPanel_Dialog_Title" xml:space="preserve">
+    <value>Auditoría de media</value>
+  </data>
+  <data name="AuditPanel_SelectPlatform_Text" xml:space="preserve">
+    <value>Selecciona primero una plataforma.</value>
+  </data>
+  <data name="AuditPanel_ExcelError_Text" xml:space="preserve">
+    <value>No se pudo procesar el Excel de auditoría.</value>
+  </data>
+  <!-- MediaAuditService -->
+  <data name="MediaAuditService_UnknownType_Warning" xml:space="preserve">
+    <value>El tipo '{0}' (columna '{1}') no existe en MediaType; se ignora.</value>
+  </data>
+  <!-- ConsoleViewModel -->
+  <data name="ConsoleViewModel_EmptyBackup_Title" xml:space="preserve">
+    <value>Vaciar la carpeta de backup</value>
+  </data>
+  <data name="ConsoleViewModel_EmptyBackup_Content" xml:space="preserve">
+    <value>¿Quieres borrar los {0} ficheros de media respaldados ({1} MB)? Las operaciones que dependían de estos backups ya no se podrán deshacer.</value>
+  </data>
+  <data name="ConsoleViewModel_Emptying_Progress" xml:space="preserve">
+    <value>Vaciando la carpeta de backup...</value>
+  </data>
+  <data name="ConsoleViewModel_Emptied_Progress" xml:space="preserve">
+    <value>Carpeta de backup vaciada  |  {0} ficheros de media ({1} MB) borrados</value>
+  </data>
+  <!-- YoutubeDownloadService -->
+  <data name="Youtube_NoVideoStream_Error" xml:space="preserve">
+    <value>Este vídeo no ofrece ningún stream de vídeo descargable.</value>
+  </data>
+  <data name="Youtube_NoAudioTrack_Error" xml:space="preserve">
+    <value>Este vídeo no ofrece ninguna pista de audio descargable.</value>
+  </data>
+  <data name="Youtube_FfmpegZipMissing_Error" xml:space="preserve">
+    <value>El zip de ffmpeg descargado no contiene ffmpeg.exe.</value>
+  </data>
+  <data name="Youtube_FfmpegNotExecutable_Error" xml:space="preserve">
+    <value>El binario de ffmpeg descargado no se pudo ejecutar.</value>
+  </data>
+  <data name="Youtube_FfmpegInvalid_Error" xml:space="preserve">
+    <value>El binario de ffmpeg descargado no es válido (código {0}).</value>
+  </data>
+  <data name="Youtube_FfmpegNotFound_Error" xml:space="preserve">
+    <value>No se encontró ffmpeg; no es posible descargar vídeo en esta calidad.</value>
+  </data>
+  <data name="Youtube_FfmpegProcessFailed_Error" xml:space="preserve">
+    <value>ffmpeg no pudo procesar el vídeo (código {0}). {1}</value>
+  </data>
+  <!-- StatisticsService : pills -->
+  <data name="Common_PlatformAll_Description" xml:space="preserve">
+    <value>Plataforma / Todas</value>
+  </data>
+  <data name="Stats_MatchingTotal_Description" xml:space="preserve">
+    <value>Emparejadas / Total</value>
+  </data>
+  <data name="Stats_MatchedTotal_Description" xml:space="preserve">
+    <value>Emparejadas / Total</value>
+  </data>
+  <data name="Stats_InMyCollection_Title" xml:space="preserve">
+    <value>En mi colección</value>
+  </data>
+  <data name="Stats_InLaunchBox_Title" xml:space="preserve">
+    <value>En LaunchBox</value>
+  </data>
+  <data name="Stats_NotInLaunchBox_Title" xml:space="preserve">
+    <value>No en LaunchBox</value>
+  </data>
+  <data name="Stats_WithRegion_Title" xml:space="preserve">
+    <value>Con región</value>
+  </data>
+  <data name="Stats_MatchedImages_Title" xml:space="preserve">
+    <value>Imágenes emparejadas</value>
+  </data>
+  <data name="Stats_GamesWithMatch_Title" xml:space="preserve">
+    <value>Juegos con coincidencia</value>
+  </data>
+  <data name="Stats_Images_Title" xml:space="preserve">
+    <value>Imágenes</value>
+  </data>
+  <data name="Stats_ImageTypes_Title" xml:space="preserve">
+    <value>Tipos de imagen</value>
+  </data>
+  <data name="Stats_Size_Title" xml:space="preserve">
+    <value>Tamaño</value>
+  </data>
+  <data name="Stats_Games_Title" xml:space="preserve">
+    <value>Juegos</value>
+  </data>
+  <data name="Stats_MediaSet_Title" xml:space="preserve">
+    <value>Set de media</value>
+  </data>
+  <data name="Stats_MediaTypes_Title" xml:space="preserve">
+    <value>Tipos de media</value>
+  </data>
+  <data name="Stats_MediaSetSize_Title" xml:space="preserve">
+    <value>Tamaño del set de media</value>
+  </data>
+  <data name="Stats_EmptyCollection_Title" xml:space="preserve">
+    <value>Colección vacía</value>
+  </data>
+  <data name="Stats_AsRegion_Format" xml:space="preserve">
+    <value>[{0}] como región</value>
+  </data>
+  <data name="Stats_AsExtension_Format" xml:space="preserve">
+    <value>[{0}] como extensión</value>
+  </data>
+  <data name="Stats_AsQuality_Format" xml:space="preserve">
+    <value>[{0}] como calidad</value>
+  </data>
+  <data name="Stats_AsDuration_Format" xml:space="preserve">
+    <value>[{0}] como duración</value>
+  </data>
+  <data name="Stats_AsDimensions_Format" xml:space="preserve">
+    <value>[{0}] como dimensiones</value>
+  </data>
+  <!-- ImageLoadingService -->
+  <data name="ImageLoading_ReplacingVideo_Progress" xml:space="preserve"><value>Reemplazando vídeo...</value></data>
+  <data name="ImageLoading_VideoReplaced_Progress" xml:space="preserve"><value>Vídeo reemplazado</value></data>
+  <data name="ImageLoading_ReplaceVideoFailed_Error" xml:space="preserve"><value>No se pudo reemplazar el vídeo</value></data>
+  <data name="ImageLoading_ImportingMediaFile_Progress" xml:space="preserve"><value>Importando fichero de media...</value></data>
+  <data name="ImageLoading_MediaFileImported_Progress" xml:space="preserve"><value>Fichero de media importado</value></data>
+  <data name="ImageLoading_ImportMediaFileFailed_Error" xml:space="preserve"><value>No se pudo importar el fichero de media</value></data>
+  <data name="ImageLoading_UrlAndFolderRequired_Error" xml:space="preserve"><value>Se requieren una URL de imagen válida y una carpeta de destino.</value></data>
+  <data name="ImageLoading_DownloadingMedia_Progress" xml:space="preserve"><value>Descargando fichero de media... ({0})</value></data>
+  <data name="ImageLoading_DownloadingMediaSized_Progress" xml:space="preserve"><value>Descargando fichero de media... ({0}, {1})</value></data>
+  <data name="ImageLoading_MediaDownloaded_Progress" xml:space="preserve"><value>{0} descargado</value></data>
+  <data name="ImageLoading_MediaDownloadCancelled_Progress" xml:space="preserve"><value>Descarga del fichero de media cancelada</value></data>
+  <data name="ImageLoading_MediaDownloadFailed_Error" xml:space="preserve"><value>Fallo al descargar el fichero de media</value></data>
+  <data name="ImageLoading_SourceAndFolderRequired_Error" xml:space="preserve"><value>Se requieren un fichero de origen válido y una carpeta de destino.</value></data>
+  <data name="ImageLoading_SourceFileNotFound_Error" xml:space="preserve"><value>No se encontró el fichero de imagen de origen.</value></data>
+  <data name="ImageLoading_ImportingMedia_Progress" xml:space="preserve"><value>Importando {0}...</value></data>
+  <data name="ImageLoading_MediaImported_Progress" xml:space="preserve"><value>{0} importado</value></data>
+  <data name="ImageLoading_MediaImportFailed_Error" xml:space="preserve"><value>Fallo al importar {0}</value></data>
+  <data name="ImageLoading_DownloadingYoutube_Progress" xml:space="preserve"><value>Descargando vídeo de YouTube...</value></data>
+  <data name="ImageLoading_DownloadingYoutubeSized_Progress" xml:space="preserve"><value>Descargando vídeo de YouTube... ({0})</value></data>
+  <data name="ImageLoading_YoutubeDownloaded_Progress" xml:space="preserve"><value>Vídeo descargado de YouTube</value></data>
+  <data name="ImageLoading_YoutubeDownloadCancelled_Progress" xml:space="preserve"><value>Descarga del vídeo cancelada</value></data>
+  <data name="ImageLoading_MediaDeleted_Progress" xml:space="preserve"><value>Fichero de media borrado: {0}{1}</value></data>
+  <data name="ImageLoading_ProcessingGame_Progress" xml:space="preserve"><value>Procesando juego ({0}/{1})</value></data>
+  <data name="ImageLoading_GameProcessed_Progress" xml:space="preserve"><value>Juego procesado ({0} medios borrados)</value></data>
+  <data name="ImageLoading_ProcessGameFailed_Error" xml:space="preserve"><value>Error al procesar el juego</value></data>
+  <data name="ImageLoading_ProcessingRegions_Progress" xml:space="preserve"><value>Procesando regiones ({0}/{1})</value></data>
+  <data name="ImageLoading_RegionsProcessed_Progress" xml:space="preserve"><value>Regiones procesadas ({0} medios borrados)</value></data>
+  <data name="ImageLoading_ProcessRegionsFailed_Error" xml:space="preserve"><value>Error al procesar las regiones</value></data>
+  <data name="ImageLoading_ImportingMediaFiles_Progress" xml:space="preserve"><value>Importando ficheros de media ({0}/{1})</value></data>
+  <data name="ImageLoading_ImagesImported_Progress" xml:space="preserve"><value>{0} imágenes importadas</value></data>
+  <data name="ImageLoading_ImagesImportedPartial_Error" xml:space="preserve"><value>{0}/{1} imágenes importadas ({2} fallidas)</value></data>
+  <data name="ImageLoading_FolderNotFound_Error" xml:space="preserve"><value>Carpeta no encontrada</value></data>
+  <data name="ImageLoading_ScanningFolder_Progress" xml:space="preserve"><value>Escaneando la carpeta en busca de ficheros de media</value></data>
+  <data name="ImageLoading_LoadingMedia_Progress" xml:space="preserve"><value>Cargando {0} ficheros de media</value></data>
+  <data name="ImageLoading_MediaLoaded_Progress" xml:space="preserve"><value>{0} ficheros de media cargados</value></data>
+  <data name="ImageLoading_DataUriNoPayload_Error" xml:space="preserve"><value>El URI de datos no contiene ninguna carga útil.</value></data>
+  <!-- Loaders / matching / progress -->
+  <data name="PlatformLoading_LoadingPlatform_Progress" xml:space="preserve"><value>Cargando plataformas ({0})...</value></data>
+  <data name="PlatformLoading_ProcessingPlatformsXml_Progress" xml:space="preserve"><value>Procesando el archivo platform.xml...</value></data>
+  <data name="PlatformLoading_LoadingPlatforms_Progress" xml:space="preserve"><value>Cargando plataformas...</value></data>
+  <data name="PlatformLoading_PreparingUi_Progress" xml:space="preserve"><value>Preparando la interfaz...</value></data>
+  <data name="PlatformLoading_LoadingGamesDb_Progress" xml:space="preserve"><value>Cargando la base de datos de juegos de LaunchBox...</value></data>
+  <data name="PlatformLoading_LoadGamesDbError_Error" xml:space="preserve"><value>Se ha producido un error al cargar los juegos desde la base de datos de LaunchBox.</value></data>
+  <data name="PlatformLoading_GamesDbLoaded_Progress" xml:space="preserve"><value>{0} juegos cargados desde la base de datos de LaunchBox</value></data>
+  <data name="ImageMatching_LoadingMedia_Progress" xml:space="preserve"><value>{0}  |  {1}  |  Cargando archivos multimedia para {2} juegos</value></data>
+  <data name="ImageMatching_MediaLoaded_Progress" xml:space="preserve"><value>{0}  |  {1}  |  {2} archivos multimedia cargados para {3} juegos</value></data>
+  <data name="ImageBinaryLoading_HighResProgress_Progress" xml:space="preserve"><value>{0}  |  Cargando binarios en alta resolución ({1}/{2})</value></data>
+  <data name="ImageBinaryLoading_HighResCompleted_Progress" xml:space="preserve"><value>{0}  |  Carga de binarios en alta resolución completada</value></data>
+  <data name="Progress_LazyLoading_Progress" xml:space="preserve"><value>{0}Cargando {1} archivos multimedia</value></data>
+  <data name="Progress_LazyLoaded_Progress" xml:space="preserve"><value>{0}{1} archivos multimedia cargados</value></data>
+  <data name="GameMetadata_ReadError_Error" xml:space="preserve"><value>Se ha producido un error al leer los metadatos del juego desde la base de datos de LaunchBox.</value></data>
+  <data name="LaunchBox_NoPlatforms_Error" xml:space="preserve"><value>No se han encontrado plataformas en LaunchBox. Añade al menos una plataforma en LaunchBox y reinicia MM4LB.</value></data>
+  <!-- ViewModels -->
+  <data name="Common_NoneRegion_Placeholder" xml:space="preserve"><value>Ninguna</value></data>
+  <data name="ImageAudit_DeleteOrphanImages_Error" xml:space="preserve"><value>Error al eliminar las imágenes huérfanas.</value></data>
+  <data name="ImageAudit_RetrieveDimensions_Error" xml:space="preserve"><value>Error al obtener las dimensiones de las imágenes.</value></data>
+  <data name="ImageAudit_OrphanFilesDeleted_Progress" xml:space="preserve"><value>{0}  |  {1} archivos de medios huérfanos {2} eliminados</value></data>
+  <data name="ImageAudit_RetrievingDimensions_Progress" xml:space="preserve"><value>{2}  |  Obteniendo dimensiones de {0} archivos de medios {1}</value></data>
+  <data name="ImageAudit_DimensionsRetrieved_Progress" xml:space="preserve"><value>{0}  |  dimensiones de {1} archivos de medios {2} obtenidas en {3} ms ({4} fallback lento)</value></data>
+  <data name="ImageAudit_DimensionsRetrievedShort_Progress" xml:space="preserve"><value>{0}  |  dimensiones de {1} obtenidas</value></data>
+  <data name="ImageAudit_Quality_Label" xml:space="preserve"><value>Calidad</value></data>
+  <data name="ImageAudit_Duration_Label" xml:space="preserve"><value>Duración</value></data>
+  <data name="ImageAudit_MostUsed_Label" xml:space="preserve"><value>Más usado</value></data>
+  <data name="ImageAudit_Others_Label" xml:space="preserve"><value>Otros</value></data>
+  <data name="OrphanTool_Scan_Error" xml:space="preserve"><value>Error al escanear los medios huérfanos.</value></data>
+  <data name="OrphanTool_Delete_Error" xml:space="preserve"><value>Error al eliminar los medios huérfanos.</value></data>
+  <data name="OrphanTool_DeletingMedia_Progress" xml:space="preserve"><value>{0}  |  Eliminando medios huérfanos ({1}/{2})</value></data>
+  <data name="OrphanTool_MediaDeleted_Progress" xml:space="preserve"><value>{0}  |  {1} archivos de medios huérfanos eliminados</value></data>
+  <data name="SharedMediaTool_Scan_Error" xml:space="preserve"><value>Error al escanear los medios compartidos.</value></data>
+  <data name="ImageGridGame_RefreshGallery_Error" xml:space="preserve"><value>Error al actualizar la galería del juego.</value></data>
+  <data name="ImageGridGame_SelectionChange_Error" xml:space="preserve"><value>Error al gestionar el cambio de selección.</value></data>
+  <data name="ImageType_LoadImages_Error" xml:space="preserve"><value>Error al cargar las imágenes del tipo de imagen seleccionado.</value></data>
+  <data name="ImageCollectionImport_Import_Error" xml:space="preserve"><value>Error al importar las imágenes emparejadas.</value></data>
+  <data name="ImageCollectionImport_SelectFolder_Error" xml:space="preserve"><value>Error al seleccionar la carpeta.</value></data>
+  <data name="PlatformDetails_RefreshView_Error" xml:space="preserve"><value>Error al actualizar la vista de la plataforma.</value></data>
+  <data name="PlatformDetails_RefreshImages_Error" xml:space="preserve"><value>Error al actualizar las imágenes de la plataforma.</value></data>
+  <data name="PlatformDetails_AddDroppedMedia_Error" xml:space="preserve"><value>Error al añadir el medio soltado de la plataforma.</value></data>
+  <data name="GameImagesDashboard_AddDroppedMedia_Error" xml:space="preserve"><value>Error al añadir el medio soltado.</value></data>
+  <data name="GameImagesDashboard_RefreshGame_Error" xml:space="preserve"><value>Error al actualizar el juego seleccionado.</value></data>
+  <data name="GameImagesDashboard_RefreshImages_Error" xml:space="preserve"><value>Error al actualizar las imágenes del juego.</value></data>
+  <data name="GameImagesDashboard_LoadAddedImage_Error" xml:space="preserve"><value>Error al cargar la imagen añadida del juego.</value></data>
+  <data name="GameImagesRegionDashboard_LoadAddedImage_Error" xml:space="preserve"><value>Error al cargar la imagen añadida del juego.</value></data>
+  <data name="GameImagesRegionDashboard_Refresh_Error" xml:space="preserve"><value>Error al actualizar el panel de regiones.</value></data>
+  <data name="GameImagesRegionDashboard_AddDroppedMedia_Error" xml:space="preserve"><value>Error al añadir el medio soltado.</value></data>
+  <data name="MainWindow_FfmpegPreparing_Progress" xml:space="preserve"><value>Preparando herramientas de vídeo: descargando ffmpeg (configuración inicial)...</value></data>
+  <data name="MainWindow_FfmpegReady_Progress" xml:space="preserve"><value>Herramientas de vídeo listas (ffmpeg instalado)</value></data>
+  <data name="MainWindow_FfmpegCancelled_Progress" xml:space="preserve"><value>Descarga de ffmpeg cancelada (las descargas de vídeo en HD lo reintentarán)</value></data>
+  <data name="MainWindow_FfmpegPrepare_Error" xml:space="preserve"><value>No se pudo preparar ffmpeg: {0}</value></data>
+  <!-- Toolbar principal -->
+  <data name="Toolbar_Layout_Tooltip" xml:space="preserve"><value>Elige el diseño del panel</value></data>
+  <data name="Toolbar_Widgets_Tooltip" xml:space="preserve"><value>Muestra u oculta widgets del panel</value></data>
+  <data name="Toolbar_Templates_Tooltip" xml:space="preserve"><value>Carga un template de diseño guardado</value></data>
+  <data name="Toolbar_QuickSettings_Tooltip" xml:space="preserve"><value>Ajustes rápidos (miniaturas, sonido, panel de widgets)</value></data>
+  <data name="Toolbar_Settings_Tooltip" xml:space="preserve"><value>Abrir la configuración</value></data>
+  <data name="Toolbar_Resize_Tooltip" xml:space="preserve"><value>Redimensiona los widgets del panel</value></data>
+  <data name="Toolbar_SaveTemplate_Tooltip" xml:space="preserve"><value>Graba el diseño actual como template</value></data>
+  <data name="Toolbar_TogglePlatformDetails_Tooltip" xml:space="preserve"><value>Muestra u oculta el panel de ficha de plataforma</value></data>
+  <data name="Toolbar_TogglePlatformList_Tooltip" xml:space="preserve"><value>Muestra la lista de plataformas como lista</value></data>
+  <data name="Toolbar_ToggleGameList_Tooltip" xml:space="preserve"><value>Muestra la lista de juegos en una columna aparte</value></data>
+  <data name="Toolbar_ToggleImageTypeBand_Tooltip" xml:space="preserve"><value>Muestra u oculta la banda de tipos de media</value></data>
+  <data name="Common_Close_Tooltip" xml:space="preserve"><value>Cierra esta ventana sin guardar los cambios</value></data>
+  <data name="SetLaunchBoxFolders_SelectFolder_Tooltip" xml:space="preserve"><value>Busca la carpeta raíz de LaunchBox para que MM4LB localice sus datos</value></data>
+  <data name="SetLaunchBoxFolders_Save_Tooltip" xml:space="preserve"><value>Guarda la configuración de carpetas de LaunchBox y continúa</value></data>
+  <data name="AuditPanel_CheckMedia_Tooltip" xml:space="preserve"><value>Importa el Excel de auditoría y compara su media con la que empareja MM4LB para la plataforma seleccionada</value></data>
+  <data name="AuditPanel_OnlyDiscrepancies_Tooltip" xml:space="preserve"><value>Muestra solo las filas donde LaunchBox y MM4LB no coinciden, ocultando las que sí</value></data>
+  <data name="AuditPanel_SelectedMediaType_Tooltip" xml:space="preserve"><value>Limita la comparación al tipo de media seleccionado en la banda</value></data>
+  <data name="ImageCollectionImport_Folder_Tooltip" xml:space="preserve"><value>Elige la carpeta que contiene la colección de imágenes que quieres importar</value></data>
+  <data name="ImageCollectionImport_Import_Tooltip" xml:space="preserve"><value>Importa las imágenes de la carpeta elegida y las empareja con los juegos correspondientes</value></data>
+  <data name="ImageAudit_Orphan_Tooltip" xml:space="preserve"><value>Borra las imágenes huérfanas: ficheros en disco que ya no están vinculados a ningún juego</value></data>
+  <data name="OrphanTool_DeleteAll_Tooltip" xml:space="preserve"><value>Borra todos los ficheros de media huérfanos encontrados por el escaneo</value></data>
+  <data name="WidgetPanel_SplittersConfirm_Tooltip" xml:space="preserve"><value>Aplica los nuevos tamaños de los paneles</value></data>
+  <data name="WidgetPanel_SplittersCancel_Tooltip" xml:space="preserve"><value>Descarta los cambios de tamaño y mantiene el diseño anterior</value></data>
+  <data name="WidgetPanel_SplittersDefault_Tooltip" xml:space="preserve"><value>Restaura los paneles a sus tamaños por defecto</value></data>
+  <data name="ImageType_Toggle_Tooltip" xml:space="preserve"><value>Selecciona este tipo de media para filtrar lo que muestra la vista</value></data>
+  <data name="TemplateSlots_BuiltIn_Tooltip" xml:space="preserve"><value>Template de la aplicación (solo lectura)</value></data>
+  <data name="QuickSettings_Thumbnails_Header" xml:space="preserve"><value>MINIATURAS</value></data>
+  <data name="QuickSettings_GameGallery_Label" xml:space="preserve"><value>Galería de juegos</value></data>
+  <data name="QuickSettings_MediaAudit_Label" xml:space="preserve"><value>Auditoría de media</value></data>
+  <data name="QuickSettings_ImportMedia_Label" xml:space="preserve"><value>Importar media</value></data>
+  <data name="QuickSettings_OrphanMedia_Label" xml:space="preserve"><value>Media huérfana</value></data>
+  <data name="QuickSettings_Sound_Header" xml:space="preserve"><value>SONIDO</value></data>
+  <data name="QuickSettings_VideoVolume_Label" xml:space="preserve"><value>Volumen de vídeo</value></data>
+  <data name="QuickSettings_Widgets_Header" xml:space="preserve"><value>WIDGETS</value></data>
+  <data name="QuickSettings_CornerRadius_Label" xml:space="preserve"><value>Radio de esquina</value></data>
+  <data name="QuickSettings_Gap_Label" xml:space="preserve"><value>Separación</value></data>
+  <data name="QuickSettings_PanelMargin_Label" xml:space="preserve"><value>Margen del panel</value></data>
+</root>

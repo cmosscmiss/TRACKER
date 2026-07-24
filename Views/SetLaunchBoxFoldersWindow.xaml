@@ -1,0 +1,96 @@
+<Window
+    x:Class="MM4LB.Views.SetLaunchBoxFoldersWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
+    mc:Ignorable="d">
+
+    <Grid RowDefinitions="40, *, Auto, *, Auto, *, Auto, *, Auto, *, Auto" ColumnDefinitions="*" Padding="12" Background="{ThemeResource BackgroundBrush}">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" Spacing="12" Margin="0 0 0 8">
+            <Image Source="ms-appx:///Assets/MM4LB-Logo.png" HorizontalAlignment="Left" Margin="0 4"/>
+            <TextBlock Text="{loc:Str Key=SetLaunchBoxFolders_Title}" FontSize="20" Foreground="{ThemeResource AccentLightBrush}"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" CornerRadius="4">
+            <Grid ColumnDefinitions="*, Auto" Background="{ThemeResource CardBackgroundBrush}" Padding="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{loc:Str Key=SetLaunchBoxFolders_Folder_Label}" FontSize="18" Foreground="{ThemeResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding LaunchBoxFolderPath}" Foreground="{ThemeResource TextBrush}"/>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <FontIcon Glyph="&#xE73E;" Foreground="{ThemeResource SuccessBrush}" Visibility="{Binding IsLaunchBoxFolderPathValid, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                    <FontIcon Glyph="&#xE711;" Foreground="{ThemeResource DangerBrush}" Visibility="{Binding IsLaunchBoxFolderPathValid, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Height="8"/>
+
+        <Border Grid.Row="3" CornerRadius="4">
+            <Grid ColumnDefinitions="*, Auto" Background="{ThemeResource CardBackgroundBrush}" Padding="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{loc:Str Key=SetLaunchBoxFolders_DataFolder_Label}" FontSize="18" Foreground="{ThemeResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding LaunchBoxDataFolderPath}" Foreground="{ThemeResource TextBrush}"/>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <FontIcon Glyph="&#xE73E;" Foreground="{ThemeResource SuccessBrush}" Visibility="{Binding IsLaunchBoxDataFolderPathValid, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                    <FontIcon Glyph="&#xE711;" Foreground="{ThemeResource DangerBrush}" Visibility="{Binding IsLaunchBoxDataFolderPathValid, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="4" Height="8"/>
+
+        <Border Grid.Row="5" CornerRadius="4">
+            <Grid ColumnDefinitions="*, Auto" Background="{ThemeResource CardBackgroundBrush}" Padding="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{loc:Str Key=SetLaunchBoxFolders_PlatformsFolder_Label}" FontSize="18" Foreground="{ThemeResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding LaunchBoxPlatformsFolder}" Foreground="{ThemeResource TextBrush}"/>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <FontIcon Glyph="&#xE73E;" Foreground="{ThemeResource SuccessBrush}" Visibility="{Binding IsLaunchBoxPlatformsFolderValid, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                    <FontIcon Glyph="&#xE711;" Foreground="{ThemeResource DangerBrush}" Visibility="{Binding IsLaunchBoxPlatformsFolderValid, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="6" Height="8"/>
+
+        <Border Grid.Row="7" CornerRadius="4">
+            <Grid ColumnDefinitions="*, Auto" Background="{ThemeResource CardBackgroundBrush}" Padding="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{loc:Str Key=SetLaunchBoxFolders_PlatformsXml_Label}" FontSize="18" Foreground="{ThemeResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding LaunchboxPlatformsXmlFile}" Foreground="{ThemeResource TextBrush}"/>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <FontIcon Glyph="&#xE73E;" Foreground="{ThemeResource SuccessBrush}" Visibility="{Binding IsLaunchBoxPlatformsXmlFileValid, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                    <FontIcon Glyph="&#xE711;" Foreground="{ThemeResource DangerBrush}" Visibility="{Binding IsLaunchBoxPlatformsXmlFileValid, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="8" Height="8"/>
+
+        <Border Grid.Row="9" CornerRadius="4">
+            <Grid ColumnDefinitions="*, Auto" Background="{ThemeResource CardBackgroundBrush}" Padding="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{loc:Str Key=SetLaunchBoxFolders_SettingsXml_Label}" FontSize="18" Foreground="{ThemeResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding LaunchboxSettingsXmlFile}" Foreground="{ThemeResource TextBrush}"/>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <FontIcon Glyph="&#xE73E;" Foreground="{ThemeResource SuccessBrush}" Visibility="{Binding IsLaunchBoxSettingsXmlFileValid, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                    <FontIcon Glyph="&#xE711;" Foreground="{ThemeResource DangerBrush}" Visibility="{Binding IsLaunchBoxSettingsXmlFileValid, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Padding="0 12 0 0">
+            <Button Content="{loc:Str Key=Common_Close_Label}" help:Help.Key="Common_Close_Tooltip" Command="{Binding CloseCommand}" Style="{StaticResource Button_Default}"/>
+            <Button Content="{loc:Str Key=SetLaunchBoxFolders_SelectFolder_Label}" help:Help.Key="SetLaunchBoxFolders_SelectFolder_Tooltip" Command="{Binding SelectFolderCommand}" Style="{StaticResource Button_Theme}"/>
+            <Button Content="{loc:Str Key=Common_OK_Label}" help:Help.Key="SetLaunchBoxFolders_Save_Tooltip" Command="{Binding SaveCommand}" IsEnabled="{Binding LaunchBoxFoldersValid}" Style="{StaticResource Button_Theme}"/>
+        </StackPanel>
+    </Grid>
+</Window>

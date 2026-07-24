@@ -1,0 +1,254 @@
+<UserControl
+    x:Class="MM4LB.Controls.Views.WidgetStatCardControl"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid x:Name="RootLayout">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStyleStates">
+                <!-- Lateral accent bar. -->
+                <VisualState x:Name="VisualStyleLateralAccentBar">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.MinHeight" Value="80" />
+                        <Setter Target="OuterBorder.Padding" Value="16 0 12 0" />
+                        <Setter Target="OuterBorder.Margin" Value="8" />
+                        <Setter Target="OuterBorder.CornerRadius" Value="0 8 8 0" />
+                        <Setter Target="OuterBorder.Background" Value="{ThemeResource CardBackgroundBrush}" />
+                        <Setter Target="OuterBorder.BorderThickness" Value="1" />
+                        <Setter Target="LeftAccentBar.Visibility" Value="Visible" />
+                        <Setter Target="SplitPanelLayer.Visibility" Value="Collapsed" />
+                        <Setter Target="IconColumn.Width" Value="64" />
+                        <Setter Target="DividerColumn.Width" Value="0" />
+                        <Setter Target="IconHost.Width" Value="52" />
+                        <Setter Target="IconHost.Height" Value="52" />
+                        <Setter Target="IconHost.CornerRadius" Value="10" />
+                        <Setter Target="IconHost.BorderThickness" Value="1.5" />
+                        <Setter Target="GlyphIcon.FontSize" Value="28" />
+                        <Setter Target="ImageIcon.Width" Value="30" />
+                        <Setter Target="ImageIcon.Height" Value="30" />
+                        <Setter Target="VerticalDivider.Visibility" Value="Collapsed" />
+                        <Setter Target="TextPanel.Margin" Value="14 0 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <!-- Icon box with soft neon. -->
+                <VisualState x:Name="VisualStyleIconBoxSoftNeon">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.MinHeight" Value="80" />
+                        <Setter Target="OuterBorder.Padding" Value="12 0" />
+                        <Setter Target="OuterBorder.Margin" Value="8" />
+                        <Setter Target="OuterBorder.CornerRadius" Value="12" />
+                        <Setter Target="OuterBorder.Background" Value="{ThemeResource CardBackgroundBrush}" />
+                        <Setter Target="OuterBorder.BorderThickness" Value="1" />
+                        <Setter Target="LeftAccentBar.Visibility" Value="Collapsed" />
+                        <Setter Target="SplitPanelLayer.Visibility" Value="Collapsed" />
+                        <Setter Target="IconColumn.Width" Value="64" />
+                        <Setter Target="DividerColumn.Width" Value="0" />
+                        <Setter Target="IconHost.Width" Value="52" />
+                        <Setter Target="IconHost.Height" Value="52" />
+                        <Setter Target="IconHost.CornerRadius" Value="10" />
+                        <Setter Target="IconHost.BorderThickness" Value="1.5" />
+                        <Setter Target="GlyphIcon.FontSize" Value="28" />
+                        <Setter Target="ImageIcon.Width" Value="30" />
+                        <Setter Target="ImageIcon.Height" Value="30" />
+                        <Setter Target="VerticalDivider.Visibility" Value="Collapsed" />
+                        <Setter Target="TextPanel.Margin" Value="14 0 8 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <!-- Split panel. -->
+                <VisualState x:Name="VisualStyleSplitPanel">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.MinHeight" Value="80" />
+                        <Setter Target="OuterBorder.Padding" Value="0" />
+                        <Setter Target="OuterBorder.Margin" Value="8" />
+                        <Setter Target="OuterBorder.CornerRadius" Value="12" />
+                        <Setter Target="OuterBorder.Background" Value="{ThemeResource CardBackgroundBrush}" />
+                        <Setter Target="OuterBorder.BorderThickness" Value="1" />
+                        <Setter Target="LeftAccentBar.Visibility" Value="Collapsed" />
+                        <Setter Target="SplitPanelLayer.Visibility" Value="Visible" />
+                        <Setter Target="IconColumn.Width" Value="76" />
+                        <Setter Target="DividerColumn.Width" Value="0" />
+                        <Setter Target="IconHost.Width" Value="64" />
+                        <Setter Target="IconHost.Height" Value="64" />
+                        <Setter Target="IconHost.CornerRadius" Value="28" />
+                        <Setter Target="IconHost.Background" Value="Transparent" />
+                        <Setter Target="IconHost.BorderThickness" Value="0" />
+                        <Setter Target="GlyphIcon.FontSize" Value="36" />
+                        <Setter Target="ImageIcon.Width" Value="32" />
+                        <Setter Target="ImageIcon.Height" Value="32" />
+                        <Setter Target="VerticalDivider.Visibility" Value="Collapsed" />
+                        <Setter Target="TextPanel.Margin" Value="18 0 16 0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <!-- Color variants based on theme resources. -->
+            <VisualStateGroup x:Name="ColorVariantStates">
+                <VisualState x:Name="ColorVariantThemeAccent">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource AccentBrushOpacity60}" />
+                        <Setter Target="IconHost.Background" Value="{ThemeResource AccentBrushOpacity20}" />
+                        <Setter Target="IconHost.BorderBrush" Value="{ThemeResource AccentBrushOpacity80}" />
+                        <Setter Target="GlyphIcon.Foreground" Value="{ThemeResource AccentBrush}" />
+                        <Setter Target="LabelText.Foreground" Value="{ThemeResource AccentBrush}" />
+                        <Setter Target="LeftAccentBar.Background" Value="{ThemeResource AccentBrush}" />
+                        <Setter Target="SplitPanelLayer.Background" Value="{ThemeResource AccentBrushOpacity40}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ColorVariantAccentLight">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource AccentLightBrushOpacity60}" />
+                        <Setter Target="IconHost.Background" Value="{ThemeResource AccentLightBrushOpacity20}" />
+                        <Setter Target="IconHost.BorderBrush" Value="{ThemeResource AccentLightBrushOpacity80}" />
+                        <Setter Target="GlyphIcon.Foreground" Value="{ThemeResource AccentLightBrush}" />
+                        <Setter Target="LabelText.Foreground" Value="{ThemeResource AccentLightBrush}" />
+                        <Setter Target="LeftAccentBar.Background" Value="{ThemeResource AccentLightBrush}" />
+                        <Setter Target="SplitPanelLayer.Background" Value="{ThemeResource AccentLightBrushOpacity40}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ColorVariantAccentDark">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource AccentDarkBrushOpacity60}" />
+                        <Setter Target="IconHost.Background" Value="{ThemeResource AccentDarkBrushOpacity20}" />
+                        <Setter Target="IconHost.BorderBrush" Value="{ThemeResource AccentDarkBrushOpacity80}" />
+                        <Setter Target="GlyphIcon.Foreground" Value="{ThemeResource AccentDarkBrush}" />
+                        <Setter Target="LabelText.Foreground" Value="{ThemeResource AccentDarkBrush}" />
+                        <Setter Target="LeftAccentBar.Background" Value="{ThemeResource AccentDarkBrush}" />
+                        <Setter Target="SplitPanelLayer.Background" Value="{ThemeResource AccentDarkBrushOpacity40}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ColorVariantSuccess">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource SuccessBrushOpacity60}" />
+                        <Setter Target="IconHost.Background" Value="{ThemeResource SuccessBrushOpacity20}" />
+                        <Setter Target="IconHost.BorderBrush" Value="{ThemeResource SuccessBrushOpacity80}" />
+                        <Setter Target="GlyphIcon.Foreground" Value="{ThemeResource SuccessBrush}" />
+                        <Setter Target="LabelText.Foreground" Value="{ThemeResource SuccessBrush}" />
+                        <Setter Target="LeftAccentBar.Background" Value="{ThemeResource SuccessBrush}" />
+                        <Setter Target="SplitPanelLayer.Background" Value="{ThemeResource SuccessBrushOpacity40}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ColorVariantDanger">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource DangerBrushOpacity60}" />
+                        <Setter Target="IconHost.Background" Value="{ThemeResource DangerBrushOpacity20}" />
+                        <Setter Target="IconHost.BorderBrush" Value="{ThemeResource DangerBrushOpacity80}" />
+                        <Setter Target="GlyphIcon.Foreground" Value="{ThemeResource DangerBrush}" />
+                        <Setter Target="LabelText.Foreground" Value="{ThemeResource DangerBrush}" />
+                        <Setter Target="LeftAccentBar.Background" Value="{ThemeResource DangerBrush}" />
+                        <Setter Target="SplitPanelLayer.Background" Value="{ThemeResource DangerBrushOpacity40}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ColorVariantWarning">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderBrush" Value="{ThemeResource WarningBrushOpacity60}" />
+                        <Setter Target="IconHost.Background" Value="{ThemeResource WarningBrushOpacity20}" />
+                        <Setter Target="IconHost.BorderBrush" Value="{ThemeResource WarningBrushOpacity80}" />
+                        <Setter Target="GlyphIcon.Foreground" Value="{ThemeResource WarningBrush}" />
+                        <Setter Target="LabelText.Foreground" Value="{ThemeResource WarningBrush}" />
+                        <Setter Target="LeftAccentBar.Background" Value="{ThemeResource WarningBrush}" />
+                        <Setter Target="SplitPanelLayer.Background" Value="{ThemeResource WarningBrushOpacity40}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <!-- Icon states. Applied after visual style and color states. -->
+            <VisualStateGroup x:Name="IconStates">
+                <VisualState x:Name="IconStateGlyph">
+                    <VisualState.Setters>
+                        <Setter Target="IconHost.Visibility" Value="Visible" />
+                        <Setter Target="GlyphIcon.Visibility" Value="Visible" />
+                        <Setter Target="ImageIcon.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="IconStateImage">
+                    <VisualState.Setters>
+                        <Setter Target="IconHost.Visibility" Value="Visible" />
+                        <Setter Target="GlyphIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="ImageIcon.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="IconStateNone">
+                    <VisualState.Setters>
+                        <Setter Target="IconHost.Visibility" Value="Collapsed" />
+                        <Setter Target="GlyphIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="ImageIcon.Visibility" Value="Collapsed" />
+                        <Setter Target="IconColumn.Width" Value="0" />
+                        <Setter Target="DividerColumn.Width" Value="0" />
+                        <Setter Target="VerticalDivider.Visibility" Value="Collapsed" />
+                        <Setter Target="SplitPanelLayer.Visibility" Value="Collapsed" />
+                        <Setter Target="TextPanel.Margin" Value="8 0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <!-- Content states. -->
+            <VisualStateGroup x:Name="ContentStates">
+                <VisualState x:Name="ContentStateDefault">
+                    <VisualState.Setters>
+                        <Setter Target="DefaultStatContent.Visibility" Value="Visible" />
+                        <Setter Target="CustomContentHost.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ContentStateCustom">
+                    <VisualState.Setters>
+                        <Setter Target="DefaultStatContent.Visibility" Value="Collapsed" />
+                        <Setter Target="CustomContentHost.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <!-- Border states. Applied after visual style states. -->
+            <VisualStateGroup x:Name="BorderStates">
+                <VisualState x:Name="BorderStateVisible">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderThickness" Value="1.5" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="BorderStateHidden">
+                    <VisualState.Setters>
+                        <Setter Target="OuterBorder.BorderThickness" Value="0" />
+                        <Setter Target="OuterBorder.Background" Value="Transparent" />
+                        <Setter Target="OuterBorder.MinHeight" Value="40" />
+                        <Setter Target="OuterBorder.Padding" Value="0" />
+                        <Setter Target="OuterBorder.Margin" Value="0 8" />
+                        <Setter Target="OuterBorder.CornerRadius" Value="0" />
+                        <Setter Target="TextPanel.Margin" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Border x:Name="OuterBorder" MinHeight="96" Margin="8" Padding="16" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{ThemeResource CardBackgroundBrush}" BorderBrush="{ThemeResource AccentBrushOpacity60}" BorderThickness="1" CornerRadius="12">
+            <Grid>
+                <!-- Lateral accent used by LateralAccentBar style. -->
+                <Border x:Name="LeftAccentBar" Width="4" Margin="-16 0 0 0" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{ThemeResource AccentBrush}" CornerRadius="4 0 0 4" Visibility="Collapsed" />
+                <Grid x:Name="ContentGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="IconColumn" Width="76" />
+                        <ColumnDefinition x:Name="DividerColumn" Width="1" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <!-- Colored panel used by SplitPanel style. -->
+                    <Border x:Name="SplitPanelLayer" Grid.Column="0" Background="{ThemeResource AccentBrushOpacity40}" Visibility="Collapsed" />
+                    <!-- Icon container. -->
+                    <Border x:Name="IconHost" Grid.Column="0" Width="58" Height="58" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{ThemeResource AccentBrushOpacity20}" BorderBrush="{ThemeResource AccentBrushOpacity80}" BorderThickness="1" CornerRadius="29">
+                        <Grid>
+                            <FontIcon x:Name="GlyphIcon" Glyph="{Binding Glyph, ElementName=Root}" FontSize="28" Foreground="{ThemeResource AccentBrush}" Visibility="Visible" />
+                            <Image x:Name="ImageIcon" Source="{Binding IconImageSource, ElementName=Root}" Width="30" Height="30" Stretch="Uniform" Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <!-- Vertical separator. -->
+                    <Border x:Name="VerticalDivider" Grid.Column="1" Width="1" Height="58"
+                        VerticalAlignment="Center" Background="{ThemeResource TextBrushOpacity20}" />
+                    <!-- Text/custom content area. -->
+                    <Grid x:Name="TextPanel" Grid.Column="2" Margin="16 0 8 0" VerticalAlignment="{Binding ContentVerticalAlignment, ElementName=Root}">
+                        <!-- Default stat content. -->
+                        <StackPanel x:Name="DefaultStatContent" VerticalAlignment="Center" Spacing="2">
+                            <TextBlock x:Name="LabelText" Text="{Binding Label, ElementName=Root}" Style="{StaticResource LabelStyle}" />
+                            <TextBlock x:Name="ValueText" Text="{Binding Value, ElementName=Root}" Style="{StaticResource TitleStyle}" />
+                            <TextBlock x:Name="DescriptionText" Text="{Binding Description, ElementName=Root}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="11" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                        </StackPanel>
+                        <!-- Optional custom content. -->
+                        <ContentControl x:Name="CustomContentHost" Content="{Binding CustomContent, ElementName=Root}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Visibility="Collapsed" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

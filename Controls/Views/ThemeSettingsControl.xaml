@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.ThemeSettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:template="using:MM4LB.Controls.Templates"
+    xmlns:loc="using:MM4LB.Markup"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Página de la categoría Theme: selector del tema visual activo + resto de parámetros de AppSettings.ThemeSettings.
+         Todo se aplica en caliente al pulsar OK (SettingsDialogViewModel.Apply -> ThemeService.ApplyTheme + refresco del
+         TintedImage de la ventana principal). DataContext heredado del SettingsDialogViewModel. -->
+    <StackPanel Spacing="12">
+        <!-- Tema activo. -->
+        <Grid ColumnDefinitions="240,*">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_Theme_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <ComboBox Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
+                      ItemsSource="{Binding ThemeNames}"
+                      SelectedItem="{Binding SelectedThemeName, Mode=TwoWay}"/>
+        </Grid>
+
+        <CheckBox Content="{loc:Str Key=ThemeSettings_RandomTheme_Label}" Foreground="{ThemeResource TextBrush}"
+                  IsChecked="{Binding RandomTheme, Mode=TwoWay}"/>
+
+        <!-- Preview en vivo del fondo del tema seleccionado (staging, no aplicado): cambia al elegir otro tema en el
+             combo y refleja los sliders de tinte (opacity/saturation/brightness) al instante. -->
+        <Border CornerRadius="6" BorderThickness="1" BorderBrush="{ThemeResource CardBackgroundLightBrush}">
+            <template:TintedImage Height="160" HorizontalAlignment="Stretch"
+                                  Source="{Binding ThemePreviewSource}"
+                                  TintColor="{Binding ThemePreviewTintColor}"
+                                  TintOpacity="{Binding TintOpacity}"
+                                  TintSaturation="{Binding TintSaturation}"
+                                  TintBrightness="{Binding TintBrightness}"
+                                  BlendMode="Hue"/>
+        </Border>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
+        <!-- Tinte del overlay del fondo (ventana principal). -->
+        <TextBlock Text="{loc:Str Key=ThemeSettings_BackgroundOverlay_Header}" Foreground="{ThemeResource TextSecondaryBrush}"/>
+
+        <Grid ColumnDefinitions="240,*,56">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_TintOpacity_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center"
+                    Value="{Binding TintOpacity, Mode=TwoWay}"/>
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
+                       Text="{Binding TintOpacity}"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="240,*,56">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_TintSaturation_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center"
+                    Value="{Binding TintSaturation, Mode=TwoWay}"/>
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
+                       Text="{Binding TintSaturation}"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="240,*,56">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_TintBrightness_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center"
+                    Value="{Binding TintBrightness, Mode=TwoWay}"/>
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
+                       Text="{Binding TintBrightness}"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="240,*,56">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayBlur_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <Slider Grid.Column="1" Minimum="0" Maximum="50" StepFrequency="1" VerticalAlignment="Center"
+                    Value="{Binding OverlayImageBlur, Mode=TwoWay}"/>
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
+                       Text="{Binding OverlayImageBlur}"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="240,*,56">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayOpacity_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center"
+                    Value="{Binding OverlayImageOpacity, Mode=TwoWay}"/>
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
+                       Text="{Binding OverlayImageOpacity}"/>
+        </Grid>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
+        <!-- Fondo de la ventana de carga (loading window). -->
+        <TextBlock Text="{loc:Str Key=ThemeSettings_LoadingBackground_Header}" Foreground="{ThemeResource TextSecondaryBrush}"/>
+        <CheckBox Content="{loc:Str Key=ThemeSettings_TintBackground_Label}" Foreground="{ThemeResource TextBrush}"
+                  IsChecked="{Binding BackgroundImageTinted, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=ThemeSettings_NeonFrame_Label}" Foreground="{ThemeResource TextBrush}"
+                  IsChecked="{Binding BackgroundImageFramed, Mode=TwoWay}"/>
+    </StackPanel>
+</UserControl>

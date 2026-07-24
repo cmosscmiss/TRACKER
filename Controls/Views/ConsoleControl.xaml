@@ -1,0 +1,95 @@
+<UserControl
+    x:Class="MM4LB.Controls.Views.ConsoleControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MM4LB.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:models="using:MM4LB.Models" 
+    xmlns:uc="using:MM4LB.Controls.Views"
+    xmlns:sys="using:System" xmlns:template="using:MM4LB.Controls.Templates"
+    xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled"
+              HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="0 0 16 0">
+                <ItemsControl ItemsSource="{x:Bind ViewModel.LogEntries, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:ProgressNotifier">
+                            <Grid Opacity="{x:Bind IsUndone, Mode=OneWay, Converter={StaticResource DimIfTrueConverter}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" MinWidth="30"/>
+                                        <ColumnDefinition Width="Auto" MinWidth="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0" Width="30" Height="24" VerticalAlignment="Top" HorizontalAlignment="Center">
+                                        <!-- En curso: acento. Al terminar: Success por defecto, y Warning/Danger se superponen si los hay. -->
+                                        <Ellipse Width="9" Height="9" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{ThemeResource AccentBrush}" Visibility="{Binding IsOperationFinished, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                                        <Ellipse Width="9" Height="9" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{ThemeResource SuccessBrush}" Visibility="{Binding IsOperationFinished, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                        <Ellipse Width="9" Height="9" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{ThemeResource WarningBrush}" Visibility="{Binding IsWarning, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                        <Ellipse Width="9" Height="9" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{ThemeResource DangerBrush}" Visibility="{Binding IsException, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                    </Grid>
+                                    <TextBlock Grid.Column="1" Text="{Binding ProgressText}" Padding="4 0" Visibility="{Binding IsOperationFinished, Converter={StaticResource HiddenIfTrueConverter}}" Foreground="{Binding Severity, Converter={StaticResource LogEntrySeverityConverter}}"/>
+                                    <!-- La duración hereda el color de la severidad: secundario al terminar, rojo en error y warning en cancelaciones. -->
+                                    <TextBlock Grid.Column="1" Text="{Binding DurationText}" Padding="4 0" Visibility="{Binding IsOperationFinished, Converter={StaticResource VisibleIfTrueConverter}}" Foreground="{Binding Severity, Converter={StaticResource LogEntrySeverityConverter}}"/>
+                                    <!-- Un único TextBlock: el color (normal/secundario/warning/error) lo resuelve el converter de severidad. -->
+                                    <TextBlock Grid.Column="2" Text="{Binding Message}" TextWrapping="Wrap" TextDecorations="{x:Bind IsUndone, Mode=OneWay, Converter={StaticResource StrikethroughIfTrueConverter}}" Foreground="{Binding Severity, Converter={StaticResource LogEntrySeverityConverter}}"/>
+                                    <!-- Cancelar (durante la operación) y Undo (al terminar) comparten celda: nunca están visibles a la vez. -->
+                                    <Button Grid.Column="3" VerticalAlignment="Top" Margin="6 0 0 0" Padding="5" Style="{StaticResource Button_Icon}" BorderThickness="0" help:Help.Key="Common_Cancel_Tooltip" Command="{x:Bind CancelCommand}" Visibility="{x:Bind CanCancel, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}">
+                                        <FontIcon FontSize="14" Glyph="&#xE711;"/>
+                                    </Button>
+                                    <Button Grid.Column="3" VerticalAlignment="Top" Margin="6 0 0 0" Padding="5" Style="{StaticResource Button_Icon}" BorderThickness="0" help:Help.Key="Common_Undo_Tooltip" Command="{x:Bind UndoCommand}" Visibility="{x:Bind CanUndo, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}">
+                                        <FontIcon FontSize="14" Glyph="&#xE7A7;"/>
+                                    </Button>
+                                </Grid>
+                                <template:SeparatorEx Grid.Row="1" Margin="0 8 0 4" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
+
+        <Grid Grid.Row="1">
+            <uc:WidgetStatCardControl Grid.Column="0" VisualStyle="LateralAccentBar" ColorVariant="ThemeAccent">
+                <StackPanel Margin="0 4">                    
+                    <StackPanel Orientation="Horizontal" Spacing="24">
+                        <uc:WidgetStatCardControl Grid.Column="0" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{loc:Str Key=Console_CachedMedia_Label}" Value="{x:Bind sys:String.Format(x:Null,'{0} / {1} MB', ViewModel.ImageBinariesCacheService.CachedImagesCount, ViewModel.ImageBinariesCacheService.CachedImagesSize), Mode=OneWay}" Description="{loc:Str Key=Console_MediaTotalSize_Description}" HasBorder="False"/>
+                        <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{loc:Str Key=Console_BackupMedia_Label}" Value="{x:Bind sys:String.Format(x:Null,'{0} / {1} MB', ViewModel.BackupService.ImagesCount, ViewModel.BackupService.SizeMb), Mode=OneWay}" Description="{loc:Str Key=Console_MediaTotalSize_Description}" HasBorder="False"/>
+                        <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
+                        <AppBarButton Label="{loc:Str Key=Console_Backup_Label}" Command="{x:Bind ViewModel.ClearBackupCommand}" IsEnabled="{x:Bind ViewModel.BackupService.HasBackups, Mode=OneWay}" help:Help.Key="Console_Backup_Tooltip" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <AppBarButton.Content>
+                                <FontIcon Glyph="&#xE74D;"/>
+                            </AppBarButton.Content>
+                        </AppBarButton>
+                    </StackPanel>
+                    <template:SeparatorEx Grid.Row="1" Margin="0 8" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="{loc:Str Key=Common_CacheUsage_Label}" FontSize="20" FontWeight="SemiBold" Opacity="0.8"/>
+                        <TextBlock Text="{x:Bind sys:String.Format(x:Null,'{0}%', ViewModel.ImageBinariesCacheService.CacheUsage), Mode=OneWay}" Foreground="{ThemeResource AccentLightBrush}" FontSize="22" FontWeight="SemiBold"/>
+                    </StackPanel>                    
+                    <Grid Height="32" Margin="0 4 0 0">
+                        <Border Background="{ThemeResource AccentDarkBrush}" CornerRadius="8" Opacity="0.5" Margin="0 4"/>
+                        <ProgressBar Value="{x:Bind ViewModel.ImageBinariesCacheService.CacheUsage, Mode=OneWay}" Maximum="100" Margin="0 8" Background="Transparent" Foreground="{ThemeResource AccentBrush}" MinHeight="16" CornerRadius="8"/>
+                    </Grid>                    
+                </StackPanel>
+            </uc:WidgetStatCardControl>
+
+            <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="Cache usage" Value="{x:Bind sys:String.Format(x:Null,'{0}%', ViewModel.ImageBinariesCacheService.CacheUsage), Mode=OneWay}" Description="% used" Glyph="&#xF16A;" Visibility="Collapsed"/>
+        </Grid>
+    </Grid>
+</UserControl>

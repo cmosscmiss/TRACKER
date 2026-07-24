@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MM4LB.Controls.Dialogs.DeleteConfirmDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MM4LB.Controls.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:loc="using:MM4LB.Markup"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="16" MinWidth="360">
+        <TextBlock x:Name="MessageText" TextWrapping="Wrap"/>
+        <!-- Marcado = seguir pidiendo confirmación; desmarcar apaga el setting PromptBeforeDeleteImage. -->
+        <CheckBox x:Name="cbAskBefore" Content="{loc:Str Key=DeleteConfirmDialog_AskBefore_Label}"/>
+    </StackPanel>
+</Page>

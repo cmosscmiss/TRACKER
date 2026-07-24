@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.WidgetSelectorControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MM4LB.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:template="using:MM4LB.Controls.Templates"
+    mc:Ignorable="d">
+
+    <Grid x:Name="RootGrid" Padding="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="576"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="536"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <VariableSizedWrapGrid x:Name="RootPanel" Orientation="Horizontal" MaximumRowsOrColumns="4" ItemHeight="144" ItemWidth="144" />
+        </Grid>
+
+        <template:SeparatorEx Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0 28 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
+
+        <Grid Grid.Column="2" x:Name="SelectedLayoutHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinWidth="360" MinHeight="240" Padding="0 8 24 8"/>
+
+        <Canvas x:Name="DragLayer" Grid.ColumnSpan="3" IsHitTestVisible="False" />
+    </Grid>
+</UserControl>

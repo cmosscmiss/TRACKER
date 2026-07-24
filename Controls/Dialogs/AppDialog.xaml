@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Dialogs.AppDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- El diálogo se muestra en un Popup. Las plantillas por defecto de los controles del contenido
+                 (RadioButton, etc.) resuelven sus {ThemeResource ...} en tiempo de ejecución y, desde un Popup,
+                 NO alcanzan los diccionarios mergeados de la app. Mergeando Theme.xaml aquí, esos overrides de
+                 color (Buttons.xaml, etc.) quedan al alcance del árbol del popup y el contenido se tematiza. -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Resources/Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Animación de entrada: fade-in del overlay + leve scale de la tarjeta. -->
+            <Storyboard x:Key="ShowStoryboard">
+            <DoubleAnimation Storyboard.TargetName="Overlay" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.15"/>
+            <DoubleAnimation Storyboard.TargetName="CardScale" Storyboard.TargetProperty="ScaleX" From="0.92" To="1" Duration="0:0:0.18">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="CardScale" Storyboard.TargetProperty="ScaleY" From="0.92" To="1" Duration="0:0:0.18">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <!-- Overlay atenuado a pantalla completa (su tamaño lo fija el code-behind = tamaño de la ventana). -->
+    <Grid x:Name="Overlay" Opacity="0" Tapped="OnOverlayTapped">
+        <Grid.Background>
+            <SolidColorBrush Color="{ThemeResource BackgroundColor}" Opacity="0.7"/>
+        </Grid.Background>
+
+        <!-- Caja del diálogo, centrada. -->
+        <Border x:Name="Card" HorizontalAlignment="Center" VerticalAlignment="Center" Tapped="OnCardTapped" Background="{ThemeResource BackgroundBrush}" BorderBrush="{ThemeResource CardBackgroundLightBrush}" BorderThickness="1" CornerRadius="8" MaxWidth="860" MinWidth="420" RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1"/>
+            </Border.RenderTransform>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Cabecera: logo + título en accent. -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" Padding="12">
+                    <Image Source="ms-appx:///Assets/MM4LB-Logo.png" VerticalAlignment="Center" Height="24"/>
+                    <TextBlock x:Name="TitleText" Style="{StaticResource SubTitleStyle}"/>
+                </StackPanel>
+
+                <!-- Contenido, sobre tarjeta, ocupando todo el espacio disponible. -->
+                <Border Grid.Row="1" CornerRadius="4" Padding="12">
+                    <ContentPresenter x:Name="ContentHost" Style="{StaticResource TextStyle}"/>
+                </Border>
+
+                <!-- Botonera a la derecha, con los estilos de la app. -->
+                <Grid Grid.Row="2" Background="{ThemeResource BackgroundLightBrush}" Margin="0 8 0 0" Padding="12 8">
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                        <Button x:Name="CloseButton" Style="{StaticResource Button_Default}" MinWidth="96" Click="OnCloseClick" Visibility="Collapsed"/>
+                        <Button x:Name="ApplyButton" Style="{StaticResource Button_Default}" MinWidth="96" Click="OnApplyClick" Visibility="Collapsed"/>
+                        <Button x:Name="PrimaryButton" Style="{StaticResource Button_Theme}" MinWidth="96" Click="OnPrimaryClick" Visibility="Collapsed"/>
+                        <Button x:Name="SecondaryButton" Style="{StaticResource Button_Default}" MinWidth="96" Click="OnSecondaryClick" Visibility="Collapsed"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

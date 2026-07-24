@@ -3,29 +3,252 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-		<RootNamespace>Tracker</RootNamespace>
+		<RootNamespace>MM4LB</RootNamespace>
+		<AssemblyName>Tracker</AssemblyName>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;ARM64</Platforms>
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<!-- App WinUI3 sin empaquetar + self-contained: los binarios nativos del Windows App SDK solo se
-		     despliegan junto al .exe si hay un RuntimeIdentifier en el build. Se deriva de la Plataforma
-		     cuando no venga dado (evita el fail-fast 0xc000027b al arrancar sin RID). -->
+		     despliegan junto al .exe si hay un RuntimeIdentifier en el build. Visual Studio (F5/Debug) no lo
+		     fija por sí solo (solo la Plataforma), lo que provoca un fail-fast 0xc000027b al arrancar. Derivamos
+		     el RID de la Plataforma cuando no venga dado (la CLI y los perfiles de publish ya lo pasan). -->
 		<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and ('$(Platform)' == 'x64' or '$(Platform)' == 'x86' or '$(Platform)' == 'ARM64')">win-$(Platform.ToLowerInvariant())</RuntimeIdentifier>
+		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<WinUISDKReferences>false</WinUISDKReferences>
+		<!-- Eliminado: <EnableMsixTooling>true</EnableMsixTooling> -->
 		<Nullable>enable</Nullable>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<WindowsPackageType>None</WindowsPackageType>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<Manifest Include="$(ApplicationManifest)" />
+	  <None Remove="Controls\Dialogs\ImportImagesDialog.xaml" />
+	  <None Remove="Controls\Views\ConsoleControl.xaml" />
+	  <None Remove="Controls\Views\GameImageControl.xaml" />
+	  <None Remove="Controls\Views\GamesAuditControl.xaml" />
+	  <None Remove="Controls\Views\GameDetailsControl.xaml" />
+	  <None Remove="Controls\Views\ImageAuditControl.xaml" />
+	  <None Remove="Controls\Views\ChartTypeSelectorControl.xaml" />
+	  <None Remove="Controls\Views\ImageCollectionImportControl.xaml" />
+	  <None Remove="Controls\Views\ImageGridControl.xaml" />
+	  <None Remove="Controls\Views\ImageTypeControl.xaml" />
+	  <None Remove="Controls\Views\PlatformDetailsControl.xaml" />
+	  <None Remove="Controls\Views\StatsPlatformControl.xaml" />
+	  <None Remove="Controls\Views\StatsGlobalControl.xaml" />
+	  <None Remove="Controls\Views\PlatformListControl.xaml" />
+	  <None Remove="Controls\Views\SearchStringsControl.xaml" />
+	  <None Remove="Controls\Views\SettingsControl.xaml" />
+	  <None Remove="Controls\Views\WebViewControl.xaml" />
+	  <None Remove="Controls\Views\WidgetBaseControl.xaml" />
+	  <None Remove="Controls\Views\WidgetStatCardControl.xaml" />
+	  <None Remove="Views\LoadingWindow.xaml" />
 	</ItemGroup>
 	<ItemGroup>
+		<Manifest Include="$(ApplicationManifest)" />
+	</ItemGroup>
+	<!-- Eliminado: bloque ProjectCapability Msix -->
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" Version="0.105.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.251219" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.Sizers" Version="8.2.251219" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.4" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="YoutubeExplode" Version="6.6.0" />
+	</ItemGroup>
+	<!-- ffmpeg (para remuxear el HD de YouTube a MP4 progresivo) NO se distribuye con la app: lo descarga
+	     YoutubeDownloadService al directorio de settings (%LocalAppData%\MM4LB\Tools\ffmpeg) la primera vez que
+	     se necesita. Por eso no se copia ningún binario al output. -->
+	<ItemGroup>
+	  <Page Update="Controls\Views\ImageCollectionImportControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\ImageAuditControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\GamesAuditControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\GameDetailsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\ImageGridControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\SearchStringsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\WidgetStatCardControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\ImageTypeControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Controls\Views\ConsoleControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Controls\Views\LayoutItemControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Controls\Views\WidgetPanelControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Controls\Views\ToolbarControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\PlatformDetailsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\PlatformListControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\GameListControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Resources\Buttons.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Resources\GenericControls.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Resources\Controls.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Resources\Typography.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\LoadingWindow.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\SetLaunchBoxFoldersWindow.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Resources\Theme.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\GameImagesDashboardControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\GameImagesRegionDashboardControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\StatsPlatformControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\StatsGlobalControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\ChartTypeSelectorControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\GameImageControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\WebViewControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\SettingsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Views\WidgetSelectorControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\Dialogs\ImportImagesDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Controls\Dialogs\SelectRegionDialog.xaml" />
+	  <Page Update="Controls\Dialogs\SelectRegionDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Controls\Dialogs\DashboardSettingsDialog.xaml" />
+	  <Page Update="Controls\Dialogs\DashboardSettingsDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Controls\Views\ExclusiveOptionsControl.xaml" />
+	  <Page Update="Controls\Views\ExclusiveOptionsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<!-- Eliminado: bloque HasPackageAndPublishMenu -->
+	<PropertyGroup>
+		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
+		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+	</PropertyGroup>
+	<!--<ItemGroup>
+		<None Update="appsettings1.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>-->
+	<ItemGroup>
+	  <None Remove="Controls\Views\AuditPanelControl.xaml" />
+	  <Page Update="Controls\Views\AuditPanelControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <None Remove="Controls\Views\ToolsControl.xaml" />
+	  <Page Update="Controls\Views\ToolsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 </Project>

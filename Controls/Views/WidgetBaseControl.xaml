@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.WidgetBaseControl"
+    x:Name="Root"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:template="using:MM4LB.Controls.Templates"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!-- Pseudo-sombra exterior. Usa el color de fondo del tema con diferentes niveles de opacidad. -->
+        <LinearGradientBrush x:Key="WidgetShadowBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity80}" Offset="0"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity60}" Offset="0.65"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity20}" Offset="1"/>
+        </LinearGradientBrush>
+        <!-- Borde principal 3D. Luz arriba/izquierda, acento en el centro, sombra abajo/derecha. -->
+        <LinearGradientBrush x:Key="WidgetOuterBorderBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="{ThemeResource TextColorOpacity60}" Offset="0"/>
+            <GradientStop Color="{ThemeResource AccentLightColorOpacity80}" Offset="0.25"/>
+            <GradientStop Color="{ThemeResource AccentColorOpacity80}" Offset="0.65"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity80}" Offset="1"/>
+        </LinearGradientBrush>
+        <!-- Fondo principal con volumen. Usa los fondos de card y background del tema. -->
+        <LinearGradientBrush x:Key="WidgetSurfaceBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="{ThemeResource CardBackgroundLightColorOpacity80}" Offset="0"/>
+            <GradientStop Color="{ThemeResource BackgroundLightColorOpacity80}" Offset="0.45"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity80}" Offset="1"/>
+        </LinearGradientBrush>
+        <!-- Sombra interna inferior. Usa el fondo del tema con opacidad progresiva. -->
+        <LinearGradientBrush x:Key="WidgetBottomInnerShadowBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity20}" Offset="0"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity60}" Offset="0.75"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity80}" Offset="1"/>
+        </LinearGradientBrush>
+        <!-- Línea interna sutil tipo cristal. Combina brillo de texto con profundidad del fondo. -->
+        <LinearGradientBrush x:Key="WidgetInnerBorderBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="{ThemeResource TextColorOpacity40}" Offset="0"/>
+            <GradientStop Color="{ThemeResource TextColorOpacity20}" Offset="0.4"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity20}" Offset="0.7"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity60}" Offset="1"/>
+        </LinearGradientBrush>
+        <!-- Brillo superior glossy. Usa el color de texto como fuente de luz. -->
+        <LinearGradientBrush x:Key="WidgetTopGlossBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{ThemeResource TextColorOpacity60}" Offset="0"/>
+            <GradientStop Color="{ThemeResource TextColorOpacity20}" Offset="0.35"/>
+            <GradientStop Color="Transparent" Offset="0.8"/>
+        </LinearGradientBrush>
+        <!-- Fondo visual de la barra superior. Brillo horizontal basado en el texto del tema. -->
+        <LinearGradientBrush x:Key="WidgetHeaderBackgroundBrush" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="{ThemeResource TextColorOpacity40}" Offset="0"/>
+            <GradientStop Color="{ThemeResource TextColorOpacity20}" Offset="0.4"/>
+            <GradientStop Color="{ThemeResource BackgroundColorOpacity20}" Offset="1"/>
+        </LinearGradientBrush>
+        <Style x:Key="WidgetShadowLayerStyle" TargetType="Border">
+            <Setter Property="Margin" Value="8 8 -6 -8"/>
+            <Setter Property="Opacity" Value="0.45"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Background" Value="{StaticResource WidgetShadowBrush}"/>
+        </Style>
+        <Style x:Key="WidgetSurfaceStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="BorderBrush" Value="{StaticResource WidgetOuterBorderBrush}"/>
+            <Setter Property="Background" Value="{StaticResource WidgetSurfaceBackgroundBrush}"/>
+        </Style>
+        <Style x:Key="WidgetThemeTintLayerStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource BackgroundLightBrush}"/>
+            <Setter Property="Opacity" Value="0.28"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+        <Style x:Key="WidgetTopGlossLayerStyle" TargetType="Border">
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Height" Value="72"/>
+            <Setter Property="Opacity" Value="0.28"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Background" Value="{StaticResource WidgetTopGlossBrush}"/>
+        </Style>
+        <Style x:Key="WidgetBottomInnerShadowLayerStyle" TargetType="Border">
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Height" Value="80"/>
+            <Setter Property="Opacity" Value="0.42"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Background" Value="{StaticResource WidgetBottomInnerShadowBrush}"/>
+        </Style>
+        <Style x:Key="WidgetInnerBorderLayerStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource WidgetInnerBorderBrush}"/>
+            <Setter Property="Opacity" Value="0.35"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+        <Style x:Key="WidgetHeaderBackgroundLayerStyle" TargetType="Border">
+            <Setter Property="Opacity" Value="0.32"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Background" Value="{StaticResource WidgetHeaderBackgroundBrush}"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Pseudo-sombra exterior del widget -->
+        <Border x:Name="WidgetShadowLayer" Style="{StaticResource WidgetShadowLayerStyle}" CornerRadius="{x:Bind WidgetOuterCornerRadius, Mode=OneWay}"/>
+        <!-- Superficie principal del widget -->
+        <Border x:Name="WidgetSurface" Style="{StaticResource WidgetSurfaceStyle}" CornerRadius="{x:Bind WidgetOuterCornerRadius, Mode=OneWay}">
+            <Grid>
+                <!-- Tinte del tema actual -->
+                <Border x:Name="WidgetThemeTintLayer" Style="{StaticResource WidgetThemeTintLayerStyle}" CornerRadius="{x:Bind WidgetInnerCornerRadius, Mode=OneWay}"/>
+                <!-- Brillo superior interno -->
+                <Border x:Name="WidgetTopGlossLayer" Style="{StaticResource WidgetTopGlossLayerStyle}" CornerRadius="{x:Bind WidgetTopOnlyInnerCornerRadius, Mode=OneWay}"/>
+                <!-- Sombra interna inferior -->
+                <Border x:Name="WidgetBottomInnerShadowLayer" Style="{StaticResource WidgetBottomInnerShadowLayerStyle}" CornerRadius="{x:Bind WidgetBottomOnlyInnerCornerRadius, Mode=OneWay}"/>
+                <!-- Línea interna tipo cristal/neón -->
+                <Border x:Name="WidgetInnerBorderLayer" Style="{StaticResource WidgetInnerBorderLayerStyle}" CornerRadius="{x:Bind WidgetInnerCornerRadius, Mode=OneWay}"/>
+                <!-- Contenido real del widget -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="WidgetHeaderRow" Height="40"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Fondo específico de la barra superior -->
+                    <Border x:Name="WidgetHeaderBackgroundLayer" Grid.Row="0" Style="{StaticResource WidgetHeaderBackgroundLayerStyle}" CornerRadius="{x:Bind WidgetTopOnlyInnerCornerRadius, Mode=OneWay}"/>
+                    <!-- Barra superior -->
+                    <Grid x:Name="WidgetDragHandle" Grid.Row="0" Background="Transparent">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Padding="16 0" IsHitTestVisible="False" Spacing="8">
+                            <StackPanel x:Name="WidgetDragDots" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{ThemeResource AccentBrush}" Margin="0 2 4 0"/>
+                                <Ellipse Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{ThemeResource AccentBrush}" Margin="0 2 4 0" Opacity="0.8"/>
+                                <Ellipse Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="{ThemeResource AccentBrush}" Margin="0 2 4 0" Opacity="0.6"/>
+                            </StackPanel>
+                            <TextBlock x:Name="WidgetTitleText" Text="{x:Bind ComposedTitle, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Icono de ayuda (arriba a la derecha de la cabecera): abre un TeachingTip que explica el widget.
+                         Su visibilidad la controla el code-behind = cabecera visible + hay descripción + toggle de ayuda
+                         activado. Va fuera del asa de arrastre para no interferir con el drag. -->
+                    <Button x:Name="WidgetHelpButton" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="0 0 10 0" Padding="4" Background="Transparent" BorderThickness="0" Visibility="Collapsed"
+                            Click="OnHelpButtonClick">
+                        <FontIcon FontSize="16" Glyph="&#xE897;" Foreground="{ThemeResource AccentLightBrush}"/>
+                    </Button>
+
+                    <!-- Contenido del widget -->
+                    <ContentPresenter Grid.Row="1" Padding="12 8" Content="{x:Bind Content, Mode=OneWay}"/>
+                </Grid>
+
+                <!-- Asa de arrastre fina superpuesta: solo activa en modo Default con la cabecera oculta (sin barra).
+                     Transparente; captura el arrastre en la franja superior sin ocupar una fila ni mostrar chrome. -->
+                <Border x:Name="WidgetDragOverlay" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="16" Background="Transparent" Visibility="Collapsed"/>
+            </Grid>
+        </Border>
+
+        <!-- Capa de redimensionado: se solapa sobre todo el widget cuando los splitters están activos,
+             señalando el modo "redimensionable" y bloqueando la interacción con el contenido hasta que
+             se oculten los splitters (Confirmar/Cancelar/Default o autoocultado). -->
+        <Border x:Name="WidgetResizeOverlay" Visibility="Collapsed" Opacity="0" Background="{ThemeResource AccentDarkBrushOpacity40}" CornerRadius="{x:Bind WidgetOuterCornerRadius, Mode=OneWay}"/>
+
+        <!-- Ayuda del widget: título = título del widget, subtítulo = descripción localizada (se fija al abrir, así
+             sale siempre en el idioma activo). Anclado al icono de ayuda de la cabecera. -->
+        <TeachingTip x:Name="WidgetHelpTip" Target="{x:Bind WidgetHelpButton}" IsLightDismissEnabled="True" PreferredPlacement="Bottom"
+                     Title="{x:Bind ComposedTitle, Mode=OneWay}"/>
+    </Grid>
+</UserControl>

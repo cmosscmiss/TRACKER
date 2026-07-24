@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.MediaTypesSettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:loc="using:MM4LB.Markup"
+    mc:Ignorable="d">
+
+    <!-- Página de la categoría Media types: lista de todos los tipos de imagen de juego con un check por cada uno.
+         Máximo 10 seleccionados (los favoritos de la banda de tipos); al llegar a 10, el resto se deshabilitan.
+         DataContext heredado del SettingsDialogViewModel. -->
+    <StackPanel Spacing="8">
+        <TextBlock Text="{loc:Str Key=MediaTypesSettings_Intro_Text}"
+                   Foreground="{ThemeResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+
+        <ItemsControl ItemsSource="{Binding MediaTypeOptions}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Name}"
+                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                              IsEnabled="{Binding CanToggle}"
+                              Foreground="{ThemeResource TextBrush}"
+                              MinHeight="0" Margin="0 1"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.PlatformListControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MM4LB.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MM4LB.Models"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="PlatformItemTemplate" x:DataType="models:Platform">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Width="24" Height="24" Source="{x:Bind Icon.Binary, Mode=OneWay}" />
+                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="12 0" VerticalAlignment="Top" Foreground="{ThemeResource TextBrush}" />
+                <TextBlock Grid.Column="2" Text="{x:Bind Games.Count, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid x:Name="PlatformListComboBox" Visibility="Visible" Opacity="1">
+            <ComboBox IsTextSearchEnabled="True" ItemsSource="{x:Bind ViewModel.SharedDataService.PlatformSet.Platforms, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedPlatform, Mode=TwoWay}" ItemTemplate="{StaticResource PlatformItemTemplate}" HorizontalAlignment="Stretch" Margin="16 0 18 8" />
+        </Grid>
+        
+        <ListView x:Name="PlatformListView" Visibility="Collapsed" Opacity="0" ItemsSource="{x:Bind ViewModel.SharedDataService.PlatformSet.Platforms, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedPlatform, Mode=TwoWay}" ItemTemplate="{StaticResource PlatformItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+    </Grid>
+</UserControl>

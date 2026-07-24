@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 
-namespace Tracker.Services;
+namespace MM4LB.Services;
 
 /// <summary>
 /// Servicio centralizado para la creación y ejecución de animaciones en WinUI 3.

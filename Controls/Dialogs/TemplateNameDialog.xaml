@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MM4LB.Controls.Dialogs.TemplateNameDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uc="using:MM4LB.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:loc="using:MM4LB.Markup"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="14" MinWidth="720">
+        <TextBlock Text="{loc:Str Key=TemplateNameDialog_ChooseSlot_Text}" TextWrapping="Wrap" Foreground="{ThemeResource TextSecondaryBrush}"/>
+        <uc:TemplateSlotsControl x:Name="Slots" SelectionMode="True" Source="UserSlots" SelectionChanged="OnSlotSelectionChanged"/>
+
+        <TextBlock Text="{loc:Str Key=TemplateNameDialog_Name_Label}" TextWrapping="Wrap" Foreground="{ThemeResource TextBrush}"/>
+        <TextBox x:Name="NameBox" PlaceholderText="{loc:Str Key=TemplateNameDialog_Name_Placeholder}" TextChanged="OnTextChanged" MaxLength="80"/>
+    </StackPanel>
+</Page>

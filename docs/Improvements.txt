@@ -1,0 +1,87 @@
+DONE
+Si el GameImagesDashboard está oculto (slotIndex < 0), entonces que no comience reproducción automática de video. --> DONE
+Vista de asset en lista --> El video no muestra la duración (la imagen si muestra la región) --> DONE
+El video en reproducción, cuando acaba que muestre la imagen que se ha generado al cargarlo, que se oculten los controles de reproducción y que se ponga el icono de video encima de la imagen. Clic reinicia la reproducción. --> DONE
+GameImagesDashboard --> Region con default value. --> DONE
+ImageAudit: Diferentes cambios y updates. --> DONE
+  - En las pastillas cuando estamos mostrando videos, añadir una (entre la extensión y las dimensiones) con la calidad. Añadimos otra pill al final. Esta pill es parecida a la de dimensiones. Muestra el número de videos totales y el número de vídeos que más hay en cada rango de duración. Los rangos de duración son cada 10 segundos: 0-10 segundos, 11-20 segundos, 21-30...
+  - En la vista de lista, si estamos mostrando vídeos, ocultamos la columna de región. Añadimos una columan de calidad (justo antes de la de dimensiones) y otra con la duración, justo antes de la extensión. Estas 2 columnas nuevas son ordenables.
+  - En la gráfica, en modo video, reemplazar las 2 estadísticas de region por la de calidad y la de rangos de duración.
+  - El rango de tiempos parece estar mal. Es en segundos, no minutos.
+¿Se puede saber en que monitor se cierra la aplicación para que vuelva a salir en el mismo al re-arrancar? --> DONE
+Valor por defecto de región, cambiar a  "None". Ahora se está usando --- o algo así. --> DONE
+Añadir 480p como calidad para los vídeos. --> DONE
+Estos 2 settings son para el video que se muestra en el GameImagesDashboard --> DONE
+  - Setting en el appsettings booleano para indicar si el video del juego se reproduce con sonido o no. False por defecto. 
+  - Otro setting para indicar si para la reproducción del video se muestran los controles (ahora se están mostrando) o no. False por defecto. 
+Poder cancelar la operación de descarga. --> DONE
+Los dots en el console log que sigan el patrón danger / warning / success. --> DONE
+Setting para que el visor de eventos del footer esté visible o no cuando la consola es visible. --> DONE
+Poner un overlay con BackgroundBrush encima del componente WebView en la primera carga. Hay un flicker extraño gris claro hasta que se inicia el control y se carga la primera web. --> DONE
+Añadir slider para volumen a las settings. Añadir sliders de margin para el widgetPanel. Añadir sliders para el tamaño de los thumbnails en los 3 controles que lo usan. --> DONE
+El imageTypeControl como un widget aparte en el widgetPanel. --> DONE
+Flag en settings para ocultar la cabecera de los widgets --> DONE
+Añadir botón de mute / unmute. Footer. --> DONE
+Añadir un separador entre los widgetStats agrupados. Puede ser una variación del separator. --> DONE
+Descargar el ffmpeg en el primer uso y guardarlo en la carpeta MM4LB donde está el backup y las settings, en un folder Tools. --> DONE
+El importCollecitonControl, que soporte videos. Si estamos en un image type de imágenes, solo carga imágenes. Si es de video, solo vídeos. El import no puede canExecute si la media cargada es de video y el media type seleccionadado es de imágenes. Y viceversa. --> DONE
+Comando de borrar. Para el ImageGridControl. La acción con undo. Borra el elemento seleccionado. Con setting de si debe o no preguntar confirmación antes de borrar. Ese setting se puede poner con un check en el diálogo. --> DONE
+Comando de aplicar cambios en la colección y continuar. --> DONE
+La barra de process games más original a nivel gráfico. --> DONE
+Los filtros de juegos, actualizar y que ponga media en vez de imágenes. Si tengo filtro >1 en Video Snap, paso a Clear logo y vuelvo a Video Snap, la lista de juegos está vacia. --> DONE
+Preselect image: Ver condiciones y que se puedan configurar en la ventana de settings. --> DONE
+La pastilla de proceso tiene 2 problemas: 1. Cuando está al inicio o al final de la lista, debería seguir habilitada, y mostrar el nombre del juego actual. Si el juego tiene 1 o 0 imágenes, entonces lo deshabilitatmos, ocultando el texto y evitando el hover. 2. Al hacer hover, la región de hover, que es rectangular, solapa parcialmente el separador oblicuo. Creo que habría que reducir la zone hoverable para que esto no ocurra. --> DONE
+En el ImportCollection, hacer la barra de herramientas como las demás (label debajo). --> DONE
+Ruta a los directorios de image types del platforms.xml. --> DONE
+Tool para borrar todos los huérfanos del tirón por plataforma. Con una vista en tabla que las liste y una vista en grid de imágenes. --> DONE
+Las tools... la de borrar orphans tiene un imagegrid, y su slider tiene que ir al settingsControl. --> DONE
+Loading window: el borde de la región del progressBar, como los widgets??? --> DONE
+Mensaje "Preparing UI..." a cambiar a "UI ready" al finalizar. --> DONE
+En el launchbox media check: Mirar las pills. Habría que añadir alguna sobre el número de media files que están mal del total. --> DONE
+Revisar la duplicidad de eventos. hay 2 que se duplican. La primera carga inicial y el loading high resolution images. --> DONE
+Quiero un nuevo widget, GameImagesRegionDashboard. Su funcionamiento es practicamente idéntico al GameImagesDashboard, pero en vez de gestionar todas las imágenes del juego seleccionado juntas, las gestiona por regiones. La idea es añadir un selector de región visual, donde cada elemento del selector es una región específica con un badge del número de imágenes que hay por región. Los elementos del seletor deben ser todos fijos y vienen de una lista de regiones favoritas (máximo 3) que se pasan por configuración (appSettings). Por defecto, esta lista es "Europe", "World", "Spain". Se añade además un 4 elemento al selector que agrupa todas las imágenes que tienen región pero no es ninguna de esas 3. Y luego un quinto elemento al selector que agrupa todas las imágenes sin región. Por defecto, se cargan en el dashboard las imágenes del primer selector que tenga imágenes. Pinchando en un selector, se cargan las imágenes de esa región. Se aplican las mismas reglas para la selección de la imagen principal que ahora mismo, pero por región, para que al seleccionar una región distinta, la imagene en stand alone sea la pre-seleccionada. Añadimos un botón nuevo de "Process region" que lo que hace es lo mismo que el botón de procesar para la región seleccionada pero sin cambiar de juego seleccionado. Y luego, adaptamos los botones de process & next y process & previous para que al pulsarlos se queden con una sola imagen por región, una sola imagen sin región, y eliminen o no todas las imágenes de otras regiones que no sean las favoritas (configurable como opción adicional de proceso de imágenes como el keep region, que para esta versión del dahsboard debe ser siempre true... por ver, creo que deberíamos tener unos parámetros de proceso para el GameImagesDashboard y otros para el GameImagesRegionDashboard). --> DONE
+Solo 1 de los widgets de dashboad simultáneamente. Si se arrastra uno al panel de widgets, y el otro está visible, se saca del panel (SlotIndes =0). Si al cargar las settings están los 2 visibles, se muestra solo uno de los 2.  En el import collection, si no hay un widget de dashboard visible, entonces el botón de import en el ImportCollection está deshabilitado. Si lo hay, y el visible es el de región, entonces el import debe mostrar un diálogo para seleccionar la región sobre la que importar las imágenes. --> DONE
+Eliminar toda la funcionalidad relacionada con el cierre de los widgets, incluido el flag en settings. --> DONE
+Una opción configurable para mostrar las barras de herramientas de toggles con botones independientes o bien con un ToggleSplitButton. --> DONE
+Añadir un último widget con estadísticas del juego: Regiones, imágenes, search strings... Puede ser en texto estilo settings. Mirar que información del juego tenemos en la base de datos que podamos mostrar aquí. --> DONE
+Tool para imágenes compartidas. --> DONE
+Process Region disabled si no se puede hacer nada.--> DONE
+Eliminar los iconos e imágenes inútiles.--> DONE
+Resilience a problemas de configuración en el .ini al arrancar. --> DONE
+Quiero que hagas una auditoría completa de los labels de todos los botones de la aplicación y de todos los textos que se muestran en la aplicación que no son de datos. Almacena los resultados en un documento en el directorio docs. --> DONE (docs/Auditoria-Textos-UI.md)
+Añadir un icono de ayuda a la derecha arriba de cada widget con un teachingTip que explique lo que hace el widget. Integrado con el fichero de recursos para labels y el flag para mostrar/ocultar mensajes de ayuda. --> DONE
+--------------------------------------------------------------------------------------------------------------
+
+TODO
+
+Un selector de colores para poder comprobar los temas que tengo y que quiero crear. Con hot apply.
+
+Livecharts - Gauge chart and others - check
+
+El progressBar de uso de caché que coja todo el espacio si el visor de eventos no está disponible. Probar en Bruselas, porque puede ser que a altas resoluciones sea excesiva la anchura del progreas bar.
+
+Los valores de Alternate names. Probar en launchbox con imágenes con esos nombreas alternativso. si cargan, habrá que añadirlos a las search strings.
+
+Missing media cargado de la BBDD de LB para los juegos: Esta oculto. Eliminar si al final no vale para nada del GameDetails.
+
+Altura de los toggle split buttons no es correcta. pero Claude no lo hace bien. Probar con Visual Studio y hot reaload. Igual una altura fija al contenedor y que los botones hagan un verticalAligment stretch?
+
+Los botones de filtrado en ImageAudit / ImageImport y GamesAudit, deberían ser como los de juegos o image types. Un ToggleSplitButton único. Y si lo hacemos por widget??? O bien automático por tamaño??
+
+Me falta el icono del ImageGridControl-off y los del ToolsControl. Y del GameImagesRegionDashboard. Y del GameDetailscontrol.
+
+Soporte para manuales y música. A lo mejor en un futuro.
+
+Settings --> Para el tema, visor de imagen con los parámetros de tint y boxed or not. Y un visor de fondo de pantalla sleccionado por el usuario?
+
+Copyright --> Añadir copyright.
+
+Añadir toolips a todos los botones y que se muestren o no por configuración. Y con un botón en el footer como el del sonido. Los textos a un fichero de recursos para que sea mas fácil su edición.
+
+Cambiar estilos de los botones tipo para diálogos. Igual que sean similares al progressBar del footer?
+
+En el dashboard de regiones, ocultar el selector de regiones para los media type de video?
+
+Usamos el icono de close para cerrar las ventanas y/o los diálogos?
+
+Organizar los ficheros en Controls/Views (hay demasiados). Lo mismo en viewModels.

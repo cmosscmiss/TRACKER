@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MM4LB (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MM4LB (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

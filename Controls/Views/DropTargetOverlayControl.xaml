@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.DropTargetOverlayControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="Root">
+
+    <!-- Background no nulo: garantiza el hit-test del drop incluso sobre un área vacía. -->
+    <Grid Background="{ThemeResource AccentDarkBrushOpacity40}">
+        <Rectangle Margin="8" RadiusX="8" RadiusY="8" StrokeThickness="2"
+                   StrokeDashArray="4 3" StrokeDashCap="Round"
+                   Stroke="{ThemeResource AccentBrush}"/>
+        <FontIcon Glyph="&#xE710;" FontSize="96" Foreground="{ThemeResource AccentBrush}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

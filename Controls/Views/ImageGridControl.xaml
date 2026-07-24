@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.ImageGridControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uc="using:MM4LB.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:sys="using:System" 
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:template="using:MM4LB.Controls.Templates"
+    xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
+    mc:Ignorable="d"
+    x:Name="root">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <uc:AdaptiveToolbarPanel>
+            <!-- Grupo excluyente de aspect ratio (opciones dinámicas desde el ViewModel). -->
+            <uc:ExclusiveOptionsControl Header="{loc:Str Key=ImageGrid_AspectRatio_Header}" VerticalAlignment="Center" ItemsSource="{x:Bind ViewModel.AspectRatioOptions}" SelectedValue="{x:Bind ViewModel.SelectedAspectRatioValue, Mode=TwoWay}"/>
+            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
+            <!-- Grupo excluyente de resolución (opciones dinámicas desde el ViewModel). -->
+            <uc:ExclusiveOptionsControl Header="{loc:Str Key=ImageGrid_Resolution_Header}" VerticalAlignment="Center" ItemsSource="{x:Bind ViewModel.ImageResolutionOptions}" SelectedValue="{x:Bind ViewModel.SelectedImageResolutionValue, Mode=TwoWay}"/>
+            <!-- Borrar el medio seleccionado (con confirmación y undo). Solo en galerías que lo permiten. -->
+            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" Visibility="{Binding ElementName=root, Path=ViewModel.CanDeleteImages, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}"/>
+            <AppBarButton Label="{loc:Str Key=Common_Delete_Label}" help:Help.Key="Common_Delete_Tooltip" Command="{Binding ElementName=root, Path=ViewModel.DeleteSelectedImageCommand, Mode=OneWay}" Visibility="{Binding ElementName=root, Path=ViewModel.CanDeleteImages, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE74D;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </uc:AdaptiveToolbarPanel>
+
+        <template:SeparatorEx Grid.Row="1" Margin="0 8 0 0" VerticalAlignment="Bottom" Thickness="1" UseGradient="True" />
+
+        <!-- Slider inline del tamaño de miniatura. Enlaza la MISMA propiedad (ViewModel.Width) que el slider de la
+             sección THUMBNAILS del SettingsControl, así que ambos se mantienen sincronizados. -->
+        <StackPanel Grid.Row="2">
+            <Slider Minimum="{x:Bind ViewModel.MinimumSize, Mode=OneWay}" Maximum="{x:Bind ViewModel.MaximumSize, Mode=OneWay}" LargeChange="50" Value="{x:Bind ViewModel.Width, Mode=TwoWay}"/>
+        </StackPanel>
+
+        <!-- Grid view to display the images -->
+        <GridView x:Name="ImagesGridView" Grid.Row="3" ItemsSource="{x:Bind ViewModel.Images, Mode=OneWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0 0 8 0" SelectedItem="{x:Bind ViewModel.SelectedImage, Mode=TwoWay}" SelectionChanged="{x:Bind ViewModel.IgControl_OnImageSelectionChanged}" CanDragItems="True" DragItemsStarting="{x:Bind ViewModel.IgControl_OnDragItemsStarting}" ContainerContentChanging="ImagesGridView_ContainerContentChanging">
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem" BasedOn="{StaticResource GameImagesGridViewItemStyle}">
+                    <Setter Property="Margin" Value="4"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MinWidth" Value="0"/>
+                    <Setter Property="MinHeight" Value="0"/>
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid x:Name="ImagesItemsWrapGrid" MaximumRowsOrColumns="40" Orientation="Horizontal" Loaded="ImagesItemsWrapGrid_Loaded"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <uc:GameImageControl GameImage="{Binding}" Margin="0 8 0 0"/>
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="{Binding ViewModel.IsGameImagesView, ElementName=root, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}"> 
+                            <Rectangle Fill="{ThemeResource AccentDarkBrushOpacity40}"/>
+                            <StackPanel Orientation="Vertical" Padding="8">
+                                <TextBlock Text="{Binding Type.Value, Mode=OneWay}" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource TextBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+
+        <!-- Pastillas (movidas desde GameStatsControl): solo en modo galería del juego seleccionado. Valor del
+             juego / valor de la plataforma. Binding tardío porque ViewModel está tipado como la clase base. -->
+        <uc:WidgetStatCardControl Grid.Row="4" Margin="0 8 0 0" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Glyph="&#xE8B9;" IconCollapsePillCount="4" HasBorder="True" Visibility="{Binding ViewModel.IsGameImagesView, ElementName=root, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <uc:WidgetStatCardControl Grid.Column="0" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{x:Bind ViewModel.ImagePills.Images.Title, Mode=OneWay}" Value="{x:Bind ViewModel.ImagePills.Images.ValueText, Mode=OneWay}" Description="{x:Bind ViewModel.ImagePills.Images.Description, Mode=OneWay}" HasBorder="False"/>
+                <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{x:Bind ViewModel.ImagePills.ImageTypes.Title, Mode=OneWay}" Value="{x:Bind ViewModel.ImagePills.ImageTypes.ValueText, Mode=OneWay}" Description="{x:Bind ViewModel.ImagePills.ImageTypes.Description, Mode=OneWay}" HasBorder="False"/>
+                <uc:WidgetStatCardControl Grid.Column="2" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{x:Bind ViewModel.ImagePills.Size.Title, Mode=OneWay}" Value="{x:Bind ViewModel.ImagePills.Size.ValueText, Mode=OneWay}" Description="{x:Bind ViewModel.ImagePills.Size.Description, Mode=OneWay}" HasBorder="False"/>
+                <uc:WidgetStatCardControl Grid.Column="3" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{loc:Str Key=ImageGrid_Coverage_Label}" Value="{x:Bind ViewModel.CoverageText, Mode=OneWay}" Description="{loc:Str Key=Common_GamePlatform_Description}" HasBorder="False"/>
+            </Grid>
+        </uc:WidgetStatCardControl>
+    </Grid>
+</UserControl>

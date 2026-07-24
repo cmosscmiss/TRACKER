@@ -1,0 +1,69 @@
+<UserControl
+    x:Class="MM4LB.Controls.Views.LayoutItemControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid x:Name="Root" Padding="8" Background="Transparent" RenderTransformOrigin="0.5,0.5">
+        <Grid.RenderTransform>
+            <ScaleTransform x:Name="ScaleElement" ScaleX="1" ScaleY="1"/>
+        </Grid.RenderTransform>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CommonStates">
+                <VisualState x:Name="Normal">
+                    <VisualState.Setters>
+                        <Setter Target="BackgroundBorder.Background" Value="Transparent"/>
+                        <Setter Target="StateBorder.BorderBrush" Value="Transparent"/>
+                        <Setter Target="ScaleElement.ScaleX" Value="1"/>
+                        <Setter Target="ScaleElement.ScaleY" Value="1"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PointerOver">
+                    <VisualState.Setters>
+                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentBrushOpacity40}"/>
+                        <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentLightBrush}"/>
+                        <Setter Target="ScaleElement.ScaleX" Value="1"/>
+                        <Setter Target="ScaleElement.ScaleY" Value="1"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Pressed">
+                    <VisualState.Setters>
+                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource AccentBrushOpacity20}"/>
+                        <Setter Target="StateBorder.BorderBrush" Value="{ThemeResource AccentBrush}"/>
+                        <Setter Target="ScaleElement.ScaleX" Value="0.98"/>
+                        <Setter Target="ScaleElement.ScaleY" Value="0.98"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Disabled">
+                    <VisualState.Setters>
+                        <Setter Target="Root.Opacity" Value="0.5"/>
+                        <Setter Target="StateBorder.BorderBrush" Value="Transparent"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="SelectionStates">
+                <VisualState x:Name="Unselected">
+                    <VisualState.Setters>
+                        <Setter Target="SelectionBackground.Background" Value="Transparent"/>
+                        <Setter Target="SelectionBorder.BorderBrush" Value="Transparent"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Selected">
+                    <VisualState.Setters>
+                        <Setter Target="SelectionBackground.Background" Value="{ThemeResource AccentDarkBrushOpacity40}"/>
+                        <Setter Target="SelectionBorder.BorderBrush" Value="{ThemeResource AccentDarkBrush}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <!-- Selected background layer -->
+        <Border x:Name="SelectionBackground" CornerRadius="8" Background="Transparent"/>
+        <!-- Pointer / pressed / normal background + content -->
+        <Border x:Name="BackgroundBorder" CornerRadius="8" Background="Transparent" Padding="8">
+            <Grid x:Name="LayoutHost"/>
+        </Border>
+        <!-- Border controlled by common interaction states -->
+        <Border x:Name="StateBorder" CornerRadius="8" BorderThickness="2" BorderBrush="{ThemeResource CardBackgroundLightBrush}" Background="Transparent" IsHitTestVisible="False"/>
+        <!-- Border controlled by selection state -->
+        <Border x:Name="SelectionBorder" CornerRadius="8" BorderThickness="2" BorderBrush="Transparent" Background="Transparent" IsHitTestVisible="False"/>
+    </Grid>
+</UserControl>

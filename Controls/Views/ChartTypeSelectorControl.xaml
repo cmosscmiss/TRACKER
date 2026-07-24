@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.ChartTypeSelectorControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI" xmlns:template="using:MM4LB.Controls.Templates"
+    xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
+    mc:Ignorable="d">
+
+    <!-- Componente autocontenido: un título opcional (Title), una toolbar (tipo de gráfica / Top N / orden, cada
+         barra un ToggleSplitButton cuya cara muestra la selección y cuyo desplegable lista las opciones 1-de-N) y,
+         debajo, la gráfica que controla (cartesiana o pie según el tipo). Las series se construyen en el code-behind
+         a partir de las propiedades de datos (Values/Labels/…), evitando x:Bind a propiedades de LiveCharts. -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Título de la gráfica (izda., oculto si Title está vacío) y botón de ayuda (dcha., oculto si no se pasa
+             HelpText). El botón abre un TeachingTip con el texto de ayuda. Lo gestiona el code-behind. -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="TitleText" Grid.Column="0" Margin="0 8" Style="{StaticResource TitleStyle}" Visibility="Collapsed"/>
+            <Button x:Name="HelpButton" Grid.Column="1" Style="{StaticResource Button_Icon}" Click="OnHelpClick" VerticalAlignment="Center" Margin="8 8 0 0" Padding="8" Visibility="Collapsed" help:Help.Key="Common_Help_Tooltip">
+                <FontIcon Glyph="&#xE897;" FontSize="16"/>
+            </Button>
+            <TeachingTip x:Name="HelpTip" Grid.Column="1" Target="{x:Bind HelpButton}" IsLightDismissEnabled="True" PreferredPlacement="BottomLeft"/>
+        </Grid>
+
+        <template:SeparatorEx Grid.Row="1" Margin="0 8 0 16" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+
+        <!-- Toolbar: cada barra es un ToggleSplitButton (cara = selección actual, desplegable = opciones 1-de-N) -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 0 8">
+            <!-- Tipo de gráfica -->
+            <ToggleSplitButton x:Name="ChartTypeButton" IsCheckedChanged="OnSplitToggle" help:Help.Key="ChartType_TypeButton_Tooltip">
+                <ToggleSplitButton.Flyout>
+                    <MenuFlyout>
+                        <RadioMenuFlyoutItem x:Name="ColumnItem"   GroupName="ChartType" Tag="Column"   Text="{loc:Str Key=ChartType_Bars_Label}"   Click="OnTypeClick"/>
+                        <RadioMenuFlyoutItem x:Name="RowItem"      GroupName="ChartType" Tag="Row"      Text="{loc:Str Key=ChartType_HBars_Label}" Click="OnTypeClick"/>
+                        <RadioMenuFlyoutItem x:Name="LineItem"     GroupName="ChartType" Tag="Line"     Text="{loc:Str Key=ChartType_Line_Label}"   Click="OnTypeClick"/>
+                        <RadioMenuFlyoutItem x:Name="AreaItem"     GroupName="ChartType" Tag="Area"     Text="{loc:Str Key=ChartType_Area_Label}"   Click="OnTypeClick"/>
+                        <RadioMenuFlyoutItem x:Name="PieItem"      GroupName="ChartType" Tag="Pie"      Text="{loc:Str Key=ChartType_Pie_Label}"    Click="OnTypeClick"/>
+                        <RadioMenuFlyoutItem x:Name="DoughnutItem" GroupName="ChartType" Tag="Doughnut" Text="{loc:Str Key=ChartType_Ring_Label}"   Click="OnTypeClick"/>
+                    </MenuFlyout>
+                </ToggleSplitButton.Flyout>
+            </ToggleSplitButton>
+
+            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+
+            <!-- Top N: los N elementos de mayor valor. Cada opción "Top X" solo aparece si hay más de X elementos;
+                 el botón entero (y su separador) se ocultan si no califica ninguno. -->
+            <ToggleSplitButton x:Name="TopNButton" IsCheckedChanged="OnSplitToggle" help:Help.Key="ChartType_TopNButton_Tooltip">
+                <ToggleSplitButton.Flyout>
+                    <MenuFlyout>
+                        <RadioMenuFlyoutItem x:Name="Top5Item"   GroupName="TopN" Tag="5"   Text="Top 5"   Click="OnTopNClick"/>
+                        <RadioMenuFlyoutItem x:Name="Top10Item"  GroupName="TopN" Tag="10"  Text="Top 10"  Click="OnTopNClick"/>
+                        <RadioMenuFlyoutItem x:Name="Top20Item"  GroupName="TopN" Tag="20"  Text="Top 20"  Click="OnTopNClick"/>
+                        <RadioMenuFlyoutItem x:Name="Top50Item"  GroupName="TopN" Tag="50"  Text="Top 50"  Click="OnTopNClick"/>
+                        <RadioMenuFlyoutItem x:Name="Top100Item" GroupName="TopN" Tag="100" Text="Top 100" Click="OnTopNClick"/>
+                        <RadioMenuFlyoutItem x:Name="AllItem"    GroupName="TopN" Tag="All" Text="{loc:Str Key=ChartType_All_Label}" Click="OnTopNClick"/>
+                    </MenuFlyout>
+                </ToggleSplitButton.Flyout>
+            </ToggleSplitButton>
+
+            <template:SeparatorEx x:Name="TopNSeparator" VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+
+            <!-- Orden: sin orden / ascendente / descendente (por valor) -->
+            <ToggleSplitButton x:Name="SortButton" IsCheckedChanged="OnSplitToggle" help:Help.Key="ChartType_SortButton_Tooltip">
+                <ToggleSplitButton.Flyout>
+                    <MenuFlyout>
+                        <RadioMenuFlyoutItem x:Name="SortNoneItem" GroupName="Sort" Tag="None"       Text="{loc:Str Key=ChartType_SortNone_Label}"  Click="OnSortClick"/>
+                        <RadioMenuFlyoutItem x:Name="SortAscItem"  GroupName="Sort" Tag="Ascending"  Text="{loc:Str Key=ChartType_SortAsc_Label}"  Click="OnSortClick"/>
+                        <RadioMenuFlyoutItem x:Name="SortDescItem" GroupName="Sort" Tag="Descending" Text="{loc:Str Key=ChartType_SortDesc_Label}" Click="OnSortClick"/>
+                    </MenuFlyout>
+                </ToggleSplitButton.Flyout>
+            </ToggleSplitButton>
+        </StackPanel>
+
+        <lvc:CartesianChart x:Name="Cartesian" Grid.Row="3" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LegendPosition="Hidden"/>
+        <lvc:PieChart x:Name="Pie" Grid.Row="3" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LegendPosition="Right" Visibility="Collapsed"/>
+    </Grid>
+</UserControl>

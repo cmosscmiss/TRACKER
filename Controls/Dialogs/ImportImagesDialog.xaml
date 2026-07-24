@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MM4LB.Controls.Dialogs.ImportImagesDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MM4LB.Controls.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="4">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{loc:Str Key=ImportImagesDialog_ExistingImages_Label}" VerticalAlignment="Center"/>
+            <Button x:Name="HelpButton" Grid.Column="1" Style="{StaticResource Button_Icon}" Click="OnHelpClick" VerticalAlignment="Center" Margin="8 0 0 0" Padding="8" help:Help.AffordanceVisible="True" help:Help.Key="Common_Help_Tooltip">
+                <FontIcon Glyph="&#xE897;" FontSize="16"/>
+            </Button>
+            <TeachingTip x:Name="HelpTip" Grid.Column="1" Target="{x:Bind HelpButton}" IsLightDismissEnabled="True" PreferredPlacement="BottomLeft" Subtitle="{loc:Str Key=ImportImagesDialog_Help_Description}"/>
+        </Grid>
+
+        <!-- Opción mutuamente excluyente. Índice 0 = Discard (por defecto), 1 = Keep. -->
+        <RadioButtons x:Name="rbCollectionImages" SelectedIndex="{x:Bind _collectionImagesIndex}" MaxColumns="2">
+            <RadioButton Content="{loc:Str Key=Common_Discard_Label}"/>
+            <RadioButton Content="{loc:Str Key=Common_Keep_Label}"/>
+        </RadioButtons>
+    </StackPanel>
+</Page>

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git add *)",
+      "Bash(dotnet build *)",
+      "PowerShell(dotnet build -p:Platform=x64 -clp:ErrorsOnly 2>&1)"
+    ]
+  }
+}

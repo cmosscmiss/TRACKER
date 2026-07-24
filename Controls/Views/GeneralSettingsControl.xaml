@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.GeneralSettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:template="using:MM4LB.Controls.Templates"
+    xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
+    mc:Ignorable="d">
+
+    <!-- Página de la categoría General. Los controles editan el staging del SettingsWindowViewModel (DataContext
+         heredado); OK los aplica a AppSettings, Cancel los descarta. -->
+    <StackPanel Spacing="14">
+
+        <!-- Idioma de la interfaz. El combo lleva un tooltip localizado y GATED por el toggle de ayuda (help:Help.Key):
+             con la ayuda apagada no se muestra. El texto cambia EN CALIENTE al aceptar un idioma distinto ({loc:Str}). -->
+        <Grid ColumnDefinitions="240,*">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_Language_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <ComboBox x:Name="LanguageCombo" Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
+                      ItemsSource="{Binding LanguageOptions}"
+                      DisplayMemberPath="DisplayName"
+                      SelectionChanged="OnLanguageSelectionChanged"
+                      help:Help.Key="GeneralSettings_Language_Tooltip"/>
+        </Grid>
+
+        <!-- PILOTO F0 (ayuda): el icono se OCULTA con el toggle de ayuda (help:Help.AffordanceVisible) y lleva su
+             propio tooltip gated; el caption cambia de idioma en caliente. Se retirará al terminar la migración. -->
+        <StackPanel Orientation="Horizontal" Spacing="6">
+            <FontIcon FontSize="14" Glyph="&#xE897;" Foreground="{ThemeResource AccentBrush}" VerticalAlignment="Center"
+                      help:Help.AffordanceVisible="True" help:Help.Key="GeneralSettings_HelpPilot_Tooltip"/>
+            <TextBlock Text="{loc:Str Key=GeneralSettings_LanguagePilot_Caption}"
+                       FontSize="12" Foreground="{ThemeResource TextSecondaryBrush}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
+        <!-- Grupos de botones de las toolbars. -->
+        <Grid ColumnDefinitions="240,*">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_ToolbarGroups_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <ComboBox x:Name="ToolbarGroupsCombo" Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
+                      ItemsSource="{Binding ToolbarGroupsModeOptions}"
+                      DisplayMemberPath="Label"
+                      SelectionChanged="OnToolbarGroupsSelectionChanged"/>
+        </Grid>
+
+        <!-- Tamaño de la caché de imágenes. -->
+        <Grid ColumnDefinitions="240,*">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_CacheSize_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <NumberBox Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
+                       Minimum="0" SmallChange="256" LargeChange="1024" SpinButtonPlacementMode="Compact"
+                       Value="{Binding CacheSize, Mode=TwoWay}"/>
+        </Grid>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
+        <!-- Interruptores. -->
+        <CheckBox Content="{loc:Str Key=GeneralSettings_ShowWidgetHeader_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ShowWidgetHeader, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=GeneralSettings_FooterEventViewer_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding FooterEventViewerAlwaysVisible, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=GeneralSettings_ConfirmDelete_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding PromptBeforeDeleteImage, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=GeneralSettings_LogExceptions_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ExceptionLoggingEnabled, Mode=TwoWay}"/>
+
+    </StackPanel>
+</UserControl>

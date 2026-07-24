@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Data;
 
 
-namespace Tracker.Helpers;
+namespace MM4LB.Helpers;
 
 public class NullToOpacityConverter : IValueConverter
 {

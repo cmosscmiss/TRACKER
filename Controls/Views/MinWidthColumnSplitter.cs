@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System;
 
-namespace Tracker.Controls.Views;
+namespace MM4LB.Controls.Views;
 
 /// <summary>
 /// GridSplitter de columnas que impide que cualquiera de las dos columnas que redimensiona baje de
