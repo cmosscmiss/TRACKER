@@ -29,7 +29,6 @@ public sealed class ApplicationHostService : IHostedService
     #region Attributes
     private readonly PersistAndRestoreService _persistAndRestoreService;
     private readonly ThemeService _themeService;
-    private readonly BackupService _backupService;
     private readonly LocalizationService _localizationService;
     private readonly AppSettings _appSettings;
 
@@ -37,11 +36,10 @@ public sealed class ApplicationHostService : IHostedService
     #endregion
 
     #region Constructor
-    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ThemeService themeService, BackupService backupService, LocalizationService localizationService, IOptions<AppSettings> settings)
+    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ThemeService themeService, LocalizationService localizationService, IOptions<AppSettings> settings)
     {
         _persistAndRestoreService = persistAndRestoreService;
         _themeService = themeService;
-        _backupService = backupService;
         _localizationService = localizationService;
         _appSettings = settings.Value;
     }
@@ -81,10 +79,6 @@ public sealed class ApplicationHostService : IHostedService
         LocalizationValidator.Validate();
 
         await _themeService.InitializeAsync();
-
-        // Lee el estado inicial de la carpeta de backup (nº de imágenes + tamaño) antes de que la UI se monte,
-        // para que la pastilla del ACTIVITY LOG arranque con los valores correctos.
-        await _backupService.RefreshAsync();
 
         _isInitialized = true;
     }

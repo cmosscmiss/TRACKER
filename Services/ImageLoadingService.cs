@@ -225,22 +225,18 @@ public sealed class ImageLoadingService
         var videosFolder = Path.Combine(_appSettings.LaunchBox.LaunchBoxFolder, "Videos", "Platforms");
         Directory.CreateDirectory(videosFolder);
 
-        var discarded = new List<(GameImage old, string backupPath)>();
         GameImage? created = null;
 
         try
         {
-            // Backup + delete every existing platform video (any supported extension).
+            // Delete every existing platform video (any supported extension). Permanente, sin backup.
             foreach (var extension in _appSettings.LaunchBox.AllowedVideoExtensions)
             {
                 var existingPath = Path.Combine(videosFolder, $"{platform.Name}{extension}");
                 if (!File.Exists(existingPath))
                     continue;
 
-                var old = new GameImage(existingPath, MediaType.PlatformVideo);
-                string? backupPath = await _fileSystemService.DeleteImageFileAsync(old);
-                if (backupPath != null)
-                    discarded.Add((old, backupPath));
+                await Task.Run(() => { try { File.Delete(existingPath); } catch { } });
             }
 
             var targetPath = Path.Combine(videosFolder, $"{platform.Name}{Path.GetExtension(sourcePath)}");
@@ -251,14 +247,11 @@ public sealed class ImageLoadingService
 
             notifier.Message = $"{context}  |  {MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_VideoReplaced_Progress] ?? "Video replaced"}";
 
-            notifier.UndoNeedsBackup = discarded.Count > 0;
+            // El borrado de los vídeos anteriores es permanente; el undo solo elimina el vídeo recién creado.
             notifier.UndoAction = async () =>
             {
                 if (created != null)
                     await Task.Run(() => { try { if (File.Exists(created.File)) File.Delete(created.File); } catch { } });
-
-                foreach (var (old, backupPath) in discarded)
-                    await _fileSystemService.RestoreImageFileAsync(backupPath, old.File);
 
                 RefreshPlatformOwnImages(platform);
                 NotifyPlatformImagesChanged();
@@ -297,7 +290,6 @@ public sealed class ImageLoadingService
         var typeFolder = Path.Combine(_appSettings.LaunchBox.LaunchBoxFolder, "Images", "Platforms", platform.Name, type.Value);
         Directory.CreateDirectory(typeFolder);
 
-        var discarded = new List<(GameImage old, string backupPath)>();
         GameImage? created = null;
 
         try
@@ -306,10 +298,7 @@ public sealed class ImageLoadingService
             {
                 foreach (var existingPath in Directory.EnumerateFiles(typeFolder).ToList())
                 {
-                    var old = new GameImage(existingPath, type);
-                    string? backupPath = await _fileSystemService.DeleteImageFileAsync(old);
-                    if (backupPath != null)
-                        discarded.Add((old, backupPath));
+                    await Task.Run(() => { try { File.Delete(existingPath); } catch { } });
                 }
             }
 
@@ -321,14 +310,11 @@ public sealed class ImageLoadingService
 
             notifier.Message = $"{context}  |  {MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_MediaFileImported_Progress] ?? "Media file imported"}";
 
-            notifier.UndoNeedsBackup = discarded.Count > 0;
+            // El borrado de las existentes es permanente; el undo solo elimina la imagen recién creada.
             notifier.UndoAction = async () =>
             {
                 if (created != null)
                     await Task.Run(() => { try { if (File.Exists(created.File)) File.Delete(created.File); } catch { } });
-
-                foreach (var (old, backupPath) in discarded)
-                    await _fileSystemService.RestoreImageFileAsync(backupPath, old.File);
 
                 RefreshPlatformOwnImages(platform);
                 NotifyPlatformImagesChanged();
@@ -695,15 +681,9 @@ public sealed class ImageLoadingService
 
         ProgressNotifier notifier = _progressService.StartOperation(false);
 
-        DeletedMediaUndo? undo = await DeleteMediaToBackup(image);
+        await DeleteMediaAsync(image);
 
         notifier.Message = $"{PlatformPrefix}{image.Type?.Value}  |  {string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_MediaDeleted_Progress] ?? "Media file deleted: {0}{1}", image.Name, image.FileExtension)}";
-
-        if (undo?.BackupPath != null)
-        {
-            notifier.UndoNeedsBackup = true;
-            notifier.UndoAction = () => RestoreDeletedMediaAsync(undo);
-        }
 
         notifier.FinishOperation();
         _progressService.ProgressNotifier.Report(notifier);
@@ -736,14 +716,13 @@ public sealed class ImageLoadingService
                 .Select(g => g.First())
                 .ToList();
 
-            List<DeletedMediaUndo> deletedUndos = new();
+            int deletedCount = 0;
             int total = toDelete.Count;
             int done = 0;
             foreach (GameImage media in toDelete)
             {
-                DeletedMediaUndo? u = await DeleteMediaToBackup(media);
-                if (u != null)
-                    deletedUndos.Add(u);
+                await DeleteMediaAsync(media);
+                deletedCount++;
 
                 done++;
                 notifier.Progress = total > 0 ? done * 100 / total : 100;
@@ -778,31 +757,22 @@ public sealed class ImageLoadingService
             }
 
             notifier.Progress = 100;
-            notifier.Message = $"{PlatformPrefix}{game.Title}  |  {string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_GameProcessed_Progress] ?? "Game processed ({0} media deleted)", deletedUndos.Count)}";
+            notifier.Message = $"{PlatformPrefix}{game.Title}  |  {string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_GameProcessed_Progress] ?? "Game processed ({0} media deleted)", deletedCount)}";
 
-            bool hasBackups = deletedUndos.Any(u => u.BackupPath != null);
-            if (hasBackups || renameUndo != null)
+            // Los borrados son permanentes (sin backup); solo el rename del conservado es reversible.
+            if (renameUndo != null)
             {
-                notifier.UndoNeedsBackup = hasBackups;
                 notifier.UndoAction = async () =>
                 {
-                    // Revierte primero el rename (devuelve el conservado a su ruta original) y luego restaura los borrados.
-                    if (renameUndo != null)
-                    {
-                        await _fileSystemService.RenameFileAsync(renameUndo.NewFile, renameUndo.OldFile);
-                        renameUndo.Image.RestoreFileName(renameUndo.OldFile, renameUndo.OldName, renameUndo.OldRegion, renameUndo.OldLeaf);
-                    }
-
-                    foreach (DeletedMediaUndo u in deletedUndos)
-                        await RestoreDeletedMediaAsync(u);
-
+                    await _fileSystemService.RenameFileAsync(renameUndo.NewFile, renameUndo.OldFile);
+                    renameUndo.Image.RestoreFileName(renameUndo.OldFile, renameUndo.OldName, renameUndo.OldRegion, renameUndo.OldLeaf);
                     NotifyPlatformImagesChanged();
                 };
             }
         }
         catch (Exception ex)
         {
-            // Sin esto, si algo lanza (RenameFileAsync, DeleteMediaToBackup...), FinishBlockingOperation no se
+            // Sin esto, si algo lanza (RenameFileAsync, DeleteMediaAsync...), FinishBlockingOperation no se
             // ejecutaría y la UI quedaría bloqueada (IsUIEnabled = false) para siempre.
             ExceptionService.LogToFile(ex, "Error processing game media.");
             notifier.Message = $"{PlatformPrefix}{game.Title}  |  {MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_ProcessGameFailed_Error] ?? "Error processing game"}";
@@ -842,14 +812,13 @@ public sealed class ImageLoadingService
                 .Select(g => g.First())
                 .ToList();
 
-            List<DeletedMediaUndo> deletedUndos = new();
+            int deletedCount = 0;
             int total = toDelete.Count;
             int done = 0;
             foreach (GameImage media in toDelete)
             {
-                DeletedMediaUndo? u = await DeleteMediaToBackup(media);
-                if (u != null)
-                    deletedUndos.Add(u);
+                await DeleteMediaAsync(media);
+                deletedCount++;
 
                 done++;
                 notifier.Progress = total > 0 ? done * 100 / total : 100;
@@ -888,23 +857,18 @@ public sealed class ImageLoadingService
             }
 
             notifier.Progress = 100;
-            notifier.Message = $"{PlatformPrefix}{game.Title}  |  {string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_RegionsProcessed_Progress] ?? "Regions processed ({0} media deleted)", deletedUndos.Count)}";
+            notifier.Message = $"{PlatformPrefix}{game.Title}  |  {string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_RegionsProcessed_Progress] ?? "Regions processed ({0} media deleted)", deletedCount)}";
 
-            bool hasBackups = deletedUndos.Any(u => u.BackupPath != null);
-            if (hasBackups || renameUndos.Count > 0)
+            // Los borrados son permanentes (sin backup); solo los renames de los conservados son reversibles.
+            if (renameUndos.Count > 0)
             {
-                notifier.UndoNeedsBackup = hasBackups;
                 notifier.UndoAction = async () =>
                 {
-                    // Revierte primero los renames y luego restaura los borrados.
                     foreach (RenamedMediaUndo r in renameUndos)
                     {
                         await _fileSystemService.RenameFileAsync(r.NewFile, r.OldFile);
                         r.Image.RestoreFileName(r.OldFile, r.OldName, r.OldRegion, r.OldLeaf);
                     }
-
-                    foreach (DeletedMediaUndo u in deletedUndos)
-                        await RestoreDeletedMediaAsync(u);
 
                     NotifyPlatformImagesChanged();
                 };
@@ -931,10 +895,10 @@ public sealed class ImageLoadingService
     /// respaldar (no deshacible). Nota: el mismo archivo puede estar representado por varias instancias de GameImage
     /// (canónica del set, con LinkedGames, vs copias por-juego de Game.AllImages); por eso se trabaja por archivo.
     /// </summary>
-    private async Task<DeletedMediaUndo?> DeleteMediaToBackup(GameImage image)
+    private async Task DeleteMediaAsync(GameImage image)
     {
         if (image is null)
-            return null;
+            return;
 
         string file = image.File;
         Platform? platform = _sharedDataService.SelectedPlatform;
@@ -976,59 +940,15 @@ public sealed class ImageLoadingService
             ImageRemovedFromGame?.Invoke(game, instance);
 
         Game? canonicalNotifyGame = candidateGames.FirstOrDefault() ?? _sharedDataService.SelectedGame;
-        bool canonicalNotifiedSeparately = false;
         if (canonical != null && canonicalNotifyGame != null && !seenInstances.Contains(canonical))
         {
             ImageRemovedFromGame?.Invoke(canonicalNotifyGame, canonical);
-            canonicalNotifiedSeparately = true;
         }
 
-        string? backupPath = await _fileSystemService.DeleteImageFileAsync(image);
+        // Borrado directo y permanente (sin backup ni undo de restauración).
+        await Task.Run(() => { try { if (File.Exists(file)) File.Delete(file); } catch { } });
 
         NotifyPlatformImagesChanged();
-
-        return new DeletedMediaUndo
-        {
-            BackupPath = backupPath,
-            File = file,
-            Set = set,
-            Canonical = canonical,
-            CanonicalNotifiedSeparately = canonicalNotifiedSeparately,
-            CanonicalNotifyGame = canonicalNotifyGame,
-            Removals = removals,
-        };
-    }
-
-    /// <summary>Restaura un medio borrado por <see cref="DeleteMediaToBackup"/> (inverso). No hace nada si no hubo backup.</summary>
-    private async Task RestoreDeletedMediaAsync(DeletedMediaUndo undo)
-    {
-        if (undo?.BackupPath == null)
-            return;
-
-        await _fileSystemService.RestoreImageFileAsync(undo.BackupPath, undo.File);
-
-        if (undo.Canonical != null)
-            undo.Set?.AddImage(undo.Canonical);
-
-        foreach (var (game, instance) in undo.Removals)
-            RegisterImageOnGame(game, instance); // re-añade a AllImages/Images + emite ImageAddedToGame
-
-        if (undo.CanonicalNotifiedSeparately)
-            ImageAddedToGame?.Invoke(undo.CanonicalNotifyGame!, undo.Canonical!); // refresca el audit por la canónica
-
-        NotifyPlatformImagesChanged();
-    }
-
-    /// <summary>Información para deshacer el borrado de un medio (ver <see cref="DeleteMediaToBackup"/>).</summary>
-    private sealed class DeletedMediaUndo
-    {
-        public string? BackupPath;
-        public string File = string.Empty;
-        public PlatformImageSet? Set;
-        public GameImage? Canonical;
-        public bool CanonicalNotifiedSeparately;
-        public Game? CanonicalNotifyGame;
-        public List<(Game game, GameImage instance)> Removals = new();
     }
 
     /// <summary>Información para deshacer el renombrado del medio conservado en <see cref="ProcessGameAsync"/>.</summary>
@@ -1099,9 +1019,8 @@ public sealed class ImageLoadingService
         int done = 0;
         int failed = 0;
 
-        // Registro para el undo: imágenes importadas (creadas) y, si hubo Discard, las existentes borradas.
+        // Registro para el undo: imágenes importadas (creadas). Las existentes se borran de forma permanente.
         var created = new List<(Game game, GameImage image)>();
-        var discarded = new List<(Game game, GameImage old, string backupPath)>();
 
         // El import opera sobre instancias de GamesInLauchboxDb (objetos nuevos creados por el loader); para que
         // las altas/bajas se vean en toda la app hay que registrarlas en la instancia canónica de platform.Games
@@ -1129,12 +1048,11 @@ public sealed class ImageLoadingService
 
                     foreach (GameImage old in existing)
                     {
-                        string? backupPath = await _fileSystemService.DeleteImageFileAsync(old);
+                        string oldFile = old.File;
+                        await Task.Run(() => { try { if (File.Exists(oldFile)) File.Delete(oldFile); } catch { } });
                         set.RemoveImage(old);
                         UnregisterImageFromGame(game, old); // quita de game + emite ImageRemovedFromGame (refresca dashboard/galerías)
                         removedExisting = true;
-                        if (backupPath != null)
-                            discarded.Add((game, old, backupPath));
                     }
                 }
 
@@ -1173,12 +1091,10 @@ public sealed class ImageLoadingService
                 ? $"{context}  |  {string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_ImagesImported_Progress] ?? "{0} images imported", imported)}"
                 : $"{context}  |  {string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ImageLoading_ImagesImportedPartial_Error] ?? "{0}/{1} images imported ({2} failed)", imported, total, failed)}";
 
-            // Undo: primero quita las importadas (borra el fichero copiado y las desregistra, liberando sus
-            // nombres en disco) y luego restaura las descartadas desde su backup y las vuelve a registrar.
-            if (created.Count > 0 || discarded.Count > 0)
+            // Undo: quita las importadas (borra el fichero copiado y las desregistra). El borrado de las
+            // descartadas es permanente (sin backup), así que no se restauran.
+            if (created.Count > 0)
             {
-                // El undo restaura las descartadas desde su backup; si las hubo, depende del backup.
-                notifier.UndoNeedsBackup = discarded.Count > 0;
                 notifier.UndoAction = async () =>
                 {
                     foreach (var (game, image) in created)
@@ -1188,15 +1104,7 @@ public sealed class ImageLoadingService
                         UnregisterImageFromGame(game, image);
                     }
 
-                    foreach (var (game, old, backupPath) in discarded)
-                    {
-                        await _fileSystemService.RestoreImageFileAsync(backupPath, old.File);
-                        set.AddImage(old);
-                        RegisterImageOnGame(game, old);
-                    }
-
-                    if (created.Count > 0)
-                        NotifyPlatformImagesChanged();
+                    NotifyPlatformImagesChanged();
                 };
             }
         }

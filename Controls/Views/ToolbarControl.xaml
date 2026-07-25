@@ -31,10 +31,6 @@
                         <StackPanel Orientation="Horizontal" Spacing="16">
                             <template:ToolbarButtonIcon x:Name="SplittersToggle" CheckedIconName="Icon-resize" UncheckedIconName="Icon-resize-off" help:Help.Key="Toolbar_Resize_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                         </StackPanel>
-                        <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                        <StackPanel x:Name="ToolbarSwitchesPanel" Orientation="Horizontal" Spacing="16">
-                            <template:ToolbarButtonIcon x:Name="PlatformListToggle" IconFolder="Widgets" CheckedIconName="PlatformListControl" UncheckedIconName="PlatformListControl-off" help:Help.Key="Toolbar_TogglePlatformList_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
-                        </StackPanel>
                     </StackPanel>
 
                     <Border x:Name="ToolbarSelectedItemLine" Grid.Row="1" Height="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="{ThemeResource AccentBrush}" Width="0" Opacity="0" Margin="0 0 0 -12">

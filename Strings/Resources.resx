@@ -31,18 +31,6 @@
     <value>Showing {0} of {1}</value>
   </data>
   <!-- Console (ACTIVITY LOG) -->
-  <data name="Console_BackupMedia_Label" xml:space="preserve">
-    <value>Backup media files</value>
-  </data>
-  <data name="Console_MediaTotalSize_Description" xml:space="preserve">
-    <value>Media files / total size</value>
-  </data>
-  <data name="Console_Backup_Label" xml:space="preserve">
-    <value>Backup</value>
-  </data>
-  <data name="Console_Backup_Tooltip" xml:space="preserve">
-    <value>Clean backup folder</value>
-  </data>
   <!-- FooterEventViewer -->
   <data name="FooterEventViewer_OlderEvent_Tooltip" xml:space="preserve">
     <value>Older event</value>
@@ -105,20 +93,11 @@
   <!-- ThemeSettings_* : pÃ¡gina Theme del diÃ¡logo de Settings. -->
   <!-- AboutSettings_* : pÃ¡gina About del diÃ¡logo de Settings. -->
   <!-- *_WidgetHelp_Description : texto del TeachingTip de ayuda de cada widget (icono de ayuda de la cabecera). -->
-  <data name="StatsPlatform_WidgetHelp_Description" xml:space="preserve">
-    <value>Coverage and media statistics for the selected platform, with charts by media type and per game.</value>
-  </data>
   <data name="Console_WidgetHelp_Description" xml:space="preserve">
     <value>Activity log of operations, with cache and backup usage and undo of recent actions.</value>
   </data>
   <data name="WebView_WidgetHelp_Description" xml:space="preserve">
     <value>Browse Google, SteamGridDB or YouTube to find media and add it to the selected game.</value>
-  </data>
-  <data name="ImageGrid_WidgetHelp_Description" xml:space="preserve">
-    <value>Gallery of the selected game's media for the chosen media type, with delete and drag-to-reorder.</value>
-  </data>
-  <data name="GameDetails_WidgetHelp_Description" xml:space="preserve">
-    <value>Detailed sheet of the selected game: database info, known images and search strings.</value>
   </data>
   <!-- Common (mÃ¡s) -->
   <data name="Common_Help_Tooltip" xml:space="preserve">
@@ -196,37 +175,7 @@
   <!-- GameList -->
   <!-- ImageCollectionImport -->
   <!-- GameDetails -->
-  <data name="GameDetails_InLaunchBox_Label" xml:space="preserve">
-    <value>In LaunchBox database</value>
-  </data>
-  <data name="GameDetails_NotInLaunchBox_Label" xml:space="preserve">
-    <value>Not in LaunchBox database</value>
-  </data>
-  <data name="GameDetails_KnownImages_Label" xml:space="preserve">
-    <value>Known images</value>
-  </data>
-  <data name="GameDetails_KnownImages_Description" xml:space="preserve">
-    <value>in the database</value>
-  </data>
-  <data name="GameDetails_MediaTypes_Label" xml:space="preserve">
-    <value>Media types</value>
-  </data>
-  <data name="GameDetails_MediaTypes_Description" xml:space="preserve">
-    <value>with images</value>
-  </data>
-  <data name="GameDetails_Empty_Text" xml:space="preserve">
-    <value>Select a game to see its details</value>
-  </data>
   <!-- ImageGrid (GAME MEDIA GALLERY) -->
-  <data name="ImageGrid_AspectRatio_Header" xml:space="preserve">
-    <value>Aspect ratio</value>
-  </data>
-  <data name="ImageGrid_Resolution_Header" xml:space="preserve">
-    <value>Resolution</value>
-  </data>
-  <data name="ImageGrid_Coverage_Label" xml:space="preserve">
-    <value>Coverage (favs.)</value>
-  </data>
   <!-- WebView (WEB SEARCH) -->
   <data name="WebView_UsingGoogle_Tooltip" xml:space="preserve">
     <value>Using Google. Click to switch to SteamGridDB.</value>
@@ -260,57 +209,6 @@
   </data>
   <!-- StatsGlobal (GLOBAL STATISTICS) : tÃ­tulos y ayuda de las grÃ¡ficas -->
   <!-- StatsPlatform (GAME STATISTICS) -->
-  <data name="StatsPlatform_Scope_Header" xml:space="preserve">
-    <value>Scope</value>
-  </data>
-  <data name="StatsPlatform_Favourites_Label" xml:space="preserve">
-    <value>Favourites</value>
-  </data>
-  <data name="StatsPlatform_InPlatform_Label" xml:space="preserve">
-    <value>In platform</value>
-  </data>
-  <data name="StatsPlatform_Coverage_Label" xml:space="preserve">
-    <value>Coverage</value>
-  </data>
-  <data name="StatsPlatform_Coverage_Tooltip" xml:space="preserve">
-    <value>Show/hide the coverage panel</value>
-  </data>
-  <data name="StatsPlatform_CoverageNow_Label" xml:space="preserve">
-    <value>Coverage:</value>
-  </data>
-  <data name="StatsPlatform_AverageAll_Label" xml:space="preserve">
-    <value>Average (all platforms):</value>
-  </data>
-  <data name="StatsPlatform_CoverageByGame_Title" xml:space="preserve">
-    <value>Coverage - Game</value>
-  </data>
-  <data name="StatsPlatform_CoverageByGame_Help" xml:space="preserve">
-    <value>Coverage of type of media of each game in the platform, one point per game. The currently selected game is highlighted.</value>
-  </data>
-  <data name="StatsPlatform_CoverageDistribution_Title" xml:space="preserve">
-    <value>Coverage distribution - Games</value>
-  </data>
-  <data name="StatsPlatform_CoverageDistribution_Help" xml:space="preserve">
-    <value>Number of games grouped by how much of the media types they cover (0â€“20% â€¦ 80â€“100%).</value>
-  </data>
-  <data name="StatsPlatform_CoverageByType_Title" xml:space="preserve">
-    <value>Coverage - Media type</value>
-  </data>
-  <data name="StatsPlatform_CoverageByType_Help" xml:space="preserve">
-    <value>Share of the platform's games that have at least one media file (image or video) of each type (0â€“100%).</value>
-  </data>
-  <data name="StatsPlatform_MediaSetByType_Title" xml:space="preserve">
-    <value>Media set - Media type</value>
-  </data>
-  <data name="StatsPlatform_MediaSetByType_Help" xml:space="preserve">
-    <value>Total number of files (images or videos) in the platform per media type. The dashed reference line marks the number of games (one media file per game).</value>
-  </data>
-  <data name="StatsPlatform_CoveragePill_Label" xml:space="preserve">
-    <value>Coverage</value>
-  </data>
-  <data name="StatsPlatform_CoveragePill_Description" xml:space="preserve">
-    <value>Platform / All (average)</value>
-  </data>
   <!-- Common (mÃ¡s): diÃ¡logos -->
   <data name="Common_Discard_Label" xml:space="preserve">
     <value>Discard</value>
@@ -341,20 +239,11 @@
     <value>Existing images of this type:</value>
   </data>
   <!-- MainWindow : tÃ­tulos de los widgets del panel -->
-  <data name="MainWindow_GameStatsWidget_Title" xml:space="preserve">
-    <value>GAME STATISTICS</value>
-  </data>
   <data name="MainWindow_ActivityLogWidget_Title" xml:space="preserve">
     <value>ACTIVITY LOG</value>
   </data>
   <data name="MainWindow_WebSearchWidget_Title" xml:space="preserve">
     <value>WEB SEARCH</value>
-  </data>
-  <data name="MainWindow_GalleryWidget_Title" xml:space="preserve">
-    <value>GAME MEDIA GALLERY</value>
-  </data>
-  <data name="MainWindow_GameDetailsWidget_Title" xml:space="preserve">
-    <value>GAME DETAILS</value>
   </data>
   <!-- Common (mÃ¡s): botones de diÃ¡logo -->
   <data name="Common_Cancel_Label" xml:space="preserve">
@@ -415,22 +304,7 @@
     <value>Game image search strings</value>
   </data>
   <!-- MediaAuditService -->
-  <data name="MediaAuditService_UnknownType_Warning" xml:space="preserve">
-    <value>Type '{0}' (column '{1}') does not exist in MediaType; ignored.</value>
-  </data>
   <!-- ConsoleViewModel : diÃ¡logo/progreso de vaciar backup -->
-  <data name="ConsoleViewModel_EmptyBackup_Title" xml:space="preserve">
-    <value>Empty backup folder</value>
-  </data>
-  <data name="ConsoleViewModel_EmptyBackup_Content" xml:space="preserve">
-    <value>Do you want to delete the {0} backed-up media file(s) ({1} MB)? Operations that relied on these backups will no longer be undoable.</value>
-  </data>
-  <data name="ConsoleViewModel_Emptying_Progress" xml:space="preserve">
-    <value>Emptying backup folder...</value>
-  </data>
-  <data name="ConsoleViewModel_Emptied_Progress" xml:space="preserve">
-    <value>Backup folder emptied  |  {0} media files ({1} MB) deleted</value>
-  </data>
   <!-- YoutubeDownloadService : errores (antes solo en espaÃ±ol) -->
   <data name="Youtube_NoVideoStream_Error" xml:space="preserve">
     <value>This video has no downloadable video stream.</value>
@@ -586,13 +460,10 @@
   <data name="Toolbar_Widgets_Tooltip" xml:space="preserve"><value>Show or hide widgets in the panel</value></data>
   <data name="Toolbar_QuickSettings_Tooltip" xml:space="preserve"><value>Quick settings (thumbnails, sound, widget panel)</value></data>
   <data name="Toolbar_Resize_Tooltip" xml:space="preserve"><value>Resize the widgets in the panel</value></data>
-  <data name="Toolbar_TogglePlatformList_Tooltip" xml:space="preserve"><value>Show the platform list as a list</value></data>
   <data name="Common_Close_Tooltip" xml:space="preserve"><value>Close this window without saving changes</value></data>
   <data name="WidgetPanel_SplittersConfirm_Tooltip" xml:space="preserve"><value>Apply the new panel sizes</value></data>
   <data name="WidgetPanel_SplittersCancel_Tooltip" xml:space="preserve"><value>Discard the size changes and keep the previous layout</value></data>
   <data name="WidgetPanel_SplittersDefault_Tooltip" xml:space="preserve"><value>Reset the panels to their default sizes</value></data>
-  <data name="QuickSettings_Thumbnails_Header" xml:space="preserve"><value>THUMBNAILS</value></data>
-  <data name="QuickSettings_GameGallery_Label" xml:space="preserve"><value>Game gallery</value></data>
   <data name="QuickSettings_Widgets_Header" xml:space="preserve"><value>WIDGETS</value></data>
   <data name="QuickSettings_CornerRadius_Label" xml:space="preserve"><value>Corner radius</value></data>
   <data name="QuickSettings_Gap_Label" xml:space="preserve"><value>Gap</value></data>

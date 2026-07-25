@@ -18,7 +18,6 @@
             <helpers:NullToVisibilityConverter x:Key="HiddenIfNullConverter" />
             <helpers:BooleanToOpacityConverter x:Key="DimIfTrueConverter" />
             <helpers:BooleanToStrikethroughConverter x:Key="StrikethroughIfTrueConverter" />
-            <helpers:AuditStatusToBrushConverter x:Key="AuditStatusToBrushConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

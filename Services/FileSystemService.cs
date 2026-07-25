@@ -20,16 +20,12 @@ public class FileSystemService
 {
     #region Attributes
     private readonly AppSettings _appSettings;
-    private readonly SharedDataService _sharedDataService;
-    private readonly BackupService _backupService;
     #endregion
 
     #region Constructor
-    public FileSystemService(IOptions<AppSettings> appSettings, SharedDataService sharedDataService, BackupService backupService)
+    public FileSystemService(IOptions<AppSettings> appSettings)
     {
         _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
-        _sharedDataService = sharedDataService ?? throw new ArgumentNullException(nameof(sharedDataService));
-        _backupService = backupService ?? throw new ArgumentNullException(nameof(backupService));
     }
     #endregion
 
@@ -43,81 +39,6 @@ public class FileSystemService
     #endregion
 
     #region Methods
-    /// <summary>
-    /// Backs-up (if backup is enabled) and deletes the image of the game passed as parameter.
-    /// </summary>
-    /// <param name="image"></param>
-    /// <returns></returns>
-    /// <summary>
-    /// Hace una copia de seguridad de la imagen y la borra. Devuelve la ruta del fichero de backup creado
-    /// (para poder restaurarla en un undo), o <c>null</c> si no se borró nada (fichero inexistente o fallo).
-    /// </summary>
-    public async Task<string?> DeleteImageFileAsync(GameImage image)
-    {
-        string? backupFile = await Task.Run<string?>(() =>
-        {
-            try
-            {
-                if (File.Exists(image.File))
-                {
-                    // Backup the file before deletion into the app's BACKUP folder, a subfolder of where the
-                    // configuration file lives (%LocalAppData%\MM4LB\BACKUP), organized by platform/type. The
-                    // timestamp avoids collisions.
-                    string platform = _sharedDataService.SelectedPlatform?.Name ?? string.Empty;
-                    string type = image.Type?.Value ?? string.Empty;
-                    string backupFolder = Path.Combine(PersistAndRestoreService.SettingsFolderPath, "BACKUP", platform, type);
-                    string backupImageFile = Path.Combine(backupFolder, $"{image.Name}-{DateTime.Now.ToFileTimeUtc()}{image.FileExtension}");
-                    if (!Directory.Exists(backupFolder)) { _ = Directory.CreateDirectory(backupFolder); }
-                    if (!File.Exists(backupImageFile)) { File.Copy(image.File, backupImageFile); }
-
-                    // Deleting the file.
-                    File.Delete(image.File);
-                    return backupImageFile;
-                }
-            }
-            catch (Exception ex)
-            {
-                // Loguear: si el File.Copy del backup tuvo éxito pero el File.Delete falló, el llamador ve null
-                // ("no se borró nada") aunque quede un backup huérfano y el original en disco. Al menos deja rastro.
-                ExceptionService.LogToFile(ex, "Error backing up/deleting the image file.");
-            }
-            return null;
-        });
-
-        // Tras el Task.Run estamos de vuelta en el hilo del llamador (UI en los flujos que borran): registra el
-        // backup en el BackupService para que la pastilla del log refleje el nuevo tamaño/contador.
-        if (backupFile != null)
-        {
-            try { _backupService.RegisterBackup(new FileInfo(backupFile).Length); } catch { }
-        }
-
-        return backupFile;
-    }
-
-    /// <summary>
-    /// Restaura un fichero desde su copia de backup a su ruta original (no borra el backup). Usado por el
-    /// undo de operaciones que borraron imágenes.
-    /// </summary>
-    public async Task RestoreImageFileAsync(string backupFile, string targetFile)
-    {
-        await Task.Run(() =>
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(backupFile) && File.Exists(backupFile) && !File.Exists(targetFile))
-                {
-                    string? folder = Path.GetDirectoryName(targetFile);
-                    if (!string.IsNullOrEmpty(folder) && !Directory.Exists(folder)) { _ = Directory.CreateDirectory(folder); }
-                    File.Copy(backupFile, targetFile);
-                }
-            }
-            catch (Exception ex)
-            {
-                ExceptionService.LogToFile(ex, "Error restoring the image file from backup.");
-            }
-        });
-    }
-
     /// <summary>
     /// Returns an available file name taking into account the game file name and the folder where the images are.
     /// </summary>

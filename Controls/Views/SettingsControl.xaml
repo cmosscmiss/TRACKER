@@ -35,18 +35,6 @@
 
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Padding="24 16">
-            <!-- ==================== THUMBNAILS ==================== -->
-            <TextBlock Text="{loc:Str Key=QuickSettings_Thumbnails_Header}" Style="{StaticResource SettingsSectionHeaderStyle}" Margin="0" />
-            <template:SeparatorEx Margin="0 4 0 0" HorizontalAlignment="Stretch" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-            <Grid Style="{StaticResource SettingsRowStyle}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="700" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{loc:Str Key=QuickSettings_GameGallery_Label}" Style="{StaticResource SettingsLabelStyle}" />
-                <Slider Grid.Column="1" Orientation="Horizontal" Minimum="{x:Bind ViewModel.ImageGridGameViewModel.MinimumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" Maximum="{x:Bind ViewModel.ImageGridGameViewModel.MaximumSize, Mode=OneWay, Converter={StaticResource IntToDoubleConverter}}" LargeChange="50" Value="{x:Bind ViewModel.ImageGridGameViewModel.Width, Mode=TwoWay, Converter={StaticResource IntToDoubleConverter}}" />
-            </Grid>
-
             <!-- ==================== WIDGETS ==================== -->
             <TextBlock Text="{loc:Str Key=QuickSettings_Widgets_Header}" Style="{StaticResource SettingsSectionHeaderStyle}" />
             <template:SeparatorEx Margin="0 4 0 0" HorizontalAlignment="Stretch" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />

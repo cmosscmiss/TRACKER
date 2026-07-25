@@ -17,17 +17,11 @@ namespace MM4LB.Controls.ViewModels;
 public class ConsoleViewModel : WidgetViewModelBase
 {
     #region Attributes
-    private readonly BackupService _backupService;
     private readonly DialogsService _dialogsService;
     private readonly WindowService _windowService;
-
-    private IAsyncRelayCommand? _clearBackupCommand;
     #endregion
 
     #region Properties
-    /// <summary>Estadísticas de la carpeta de backup (nº de imágenes y tamaño) para la pastilla del log.</summary>
-    public BackupService BackupService => _backupService;
-
     public ObservableCollection<ProgressNotifier> LogEntries { get; private set; } = new();
 
     /// <summary>
@@ -52,19 +46,13 @@ public class ConsoleViewModel : WidgetViewModelBase
     /// cuando la consola no está como widget visible.
     /// </summary>
     public bool IsFooterViewerVisible => _appSettings.General.FooterEventViewerAlwaysVisible || IsHidden;
-
-    /// <summary>Vacía la carpeta de backup tras confirmación. El botón se habilita si hay backups.</summary>
-    public IAsyncRelayCommand ClearBackupCommand => _clearBackupCommand ??= new AsyncRelayCommand(ClearBackupAsync);
     #endregion
 
     #region Constructor
-    public ConsoleViewModel(BackupService backupService, DialogsService dialogsService, WindowService windowService, SharedDataService sharedDataService, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
+    public ConsoleViewModel(DialogsService dialogsService, WindowService windowService, SharedDataService sharedDataService, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
     {
-        _backupService = backupService;
         _dialogsService = dialogsService;
         _windowService = windowService;
-
-        _backupService.Cleared += OnBackupCleared;
 
         // El visor del pie sigue al evento de arriba: re-notifica LatestEntry cuando entra/sale un evento, e
         // IsHidden cuando la consola se añade/quita del WidgetPanel (SlotIndex).
@@ -103,7 +91,6 @@ public class ConsoleViewModel : WidgetViewModelBase
 
     public override void Dispose()
     {
-        _backupService.Cleared -= OnBackupCleared;
     }
 
     public override void LoadConfig()
@@ -112,64 +99,6 @@ public class ConsoleViewModel : WidgetViewModelBase
 
     public override void SaveConfig()
     {
-    }
-    #endregion
-
-    #region Methods (private)
-    private async Task ClearBackupAsync()
-    {
-        if (!_backupService.HasBackups)
-        {
-            return;
-        }
-
-        MM4LB.Services.LocalizationService? loc = MM4LB.Services.LocalizationService.Instance;
-        string emptyTitle = loc?[MM4LB.Helpers.LocKeys.ConsoleViewModel_EmptyBackup_Title] ?? "Empty backup folder";
-        string emptyContent = loc is not null
-            ? loc.Format(MM4LB.Helpers.LocKeys.ConsoleViewModel_EmptyBackup_Content, _backupService.ImagesCount, _backupService.SizeMb)
-            : $"Do you want to delete the {_backupService.ImagesCount} backed-up media file(s) ({_backupService.SizeMb} MB)? Operations that relied on these backups will no longer be undoable.";
-        bool confirmed = await _dialogsService.ConfirmAsync(_windowService.ActiveXamlRoot!, emptyTitle, emptyContent, loc?[MM4LB.Helpers.LocKeys.Common_Empty_Label] ?? "Empty", loc?[MM4LB.Helpers.LocKeys.Common_Cancel_Label] ?? "Cancel");
-
-        if (!confirmed)
-        {
-            return;
-        }
-
-        // Reporta la limpieza al ACTIVITY LOG (no-blocking: no afecta al dataset activo). ProgressService se
-        // resuelve por App.GetService para evitar el ciclo de DI (ProgressService → ConsoleViewModel → este VM).
-        int count = _backupService.ImagesCount;
-        double mb = _backupService.SizeMb;
-
-        ProgressService progress = App.GetService<ProgressService>();
-        ProgressNotifier notifier = progress.StartOperation();
-        notifier.IsIndeterminate = true;
-        notifier.Message = MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.ConsoleViewModel_Emptying_Progress] ?? "Emptying backup folder...";
-        progress.ProgressNotifier.Report(notifier);
-
-        await _backupService.ClearAsync();
-
-        notifier.IsIndeterminate = false;
-        notifier.Message = MM4LB.Services.LocalizationService.Instance is MM4LB.Services.LocalizationService emptiedLoc
-            ? emptiedLoc.Format(MM4LB.Helpers.LocKeys.ConsoleViewModel_Emptied_Progress, count, mb)
-            : $"Backup folder emptied  |  {count} media files ({mb} MB) deleted";
-        notifier.FinishOperation();
-        progress.ProgressNotifier.Report(notifier);
-        progress.FinishOperation();
-    }
-
-    /// <summary>
-    /// Al vaciar el backup, las operaciones cuyo undo restaura desde backup ya no pueden deshacerse: se les
-    /// quita la acción de undo (el botón desaparece). El undo de "añadir imagen" no usa backup y se conserva.
-    /// </summary>
-    private void OnBackupCleared()
-    {
-        foreach (ProgressNotifier entry in LogEntries)
-        {
-            if (entry.UndoNeedsBackup && entry.CanUndo)
-            {
-                entry.DisableUndo();
-            }
-        }
     }
     #endregion
 }

@@ -16,18 +16,6 @@ namespace MM4LB.Controls.ViewModels;
 /// </summary>
 public partial class PlatformListViewModel : WidgetViewModelBase
 {
-    #region Attributes
-    /// <summary>
-    /// Indica si el control debe comportarse visualmente como una lista.
-    /// Cuando su valor es <c>true</c>, el control muestra la colección de plataformas
-    /// mediante una <c>ListView</c>.
-    /// Cuando su valor es <c>false</c>, el control muestra la selección de plataformas
-    /// mediante un <c>ComboBox</c>.
-    /// </summary>
-    [ObservableProperty]
-    private bool behavesAsList;
-    #endregion
-
     #region Constructor
     /// <summary>
     /// Inicializa una nueva instancia de <see cref="PlatformListViewModel"/>.
@@ -57,15 +45,13 @@ public partial class PlatformListViewModel : WidgetViewModelBase
     /// </summary>
     public override void LoadConfig()
     {
-        BehavesAsList = _appSettings.PlatformListControl.BehavesAsList;
     }
 
     /// <summary>
-    /// Guarda en la configuración el estado visual actual del control y la plataforma seleccionada.
+    /// Guarda en la configuración la plataforma seleccionada.
     /// </summary>
     public override void SaveConfig()
     {
-        _appSettings.PlatformListControl.BehavesAsList = BehavesAsList;
         _appSettings.PlatformListControl.SelectedPlatform = SharedDataService.SelectedPlatform?.Name ?? string.Empty;
     }
 

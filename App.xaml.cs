@@ -68,21 +68,17 @@ public partial class App : Application
             services.AddSingleton<PlatformLoadingService>();
             services.AddSingleton<ImageLoadingService>();
             services.AddSingleton<ImageBinaryLoadingService>();
-            services.AddSingleton<ImageMatchingService>();
             services.AddSingleton<ExceptionService>();
             services.AddSingleton<ExceptionDialogService>();
             services.AddSingleton<ThemeService>();
             services.AddSingleton<LaunchBoxService>();
-            services.AddSingleton<GameMetadataService>();
             services.AddSingleton<SharedDataService>();
             services.AddSingleton<LocalizationService>();
             services.AddSingleton<ProgressService>();            
             services.AddSingleton<IStatisticsService, StatisticsService>();
-            services.AddSingleton<BackupService>();
             services.AddSingleton<FileSystemService>();
             services.AddSingleton<YoutubeDownloadService>();
             services.AddSingleton<DialogsService>();
-            services.AddSingleton<MediaAuditService>();
 
             // ViewModels (Windows)
             services.AddSingleton<LoadingWindowViewModel>();
@@ -91,12 +87,6 @@ public partial class App : Application
             // ViewModels (Controls)
             services.AddSingleton<PlatformListViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<PlatformListViewModel>());
-            services.AddSingleton<StatsPlatformViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<StatsPlatformViewModel>());
-            services.AddSingleton<GameDetailsViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<GameDetailsViewModel>());
-            services.AddSingleton<ImageGridGameViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ImageGridGameViewModel>());
             services.AddSingleton<ConsoleViewModel>();
             services.AddSingleton<LayoutSelectorViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<LayoutSelectorViewModel>());

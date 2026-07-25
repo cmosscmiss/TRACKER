@@ -25,10 +25,6 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid x:Name="PlatformListComboBox" Visibility="Visible" Opacity="1">
-            <ComboBox IsTextSearchEnabled="True" ItemsSource="{x:Bind ViewModel.SharedDataService.PlatformSet.Platforms, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedPlatform, Mode=TwoWay}" ItemTemplate="{StaticResource PlatformItemTemplate}" HorizontalAlignment="Stretch" Margin="16 0 18 8" />
-        </Grid>
-        
-        <ListView x:Name="PlatformListView" Visibility="Collapsed" Opacity="0" ItemsSource="{x:Bind ViewModel.SharedDataService.PlatformSet.Platforms, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedPlatform, Mode=TwoWay}" ItemTemplate="{StaticResource PlatformItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+        <ListView x:Name="PlatformListView" ItemsSource="{x:Bind ViewModel.SharedDataService.PlatformSet.Platforms, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedPlatform, Mode=TwoWay}" ItemTemplate="{StaticResource PlatformItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
     </Grid>
 </UserControl>

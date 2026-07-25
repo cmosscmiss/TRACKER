@@ -34,18 +34,8 @@ public static class LocKeys
 
 
     // GameDetails
-    public const string GameDetails_InLaunchBox_Label = "GameDetails_InLaunchBox_Label";
-    public const string GameDetails_NotInLaunchBox_Label = "GameDetails_NotInLaunchBox_Label";
-    public const string GameDetails_KnownImages_Label = "GameDetails_KnownImages_Label";
-    public const string GameDetails_KnownImages_Description = "GameDetails_KnownImages_Description";
-    public const string GameDetails_MediaTypes_Label = "GameDetails_MediaTypes_Label";
-    public const string GameDetails_MediaTypes_Description = "GameDetails_MediaTypes_Description";
-    public const string GameDetails_Empty_Text = "GameDetails_Empty_Text";
 
     // ImageGrid (GAME MEDIA GALLERY)
-    public const string ImageGrid_AspectRatio_Header = "ImageGrid_AspectRatio_Header";
-    public const string ImageGrid_Resolution_Header = "ImageGrid_Resolution_Header";
-    public const string ImageGrid_Coverage_Label = "ImageGrid_Coverage_Label";
 
     // WebView (WEB SEARCH)
     public const string WebView_UsingGoogle_Tooltip = "WebView_UsingGoogle_Tooltip";
@@ -62,23 +52,6 @@ public static class LocKeys
     // StatsGlobal (GLOBAL STATISTICS)
 
     // StatsPlatform (GAME STATISTICS)
-    public const string StatsPlatform_Scope_Header = "StatsPlatform_Scope_Header";
-    public const string StatsPlatform_Favourites_Label = "StatsPlatform_Favourites_Label";
-    public const string StatsPlatform_InPlatform_Label = "StatsPlatform_InPlatform_Label";
-    public const string StatsPlatform_Coverage_Label = "StatsPlatform_Coverage_Label";
-    public const string StatsPlatform_Coverage_Tooltip = "StatsPlatform_Coverage_Tooltip";
-    public const string StatsPlatform_CoverageNow_Label = "StatsPlatform_CoverageNow_Label";
-    public const string StatsPlatform_AverageAll_Label = "StatsPlatform_AverageAll_Label";
-    public const string StatsPlatform_CoverageByGame_Title = "StatsPlatform_CoverageByGame_Title";
-    public const string StatsPlatform_CoverageByGame_Help = "StatsPlatform_CoverageByGame_Help";
-    public const string StatsPlatform_CoverageDistribution_Title = "StatsPlatform_CoverageDistribution_Title";
-    public const string StatsPlatform_CoverageDistribution_Help = "StatsPlatform_CoverageDistribution_Help";
-    public const string StatsPlatform_CoverageByType_Title = "StatsPlatform_CoverageByType_Title";
-    public const string StatsPlatform_CoverageByType_Help = "StatsPlatform_CoverageByType_Help";
-    public const string StatsPlatform_MediaSetByType_Title = "StatsPlatform_MediaSetByType_Title";
-    public const string StatsPlatform_MediaSetByType_Help = "StatsPlatform_MediaSetByType_Help";
-    public const string StatsPlatform_CoveragePill_Label = "StatsPlatform_CoveragePill_Label";
-    public const string StatsPlatform_CoveragePill_Description = "StatsPlatform_CoveragePill_Description";
 
 
     // Common (mÃ¡s): diÃ¡logos
@@ -95,11 +68,8 @@ public static class LocKeys
     public const string PlatformImageDropDialog_ExistingImages_Label = "PlatformImageDropDialog_ExistingImages_Label";
 
     // MainWindow : tÃ­tulos de widgets
-    public const string MainWindow_GameStatsWidget_Title = "MainWindow_GameStatsWidget_Title";
     public const string MainWindow_ActivityLogWidget_Title = "MainWindow_ActivityLogWidget_Title";
     public const string MainWindow_WebSearchWidget_Title = "MainWindow_WebSearchWidget_Title";
-    public const string MainWindow_GalleryWidget_Title = "MainWindow_GalleryWidget_Title";
-    public const string MainWindow_GameDetailsWidget_Title = "MainWindow_GameDetailsWidget_Title";
 
     // Common (mÃ¡s): botones de diÃ¡logo
     public const string Common_Cancel_Label = "Common_Cancel_Label";
@@ -128,13 +98,8 @@ public static class LocKeys
     public const string SearchStrings_GameImageTitle = "SearchStrings_GameImageTitle";
 
     // MediaAuditService
-    public const string MediaAuditService_UnknownType_Warning = "MediaAuditService_UnknownType_Warning";
 
     // ConsoleViewModel
-    public const string ConsoleViewModel_EmptyBackup_Title = "ConsoleViewModel_EmptyBackup_Title";
-    public const string ConsoleViewModel_EmptyBackup_Content = "ConsoleViewModel_EmptyBackup_Content";
-    public const string ConsoleViewModel_Emptying_Progress = "ConsoleViewModel_Emptying_Progress";
-    public const string ConsoleViewModel_Emptied_Progress = "ConsoleViewModel_Emptied_Progress";
 
     // YoutubeDownloadService
     public const string Youtube_NoVideoStream_Error = "Youtube_NoVideoStream_Error";
@@ -238,7 +203,6 @@ public static class LocKeys
     public const string Toolbar_Widgets_Tooltip = "Toolbar_Widgets_Tooltip";
     public const string Toolbar_QuickSettings_Tooltip = "Toolbar_QuickSettings_Tooltip";
     public const string Toolbar_Resize_Tooltip = "Toolbar_Resize_Tooltip";
-    public const string Toolbar_TogglePlatformList_Tooltip = "Toolbar_TogglePlatformList_Tooltip";
 
     // ChartTypeSelector (toolbar de graficas)
     public const string ChartType_Bars_Label = "ChartType_Bars_Label";
@@ -258,10 +222,6 @@ public static class LocKeys
     // ImageAudit (MEDIA AUDIT)
 
     // Console (ACTIVITY LOG)
-    public const string Console_BackupMedia_Label = "Console_BackupMedia_Label";
-    public const string Console_MediaTotalSize_Description = "Console_MediaTotalSize_Description";
-    public const string Console_Backup_Label = "Console_Backup_Label";
-    public const string Console_Backup_Tooltip = "Console_Backup_Tooltip";
 
     // FooterEventViewer
     public const string FooterEventViewer_OlderEvent_Tooltip = "FooterEventViewer_OlderEvent_Tooltip";
@@ -300,11 +260,8 @@ public static class LocKeys
     // Piloto (F0): validar idioma en caliente + toggle de ayuda. Se retirarÃ¡ al terminar la migraciÃ³n.
 
     // *_WidgetHelp_Description : descripciÃ³n del TeachingTip de ayuda de cada widget (icono de la cabecera).
-    public const string StatsPlatform_WidgetHelp_Description = "StatsPlatform_WidgetHelp_Description";
     public const string Console_WidgetHelp_Description = "Console_WidgetHelp_Description";
     public const string WebView_WidgetHelp_Description = "WebView_WidgetHelp_Description";
-    public const string ImageGrid_WidgetHelp_Description = "ImageGrid_WidgetHelp_Description";
-    public const string GameDetails_WidgetHelp_Description = "GameDetails_WidgetHelp_Description";
 
     // F4 â€” tooltips para los botones con label visible (explicativos, van mÃ¡s allÃ¡ del label).
     public const string Common_Close_Tooltip = "Common_Close_Tooltip";
@@ -312,8 +269,6 @@ public static class LocKeys
     public const string WidgetPanel_SplittersCancel_Tooltip = "WidgetPanel_SplittersCancel_Tooltip";
     public const string WidgetPanel_SplittersDefault_Tooltip = "WidgetPanel_SplittersDefault_Tooltip";
     // Panel de ajustes rÃ¡pidos (icono equalizer de la toolbar).
-    public const string QuickSettings_Thumbnails_Header = "QuickSettings_Thumbnails_Header";
-    public const string QuickSettings_GameGallery_Label = "QuickSettings_GameGallery_Label";
     public const string QuickSettings_Widgets_Header = "QuickSettings_Widgets_Header";
     public const string QuickSettings_CornerRadius_Label = "QuickSettings_CornerRadius_Label";
     public const string QuickSettings_Gap_Label = "QuickSettings_Gap_Label";

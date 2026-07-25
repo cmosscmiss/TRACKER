@@ -83,8 +83,6 @@ public sealed partial class MainWindow : Window
         _themeService = App.GetService<ThemeService>();
         _themeService.ThemeChanged += OnThemeChanged;
 
-        RestorePlatformListLayout();
-
         if (Content is FrameworkElement root)
         {
             root.DataContext = _viewModel;
@@ -142,11 +140,8 @@ public sealed partial class MainWindow : Window
     {
         var widgetEntries = new List<WidgetPanelControl.WidgetEntry>
         {
-            new(ucStatsPlatformControl.ViewModel!, ucStatsPlatformWidget),
             new(ucConsoleControl.ViewModel!, ucConsoleWidget),
             new(ucWebViewControl.ViewModel!, ucWebViewWidget),
-            new(ucImageGridControl.ViewModel!, ucImageGridWidget),
-            new(ucGameDetailsControl.ViewModel!, ucGameDetailsWidget),
         };
 
         WidgetPanel.SetWidgets(widgetEntries);
@@ -160,12 +155,6 @@ public sealed partial class MainWindow : Window
 
         // Deja terminar los bindings y el primer layout pass.
         await Task.Yield();
-
-        // Reaplica el estado inicial sin animación una vez que el árbol visual ya está cargado.
-        RestorePlatformListLayout();
-
-        // A partir de aquí, los cambios ya se consideran interacción posterior.
-        _viewModel.PlatformListViewModel.PropertyChanged += OnPlatformListViewModelPropertyChanged;
 
         // Ya con la UI montada: si falta ffmpeg, se descarga en segundo plano (no se espera) y se cachea, para
         // que las descargas de vídeo en HD funcionen luego sin esperas. El método no lanza (gestiona sus errores).
@@ -185,8 +174,6 @@ public sealed partial class MainWindow : Window
         _sharedDataService.PropertyChanged -= OnSharedDataServicePropertyChanged;
 
         DisposeToolbarBehavior();
-
-        _viewModel.PlatformListViewModel.PropertyChanged -= OnPlatformListViewModelPropertyChanged;
 
         _viewModel.Dispose();
     }

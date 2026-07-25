@@ -43,7 +43,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition x:Name="rowPlatformList" Height="Auto" />
+                                <RowDefinition x:Name="rowPlatformList" Height="*" />
                             </Grid.RowDefinitions>
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" Padding="12 12 0 0">
@@ -77,20 +77,11 @@
                         <!-- Widgets area -->
                         <Grid Grid.Row="0" Grid.RowSpan="2">
                             <uc:WidgetPanelControl x:Name="WidgetPanel" Layout="{Binding LayoutSelectorViewModel.SelectedLayout}" SplittersVisible="{Binding LayoutSelectorViewModel.SplittersVisible, Mode=OneWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}" Margin="{Binding LayoutSelectorViewModel.WidgetPanelMargin}">
-                                <uc:WidgetBaseControl x:Name="ucStatsPlatformWidget" HelpDescriptionKey="StatsPlatform_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_GameStatsWidget_Title}" Title="{Binding SharedDataService.SelectedPlatform.Name, Mode=OneWay}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:StatsPlatformControl x:Name="ucStatsPlatformControl" ViewModel="{Binding StatsPlatformViewModel}"></uc:StatsPlatformControl>
-                                </uc:WidgetBaseControl>
                                 <uc:WidgetBaseControl x:Name="ucConsoleWidget" HelpDescriptionKey="Console_WidgetHelp_Description" Title="{loc:Str Key=MainWindow_ActivityLogWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:ConsoleControl x:Name="ucConsoleControl" ViewModel="{Binding ConsoleViewModel}"></uc:ConsoleControl>
                                 </uc:WidgetBaseControl>
                                 <uc:WidgetBaseControl x:Name="ucWebViewWidget" HelpDescriptionKey="WebView_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_WebSearchWidget_Title}" Title="{Binding WebViewViewModel.SearchString}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:WebViewControl x:Name="ucWebViewControl" ViewModel="{Binding WebViewViewModel}"></uc:WebViewControl>
-                                </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucImageGridWidget" HelpDescriptionKey="ImageGrid_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_GalleryWidget_Title}" Title="{Binding SharedDataService.SelectedGame.Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:ImageGridControl x:Name="ucImageGridControl" ViewModel="{Binding ImageGridGameViewModel}"></uc:ImageGridControl>
-                                </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucGameDetailsWidget" HelpDescriptionKey="GameDetails_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_GameDetailsWidget_Title}" Title="{Binding SharedDataService.SelectedGame.Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:GameDetailsControl x:Name="ucGameDetailsControl" ViewModel="{Binding GameDetailsViewModel}"></uc:GameDetailsControl>
                                 </uc:WidgetBaseControl>
                             </uc:WidgetPanelControl>
                         </Grid>
@@ -142,7 +133,7 @@
         <!-- Toolbar -->
         <Grid>
             <Border x:Name="ucToolbarHoverZone" Height="32" VerticalAlignment="Top" Margin="140 8" Background="Transparent"/>
-            <uc:ToolbarControl x:Name="ucToolbar" TogglesDisabled="{Binding IsAnimating, Mode=OneWay}" PlatformListBehavesAsList="{Binding PlatformListViewModel.BehavesAsList, Mode=TwoWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}">
+            <uc:ToolbarControl x:Name="ucToolbar" TogglesDisabled="{Binding IsAnimating, Mode=OneWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}">
                 <UserControl.RenderTransform>
                     <TranslateTransform x:Name="ucToolbarTransform" Y="-140"/>
                 </UserControl.RenderTransform>

@@ -517,7 +517,6 @@ public class AppSettings
 
     public class PlatformListControlSettings
     {
-        public bool BehavesAsList { get; set; } = true;
         public string SelectedPlatform { get; set; } = "";
     }
 

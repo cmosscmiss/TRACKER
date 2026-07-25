@@ -50,18 +50,6 @@ public class MainWindowViewModel : WidgetViewModelBase
     {
         get; private set;
     }
-    public StatsPlatformViewModel StatsPlatformViewModel
-    {
-        get; private set;
-    }
-    public GameDetailsViewModel GameDetailsViewModel
-    {
-        get; private set;
-    }
-    public ImageGridGameViewModel ImageGridGameViewModel
-    {
-        get; private set;
-    }
     public PlatformListViewModel PlatformListViewModel
     {
         get; private set;
@@ -77,16 +65,13 @@ public class MainWindowViewModel : WidgetViewModelBase
     #endregion
 
     #region Constructors
-    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, YoutubeDownloadService youtubeDownloadService, ConsoleViewModel consoleViewModel, StatsPlatformViewModel statsPlatformViewModel, GameDetailsViewModel gameDetailsViewModel, PlatformListViewModel platformListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, ImageGridGameViewModel imageGridGameViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
+    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, YoutubeDownloadService youtubeDownloadService, ConsoleViewModel consoleViewModel, PlatformListViewModel platformListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
     {
         _progressService = progressService;
         _sharedDataService = sharedDataService;
         _youtubeDownloadService = youtubeDownloadService;
 
         ConsoleViewModel = consoleViewModel;
-        StatsPlatformViewModel = statsPlatformViewModel;
-        GameDetailsViewModel = gameDetailsViewModel;
-        ImageGridGameViewModel = imageGridGameViewModel;
         PlatformListViewModel = platformListViewModel;
         LayoutSelectorViewModel = layoutSelectorViewModel;
         WebViewViewModel = webViewViewModel;

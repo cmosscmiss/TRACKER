@@ -39,13 +39,6 @@ public sealed partial class ToolbarControl : UserControl
         set => SetValue(TogglesDisabledProperty, value);
     }
 
-    public static readonly DependencyProperty PlatformListBehavesAsListProperty = DependencyProperty.Register(nameof(PlatformListBehavesAsList), typeof(bool), typeof(ToolbarControl), new PropertyMetadata(true, OnPlatformListBehavesAsListChanged));
-
-    public bool PlatformListBehavesAsList
-    {
-        get => (bool)GetValue(PlatformListBehavesAsListProperty);
-        set => SetValue(PlatformListBehavesAsListProperty, value);
-    }
 
     public static readonly DependencyProperty SplittersEnabledProperty = DependencyProperty.Register(nameof(SplittersEnabled), typeof(bool), typeof(ToolbarControl), new PropertyMetadata(false, OnSplittersEnabledChanged));
 
@@ -73,11 +66,6 @@ public sealed partial class ToolbarControl : UserControl
         foreach (var btn in ToolbarButtonsPanel.Children.OfType<ToolbarButtonIcon>())
             btn.Clicked += (_, __) => OnButtonSelected(btn);
 
-        foreach (var sw in ToolbarSwitchesPanel.Children.OfType<ToolbarButtonIcon>())
-            sw.Clicked += (_, __) => OnToggleClicked(sw);
-
-        // El toggle de splitters vive fuera de ToolbarSwitchesPanel (grupo propio tras el botón de
-        // ajustes), por lo que el bucle anterior no lo alcanza; se engancha aquí explícitamente.
         SplittersToggle.Clicked += (_, __) => OnToggleClicked(SplittersToggle);
 
         await Task.Yield();
@@ -90,7 +78,6 @@ public sealed partial class ToolbarControl : UserControl
         ToolbarSelectedItemLine.Width = 0;
         ToolbarSelectedItemLineTranslate.X = 0;
 
-        ApplyPlatformListToggleState(PlatformListBehavesAsList);
         ApplySplittersToggleState(SplittersEnabled);
         ApplySwitchesEnabledState(!TogglesDisabled);
 
@@ -142,11 +129,6 @@ public sealed partial class ToolbarControl : UserControl
 
         switch (sw.Name)
         {
-            case "PlatformListToggle":
-                sw.IsChecked = !sw.IsChecked;
-                PlatformListBehavesAsList = sw.IsChecked;
-                break;
-
             case "SplittersToggle":
                 sw.IsChecked = !sw.IsChecked;
                 SplittersEnabled = sw.IsChecked;
@@ -169,17 +151,6 @@ public sealed partial class ToolbarControl : UserControl
         }
     }
 
-    private static void OnPlatformListBehavesAsListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is not ToolbarControl control)
-            return;
-
-        if (e.NewValue is bool behavesAsList)
-        {
-            control.ApplyPlatformListToggleState(behavesAsList);
-        }
-    }
-
     private static void OnSplittersEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is not ToolbarControl control)
@@ -195,14 +166,6 @@ public sealed partial class ToolbarControl : UserControl
 
     #region Methods (private) - Switches
 
-    private void ApplyPlatformListToggleState(bool behavesAsList)
-    {
-        if (PlatformListToggle is null)
-            return;
-
-        PlatformListToggle.IsChecked = behavesAsList;
-    }
-
     private void ApplySplittersToggleState(bool enabled)
     {
         if (SplittersToggle is null)
@@ -213,13 +176,10 @@ public sealed partial class ToolbarControl : UserControl
 
     private void ApplySwitchesEnabledState(bool enabled)
     {
-        if (PlatformListToggle is null || SplittersToggle is null)
+        if (SplittersToggle is null)
             return;
 
-        PlatformListToggle.IsEnabled = enabled;
         SplittersToggle.IsEnabled = enabled;
-
-        PlatformListToggle.Opacity = enabled ? 1.0 : 0.45;
         SplittersToggle.Opacity = enabled ? 1.0 : 0.45;
     }
 

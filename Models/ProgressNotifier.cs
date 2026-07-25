@@ -145,15 +145,6 @@ public class ProgressNotifier : ObservableObject
         }
     }
 
-    /// <summary>
-    /// True si el undo de esta operación depende de ficheros de backup para restaurar (borrar huérfanas, o
-    /// import con Discard). Al vaciar el backup, estas entries dejan de poder deshacerse.
-    /// </summary>
-    public bool UndoNeedsBackup
-    {
-        get; set;
-    }
-
     /// <summary>La entry es reversible: tiene acción de undo, su operación ya terminó y no se ha deshecho aún.</summary>
     public bool CanUndo => _undoAction != null && IsOperationFinished && !IsUndone;
 

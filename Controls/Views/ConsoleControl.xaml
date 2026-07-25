@@ -13,12 +13,7 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <ScrollViewer Grid.Row="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled"
+        <ScrollViewer VerticalScrollMode="Auto" HorizontalScrollMode="Disabled"
               HorizontalScrollBarVisibility="Disabled">
             <Grid Margin="0 0 16 0">
                 <ItemsControl ItemsSource="{x:Bind ViewModel.LogEntries, Mode=OneWay}">
@@ -63,21 +58,5 @@
                 </ItemsControl>
             </Grid>
         </ScrollViewer>
-
-        <Grid Grid.Row="1">
-            <uc:WidgetStatCardControl Grid.Column="0" VisualStyle="LateralAccentBar" ColorVariant="ThemeAccent">
-                <StackPanel Margin="0 4">                    
-                    <StackPanel Orientation="Horizontal" Spacing="24">
-                        <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="SplitPanel" ColorVariant="ThemeAccent" Label="{loc:Str Key=Console_BackupMedia_Label}" Value="{x:Bind sys:String.Format(x:Null,'{0} / {1} MB', ViewModel.BackupService.ImagesCount, ViewModel.BackupService.SizeMb), Mode=OneWay}" Description="{loc:Str Key=Console_MediaTotalSize_Description}" HasBorder="False"/>
-                        <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                        <AppBarButton Label="{loc:Str Key=Console_Backup_Label}" Command="{x:Bind ViewModel.ClearBackupCommand}" IsEnabled="{x:Bind ViewModel.BackupService.HasBackups, Mode=OneWay}" help:Help.Key="Console_Backup_Tooltip" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <AppBarButton.Content>
-                                <FontIcon Glyph="&#xE74D;"/>
-                            </AppBarButton.Content>
-                        </AppBarButton>
-                    </StackPanel>
-                </StackPanel>
-            </uc:WidgetStatCardControl>
-        </Grid>
     </Grid>
 </UserControl>
