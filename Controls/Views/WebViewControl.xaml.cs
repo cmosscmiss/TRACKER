@@ -12,12 +12,12 @@ namespace MM4LB.Controls.Views;
 
 /// <summary>
 /// Control visual encargado de mostrar un WebView2 dentro del sistema de widgets de MM4LB.
-/// 
+///
 /// La navegación no depende de IsEnabled, sino del estado funcional del widget:
 /// si el ViewModel tiene SlotIndex == -1, el widget se considera inactivo y no debe navegar.
 /// Cuando SlotIndex pasa a un valor distinto de -1, el widget se considera activo y puede navegar
 /// a la URL preparada por el ViewModel.
-/// 
+///
 /// Responsabilidades principales:
 /// - Inicializar WebView2.
 /// - Escuchar las peticiones de navegación emitidas por el ViewModel.
@@ -31,86 +31,6 @@ public sealed partial class WebViewControl : UserControl
 {
     #region Attributes
     private bool _isWidgetActive;
-
-    /// <summary>
-    /// Prefijo de los mensajes postMessage emitidos por el script inyectado para identificar
-    /// las peticiones de "añadir imagen". Debe coincidir con el prefijo usado en <see cref="ImagePickerScript"/>.
-    /// </summary>
-    private const string ImagePickMessagePrefix = "mm4lb-add-image:";
-
-    /// <summary>
-    /// Script inyectado en cada documento que permite elegir una imagen con doble clic o Ctrl+clic
-    /// y enviar su URL al host mediante postMessage.
-    ///
-    /// Se usan clics (no drag) porque el arrastre desde WebView2 hacia XAML está roto en WinUI 3;
-    /// los eventos de clic, en cambio, funcionan con normalidad.
-    /// </summary>
-    private const string ImagePickerScript = @"
-(function () {
-    if (window.__mm4lbImagePickerInstalled) { return; }
-    window.__mm4lbImagePickerInstalled = true;
-
-    function sendImage(target) {
-        var img = target && target.closest ? target.closest('img') : null;
-        if (!img) { return false; }
-        var url = img.currentSrc || img.src;
-        if (!url) { return false; }
-        window.chrome.webview.postMessage('mm4lb-add-image:' + url);
-        return true;
-    }
-
-    document.addEventListener('dblclick', function (e) {
-        if (sendImage(e.target)) { e.preventDefault(); }
-    }, true);
-
-    document.addEventListener('click', function (e) {
-        if (!e.ctrlKey) { return; }
-        if (sendImage(e.target)) { e.preventDefault(); e.stopPropagation(); }
-    }, true);
-})();
-";
-
-    /// <summary>
-    /// Prefijo de los mensajes postMessage para las peticiones de "añadir vídeo" (debe coincidir con
-    /// <see cref="VideoPickerScript"/>).
-    /// </summary>
-    private const string VideoPickMessagePrefix = "mm4lb-add-video:";
-
-    /// <summary>
-    /// Script inyectado en las páginas de YouTube (modo vídeo) que permite elegir un vídeo con doble clic o
-    /// Ctrl+clic y enviar su URL de visionado (watch?v=...) al host. Busca el enlace de vídeo más cercano al
-    /// clic (resultados de búsqueda, recomendados) y, en su defecto, usa la URL de la propia página si es la de
-    /// un vídeo. Mismo enfoque de clics que el de imágenes (el drag desde WebView2 está roto en WinUI 3).
-    /// </summary>
-    private const string VideoPickerScript = @"
-(function () {
-    if (window.__mm4lbVideoPickerInstalled) { return; }
-    window.__mm4lbVideoPickerInstalled = true;
-
-    function videoUrlFrom(target) {
-        var a = target && target.closest ? target.closest('a[href*=""/watch?v=""]') : null;
-        if (a && a.href) { return a.href; }
-        if (location.href.indexOf('/watch?v=') !== -1) { return location.href; }
-        return null;
-    }
-
-    function sendVideo(target) {
-        var url = videoUrlFrom(target);
-        if (!url) { return false; }
-        window.chrome.webview.postMessage('mm4lb-add-video:' + url);
-        return true;
-    }
-
-    document.addEventListener('dblclick', function (e) {
-        if (sendVideo(e.target)) { e.preventDefault(); e.stopPropagation(); }
-    }, true);
-
-    document.addEventListener('click', function (e) {
-        if (!e.ctrlKey) { return; }
-        if (sendVideo(e.target)) { e.preventDefault(); e.stopPropagation(); }
-    }, true);
-})();
-";
     #endregion
 
     #region Dependency Properties
@@ -139,7 +59,7 @@ public sealed partial class WebViewControl : UserControl
     #region Subscribed Events (Lifecycle)
     /// <summary>
     /// Se ejecuta cuando el control entra en el árbol visual.
-    /// 
+    ///
     /// Inicializa WebView2, carga la configuración del ViewModel, conecta los eventos del ViewModel
     /// y sincroniza el estado inicial del widget para decidir si debe navegar inmediatamente.
     /// </summary>
@@ -173,7 +93,7 @@ public sealed partial class WebViewControl : UserControl
 
     /// <summary>
     /// Se ejecuta cuando el control sale del árbol visual.
-    /// 
+    ///
     /// Limpia las suscripciones al ViewModel y a los eventos internos de WebView2 para evitar
     /// referencias persistentes y comportamientos duplicados al volver a cargar el control.
     /// </summary>
@@ -185,8 +105,6 @@ public sealed partial class WebViewControl : UserControl
         if (MyWebView.CoreWebView2 is not null)
         {
             MyWebView.CoreWebView2.NewWindowRequested -= MyWebView_NewWindowRequested;
-            MyWebView.CoreWebView2.ContextMenuRequested -= MyWebView_ContextMenuRequested;
-            MyWebView.CoreWebView2.WebMessageReceived -= MyWebView_WebMessageReceived;
         }
     }
     #endregion
@@ -194,7 +112,7 @@ public sealed partial class WebViewControl : UserControl
     #region Subscribed events (ViewModel)
     /// <summary>
     /// Atiende una petición de navegación emitida por el ViewModel.
-    /// 
+    ///
     /// Si el widget no está activo, la petición se ignora. La URL permanece almacenada en el
     /// ViewModel y podrá usarse más adelante cuando el widget vuelva a tener un SlotIndex válido.
     /// </summary>
@@ -210,7 +128,7 @@ public sealed partial class WebViewControl : UserControl
 
     /// <summary>
     /// Reacciona a cambios en propiedades relevantes del ViewModel.
-    /// 
+    ///
     /// Actualmente solo escucha SlotIndex, porque es la propiedad que determina si el widget
     /// está realmente activo dentro del layout.
     /// </summary>
@@ -226,7 +144,7 @@ public sealed partial class WebViewControl : UserControl
     #region Activation logic
     /// <summary>
     /// Indica si el widget está activo dentro del layout.
-    /// 
+    ///
     /// Un SlotIndex igual a -1 significa que el widget no está visible o no está asignado
     /// a ningún slot, por lo que no debe ejecutar navegación.
     /// </summary>
@@ -234,7 +152,7 @@ public sealed partial class WebViewControl : UserControl
 
     /// <summary>
     /// Sincroniza el estado activo/inactivo del widget.
-    /// 
+    ///
     /// Si el widget acaba de pasar de inactivo a activo, navega a la URL actualmente preparada
     /// por el ViewModel. Esto permite que el ViewModel mantenga la URL actualizada aunque el
     /// widget esté oculto, y que la navegación se ejecute solo cuando vuelva a estar visible.
@@ -260,7 +178,7 @@ public sealed partial class WebViewControl : UserControl
 
     /// <summary>
     /// Navega a la URL actualmente almacenada en el ViewModel, si existe.
-    /// 
+    ///
     /// Este método se utiliza principalmente cuando el widget se activa después de haber estado
     /// fuera del layout.
     /// </summary>
@@ -276,7 +194,7 @@ public sealed partial class WebViewControl : UserControl
     #region WebView Events
     /// <summary>
     /// Se ejecuta cuando CoreWebView2 termina de inicializarse.
-    /// 
+    ///
     /// Registra el tratamiento de nuevas ventanas para evitar que enlaces externos o target="_blank"
     /// abran una ventana separada fuera del control.
     /// </summary>
@@ -295,128 +213,15 @@ public sealed partial class WebViewControl : UserControl
 
         sender.CoreWebView2.NewWindowRequested -= MyWebView_NewWindowRequested;
         sender.CoreWebView2.NewWindowRequested += MyWebView_NewWindowRequested;
-
-        // Image picking from the browser: a custom context menu command plus double-click / Ctrl+click.
-        // The double-click / Ctrl+click behaviour is provided by a script injected on every navigation
-        // (see MyWebView_NavigationCompleted), because clicks work while WebView2 drag events do not.
-        sender.CoreWebView2.ContextMenuRequested -= MyWebView_ContextMenuRequested;
-        sender.CoreWebView2.ContextMenuRequested += MyWebView_ContextMenuRequested;
-
-        sender.CoreWebView2.WebMessageReceived -= MyWebView_WebMessageReceived;
-        sender.CoreWebView2.WebMessageReceived += MyWebView_WebMessageReceived;
-    }
-
-    /// <summary>
-    /// Añade un comando "Add to game images" al menú contextual cuando el usuario hace clic
-    /// derecho sobre una imagen del navegador. Al seleccionarlo, la imagen se añade al juego
-    /// seleccionado y queda seleccionada.
-    /// </summary>
-    private void MyWebView_ContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
-    {
-        // En modo vídeo (YouTube) se ofrece "Add to game videos" sobre un enlace de vídeo o la página de un vídeo.
-        if (ViewModel?.IsVideoSearch == true)
-        {
-            AddVideoContextMenuItem(sender, args);
-            return;
-        }
-
-        CoreWebView2ContextMenuTarget target = args.ContextMenuTarget;
-
-        if (target.Kind != CoreWebView2ContextMenuTargetKind.Image || !target.HasSourceUri)
-        {
-            return;
-        }
-
-        string imageUrl = target.SourceUri;
-
-        if (string.IsNullOrWhiteSpace(imageUrl))
-        {
-            return;
-        }
-
-        CoreWebView2ContextMenuItem addImageItem = sender.Environment.CreateContextMenuItem(
-            MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.WebView_AddToGameImages_MenuItem] ?? "Add to game images",
-            null,
-            CoreWebView2ContextMenuItemKind.Command);
-
-        addImageItem.CustomItemSelected += (menuItem, e) => _ = ViewModel?.AddImageFromBrowserAsync(imageUrl);
-
-        args.MenuItems.Insert(0, addImageItem);
-    }
-
-    /// <summary>
-    /// Añade el comando "Add to game videos" cuando, en modo vídeo, el clic derecho recae sobre un enlace de
-    /// vídeo de YouTube o sobre la propia página de un vídeo (watch?v=...). Descarga el vídeo y lo añade al juego.
-    /// </summary>
-    private void AddVideoContextMenuItem(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
-    {
-        CoreWebView2ContextMenuTarget target = args.ContextMenuTarget;
-
-        string? videoUrl = null;
-        if (target.HasLinkUri && YoutubeDownloadService.IsYoutubeVideoUrl(target.LinkUri))
-        {
-            videoUrl = target.LinkUri;
-        }
-        else if (YoutubeDownloadService.IsYoutubeVideoUrl(sender.Source))
-        {
-            videoUrl = sender.Source;
-        }
-
-        if (string.IsNullOrWhiteSpace(videoUrl))
-        {
-            return;
-        }
-
-        CoreWebView2ContextMenuItem addVideoItem = sender.Environment.CreateContextMenuItem(
-            MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.WebView_AddToGameVideos_MenuItem] ?? "Add to game videos",
-            null,
-            CoreWebView2ContextMenuItemKind.Command);
-
-        addVideoItem.CustomItemSelected += (menuItem, e) => _ = ViewModel?.AddVideoFromBrowserAsync(videoUrl);
-
-        args.MenuItems.Insert(0, addVideoItem);
-    }
-
-    /// <summary>
-    /// Recibe los mensajes del script inyectado (doble clic / Ctrl+clic sobre una imagen) y
-    /// reenvía la URL al ViewModel para añadir la imagen al juego seleccionado.
-    /// </summary>
-    private void MyWebView_WebMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
-    {
-        string message;
-
-        try
-        {
-            message = args.TryGetWebMessageAsString();
-        }
-        catch
-        {
-            // The message was not a string: it does not come from our image picker script.
-            return;
-        }
-
-        if (string.IsNullOrEmpty(message))
-        {
-            return;
-        }
-
-        if (message.StartsWith(ImagePickMessagePrefix, StringComparison.Ordinal))
-        {
-            _ = ViewModel?.AddImageFromBrowserAsync(message[ImagePickMessagePrefix.Length..]);
-        }
-        else if (message.StartsWith(VideoPickMessagePrefix, StringComparison.Ordinal))
-        {
-            _ = ViewModel?.AddVideoFromBrowserAsync(message[VideoPickMessagePrefix.Length..]);
-        }
     }
 
     /// <summary>
     /// Se ejecuta al finalizar una navegación del WebView.
-    /// 
+    ///
     /// Actualiza la barra de direcciones con la URL real cargada y refresca el estado de los
     /// botones de navegación atrás/adelante.
     /// </summary>
-    private async void MyWebView_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+    private void MyWebView_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
     {
         if (sender.Source is not null)
         {
@@ -424,24 +229,11 @@ public sealed partial class WebViewControl : UserControl
         }
 
         UpdateNavigationButtonsState();
-
-        // Inject the picker script for the current mode (video on YouTube, image otherwise). It is idempotent
-        // (guarded by a window flag) and installs delegated document listeners, so a single injection per
-        // navigation also covers elements added to the page dynamically afterwards.
-        try
-        {
-            string pickerScript = ViewModel?.IsVideoSearch == true ? VideoPickerScript : ImagePickerScript;
-            await sender.ExecuteScriptAsync(pickerScript);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Failed to inject picker script: {ex}");
-        }
     }
 
     /// <summary>
     /// Intercepta peticiones de nueva ventana generadas desde el contenido web.
-    /// 
+    ///
     /// En lugar de abrir una ventana externa, navega a la URL solicitada dentro del mismo WebView.
     /// </summary>
     private void MyWebView_NewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
@@ -457,7 +249,7 @@ public sealed partial class WebViewControl : UserControl
 
     #region UI events
     /// <summary>
-    /// Abre el TeachingTip de ayuda que explica cómo descargar imágenes desde el navegador.
+    /// Abre el TeachingTip de ayuda del navegador.
     /// </summary>
     private void OnHelpClick(object sender, RoutedEventArgs e)
     {
@@ -491,7 +283,7 @@ public sealed partial class WebViewControl : UserControl
 
     /// <summary>
     /// Procesa la navegación manual desde la barra de direcciones.
-    /// 
+    ///
     /// Al pulsar Enter, normaliza la URL si no incluye esquema HTTP/HTTPS y delega la petición
     /// en el ViewModel. El control decidirá después si navega o no según SlotIndex.
     /// </summary>
@@ -517,7 +309,7 @@ public sealed partial class WebViewControl : UserControl
     #region Methods (private)
     /// <summary>
     /// Ejecuta la navegación efectiva del WebView.
-    /// 
+    ///
     /// Antes de navegar, comprueba que el widget esté activo, que la URL no esté vacía,
     /// que sea una URL absoluta válida y que use un esquema HTTP o HTTPS.
     /// </summary>

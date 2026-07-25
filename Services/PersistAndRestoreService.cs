@@ -16,7 +16,7 @@ namespace MM4LB.Services;
 /// - Restaura la configuración al iniciar la aplicación
 /// - Utiliza un conversor personalizado para serializar/deserializar tipos basados en Enumeration
 /// 
-/// Este servicio garantiza que tipos como <see cref="MediaType"/> se almacenen como texto
+/// Este servicio garantiza que tipos como <see cref="AspectRatioSettings"/> se almacenen como texto
 /// y se reconstruyan correctamente al cargar.
 /// </summary>
 public class PersistAndRestoreService
@@ -40,12 +40,10 @@ public class PersistAndRestoreService
     {
         Converters =
         {
-            new EnumerationJsonConverter<MediaType>(),
             new EnumerationJsonConverter<AspectRatioSettings>(),
             new EnumerationJsonConverter<ImageResolutionSettings>(),
             new EnumerationJsonConverter<VideoDownloadQualitySettings>(),
-            new EnumerationJsonConverter<SettingsType>(),
-            new EnumerationJsonConverter<ImageRegion>()
+            new EnumerationJsonConverter<SettingsType>()
         }
     };
     #endregion
@@ -124,12 +122,10 @@ public class PersistAndRestoreService
         Formatting = indented ? Formatting.Indented : Formatting.None,
         Converters =
         {
-            new EnumerationJsonConverter<MediaType>(),
             new EnumerationJsonConverter<AspectRatioSettings>(),
             new EnumerationJsonConverter<ImageResolutionSettings>(),
             new EnumerationJsonConverter<VideoDownloadQualitySettings>(),
-            new EnumerationJsonConverter<SettingsType>(),
-            new EnumerationJsonConverter<ImageRegion>()
+            new EnumerationJsonConverter<SettingsType>()
         }
     };
 

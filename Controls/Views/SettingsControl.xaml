@@ -11,7 +11,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <helpers:IntToDoubleConverter x:Key="IntToDoubleConverter" />
         <!-- Cabecera de cada grupo de ajustes: texto en acento, mayúsculas y espaciado, con un margen superior
              que separa el grupo del anterior. El primer grupo sobreescribe el Margin a 0 (ya lo separa el padding). -->
         <Style x:Key="SettingsSectionHeaderStyle" TargetType="TextBlock">

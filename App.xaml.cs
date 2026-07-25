@@ -57,31 +57,20 @@ public partial class App : Application
             services.AddHostedService<ApplicationHostService>();
 
             // Converters
-            services.AddSingleton<ImagesCountToColorConverter>();
-            services.AddSingleton<ImageTypeCountToColorConverter>();
-            services.AddSingleton<BooleanToColorConverter>();
             services.AddSingleton<LogEntrySeverityToBrushConverter>();
 
             // Services
             services.AddSingleton<WindowService>();
             services.AddSingleton<PersistAndRestoreService>();
-            services.AddSingleton<PlatformLoadingService>();
-            services.AddSingleton<ImageLoadingService>();
-            services.AddSingleton<ImageBinaryLoadingService>();
             services.AddSingleton<ExceptionService>();
             services.AddSingleton<ExceptionDialogService>();
             services.AddSingleton<ThemeService>();
-            services.AddSingleton<LaunchBoxService>();
             services.AddSingleton<SharedDataService>();
             services.AddSingleton<LocalizationService>();
-            services.AddSingleton<ProgressService>();            
-            services.AddSingleton<IStatisticsService, StatisticsService>();
-            services.AddSingleton<FileSystemService>();
-            services.AddSingleton<YoutubeDownloadService>();
+            services.AddSingleton<ProgressService>();
             services.AddSingleton<DialogsService>();
 
             // ViewModels (Windows)
-            services.AddSingleton<LoadingWindowViewModel>();
             services.AddSingleton<MainWindowViewModel>();
 
             // ViewModels (Controls)
@@ -92,10 +81,8 @@ public partial class App : Application
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<LayoutSelectorViewModel>());
             services.AddSingleton<WebViewViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<WebViewViewModel>());
-            services.AddTransient<SearchStringsViewModel>();
 
-            // Windows            
-            services.AddTransient<LoadingWindow>();
+            // Windows
             services.AddSingleton<MainWindow>();
 
             // Configuration
@@ -251,15 +238,6 @@ public partial class App : Application
         }
 
         // Prepare and add the color converters to resources, so they can be used in XAML and can use the Theme colors.
-        var imagesCountToColorConverter = Host.Services.GetRequiredService<ImagesCountToColorConverter>();
-        imagesCountToColorConverter.ThemeService = themeService;
-        Application.Current.Resources["ImagesCountToColorConverter"] = imagesCountToColorConverter;
-        var imageTypeCountToColorConverter = Host.Services.GetRequiredService<ImageTypeCountToColorConverter>();
-        imageTypeCountToColorConverter.ThemeService = themeService;
-        Application.Current.Resources["ImageTypeCountToColorConverter"] = imageTypeCountToColorConverter;
-        var booleanToColorConverter = Host.Services.GetRequiredService<BooleanToColorConverter>();
-        booleanToColorConverter.ThemeService = themeService;
-        Application.Current.Resources["ColorIfTrueConverter"] = booleanToColorConverter;        
         var logEntrySeverityToBrushConverter = Host.Services.GetRequiredService<LogEntrySeverityToBrushConverter>();
         logEntrySeverityToBrushConverter.ThemeService = themeService;
         Application.Current.Resources["LogEntrySeverityConverter"] = logEntrySeverityToBrushConverter;
@@ -267,12 +245,16 @@ public partial class App : Application
         // Resolve application settings configured in DI and store them in a property
         _appSettings = Host.Services.GetRequiredService<IOptions<AppSettings>>().Value;
 
-        // Always show the LoadingWindow at startup.
-        // Do NOT stop/dispose the host when this initial window closes — the host should
-        // remain running until the main window closes. The main window will be responsible
-        // for stopping the host.
-        var loadingWindow = Host.Services.GetRequiredService<LoadingWindow>();
-        loadingWindow.PrepareAndShowWhenReady();
-        _window = loadingWindow;
+        // Show the main window directly (no loading/splash window). Al cerrarla, se detiene y libera el host
+        // (persistiendo la configuración) y se termina el proceso.
+        var mainWindow = Host.Services.GetRequiredService<MainWindow>();
+        mainWindow.Closed += async (_, _) =>
+        {
+            try { await Host.StopAsync(); } catch (Exception ex) { ExceptionService.LogToFile(ex, "Error stopping the host on shutdown (settings may not have been saved)."); }
+            try { Host.Dispose(); } catch (Exception ex) { ExceptionService.LogToFile(ex, "Error disposing the host on shutdown."); }
+            Environment.Exit(0);
+        };
+        _window = mainWindow;
+        mainWindow.Activate();
     }
 }

@@ -19,7 +19,6 @@ public class MainWindowViewModel : WidgetViewModelBase
     #region Attributes
     private readonly ProgressService _progressService;
     private new readonly SharedDataService _sharedDataService;
-    private readonly YoutubeDownloadService _youtubeDownloadService;
 
     private bool _isAnimating;
     private IReadOnlyList<WidgetInfo> _widgets = Array.Empty<WidgetInfo>();
@@ -65,11 +64,10 @@ public class MainWindowViewModel : WidgetViewModelBase
     #endregion
 
     #region Constructors
-    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, YoutubeDownloadService youtubeDownloadService, ConsoleViewModel consoleViewModel, PlatformListViewModel platformListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
+    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, ConsoleViewModel consoleViewModel, PlatformListViewModel platformListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
     {
         _progressService = progressService;
         _sharedDataService = sharedDataService;
-        _youtubeDownloadService = youtubeDownloadService;
 
         ConsoleViewModel = consoleViewModel;
         PlatformListViewModel = platformListViewModel;
@@ -89,61 +87,6 @@ public class MainWindowViewModel : WidgetViewModelBase
     #endregion
 
     #region Methods (public)
-    /// <summary>
-    /// Comprueba al mostrarse la ventana principal si ffmpeg está disponible y, si no, lo descarga en segundo plano
-    /// (build estática de BtbN) y lo cachea en %LocalAppData%\MM4LB\Tools\ffmpeg, de modo que las descargas de vídeo
-    /// en HD funcionen luego sin esperas. No bloquea la UI ni propaga excepciones: la descarga se muestra en la
-    /// consola (con botón de cancelar) y, si falla o se cancela, queda como warning y se reintentará en el próximo
-    /// arranque o al primer uso HD.
-    /// </summary>
-    public async Task EnsureFfmpegReadyAsync()
-    {
-        if (_youtubeDownloadService.IsFfmpegAvailable)
-            return;
-
-        ProgressNotifier notifier = _progressService.StartOperation();
-        using var cts = new CancellationTokenSource();
-        notifier.CancelAction = () => cts.Cancel();
-
-        notifier.Message = MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.MainWindow_FfmpegPreparing_Progress] ?? "Preparing video tools: downloading ffmpeg (one-time setup)...";
-        _progressService.ProgressNotifier.Report(notifier);
-
-        try
-        {
-            var progress = new Progress<double>(fraction =>
-            {
-                notifier.Progress = (int)(fraction * 100);
-                _progressService.ProgressNotifier.Report(notifier);
-            });
-
-            var statusProgress = new Progress<string>(message =>
-            {
-                notifier.Message = message;
-                _progressService.ProgressNotifier.Report(notifier);
-            });
-
-            await _youtubeDownloadService.EnsureFfmpegAvailableAsync(progress, statusProgress, cts.Token);
-            notifier.Message = MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.MainWindow_FfmpegReady_Progress] ?? "Video tools ready (ffmpeg installed)";
-        }
-        catch (OperationCanceledException)
-        {
-            notifier.IsWarning = true;
-            notifier.Message = MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.MainWindow_FfmpegCancelled_Progress] ?? "ffmpeg download cancelled (HD video downloads will retry it)";
-        }
-        catch (Exception ex)
-        {
-            // No es fatal: la app funciona con normalidad salvo las descargas de vídeo en HD.
-            notifier.IsWarning = true;
-            notifier.Message = string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.MainWindow_FfmpegPrepare_Error] ?? "Could not prepare ffmpeg: {0}", ex.Message);
-        }
-        finally
-        {
-            notifier.CancelAction = null; // la operación terminó: ya no es cancelable
-            notifier.FinishOperation();
-            _progressService.ProgressNotifier.Report(notifier);
-            _progressService.FinishOperation();
-        }
-    }
 
     /// <summary>
     /// Devuelve la colocación de ventana guardada en configuración.

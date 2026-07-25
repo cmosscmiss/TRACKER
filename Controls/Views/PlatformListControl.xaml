@@ -13,13 +13,11 @@
         <DataTemplate x:Key="PlatformItemTemplate" x:DataType="models:Platform">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Width="24" Height="24" Source="{x:Bind Icon.Binary, Mode=OneWay}" />
-                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="12 0" VerticalAlignment="Top" Foreground="{ThemeResource TextBrush}" />
-                <TextBlock Grid.Column="2" Text="{x:Bind Games.Count, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                <TextBlock Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="12 0" VerticalAlignment="Top" Foreground="{ThemeResource TextBrush}" />
+                <TextBlock Grid.Column="1" Text="{x:Bind Games.Count, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

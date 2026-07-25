@@ -26,14 +26,11 @@ public class AppSettings
     #region Properties
     public GeneralSettings General { get; set; } = new GeneralSettings();
     public LaunchBoxSettings LaunchBox { get; set; } = new LaunchBoxSettings();
-    public GameImagesDashboardControlSettings GameImagesDashboardControl { get; set; } = new GameImagesDashboardControlSettings();
-    public GameImagesRegionDashboardControlSettings GameImagesRegionDashboardControl { get; set; } = new GameImagesRegionDashboardControlSettings();
     public GameListControlSettings GameListControl { get; set; } = new GameListControlSettings();
     public GamesAuditControlSettings GamesAuditControl { get; set; } = new GamesAuditControlSettings();
     public ImageAuditControlSettings ImageAuditControl { get; set; } = new ImageAuditControlSettings();
     public ImageCollectionImportControlSettings ImageCollectionImportControl { get; set; } = new ImageCollectionImportControlSettings();
     public ImageGridControlSettings ImageGridControl { get; set; } = new ImageGridControlSettings();
-    public ImageTypeControlSettings ImageTypeControl { get; set; } = new ImageTypeControlSettings();
     public LayoutSelectorControlSettings LayoutSelectorControl { get; set; } = new LayoutSelectorControlSettings();
     public PlatformListControlSettings PlatformListControl { get; set; } = new PlatformListControlSettings();
     public StatsGlobalControlSettings StatsGlobalControl { get; set; } = new StatsGlobalControlSettings();
@@ -262,109 +259,6 @@ public class AppSettings
         }
     }
 
-    public class GameImagesDashboardControlSettings
-    {
-        public bool IsHorizontalView { get; set; } = true;
-        public bool IsSearchStringsPanelVisible { get; set; } = true;
-        public double Width { get; set; } = 200;
-        public double Height { get; set; } = 400;
-
-        /// <summary>
-        /// Resolución objetivo con la que se descargan los vídeos de YouTube desde el WebView (240p…1080p,
-        /// siempre con audio). Si la exacta no existe, el descargador cae a la más cercana disponible.
-        /// </summary>
-        public VideoDownloadQualitySettings VideoDownloadQuality { get; set; } = VideoDownloadQualitySettings.P1080;
-
-        /// <summary>
-        /// Si el preview de vídeo del dashboard muestra los controles de reproducción (transport controls).
-        /// False por defecto (sin controles). El sonido lo gobierna ahora <see cref="GeneralSettings.VideoVolume"/>.
-        /// </summary>
-        public bool ShowVideoControls { get; set; } = false;
-
-        /// <summary>
-        /// Criterios ordenados de preselección del medio (imagen/vídeo) al seleccionar un juego o al procesarlo:
-        /// se aplican en cascada sobre los medios del juego del image type activo. Por defecto: mayor resolución
-        /// ("Dimensions") y, a igualdad, mayor tamaño ("Size"). Array (no List) para que Newtonsoft lo REEMPLACE
-        /// al restaurar en vez de acumularlo. Cada Type (SettingsType) se persiste como texto vía su converter.
-        /// </summary>
-        public GameImageCriterion[] ImageSelectionCriteria { get; set; } =
-        {
-            new GameImageCriterion { Type = SettingsType.Image, CriteriaName = "1st:", IsActive = true, ID = 1 },
-            new GameImageCriterion { Type = SettingsType.Image, CriteriaName = "2nd:", IsActive = true, ID = 2 },
-        };
-
-        /// <summary>
-        /// Criterios ordenados de procesado del medio conservado al procesar un juego: construyen su nuevo
-        /// nombre/ruta. Por defecto: región "Discard" (sacar de la subcarpeta de región), sin sufijo, y nombre =
-        /// título del juego. Mismo formato/persistencia que <see cref="ImageSelectionCriteria"/>.
-        /// </summary>
-        public GameImageCriterion[] ImageProcessingCriteria { get; set; } =
-        {
-            new GameImageCriterion { Type = SettingsType.Region, CriteriaName = "Region:", IsActive = true, ID = 2 },
-            new GameImageCriterion { Type = SettingsType.FileNameSuffix, CriteriaName = "Suffix:", IsActive = true, ID = 2 },
-            new GameImageCriterion { Type = SettingsType.FileName, CriteriaName = "File Name:", IsActive = true, ID = 4 },
-        };
-    }
-
-    /// <summary>
-    /// Configuración del widget GameImagesRegionDashboard: gestiona las imágenes del juego seleccionado POR
-    /// REGIÓN (selector de regiones favoritas + buckets "otras regiones"/"sin región"). Comparte la mayoría de
-    /// ajustes visuales con <see cref="GameImagesDashboardControlSettings"/>, pero mantiene criterios de
-    /// selección/proceso PROPIOS (independientes del dashboard normal) y sus regiones favoritas.
-    /// </summary>
-    public class GameImagesRegionDashboardControlSettings
-    {
-        public bool IsHorizontalView { get; set; } = true;
-        public bool IsSearchStringsPanelVisible { get; set; } = true;
-        public double Width { get; set; } = 200;
-        public double Height { get; set; } = 400;
-
-        /// <summary>Resolución de descarga de vídeos (espejo del dashboard normal).</summary>
-        public VideoDownloadQualitySettings VideoDownloadQuality { get; set; } = VideoDownloadQualitySettings.P1080;
-
-        /// <summary>Si el preview de vídeo muestra los transport controls.</summary>
-        public bool ShowVideoControls { get; set; } = false;
-
-        /// <summary>
-        /// Regiones favoritas del selector (máximo 3). Cada una es un elemento fijo del selector; a ellas se
-        /// suman siempre los buckets "otras regiones" y "sin región". Por defecto: Europe, World, Spain. Array
-        /// (no List) para que Newtonsoft lo REEMPLACE al restaurar en vez de acumularlo. Se persiste como texto
-        /// vía <see cref="EnumerationJsonConverter{ImageRegion}"/> (registrado en PersistAndRestoreService).
-        /// </summary>
-        public ImageRegion[] FavouriteRegions { get; set; } =
-        {
-            ImageRegion.Europe, ImageRegion.World, ImageRegion.Spain,
-        };
-
-        /// <summary>
-        /// Al procesar (Process region / Process &amp; next|previous), si las imágenes del bucket "otras regiones"
-        /// (con región pero no favorita) se BORRAN todas (true) o se dejan intactas (false). True por defecto.
-        /// </summary>
-        public bool PurgeNonFavouriteRegions { get; set; } = true;
-
-        /// <summary>
-        /// Criterios de preselección del medio principal, aplicados POR REGIÓN. Mismos defaults que el dashboard
-        /// normal (mayor resolución y, a igualdad, mayor tamaño). Independientes del dashboard normal.
-        /// </summary>
-        public GameImageCriterion[] ImageSelectionCriteria { get; set; } =
-        {
-            new GameImageCriterion { Type = SettingsType.Image, CriteriaName = "1st:", IsActive = true, ID = 1 },
-            new GameImageCriterion { Type = SettingsType.Image, CriteriaName = "2nd:", IsActive = true, ID = 2 },
-        };
-
-        /// <summary>
-        /// Criterios de procesado del medio conservado por región. La región se CONSERVA siempre (keep-region:
-        /// ID = 1 = "Keep"), de modo que las imágenes conservadas se quedan en su subcarpeta de región. Sufijo y
-        /// nombre = título del juego, como el dashboard normal.
-        /// </summary>
-        public GameImageCriterion[] ImageProcessingCriteria { get; set; } =
-        {
-            new GameImageCriterion { Type = SettingsType.Region, CriteriaName = "Region:", IsActive = true, ID = 1 },
-            new GameImageCriterion { Type = SettingsType.FileNameSuffix, CriteriaName = "Suffix:", IsActive = true, ID = 2 },
-            new GameImageCriterion { Type = SettingsType.FileName, CriteriaName = "File Name:", IsActive = true, ID = 4 },
-        };
-    }
-
     public class GameListControlSettings
     {
         public string SelectedGame { get; set; } = "";
@@ -462,19 +356,6 @@ public class AppSettings
         public AspectRatioSettings AspectRatio = AspectRatioSettings.AR11;
         public ImageResolutionSettings Resolution = ImageResolutionSettings.High;
         public int ItemSize = 250;
-    }
-
-    /// <summary>
-    /// Configuración específica del control de lista de juegos.
-    /// Se utiliza para almacenar parámetros visuales o funcionales del control.
-    /// </summary>
-    public class ImageTypeControlSettings
-    {
-        public MediaType[] FavouriteImageTypes { get; set; } = [MediaType.Box3D, MediaType.BoxFront, MediaType.BoxBack, MediaType.BoxSpine, MediaType.ClearLogo, MediaType.FanartBackground];
-        public MediaType? SelectedImageSet
-        {
-            get; set;
-        }
     }
 
     public class LayoutSelectorControlSettings

@@ -89,18 +89,6 @@
                 </Grid>
             </Grid>
 
-            <!-- Capa de "app ocupada": atenúa el contenido y muestra el cursor de espera mientras la UI
-                 está bloqueada (SharedDataService.IsUIEnabled == false). Va en Row 0 para dejar visible la
-                 barra fina 0-100% de la Row 1. La gobierna MainWindow.xaml.cs (fade + visibilidad). -->
-            <template:BusyOverlayPanel x:Name="BusyOverlay" Grid.Row="0" Visibility="Collapsed" Opacity="0">
-                <!-- Mismo fondo atenuado que el overlay de los diálogos (AppDialog): oscurecido neutro al 70 %
-                     en vez del tinte de acento, manteniendo el progress ring. -->
-                <template:BusyOverlayPanel.Background>
-                    <SolidColorBrush Color="{ThemeResource BackgroundColor}" Opacity="0.7"/>
-                </template:BusyOverlayPanel.Background>
-                <ProgressRing IsActive="True" Width="64" Height="64"  Foreground="{ThemeResource AccentBrush}"/>
-            </template:BusyOverlayPanel>
-
             <!-- Progress Bar -->
             <Grid Grid.Row="1" Height="3">
                 <Border Background="{ThemeResource CardBackgroundLightBrush}"/>

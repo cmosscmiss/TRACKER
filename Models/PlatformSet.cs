@@ -8,21 +8,13 @@ namespace MM4LB.Models;
 public class PlatformSet : LocalFile
 {
     private int _totalGames;
-    private int _totalImages;
 
-    public List<PlatformImageFolder> PlatformImageFolders { get; set; } = new();
     public List<Platform> Platforms { get; set; } = new();
 
     public int TotalGames
     {
         get => _totalGames;
         internal set => SetProperty(ref _totalGames, value);
-    }
-
-    public int TotalImages
-    {
-        get => _totalImages;
-        internal set => SetProperty(ref _totalImages, value);
     }
 
     /// <summary>

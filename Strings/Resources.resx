@@ -18,17 +18,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Common_AppName" xml:space="preserve">
-    <value>MM4LB</value>
-  </data>
   <data name="Common_Cancel_Tooltip" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="Common_Undo_Tooltip" xml:space="preserve">
     <value>Undo</value>
-  </data>
-  <data name="Common_ShowingXofY_Format" xml:space="preserve">
-    <value>Showing {0} of {1}</value>
   </data>
   <!-- Console (ACTIVITY LOG) -->
   <!-- FooterEventViewer -->
@@ -47,39 +41,6 @@
     <value>Platform:</value>
   </data>
   <!-- Common compartido por vistas de auditorÃ­a/tools (toolbar de vista, columnas de tabla, pills). -->
-  <data name="Common_View_Header" xml:space="preserve">
-    <value>View</value>
-  </data>
-  <data name="Common_TableView_Label" xml:space="preserve">
-    <value>Table view</value>
-  </data>
-  <data name="Common_GridView_Label" xml:space="preserve">
-    <value>Grid view</value>
-  </data>
-  <data name="Common_SelectedType_Label" xml:space="preserve">
-    <value>Selected type</value>
-  </data>
-  <data name="Common_Type_Header" xml:space="preserve">
-    <value>Type</value>
-  </data>
-  <data name="Common_File_Header" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="Common_Region_Header" xml:space="preserve">
-    <value>Region</value>
-  </data>
-  <data name="Common_Game_Header" xml:space="preserve">
-    <value>Game</value>
-  </data>
-  <data name="Common_Title_Header" xml:space="preserve">
-    <value>Title</value>
-  </data>
-  <data name="Common_Size_Label" xml:space="preserve">
-    <value>Size</value>
-  </data>
-  <data name="Common_Types_Label" xml:space="preserve">
-    <value>Types</value>
-  </data>
   <!-- GamesAudit -->
   <data name="FooterHelp_Toggle_Tooltip" xml:space="preserve">
     <value>Show or hide help (tooltips and help panels).</value>
@@ -89,7 +50,6 @@
   <!-- GameImagesRegionDashboard_* : especÃ­ficos del dashboard por regiones. -->
   <!-- SettingsDialog_* : tÃ­tulos de secciÃ³n y opciones generadas en el ViewModel del diÃ¡logo de Settings. -->
   <!-- GeneralSettings_* : pÃ¡gina General del diÃ¡logo de Settings. -->
-  <!-- RegionsSettings / MediaTypesSettings : pÃ¡ginas del diÃ¡logo de Settings. -->
   <!-- ThemeSettings_* : pÃ¡gina Theme del diÃ¡logo de Settings. -->
   <!-- AboutSettings_* : pÃ¡gina About del diÃ¡logo de Settings. -->
   <!-- *_WidgetHelp_Description : texto del TeachingTip de ayuda de cada widget (icono de ayuda de la cabecera). -->
@@ -102,9 +62,6 @@
   <!-- Common (mÃ¡s) -->
   <data name="Common_Help_Tooltip" xml:space="preserve">
     <value>Help</value>
-  </data>
-  <data name="Common_ListView_Label" xml:space="preserve">
-    <value>List view</value>
   </data>
   <!-- ChartTypeSelector (toolbar de grÃ¡ficas: tipo, Top N, orden) -->
   <data name="ChartType_Bars_Label" xml:space="preserve">
@@ -148,30 +105,6 @@
   </data>
   <!-- ImageAudit (MEDIA AUDIT) -->
   <!-- Common (mÃ¡s): campos y acciones genÃ©ricas -->
-  <data name="Common_Delete_Label" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="Common_Delete_Tooltip" xml:space="preserve">
-    <value>Delete the selected media (undoable).</value>
-  </data>
-  <data name="Common_Dimensions_Label" xml:space="preserve">
-    <value>Dimensions</value>
-  </data>
-  <data name="Common_FileSize_Label" xml:space="preserve">
-    <value>File size</value>
-  </data>
-  <data name="Common_Extension_Label" xml:space="preserve">
-    <value>Extension</value>
-  </data>
-  <data name="Common_Quality_Label" xml:space="preserve">
-    <value>Quality</value>
-  </data>
-  <data name="Common_Duration_Label" xml:space="preserve">
-    <value>Duration</value>
-  </data>
-  <data name="Common_GamePlatform_Description" xml:space="preserve">
-    <value>Game / Platform</value>
-  </data>
   <!-- GameList -->
   <!-- ImageCollectionImport -->
   <!-- GameDetails -->
@@ -182,9 +115,6 @@
   </data>
   <data name="WebView_UsingSteamDb_Tooltip" xml:space="preserve">
     <value>Using SteamGridDB. Click to switch to Google.</value>
-  </data>
-  <data name="WebView_YouTube_Tooltip" xml:space="preserve">
-    <value>Video media type: searching on YouTube</value>
   </data>
   <data name="WebView_Help_Title" xml:space="preserve">
     <value>How to download media</value>
@@ -198,46 +128,13 @@
   <data name="WebView_Forward_Tooltip" xml:space="preserve">
     <value>Forward</value>
   </data>
-  <data name="WebView_AddToGameImages_MenuItem" xml:space="preserve">
-    <value>Add to game images</value>
-  </data>
-  <data name="WebView_AddToGameVideos_MenuItem" xml:space="preserve">
-    <value>Add to game videos</value>
-  </data>
   <data name="WebView_Init_Error" xml:space="preserve">
     <value>The web browser (WebView2) could not be initialized.</value>
   </data>
   <!-- StatsGlobal (GLOBAL STATISTICS) : tÃ­tulos y ayuda de las grÃ¡ficas -->
   <!-- StatsPlatform (GAME STATISTICS) -->
   <!-- Common (mÃ¡s): diÃ¡logos -->
-  <data name="Common_Discard_Label" xml:space="preserve">
-    <value>Discard</value>
-  </data>
-  <data name="Common_Keep_Label" xml:space="preserve">
-    <value>Keep</value>
-  </data>
-  <data name="Common_Close_Label" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="Common_OK_Label" xml:space="preserve">
-    <value>OK</value>
-  </data>
-  <data name="Common_NoRegion_Label" xml:space="preserve">
-    <value>No region</value>
-  </data>
   <!-- DiÃ¡logos -->
-  <data name="DeleteConfirmDialog_AskBefore_Label" xml:space="preserve">
-    <value>Ask for confirmation before deleting</value>
-  </data>
-  <data name="PlatformImageDropDialog_TypeLabel" xml:space="preserve">
-    <value>Platform image type:</value>
-  </data>
-  <data name="PlatformImageDropDialog_SelectType_Placeholder" xml:space="preserve">
-    <value>Select a type</value>
-  </data>
-  <data name="PlatformImageDropDialog_ExistingImages_Label" xml:space="preserve">
-    <value>Existing images of this type:</value>
-  </data>
   <!-- MainWindow : tÃ­tulos de los widgets del panel -->
   <data name="MainWindow_ActivityLogWidget_Title" xml:space="preserve">
     <value>ACTIVITY LOG</value>
@@ -246,221 +143,21 @@
     <value>WEB SEARCH</value>
   </data>
   <!-- Common (mÃ¡s): botones de diÃ¡logo -->
-  <data name="Common_Cancel_Label" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="Common_Import_Label" xml:space="preserve">
-    <value>Import</value>
-  </data>
-  <data name="Common_Add_Label" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="Common_Save_Label" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="Common_Apply_Label" xml:space="preserve">
-    <value>Apply</value>
-  </data>
-  <data name="Common_Empty_Label" xml:space="preserve">
-    <value>Empty</value>
-  </data>
   <!-- DialogsService : tÃ­tulos de los diÃ¡logos -->
-  <data name="DialogsService_DeleteMedia_Title" xml:space="preserve">
-    <value>Delete media</value>
-  </data>
-  <data name="DialogsService_AddPlatformImage_Title" xml:space="preserve">
-    <value>Add platform image</value>
-  </data>
   <!-- Criterios de los dashboards (fila del diÃ¡logo de ajustes) -->
-  <data name="DashboardCriteria_First_Label" xml:space="preserve">
-    <value>1st:</value>
-  </data>
-  <data name="DashboardCriteria_Second_Label" xml:space="preserve">
-    <value>2nd:</value>
-  </data>
-  <data name="DashboardCriteria_Region_Label" xml:space="preserve">
-    <value>Region:</value>
-  </data>
-  <data name="DashboardCriteria_Suffix_Label" xml:space="preserve">
-    <value>Suffix:</value>
-  </data>
-  <data name="DashboardCriteria_FileName_Label" xml:space="preserve">
-    <value>File Name:</value>
-  </data>
-  <data name="Common_OtherRegions_Label" xml:space="preserve">
-    <value>Other regions</value>
-  </data>
   <!-- SearchStrings -->
-  <data name="SearchStrings_DefaultTitle" xml:space="preserve">
-    <value>Search strings:</value>
-  </data>
-  <data name="SearchStrings_Empty" xml:space="preserve">
-    <value>No search strings.</value>
-  </data>
-  <data name="SearchStrings_GameTitle" xml:space="preserve">
-    <value>Game search strings</value>
-  </data>
-  <data name="SearchStrings_GameImageTitle" xml:space="preserve">
-    <value>Game image search strings</value>
-  </data>
   <!-- MediaAuditService -->
   <!-- ConsoleViewModel : diÃ¡logo/progreso de vaciar backup -->
-  <!-- YoutubeDownloadService : errores (antes solo en espaÃ±ol) -->
-  <data name="Youtube_NoVideoStream_Error" xml:space="preserve">
-    <value>This video has no downloadable video stream.</value>
-  </data>
-  <data name="Youtube_NoAudioTrack_Error" xml:space="preserve">
-    <value>This video has no downloadable audio track.</value>
-  </data>
-  <data name="Youtube_FfmpegZipMissing_Error" xml:space="preserve">
-    <value>The downloaded ffmpeg zip does not contain ffmpeg.exe.</value>
-  </data>
-  <data name="Youtube_FfmpegNotExecutable_Error" xml:space="preserve">
-    <value>The downloaded ffmpeg binary could not be run.</value>
-  </data>
-  <data name="Youtube_FfmpegInvalid_Error" xml:space="preserve">
-    <value>The downloaded ffmpeg binary is not valid (code {0}).</value>
-  </data>
-  <data name="Youtube_FfmpegNotFound_Error" xml:space="preserve">
-    <value>ffmpeg was not found; video cannot be downloaded at this quality.</value>
-  </data>
-  <data name="Youtube_FfmpegProcessFailed_Error" xml:space="preserve">
-    <value>ffmpeg could not process the video (code {0}). {1}</value>
-  </data>
-  <!-- StatisticsService : pills (tÃ­tulos + descripciones) -->
-  <data name="Common_PlatformAll_Description" xml:space="preserve">
-    <value>Platform / All</value>
-  </data>
-  <data name="Stats_MatchingTotal_Description" xml:space="preserve">
-    <value>Matching / Total</value>
-  </data>
-  <data name="Stats_MatchedTotal_Description" xml:space="preserve">
-    <value>Matched / Total</value>
-  </data>
-  <data name="Stats_InMyCollection_Title" xml:space="preserve">
-    <value>In my collection</value>
-  </data>
-  <data name="Stats_InLaunchBox_Title" xml:space="preserve">
-    <value>In LaunchBox</value>
-  </data>
-  <data name="Stats_NotInLaunchBox_Title" xml:space="preserve">
-    <value>Not in LaunchBox</value>
-  </data>
-  <data name="Stats_WithRegion_Title" xml:space="preserve">
-    <value>With a region</value>
-  </data>
-  <data name="Stats_MatchedImages_Title" xml:space="preserve">
-    <value>Matched images</value>
-  </data>
-  <data name="Stats_GamesWithMatch_Title" xml:space="preserve">
-    <value>Games with a match</value>
-  </data>
-  <data name="Stats_Images_Title" xml:space="preserve">
-    <value>Images</value>
-  </data>
-  <data name="Stats_ImageTypes_Title" xml:space="preserve">
-    <value>Image types</value>
-  </data>
-  <data name="Stats_Size_Title" xml:space="preserve">
-    <value>Size</value>
-  </data>
-  <data name="Stats_Games_Title" xml:space="preserve">
-    <value>Games</value>
-  </data>
-  <data name="Stats_MediaSet_Title" xml:space="preserve">
-    <value>Media set</value>
-  </data>
-  <data name="Stats_MediaTypes_Title" xml:space="preserve">
-    <value>Media types</value>
-  </data>
-  <data name="Stats_MediaSetSize_Title" xml:space="preserve">
-    <value>Media set size</value>
-  </data>
-  <data name="Stats_EmptyCollection_Title" xml:space="preserve">
-    <value>Empty collection</value>
-  </data>
-  <data name="Stats_AsRegion_Format" xml:space="preserve">
-    <value>[{0}] as region</value>
-  </data>
-  <data name="Stats_AsExtension_Format" xml:space="preserve">
-    <value>[{0}] as extension</value>
-  </data>
-  <data name="Stats_AsQuality_Format" xml:space="preserve">
-    <value>[{0}] as quality</value>
-  </data>
-  <data name="Stats_AsDuration_Format" xml:space="preserve">
-    <value>[{0}] as duration</value>
-  </data>
-  <data name="Stats_AsDimensions_Format" xml:space="preserve">
-    <value>[{0}] as dimensions</value>
-  </data>
   <!-- ImageLoadingService -->
-  <data name="ImageLoading_ReplacingVideo_Progress" xml:space="preserve"><value>Replacing video...</value></data>
-  <data name="ImageLoading_VideoReplaced_Progress" xml:space="preserve"><value>Video replaced</value></data>
-  <data name="ImageLoading_ReplaceVideoFailed_Error" xml:space="preserve"><value>Could not replace the video</value></data>
-  <data name="ImageLoading_ImportingMediaFile_Progress" xml:space="preserve"><value>Importing media file...</value></data>
-  <data name="ImageLoading_MediaFileImported_Progress" xml:space="preserve"><value>Media file imported</value></data>
-  <data name="ImageLoading_ImportMediaFileFailed_Error" xml:space="preserve"><value>Could not import the media file</value></data>
-  <data name="ImageLoading_UrlAndFolderRequired_Error" xml:space="preserve"><value>A valid image URL and target folder are required.</value></data>
-  <data name="ImageLoading_DownloadingMedia_Progress" xml:space="preserve"><value>Downloading media file... ({0})</value></data>
-  <data name="ImageLoading_DownloadingMediaSized_Progress" xml:space="preserve"><value>Downloading media file... ({0}, {1})</value></data>
-  <data name="ImageLoading_MediaDownloaded_Progress" xml:space="preserve"><value>{0} downloaded</value></data>
-  <data name="ImageLoading_MediaDownloadCancelled_Progress" xml:space="preserve"><value>Media file download cancelled</value></data>
-  <data name="ImageLoading_MediaDownloadFailed_Error" xml:space="preserve"><value>Media file download failed</value></data>
-  <data name="ImageLoading_SourceAndFolderRequired_Error" xml:space="preserve"><value>A valid source file and target folder are required.</value></data>
-  <data name="ImageLoading_SourceFileNotFound_Error" xml:space="preserve"><value>The source image file was not found.</value></data>
-  <data name="ImageLoading_ImportingMedia_Progress" xml:space="preserve"><value>Importing {0}...</value></data>
-  <data name="ImageLoading_MediaImported_Progress" xml:space="preserve"><value>{0} imported</value></data>
-  <data name="ImageLoading_MediaImportFailed_Error" xml:space="preserve"><value>{0} import failed</value></data>
-  <data name="ImageLoading_DownloadingYoutube_Progress" xml:space="preserve"><value>Downloading video from YouTube...</value></data>
-  <data name="ImageLoading_DownloadingYoutubeSized_Progress" xml:space="preserve"><value>Downloading video from YouTube... ({0})</value></data>
-  <data name="ImageLoading_YoutubeDownloaded_Progress" xml:space="preserve"><value>Video downloaded from YouTube</value></data>
-  <data name="ImageLoading_YoutubeDownloadCancelled_Progress" xml:space="preserve"><value>Video download cancelled</value></data>
-  <data name="ImageLoading_MediaDeleted_Progress" xml:space="preserve"><value>Media file deleted: {0}{1}</value></data>
-  <data name="ImageLoading_ProcessingGame_Progress" xml:space="preserve"><value>Processing game ({0}/{1})</value></data>
-  <data name="ImageLoading_GameProcessed_Progress" xml:space="preserve"><value>Game processed ({0} media deleted)</value></data>
-  <data name="ImageLoading_ProcessGameFailed_Error" xml:space="preserve"><value>Error processing game</value></data>
-  <data name="ImageLoading_ProcessingRegions_Progress" xml:space="preserve"><value>Processing regions ({0}/{1})</value></data>
-  <data name="ImageLoading_RegionsProcessed_Progress" xml:space="preserve"><value>Regions processed ({0} media deleted)</value></data>
-  <data name="ImageLoading_ProcessRegionsFailed_Error" xml:space="preserve"><value>Error processing regions</value></data>
-  <data name="ImageLoading_ImportingMediaFiles_Progress" xml:space="preserve"><value>Importing media files ({0}/{1})</value></data>
-  <data name="ImageLoading_ImagesImported_Progress" xml:space="preserve"><value>{0} images imported</value></data>
-  <data name="ImageLoading_ImagesImportedPartial_Error" xml:space="preserve"><value>{0}/{1} images imported ({2} failed)</value></data>
-  <data name="ImageLoading_FolderNotFound_Error" xml:space="preserve"><value>Folder not found</value></data>
-  <data name="ImageLoading_ScanningFolder_Progress" xml:space="preserve"><value>Scanning folder for media files</value></data>
-  <data name="ImageLoading_LoadingMedia_Progress" xml:space="preserve"><value>Loading {0} media files</value></data>
-  <data name="ImageLoading_MediaLoaded_Progress" xml:space="preserve"><value>{0} media files loaded</value></data>
-  <data name="ImageLoading_DataUriNoPayload_Error" xml:space="preserve"><value>The data URI does not contain a payload.</value></data>
   <!-- Loaders / matching / progress -->
-  <data name="PlatformLoading_LoadingPlatform_Progress" xml:space="preserve"><value>Loading platforms ({0})...</value></data>
-  <data name="PlatformLoading_ProcessingPlatformsXml_Progress" xml:space="preserve"><value>Processing platform.xml file...</value></data>
-  <data name="PlatformLoading_LoadingPlatforms_Progress" xml:space="preserve"><value>Loading platforms...</value></data>
-  <data name="PlatformLoading_PreparingUi_Progress" xml:space="preserve"><value>Preparing UI...</value></data>
-  <data name="PlatformLoading_LoadingGamesDb_Progress" xml:space="preserve"><value>Loading LaunchBox games database...</value></data>
-  <data name="PlatformLoading_LoadGamesDbError_Error" xml:space="preserve"><value>There was an error loading the games from the LaunchBox database.</value></data>
-  <data name="PlatformLoading_GamesDbLoaded_Progress" xml:space="preserve"><value>{0} games from the LaunchBox database loaded</value></data>
-  <data name="ImageMatching_LoadingMedia_Progress" xml:space="preserve"><value>{0}  |  {1}  |  Loading media files for {2} games</value></data>
-  <data name="ImageMatching_MediaLoaded_Progress" xml:space="preserve"><value>{0}  |  {1}  |  {2} media files for {3} games loaded</value></data>
-  <data name="ImageBinaryLoading_HighResProgress_Progress" xml:space="preserve"><value>{0}  |  Loading high-resolution binaries ({1}/{2})</value></data>
-  <data name="ImageBinaryLoading_HighResCompleted_Progress" xml:space="preserve"><value>{0}  |  Loading high-resolution binaries completed</value></data>
   <data name="Progress_LazyLoading_Progress" xml:space="preserve"><value>{0}Loading {1} media files</value></data>
   <data name="Progress_LazyLoaded_Progress" xml:space="preserve"><value>{0}{1} media files loaded</value></data>
-  <data name="GameMetadata_ReadError_Error" xml:space="preserve"><value>There was an error reading the game metadata from the LaunchBox database.</value></data>
-  <data name="LaunchBox_NoPlatforms_Error" xml:space="preserve"><value>No platforms found in LaunchBox. Add at least one platform in LaunchBox and restart MM4LB.</value></data>
   <!-- ViewModels (progreso/errores) -->
-  <data name="Common_NoneRegion_Placeholder" xml:space="preserve"><value>None</value></data>
-  <data name="ImageGridGame_RefreshGallery_Error" xml:space="preserve"><value>Error refreshing the game gallery.</value></data>
-  <data name="ImageGridGame_SelectionChange_Error" xml:space="preserve"><value>Error handling the selection change.</value></data>
-  <data name="MainWindow_FfmpegPreparing_Progress" xml:space="preserve"><value>Preparing video tools: downloading ffmpeg (one-time setup)...</value></data>
-  <data name="MainWindow_FfmpegReady_Progress" xml:space="preserve"><value>Video tools ready (ffmpeg installed)</value></data>
-  <data name="MainWindow_FfmpegCancelled_Progress" xml:space="preserve"><value>ffmpeg download cancelled (HD video downloads will retry it)</value></data>
-  <data name="MainWindow_FfmpegPrepare_Error" xml:space="preserve"><value>Could not prepare ffmpeg: {0}</value></data>
   <!-- Toolbar principal (tooltips de los botones-icono) -->
   <data name="Toolbar_Layout_Tooltip" xml:space="preserve"><value>Choose the panel layout</value></data>
   <data name="Toolbar_Widgets_Tooltip" xml:space="preserve"><value>Show or hide widgets in the panel</value></data>
   <data name="Toolbar_QuickSettings_Tooltip" xml:space="preserve"><value>Quick settings (thumbnails, sound, widget panel)</value></data>
   <data name="Toolbar_Resize_Tooltip" xml:space="preserve"><value>Resize the widgets in the panel</value></data>
-  <data name="Common_Close_Tooltip" xml:space="preserve"><value>Close this window without saving changes</value></data>
   <data name="WidgetPanel_SplittersConfirm_Tooltip" xml:space="preserve"><value>Apply the new panel sizes</value></data>
   <data name="WidgetPanel_SplittersCancel_Tooltip" xml:space="preserve"><value>Discard the size changes and keep the previous layout</value></data>
   <data name="WidgetPanel_SplittersDefault_Tooltip" xml:space="preserve"><value>Reset the panels to their default sizes</value></data>

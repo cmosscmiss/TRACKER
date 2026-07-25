@@ -2,7 +2,6 @@ using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Options;
-using MM4LB.Enums;
 using MM4LB.Models;
 
 namespace MM4LB.Services;
@@ -34,58 +33,17 @@ public class SharedDataService : ObservableObject
             NewGame = newGame;
         }
     }
-
-    public class ImageSetChangedEventArgs : EventArgs
-    {
-        public PlatformImageSet? OldImageSet { get; }
-        public PlatformImageSet? NewImageSet { get; }
-
-        public ImageSetChangedEventArgs(PlatformImageSet? oldImageSet, PlatformImageSet? newImageSet)
-        {
-            OldImageSet = oldImageSet;
-            NewImageSet = newImageSet;
-        }
-    }
-
-    public class GameImageChangedEventArgs : EventArgs
-    {
-        public GameImage? OldImage { get; }
-        public GameImage? NewImage { get; }
-
-        public GameImageChangedEventArgs(GameImage? oldImage, GameImage? newImage)
-        {
-            OldImage = oldImage;
-            NewImage = newImage;
-        }
-    }
-
-    public class GameImagesChangedEventArgs : EventArgs
-    {
-        public Game? Game { get; }
-        public PlatformImageSet? ImageSet { get; }
-
-        public GameImagesChangedEventArgs(Game? game, PlatformImageSet? imageSet)
-        {
-            Game = game;
-            ImageSet = imageSet;
-        }
-    }
     #endregion
 
     #region Attributes
     private readonly AppSettings _appSettings;
     private bool _isUiEnabled;
     private Game? _selectedGame;
-    private GameImage? _selectedImage;
     private Platform? _selectedPlatform;
-    private PlatformImageSet? _selectedImageSet;
-    private ImageRegion? _selectedRegion;
     #endregion
 
     #region Properties
     public ObservableCollection<Game> GamesFiltered { get; protected set; } = new();
-    public ObservableCollection<GameImage> GameImages { get; protected set; } = new();
-    public ObservableCollection<PlatformImageSet> ImageTypesFiltered { get; protected set; } = new();
 
     public bool IsUIEnabled
     {
@@ -133,24 +91,6 @@ public class SharedDataService : ObservableObject
     }
 
     /// <summary>
-    /// Selected image of the selected game.
-    /// </summary>
-    public GameImage? SelectedImage
-    {
-        get => _selectedImage;
-        set
-        {
-            if (!ReferenceEquals(_selectedImage, value))
-            {
-                var oldValue = _selectedImage;
-                var newValue = value;
-                SetProperty(ref _selectedImage, newValue);
-                SelectedImageChanged?.Invoke(this, new GameImageChangedEventArgs(oldValue, newValue));
-            }
-        }
-    }
-
-    /// <summary>
     /// Selected platform.
     /// </summary>
     public Platform? SelectedPlatform
@@ -167,35 +107,6 @@ public class SharedDataService : ObservableObject
             }
         }
     }
-
-    public PlatformImageSet? SelectedImageSet
-    {
-        get => _selectedImageSet;
-        set
-        {
-            if (!ReferenceEquals(_selectedImageSet, value))
-            {
-                var oldValue = _selectedImageSet;
-                var newValue = value;
-                SetProperty(ref _selectedImageSet, newValue);
-                SelectedPlatform?.SetSelectedImageSet(newValue?.Type.Value);
-                SelectedImageSetChanged?.Invoke(this, new ImageSetChangedEventArgs(oldValue, newValue));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Región activa de destino para los nuevos medios (import/descarga), fijada por el GameImagesRegionDashboard
-    /// según su bucket seleccionado: una <see cref="ImageRegion"/> favorita, o <c>null</c> para la raíz del set
-    /// ("sin región"; también cuando el bucket activo es "otras regiones"). La consultan las rutas de alta de media
-    /// (drag&amp;drop del dashboard de regiones y descarga del WebView) para colocar el fichero en la subcarpeta
-    /// correcta. <c>null</c> por defecto = comportamiento clásico (raíz del set).
-    /// </summary>
-    public ImageRegion? SelectedRegion
-    {
-        get => _selectedRegion;
-        set => SetProperty(ref _selectedRegion, value);
-    }
     #endregion
 
     #region Constructors
@@ -209,7 +120,6 @@ public class SharedDataService : ObservableObject
     public void NotifyInitialState()
     {
         SelectedPlatformChanged?.Invoke(this, new PlatformChangedEventArgs(null, SelectedPlatform));
-        SelectedImageSetChanged?.Invoke(this, new ImageSetChangedEventArgs(null, SelectedImageSet));
         SelectedGameChanged?.Invoke(this, new GameChangedEventArgs(null, SelectedGame));
     }
     #endregion
@@ -217,9 +127,6 @@ public class SharedDataService : ObservableObject
     #region Events
     public event EventHandler<PlatformChangedEventArgs>? SelectedPlatformChanged;
     public event EventHandler<GameChangedEventArgs>? SelectedGameChanged;
-    public event EventHandler<GameImageChangedEventArgs>? SelectedImageChanged;
-    public event EventHandler<ImageSetChangedEventArgs>? SelectedImageSetChanged;
-    public event EventHandler<GameImagesChangedEventArgs>? SelectedGameImagesChanged;
 
     /// <summary>
     /// Se dispara cuando cambia el ajuste global de visibilidad de la cabecera de los widgets
@@ -229,56 +136,21 @@ public class SharedDataService : ObservableObject
     public event EventHandler? WidgetHeaderVisibilityChanged;
 
     /// <summary>
-    /// Se dispara cuando cambian las regiones favoritas (<see cref="Models.AppSettings"/>), para que el
-    /// GameImagesRegionDashboard reconstruya su selector de buckets en caliente. Lo emite la ventana de configuración
-    /// al aceptar.
-    /// </summary>
-    public event EventHandler? FavouriteRegionsChanged;
-
-    /// <summary>
-    /// Se dispara cuando cambian los tipos de media favoritos
-    /// (<see cref="Models.AppSettings.ImageTypeControlSettings.FavouriteImageTypes"/>), para que la banda de tipos
-    /// (<c>ImageTypeControl</c>) reconstruya sus botones favoritos en caliente. Lo emite la ventana de configuración.
-    /// </summary>
-    public event EventHandler? FavouriteMediaTypesChanged;
-
-    /// <summary>
     /// Se dispara cuando cambia el modo de grupos de las toolbars
-    /// (<see cref="Models.AppSettings.GeneralSettings.ToolbarGroupsDisplayMode"/>), para que los
-    /// <c>ExclusiveOptionsControl</c> se reconstruyan en caliente. Lo emite la ventana de configuración al aceptar.
+    /// (<see cref="Models.AppSettings.GeneralSettings.ToolbarGroupsDisplayMode"/>), para que las toolbars con grupos
+    /// excluyentes se reconstruyan en caliente. Lo emite la ventana de configuración al aceptar.
     /// </summary>
     public event EventHandler? ToolbarGroupsDisplayModeChanged;
     #endregion
 
     #region Methods (public)
-    /// <summary>
-    /// Notifies listeners that the image collection of the selected game may have changed.
-    /// This is typically called after matching the selected image set with the games.
-    /// </summary>
-    public void NotifySelectedGameImagesChanged()
-    {
-        SelectedGameImagesChanged?.Invoke(this, new GameImagesChangedEventArgs(SelectedGame, SelectedImageSet));
-    }
-
     /// <summary>Notifica que la visibilidad de la cabecera de los widgets cambió, para aplicarla en caliente.</summary>
     public void NotifyWidgetHeaderVisibilityChanged()
     {
         WidgetHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Notifica que las regiones favoritas cambiaron, para que el dashboard de regiones se realinee.</summary>
-    public void NotifyFavouriteRegionsChanged()
-    {
-        FavouriteRegionsChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>Notifica que los tipos de media favoritos cambiaron, para que la banda de tipos se realinee.</summary>
-    public void NotifyFavouriteMediaTypesChanged()
-    {
-        FavouriteMediaTypesChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>Notifica que el modo de grupos de las toolbars cambió, para reconstruir los ExclusiveOptionsControl.</summary>
+    /// <summary>Notifica que el modo de grupos de las toolbars cambió, para reconstruir las toolbars con grupos excluyentes.</summary>
     public void NotifyToolbarGroupsDisplayModeChanged()
     {
         ToolbarGroupsDisplayModeChanged?.Invoke(this, EventArgs.Empty);

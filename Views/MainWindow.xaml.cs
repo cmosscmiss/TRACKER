@@ -19,10 +19,8 @@ public sealed partial class MainWindow : Window
     #region Attributes
     private readonly MainWindowViewModel _viewModel;
     private readonly WindowService _windowService;
-    private readonly SharedDataService _sharedDataService;
     private readonly ThemeService _themeService;
 
-    private AnimationService.IAnimationHandle? _busyOverlayAnimation;
     private bool _initialized;
     #endregion
 
@@ -72,11 +70,6 @@ public sealed partial class MainWindow : Window
         // Marca de compilación junto al título de la plataforma (para saber si la versión en ejecución es la recién
         // compilada). Asignada por código, sin binding, para que no dependa de nada del árbol visual.
         BuildTimestampText.Text = BuildTimestamp;
-
-        // Estado visual de "app ocupada": reacciona a IsUIEnabled (lo conmutan Start/FinishBlockingOperation).
-        _sharedDataService = App.GetService<SharedDataService>();
-        _sharedDataService.PropertyChanged += OnSharedDataServicePropertyChanged;
-        SyncBusyOverlayInitialState();
 
         // El logo, el fondo/borde del progreso de cache y el título de plataforma usan recursos de tipo Uri/Color que
         // no se propagan solos al cambiar de tema en caliente: se refrescan por código al recibir ThemeChanged.
@@ -155,10 +148,6 @@ public sealed partial class MainWindow : Window
 
         // Deja terminar los bindings y el primer layout pass.
         await Task.Yield();
-
-        // Ya con la UI montada: si falta ffmpeg, se descarga en segundo plano (no se espera) y se cachea, para
-        // que las descargas de vídeo en HD funcionen luego sin esperas. El método no lanza (gestiona sus errores).
-        _ = _viewModel.EnsureFfmpegReadyAsync();
     }
 
     private void OnClosed(object sender, WindowEventArgs e)
@@ -171,8 +160,6 @@ public sealed partial class MainWindow : Window
         Activated -= OnWindowActivated;
         Closed -= OnClosed;
 
-        _sharedDataService.PropertyChanged -= OnSharedDataServicePropertyChanged;
-
         DisposeToolbarBehavior();
 
         _viewModel.Dispose();
@@ -180,50 +167,4 @@ public sealed partial class MainWindow : Window
 
     #endregion
 
-    #region Busy overlay
-
-    private void OnSharedDataServicePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SharedDataService.IsUIEnabled))
-            UpdateBusyOverlay();
-    }
-
-    /// <summary>
-    /// Estado inicial sin animación: si la UI arrancara bloqueada, deja la capa visible; en caso normal
-    /// la mantiene oculta (como ya viene del XAML). Evita un parpadeo en el primer render.
-    /// </summary>
-    private void SyncBusyOverlayInitialState()
-    {
-        if (_sharedDataService.IsUIEnabled)
-            return;
-
-        BusyOverlay.Visibility = Visibility.Visible;
-        BusyOverlay.Opacity = 1;
-    }
-
-    /// <summary>
-    /// Muestra u oculta la capa de "app ocupada" con un fade al cambiar
-    /// <see cref="SharedDataService.IsUIEnabled"/>. Al ocultar, colapsa la capa solo cuando el fade
-    /// termina de forma natural; un nuevo bloqueo cancela el fade en curso y la reaparece sin colapsar a medias.
-    /// </summary>
-    private void UpdateBusyOverlay()
-    {
-        bool busy = !_sharedDataService.IsUIEnabled;
-        _busyOverlayAnimation?.Cancel();
-
-        if (busy)
-        {
-            BusyOverlay.Visibility = Visibility.Visible;
-            _busyOverlayAnimation = AnimationService.CreateOpacityAnimation(BusyOverlay, BusyOverlay.Opacity, 1, 200);
-            _busyOverlayAnimation.Start();
-        }
-        else
-        {
-            _busyOverlayAnimation = AnimationService.CreateOpacityAnimation(BusyOverlay, BusyOverlay.Opacity, 0, 200);
-            _busyOverlayAnimation.Completed += () => BusyOverlay.Visibility = Visibility.Collapsed;
-            _busyOverlayAnimation.Start();
-        }
-    }
-
-    #endregion
 }

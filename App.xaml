@@ -13,9 +13,7 @@
             </ResourceDictionary.MergedDictionaries>
             <helpers:BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
             <helpers:BooleanToVisibilityInvertedConverter x:Key="HiddenIfTrueConverter" />
-            <helpers:BooleanToGridLengthConverter x:Key="StarIfTrueConverter" />
             <helpers:NullToOpacityConverter x:Key="NullToOpacityConverter" />
-            <helpers:NullToVisibilityConverter x:Key="HiddenIfNullConverter" />
             <helpers:BooleanToOpacityConverter x:Key="DimIfTrueConverter" />
             <helpers:BooleanToStrikethroughConverter x:Key="StrikethroughIfTrueConverter" />
         </ResourceDictionary>

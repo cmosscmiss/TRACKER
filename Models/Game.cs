@@ -1,8 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace MM4LB.Models;
@@ -22,16 +19,6 @@ public class Game : ObservableObject
     /// Used to generate search strings for image matching.
     /// </summary>
     private List<string> _tokens = new();
-
-    /// <summary>
-    /// Images for the game for all image types. If null the property is null it means that no attempt to load all the images of the game has been done.
-    /// </summary>
-    public List<GameImage> AllImages { get; protected set; } = new();
-
-    /// <summary>
-    /// Images associated with the game for the currently selected image type set.
-    /// </summary>
-    public ObservableCollection<GameImage> Images { get; protected set; } = new();
 
     /// <summary>
     /// LaunchBox database ID for the game.
