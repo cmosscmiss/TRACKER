@@ -49,7 +49,7 @@ public class MainWindowViewModel : WidgetViewModelBase
     {
         get; private set;
     }
-    public PlatformListViewModel PlatformListViewModel
+    public ProductListViewModel ProductListViewModel
     {
         get; private set;
     }
@@ -61,18 +61,23 @@ public class MainWindowViewModel : WidgetViewModelBase
     {
         get; private set;
     }
+    public PriceChartViewModel PriceChartViewModel
+    {
+        get; private set;
+    }
     #endregion
 
     #region Constructors
-    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, ConsoleViewModel consoleViewModel, PlatformListViewModel platformListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
+    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, ConsoleViewModel consoleViewModel, ProductListViewModel productListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, PriceChartViewModel priceChartViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
     {
         _progressService = progressService;
         _sharedDataService = sharedDataService;
 
         ConsoleViewModel = consoleViewModel;
-        PlatformListViewModel = platformListViewModel;
+        ProductListViewModel = productListViewModel;
         LayoutSelectorViewModel = layoutSelectorViewModel;
         WebViewViewModel = webViewViewModel;
+        PriceChartViewModel = priceChartViewModel;
 
         LoadConfig();
     }
@@ -173,7 +178,8 @@ public class MainWindowViewModel : WidgetViewModelBase
 
     public override void Dispose()
     {
-        PlatformListViewModel.Dispose();
+        ProductListViewModel.Dispose();
+        PriceChartViewModel.Dispose();
     }
     #endregion
 }

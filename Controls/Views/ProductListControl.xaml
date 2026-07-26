@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="MM4LB.Controls.Views.PlatformListControl"
+    x:Class="MM4LB.Controls.Views.ProductListControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MM4LB.Controls.Views"
@@ -10,19 +10,19 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <DataTemplate x:Key="PlatformItemTemplate" x:DataType="models:Platform">
+        <DataTemplate x:Key="ProductItemTemplate" x:DataType="models:Product">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="12 0" VerticalAlignment="Top" Foreground="{ThemeResource TextBrush}" />
-                <TextBlock Grid.Column="1" Text="{x:Bind Games.Count, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                <TextBlock Grid.Column="1" Text="{x:Bind BestPrice, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Top" Foreground="{ThemeResource AccentLightBrush}" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
-        <ListView x:Name="PlatformListView" ItemsSource="{x:Bind ViewModel.SharedDataService.PlatformSet.Platforms, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedPlatform, Mode=TwoWay}" ItemTemplate="{StaticResource PlatformItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+        <ListView x:Name="ProductListView" ItemsSource="{x:Bind ViewModel.SharedDataService.ProductSet.Products, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedProduct, Mode=TwoWay}" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
     </Grid>
 </UserControl>

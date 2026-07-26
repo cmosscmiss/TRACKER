@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="MM4LB.Controls.Views.WidgetPanelControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,7 +6,7 @@
     xmlns:local="using:MM4LB.Controls.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:template="using:MM4LB.Controls.Templates"
-    xmlns:help="using:MM4LB.Helpers"
+
     mc:Ignorable="d">
 
     <Grid x:Name="RootGrid">
@@ -14,12 +14,12 @@
             <!-- Banda fija superior (ancho completo, fuera del sistema de slots): se ajusta a su contenido. Su alto
                  se anima a 0 al ocultarla para que el grid de widgets crezca hacia arriba (ver TopBandVisible). -->
             <RowDefinition x:Name="TopBandRow" Height="Auto"/>
-            <!-- Grid de widgets (slots dinámicos, splitters, drag). -->
+            <!-- Grid de widgets (slots dinÃ¡micos, splitters, drag). -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Banda fija: contenido persistente a ancho completo, por encima del grid de widgets. No participa en el
-             layout de slots (drag/resize/ocultar). El contenido lo aporta MainWindow vía TopBandContent. -->
+             layout de slots (drag/resize/ocultar). El contenido lo aporta MainWindow vÃ­a TopBandContent. -->
         <ContentPresenter x:Name="TopBandHost" Grid.Row="0" HorizontalAlignment="Stretch" SizeChanged="OnTopBandHostSizeChanged" Content="{x:Bind TopBandContent, Mode=OneWay}"/>
 
         <Grid x:Name="WidgetGrid" Grid.Row="1" Margin="0" Background="Transparent">
@@ -29,8 +29,8 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <!-- MinWidth: evita que una columna se reduzca tanto (con los splitters o al estrechar el panel)
-                     que el contenido entre en un layout patológico y congele la app. El Grid y el GridSplitter
-                     respetan este mínimo al redimensionar. -->
+                     que el contenido entre en un layout patolÃ³gico y congele la app. El Grid y el GridSplitter
+                     respetan este mÃ­nimo al redimensionar. -->
                 <ColumnDefinition Width="*" MinWidth="150"></ColumnDefinition>
                 <ColumnDefinition Width="*" MinWidth="150"></ColumnDefinition>
                 <ColumnDefinition Width="*" MinWidth="150"></ColumnDefinition>
@@ -64,7 +64,7 @@
                 </Storyboard>
             </Border.Resources>
             <Grid>
-                <!-- Resplandor de atención; invisible en reposo, detrás de los botones para no taparlos. El
+                <!-- Resplandor de atenciÃ³n; invisible en reposo, detrÃ¡s de los botones para no taparlos. El
                      margen negativo cancela el Padding de la toolbar para que cubra TODO su interior (hasta
                      el borde), no solo la zona de los botones. -->
                 <Border x:Name="SplittersToolbarGlow" Margin="-12" CornerRadius="14" Opacity="0" IsHitTestVisible="False">
@@ -73,14 +73,14 @@
                     </Border.Background>
                 </Border>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Button Style="{StaticResource SplittersToolbarButtonStyle}" Click="OnSplittersConfirm" help:Help.Key="WidgetPanel_SplittersConfirm_Tooltip">
+                    <Button Style="{StaticResource SplittersToolbarButtonStyle}" Click="OnSplittersConfirm">
                         <FontIcon Glyph="&#xE73E;" FontSize="32" Foreground="{ThemeResource SuccessBrush}"/>
                     </Button>
-                    <Button Style="{StaticResource SplittersToolbarButtonStyle}" Click="OnSplittersCancel" help:Help.Key="WidgetPanel_SplittersCancel_Tooltip">
+                    <Button Style="{StaticResource SplittersToolbarButtonStyle}" Click="OnSplittersCancel">
                         <FontIcon Glyph="&#xE711;" FontSize="32" Foreground="{ThemeResource DangerBrush}"/>
                     </Button>
                     <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                    <Button Style="{StaticResource SplittersToolbarButtonStyle}" Click="OnSplittersDefault" help:Help.Key="WidgetPanel_SplittersDefault_Tooltip">
+                    <Button Style="{StaticResource SplittersToolbarButtonStyle}" Click="OnSplittersDefault">
                         <FontIcon Glyph="&#xE777;" FontSize="32" Foreground="{ThemeResource TextSecondaryBrush}"/>
                     </Button>
                 </StackPanel>

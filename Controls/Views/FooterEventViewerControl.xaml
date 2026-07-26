@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="MM4LB.Controls.Views.FooterEventViewerControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -6,18 +6,18 @@
     xmlns:local="using:MM4LB.Controls.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:help="using:MM4LB.Helpers"
+
     mc:Ignorable="d">
 
     <!-- Recuadro hundido (efecto "deboss"): fondo oscuro + borde con gradiente vertical (sombra arriba, luz abajo) que
-         da la sensación de que el interior está más abajo. Los colores salen del tema (ThemeService). Dentro van el
-         círculo de estado, el mensaje (recortado, con marquee y transición) y la mini barra de navegación. -->
+         da la sensaciÃ³n de que el interior estÃ¡ mÃ¡s abajo. Los colores salen del tema (ThemeService). Dentro van el
+         cÃ­rculo de estado, el mensaje (recortado, con marquee y transiciÃ³n) y la mini barra de navegaciÃ³n. -->
     <Border CornerRadius="6" Padding="8 0" Background="{ThemeResource BackgroundLightBrushOpacity60}">
-        <!-- Borde más marcado arriba (sombra, grosor 2) y más sutil en laterales/abajo (grosor 1 y luz inferior tenue). -->
+        <!-- Borde mÃ¡s marcado arriba (sombra, grosor 2) y mÃ¡s sutil en laterales/abajo (grosor 1 y luz inferior tenue). -->
         <Border.BorderThickness>2 1 1 2</Border.BorderThickness>
         <Border.BorderBrush>
             <!-- Los colores del gradiente son recursos de tipo Color (tipo por valor): no se propagan al cambiar de
-                 tema en caliente como sí lo hacen los brushes, así que se refrescan por código en OnThemeChanged. -->
+                 tema en caliente como sÃ­ lo hacen los brushes, asÃ­ que se refrescan por cÃ³digo en OnThemeChanged. -->
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                 <GradientStop x:Name="BorderStopDark" Color="{ThemeResource AccentDarkColorOpacity80}" Offset="0"/>
                 <GradientStop x:Name="BorderStopMid" Color="{ThemeResource AccentColorOpacity80}" Offset="0.5"/>
@@ -32,7 +32,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Círculo de estado, como en el ACTIVITY LOG: acento (en curso), success/warning/danger (terminado). -->
+            <!-- CÃ­rculo de estado, como en el ACTIVITY LOG: acento (en curso), success/warning/danger (terminado). -->
             <Grid Grid.Column="0" Width="22" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="0 4 0 0">
                 <Ellipse Width="9" Height="9" Fill="{ThemeResource AccentBrush}" Visibility="{x:Bind DisplayedEntry.IsOperationFinished, Mode=OneWay, Converter={StaticResource HiddenIfTrueConverter}}"/>
                 <Ellipse Width="9" Height="9" Fill="{ThemeResource SuccessBrush}" Visibility="{x:Bind DisplayedEntry.IsOperationFinished, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}"/>
@@ -40,7 +40,7 @@
                 <Ellipse Width="9" Height="9" Fill="{ThemeResource DangerBrush}" Visibility="{x:Bind DisplayedEntry.IsException, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}"/>
             </Grid>
 
-            <!-- Mensaje del evento: ContentClip lo recorta; ContentHost es la capa que se desplaza en la transición. -->
+            <!-- Mensaje del evento: ContentClip lo recorta; ContentHost es la capa que se desplaza en la transiciÃ³n. -->
             <Grid Grid.Column="1" x:Name="ContentClip" SizeChanged="ContentClip_SizeChanged">
                 <Grid x:Name="ContentHost" VerticalAlignment="Center">
                     <Grid.RenderTransform>
@@ -50,7 +50,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <!-- Progreso (en curso) / duración (terminado), con el color de la severidad. No se mueve con el marquee. -->
+                    <!-- Progreso (en curso) / duraciÃ³n (terminado), con el color de la severidad. No se mueve con el marquee. -->
                     <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0 0 8 0" Text="{x:Bind DisplayedEntry.ProgressText, Mode=OneWay}" Visibility="{x:Bind DisplayedEntry.IsOperationFinished, Mode=OneWay, Converter={StaticResource HiddenIfTrueConverter}}" Foreground="{x:Bind DisplayedEntry.Severity, Mode=OneWay, Converter={StaticResource LogEntrySeverityConverter}}" FontSize="16"/>
                     <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0 0 8 0" Text="{x:Bind DisplayedEntry.DurationText, Mode=OneWay}" Visibility="{x:Bind DisplayedEntry.IsOperationFinished, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}" Foreground="{x:Bind DisplayedEntry.Severity, Mode=OneWay, Converter={StaticResource LogEntrySeverityConverter}}" FontSize="16"/>
 
@@ -69,33 +69,33 @@
                 </Grid>
             </Grid>
 
-            <!-- Mini barra de navegación. El botón de acción (cancelar/undo) va primero; al estar las flechas siempre
-                 presentes (solo se deshabilitan), la acción queda siempre en la misma posición. -->
+            <!-- Mini barra de navegaciÃ³n. El botÃ³n de acciÃ³n (cancelar/undo) va primero; al estar las flechas siempre
+                 presentes (solo se deshabilitan), la acciÃ³n queda siempre en la misma posiciÃ³n. -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="6 0 0 2">
-                <!-- Acción del evento mostrado: cancelar (en curso) o undo (terminado, si procede). Comparten celda. -->
+                <!-- AcciÃ³n del evento mostrado: cancelar (en curso) o undo (terminado, si procede). Comparten celda. -->
                 <Grid>
-                    <Button Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" help:Help.Key="Common_Cancel_Tooltip"
+                    <Button Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0"
                             Command="{x:Bind DisplayedEntry.CancelCommand, Mode=OneWay}"
                             Visibility="{x:Bind DisplayedEntry.CanCancel, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}">
                         <FontIcon FontSize="14" Glyph="&#xE711;"/>
                     </Button>
-                    <Button Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" help:Help.Key="Common_Undo_Tooltip"
+                    <Button Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0"
                             Command="{x:Bind DisplayedEntry.UndoCommand, Mode=OneWay}"
                             Visibility="{x:Bind DisplayedEntry.CanUndo, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}">
                         <FontIcon FontSize="14" Glyph="&#xE7A7;"/>
                     </Button>
                 </Grid>
 
-                <!-- Anterior (evento más antiguo): entra desde la izquierda. -->
-                <Button x:Name="OlderButton" Margin="4 0 0 0" Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" help:Help.Key="FooterEventViewer_OlderEvent_Tooltip" IsEnabled="{x:Bind CanGoOlder, Mode=OneWay}" Click="OlderButton_Click">
+                <!-- Anterior (evento mÃ¡s antiguo): entra desde la izquierda. -->
+                <Button x:Name="OlderButton" Margin="4 0 0 0" Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" IsEnabled="{x:Bind CanGoOlder, Mode=OneWay}" Click="OlderButton_Click">
                     <FontIcon FontSize="14" Glyph="&#xE76B;"/>
                 </Button>
-                <!-- Posterior (evento más reciente): entra desde la derecha. -->
-                <Button x:Name="NewerButton" Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" help:Help.Key="FooterEventViewer_NewerEvent_Tooltip" IsEnabled="{x:Bind CanGoNewer, Mode=OneWay}" Click="NewerButton_Click">
+                <!-- Posterior (evento mÃ¡s reciente): entra desde la derecha. -->
+                <Button x:Name="NewerButton" Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" IsEnabled="{x:Bind CanGoNewer, Mode=OneWay}" Click="NewerButton_Click">
                     <FontIcon FontSize="14" Glyph="&#xE76C;"/>
                 </Button>
-                <!-- Ir al último (más reciente), que es el que se muestra por defecto. -->
-                <Button x:Name="LatestButton" Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" help:Help.Key="FooterEventViewer_LatestEvent_Tooltip" IsEnabled="{x:Bind CanGoNewer, Mode=OneWay}" Click="LatestButton_Click">
+                <!-- Ir al Ãºltimo (mÃ¡s reciente), que es el que se muestra por defecto. -->
+                <Button x:Name="LatestButton" Padding="8" Style="{StaticResource Button_Icon}" BorderThickness="0" IsEnabled="{x:Bind CanGoNewer, Mode=OneWay}" Click="LatestButton_Click">
                     <FontIcon FontSize="14" Glyph="&#xE893;"/>
                 </Button>
             </StackPanel>

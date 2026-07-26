@@ -62,9 +62,6 @@ public sealed partial class WidgetBaseControl : UserControl, INotifyPropertyChan
     /// <summary>Cache local de <see cref="AppSettings.GeneralSettings.ShowWidgetHeader"/>; se actualiza en caliente.</summary>
     private bool _showWidgetHeader;
 
-    /// <summary>Si la barra de cabecera completa está visible ahora (condición necesaria para el icono de ayuda).</summary>
-    private bool _headerBarVisible;
-
     /// <summary>
     /// Evento emitido cuando el usuario inicia una operación de arrastre
     /// sobre la barra superior del widget.
@@ -299,21 +296,6 @@ public sealed partial class WidgetBaseControl : UserControl, INotifyPropertyChan
         ((WidgetBaseControl)d).UpdateResizeOverlay();
     }
 
-    /// <summary>
-    /// Clave de recurso (i18n) de la DESCRIPCIÓN de ayuda del widget, mostrada en un TeachingTip al pulsar el icono de
-    /// ayuda de la cabecera. Vacía = el widget no tiene icono de ayuda. La visibilidad del icono depende, además, de que
-    /// la cabecera esté visible y de que el toggle global de ayuda esté activado.
-    /// </summary>
-    public string HelpDescriptionKey
-    {
-        get => (string)GetValue(HelpDescriptionKeyProperty);
-        set => SetValue(HelpDescriptionKeyProperty, value);
-    }
-
-    public static readonly DependencyProperty HelpDescriptionKeyProperty = DependencyProperty.Register(nameof(HelpDescriptionKey), typeof(string), typeof(WidgetBaseControl), new PropertyMetadata(string.Empty, OnHelpDescriptionKeyChanged));
-
-    private static void OnHelpDescriptionKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((WidgetBaseControl)d).UpdateHelpAffordance();
     #endregion
 
     #region Constructor
@@ -361,8 +343,6 @@ public sealed partial class WidgetBaseControl : UserControl, INotifyPropertyChan
         Loaded -= OnLoaded;
         _themeService.ThemeChanged += OnThemeChanged;
         _sharedDataService.WidgetHeaderVisibilityChanged += OnWidgetHeaderVisibilityChanged;
-        // Toggle global de ayuda: muestra/oculta el icono de ayuda de la cabecera en caliente.
-        _sharedDataService.PropertyChanged += OnSharedPropertyChanged;
 
         UpdateThemeIcons();
         ApplyDisplayMode();
@@ -378,7 +358,6 @@ public sealed partial class WidgetBaseControl : UserControl, INotifyPropertyChan
     {
         _themeService.ThemeChanged -= OnThemeChanged;
         _sharedDataService.WidgetHeaderVisibilityChanged -= OnWidgetHeaderVisibilityChanged;
-        _sharedDataService.PropertyChanged -= OnSharedPropertyChanged;
 
         WidgetDragHandle.PointerPressed -= OnDragHandlePointerPressed;
         WidgetDragHandle.PointerMoved -= OnDragHandlePointerMoved;
@@ -609,41 +588,6 @@ public sealed partial class WidgetBaseControl : UserControl, INotifyPropertyChan
         WidgetBottomInnerShadowLayer.Visibility = chromeVisibility;
 
         WidgetDragOverlay.Visibility = dragOverlay ? Visibility.Visible : Visibility.Collapsed;
-
-        _headerBarVisible = headerBar;
-        UpdateHelpAffordance();
-    }
-
-    /// <summary>El toggle global de ayuda cambió: reevalúa la visibilidad del icono de ayuda de la cabecera.</summary>
-    private void OnSharedPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SharedDataService.HelpTooltipsEnabled))
-            UpdateHelpAffordance();
-    }
-
-    /// <summary>
-    /// Muestra el icono de ayuda de la cabecera solo si: la barra de cabecera está visible, el widget tiene descripción
-    /// (<see cref="HelpDescriptionKey"/>) y el toggle global de ayuda está activado. Si se oculta, cierra el TeachingTip.
-    /// </summary>
-    private void UpdateHelpAffordance()
-    {
-        if (WidgetHelpButton is null)
-            return;
-
-        bool show = _headerBarVisible && !string.IsNullOrEmpty(HelpDescriptionKey) && _sharedDataService.HelpTooltipsEnabled;
-        WidgetHelpButton.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-        if (!show && WidgetHelpTip is not null)
-            WidgetHelpTip.IsOpen = false;
-    }
-
-    /// <summary>Abre el TeachingTip de ayuda del widget, resolviendo la descripción en el idioma activo al abrir.</summary>
-    private void OnHelpButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (WidgetHelpTip is null)
-            return;
-
-        WidgetHelpTip.Subtitle = string.IsNullOrEmpty(HelpDescriptionKey) ? string.Empty : LocalizationService.Instance?[HelpDescriptionKey];
-        WidgetHelpTip.IsOpen = true;
     }
 
     /// <summary>

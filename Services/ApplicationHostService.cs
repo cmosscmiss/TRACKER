@@ -28,6 +28,8 @@ public sealed class ApplicationHostService : IHostedService
 {
     #region Attributes
     private readonly PersistAndRestoreService _persistAndRestoreService;
+    private readonly ProductDatabaseService _productDatabaseService;
+    private readonly SharedDataService _sharedDataService;
     private readonly ThemeService _themeService;
     private readonly LocalizationService _localizationService;
     private readonly AppSettings _appSettings;
@@ -36,9 +38,11 @@ public sealed class ApplicationHostService : IHostedService
     #endregion
 
     #region Constructor
-    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ThemeService themeService, LocalizationService localizationService, IOptions<AppSettings> settings)
+    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ProductDatabaseService productDatabaseService, SharedDataService sharedDataService, ThemeService themeService, LocalizationService localizationService, IOptions<AppSettings> settings)
     {
         _persistAndRestoreService = persistAndRestoreService;
+        _productDatabaseService = productDatabaseService;
+        _sharedDataService = sharedDataService;
         _themeService = themeService;
         _localizationService = localizationService;
         _appSettings = settings.Value;
@@ -65,6 +69,11 @@ public sealed class ApplicationHostService : IHostedService
         if (_isInitialized) return;
 
         _persistAndRestoreService.RestoreData();
+
+        // Base de datos de productos: se crea en el primer arranque (%LocalAppData%\Tracker\tracker.db) y se cargan
+        // los productos persistidos (con sus tiendas e histórico) en el ProductSet compartido antes de mostrar la UI.
+        _productDatabaseService.Initialize();
+        _productDatabaseService.LoadInto(_sharedDataService.ProductSet);
 
         // Aplica la preferencia de logging de excepciones ya cargada (por defecto activado). Antes de este punto
         // el logging está activo para capturar también fallos tempranos del arranque.

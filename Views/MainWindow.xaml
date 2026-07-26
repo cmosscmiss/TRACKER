@@ -10,6 +10,7 @@
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:controls="using:MM4LB.Controls.Views" 
     xmlns:template="using:MM4LB.Controls.Templates" xmlns:sys="using:System"
+    xmlns:wv="using:Microsoft.UI.Xaml.Controls"
     xmlns:loc="using:MM4LB.Markup"
     mc:Ignorable="d"
     Title="MM4LB">
@@ -52,7 +53,7 @@
 
                             <template:SeparatorEx Grid.Row="1" Margin="0 0 0 16" VerticalAlignment="Bottom" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
 
-                            <uc:PlatformListControl Grid.Row="2" x:Name="plPlatforms" ViewModel="{Binding PlatformListViewModel}"/>
+                            <uc:ProductListControl Grid.Row="2" x:Name="plProducts" ViewModel="{Binding ProductListViewModel}"/>
                         </Grid>
                     </Border>
                 </Grid>
@@ -69,19 +70,21 @@
                         <!--Menu-->
                         <Grid Grid.Row="0" Grid.RowSpan="2">
                             <StackPanel Orientation="Horizontal" Padding="16">
-                                <TextBlock Text="{loc:Str Key=MainWindow_Platform_Label}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="24" FontWeight="Bold" Margin="0 5 8 0"/>
-                                <TextBlock Text="{Binding SharedDataService.SelectedPlatform.Name}" Foreground="{ThemeResource AccentLightBrush}" FontSize="28" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding SharedDataService.SelectedProduct.Name}" Foreground="{ThemeResource AccentLightBrush}" FontSize="28" FontWeight="Bold"/>
                             </StackPanel>
                         </Grid>
 
                         <!-- Widgets area -->
                         <Grid Grid.Row="0" Grid.RowSpan="2">
                             <uc:WidgetPanelControl x:Name="WidgetPanel" Layout="{Binding LayoutSelectorViewModel.SelectedLayout}" SplittersVisible="{Binding LayoutSelectorViewModel.SplittersVisible, Mode=OneWay}" SplittersEnabled="{Binding LayoutSelectorViewModel.SplittersEnabled, Mode=TwoWay}" Margin="{Binding LayoutSelectorViewModel.WidgetPanelMargin}">
-                                <uc:WidgetBaseControl x:Name="ucConsoleWidget" HelpDescriptionKey="Console_WidgetHelp_Description" Title="{loc:Str Key=MainWindow_ActivityLogWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
+                                <uc:WidgetBaseControl x:Name="ucConsoleWidget" Title="{loc:Str Key=MainWindow_ActivityLogWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:ConsoleControl x:Name="ucConsoleControl" ViewModel="{Binding ConsoleViewModel}"></uc:ConsoleControl>
                                 </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucWebViewWidget" HelpDescriptionKey="WebView_WidgetHelp_Description" TitlePrefix="{loc:Str Key=MainWindow_WebSearchWidget_Title}" Title="{Binding WebViewViewModel.SearchString}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
+                                <uc:WidgetBaseControl x:Name="ucWebViewWidget" TitlePrefix="{loc:Str Key=MainWindow_WebSearchWidget_Title}" Title="{Binding WebViewViewModel.SearchString}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:WebViewControl x:Name="ucWebViewControl" ViewModel="{Binding WebViewViewModel}"></uc:WebViewControl>
+                                </uc:WidgetBaseControl>
+                                <uc:WidgetBaseControl x:Name="ucPriceChartWidget" Title="{loc:Str Key=MainWindow_PriceChartWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
+                                    <uc:PriceChartControl x:Name="ucPriceChartControl" ViewModel="{Binding PriceChartViewModel}"></uc:PriceChartControl>
                                 </uc:WidgetBaseControl>
                             </uc:WidgetPanelControl>
                         </Grid>
@@ -109,9 +112,11 @@
                              animación de transición. ViewModel se pasa por Binding (DataContext del root = MainWindowViewModel). -->
                         <uc:FooterEventViewerControl Grid.Column="0" ViewModel="{Binding ConsoleViewModel}" Visibility="{Binding ConsoleViewModel.IsFooterViewerVisible, Converter={StaticResource VisibleIfTrueConverter}}"/>
 
-                        <!-- Barra de herramientas del footer (a la derecha, anchura automática): toggle de ayuda + sonido. -->
+                        <!-- Barra de herramientas del footer (a la derecha): botón de añadir producto. -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
-                            <uc:FooterHelpControl/>
+                            <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAddProductClick" ToolTipService.ToolTip="{loc:Str Key=Footer_AddProduct_Tooltip}">
+                                <FontIcon FontSize="18" Glyph="&#xE710;" Foreground="{ThemeResource AccentBrush}"/>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -135,5 +140,10 @@
                 Background="{ThemeResource CardBackgroundLightBrush}" CornerRadius="8" IsHitTestVisible="False">
             <TextBlock x:Name="BuildTimestampText" Foreground="{ThemeResource TextColor}" FontSize="14" Opacity="0.85"/>
         </Border>
+
+        <!-- Navegador oculto para el scraping de precios (ProductParsingService): fuera de la vista (1x1, opacidad 0,
+             sin hit-test). Se navega e inyecta JS por código; no participa en la UI. -->
+        <wv:WebView2 x:Name="ScraperWebView" Width="1" Height="1" Opacity="0" IsHitTestVisible="False"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

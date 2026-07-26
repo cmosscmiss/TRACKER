@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="MM4LB.Controls.Views.WebViewControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,7 +9,6 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:template="using:MM4LB.Controls.Templates"
     xmlns:loc="using:MM4LB.Markup"
-    xmlns:help="using:MM4LB.Helpers"
     mc:Ignorable="d">
 
     <Grid>
@@ -26,20 +25,15 @@
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <template:ToolbarButtonIcon IconName="Icon-google" Style="{StaticResource ToolbarButtonIconMediumStyle}" Command="{x:Bind ViewModel.SearchEngineChangedCommand}" help:Help.Key="WebView_UsingGoogle_Tooltip" Visibility="{x:Bind ViewModel.ShowGoogleToggle, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
-                <template:ToolbarButtonIcon IconName="Icon-steamDB" Style="{StaticResource ToolbarButtonIconMediumStyle}" Command="{x:Bind ViewModel.SearchEngineChangedCommand}" help:Help.Key="WebView_UsingSteamDb_Tooltip" Visibility="{x:Bind ViewModel.ShowSteamDbToggle, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                <template:ToolbarButtonIcon IconName="Icon-google" Style="{StaticResource ToolbarButtonIconMediumStyle}" Command="{x:Bind ViewModel.SearchEngineChangedCommand}" Visibility="{x:Bind ViewModel.ShowGoogleToggle, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
+                <template:ToolbarButtonIcon IconName="Icon-steamDB" Style="{StaticResource ToolbarButtonIconMediumStyle}" Command="{x:Bind ViewModel.SearchEngineChangedCommand}" Visibility="{x:Bind ViewModel.ShowSteamDbToggle, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                 <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0 8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                <Button x:Name="HelpButton" Grid.Column="2" Style="{StaticResource Button_Icon}" Click="OnHelpClick" VerticalAlignment="Center" Margin="8 0 0 0" Padding="8" help:Help.AffordanceVisible="True" help:Help.Key="Common_Help_Tooltip">
-                    <FontIcon Glyph="&#xE897;" FontSize="16"/>
-                </Button>
-                <TeachingTip x:Name="HelpTip" Grid.Column="2" Target="{x:Bind HelpButton}" IsLightDismissEnabled="True" PreferredPlacement="BottomLeft" Title="{loc:Str Key=WebView_Help_Title}" Subtitle="{loc:Str Key=WebView_Help_Description}"/>
-                <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0 8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                <AppBarButton x:Name="abNavigateBack" LabelPosition="Collapsed" Width="40" help:Help.Key="WebView_Back_Tooltip" Click="AbNavigateBack_Click">
+                <AppBarButton x:Name="abNavigateBack" LabelPosition="Collapsed" Width="40" Click="AbNavigateBack_Click">
                     <AppBarButton.Content>
                         <FontIcon Glyph="&#xE0A6;" />
                     </AppBarButton.Content>
                 </AppBarButton>
-                <AppBarButton x:Name="abNavigateForward" LabelPosition="Collapsed" Width="40" Margin="0 0 8 0" help:Help.Key="WebView_Forward_Tooltip" Click="AbNavigateForward_Click">
+                <AppBarButton x:Name="abNavigateForward" LabelPosition="Collapsed" Width="40" Margin="0 0 8 0" Click="AbNavigateForward_Click">
                     <AppBarButton.Content>
                         <FontIcon Glyph="&#xE0AB;" />
                     </AppBarButton.Content>

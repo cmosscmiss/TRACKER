@@ -131,15 +131,6 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Icono de ayuda (arriba a la derecha de la cabecera): abre un TeachingTip que explica el widget.
-                         Su visibilidad la controla el code-behind = cabecera visible + hay descripción + toggle de ayuda
-                         activado. Va fuera del asa de arrastre para no interferir con el drag. -->
-                    <Button x:Name="WidgetHelpButton" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="0 0 10 0" Padding="4" Background="Transparent" BorderThickness="0" Visibility="Collapsed"
-                            Click="OnHelpButtonClick">
-                        <FontIcon FontSize="16" Glyph="&#xE897;" Foreground="{ThemeResource AccentLightBrush}"/>
-                    </Button>
-
                     <!-- Contenido del widget -->
                     <ContentPresenter Grid.Row="1" Padding="12 8" Content="{x:Bind Content, Mode=OneWay}"/>
                 </Grid>
@@ -154,10 +145,5 @@
              señalando el modo "redimensionable" y bloqueando la interacción con el contenido hasta que
              se oculten los splitters (Confirmar/Cancelar/Default o autoocultado). -->
         <Border x:Name="WidgetResizeOverlay" Visibility="Collapsed" Opacity="0" Background="{ThemeResource AccentDarkBrushOpacity40}" CornerRadius="{x:Bind WidgetOuterCornerRadius, Mode=OneWay}"/>
-
-        <!-- Ayuda del widget: título = título del widget, subtítulo = descripción localizada (se fija al abrir, así
-             sale siempre en el idioma activo). Anclado al icono de ayuda de la cabecera. -->
-        <TeachingTip x:Name="WidgetHelpTip" Target="{x:Bind WidgetHelpButton}" IsLightDismissEnabled="True" PreferredPlacement="Bottom"
-                     Title="{x:Bind ComposedTitle, Mode=OneWay}"/>
     </Grid>
 </UserControl>

@@ -3,6 +3,7 @@ using MM4LB.Controls.Templates;
 using MM4LB.Controls.Views;
 using MM4LB.Services;
 using MM4LB.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ public sealed partial class MainWindow : Window
     private readonly MainWindowViewModel _viewModel;
     private readonly WindowService _windowService;
     private readonly ThemeService _themeService;
+    private readonly TrayIcon _trayIcon = new();
 
     private bool _initialized;
     #endregion
@@ -84,6 +86,10 @@ public sealed partial class MainWindow : Window
 
         InitializeToolbarBehavior();
 
+        // Minimizar a la bandeja del sistema: al minimizar se oculta de la barra de tareas y el icono de la bandeja
+        // la restaura. Mantener el proceso vivo en la bandeja es lo que permite al scheduler seguir leyendo precios.
+        _trayIcon.Initialize(WinRT.Interop.WindowNative.GetWindowHandle(this), "Tracker");
+
         Activated += OnWindowActivated;
         Closed += OnClosed;
     }
@@ -135,6 +141,7 @@ public sealed partial class MainWindow : Window
         {
             new(ucConsoleControl.ViewModel!, ucConsoleWidget),
             new(ucWebViewControl.ViewModel!, ucWebViewWidget),
+            new(ucPriceChartControl.ViewModel!, ucPriceChartWidget),
         };
 
         WidgetPanel.SetWidgets(widgetEntries);
@@ -148,6 +155,32 @@ public sealed partial class MainWindow : Window
 
         // Deja terminar los bindings y el primer layout pass.
         await Task.Yield();
+
+        await InitializeScraperAsync();
+    }
+
+    /// <summary>
+    /// Inicializa el WebView2 oculto de scraping (mismo user data folder explícito que el WebView visible, para no
+    /// caer en el fallback de ApplicationData que revienta en apps unpackaged) y lo entrega al ProductParsingService.
+    /// </summary>
+    private async Task InitializeScraperAsync()
+    {
+        try
+        {
+            string userDataFolder = System.IO.Path.Combine(
+                System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
+                "Tracker", "WebView2");
+            var environment = await Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateWithOptionsAsync(null, userDataFolder, null);
+            await ScraperWebView.EnsureCoreWebView2Async(environment);
+            App.GetService<ProductParsingService>().Attach(ScraperWebView);
+
+            // El scraper ya está listo: arranca el planificador de precios (catch-up + cada 12 h) en este hilo de UI.
+            App.GetService<PriceSchedulerService>().Start(DispatcherQueue);
+        }
+        catch (System.Exception ex)
+        {
+            App.GetService<ExceptionService>().Handle(ex, "The price scraper browser could not be initialized.");
+        }
     }
 
     private void OnClosed(object sender, WindowEventArgs e)
@@ -161,10 +194,42 @@ public sealed partial class MainWindow : Window
         Closed -= OnClosed;
 
         DisposeToolbarBehavior();
+        _trayIcon.Dispose();
 
         _viewModel.Dispose();
     }
 
+    #endregion
+
+    #region Footer actions
+    /// <summary>
+    /// Botón "Añadir producto" del footer: pide una URL y crea un producto rastreado desde ella (una tienda), que
+    /// se persiste en la BD, se añade a la lista y queda seleccionado. Nombre/precio se rellenan luego al parsear.
+    /// </summary>
+    private async void OnAddProductClick(object sender, RoutedEventArgs e)
+    {
+        if (Content is not FrameworkElement root)
+            return;
+
+        DialogsService dialogs = App.GetService<DialogsService>();
+        string? url = await dialogs.PromptAsync(
+            root.XamlRoot,
+            L(MM4LB.Helpers.LocKeys.AddProduct_Dialog_Title),
+            L(MM4LB.Helpers.LocKeys.AddProduct_Dialog_Message),
+            L(MM4LB.Helpers.LocKeys.AddProduct_Url_Placeholder),
+            L(MM4LB.Helpers.LocKeys.Common_Add_Label),
+            L(MM4LB.Helpers.LocKeys.Common_Cancel_Label));
+
+        if (string.IsNullOrWhiteSpace(url))
+            return;
+
+        var product = App.GetService<ProductService>().AddProductFromUrl(url);
+        if (product is not null)
+            await App.GetService<ProductService>().RefreshProductAsync(product);
+    }
+
+    /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
+    private static string L(string key) => MM4LB.Services.LocalizationService.Instance?[key] ?? key;
     #endregion
 
 }

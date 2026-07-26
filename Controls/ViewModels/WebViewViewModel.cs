@@ -148,10 +148,10 @@ public class WebViewViewModel : WidgetViewModelBase
         SearchViaGoogle = true;
         SearchViaSteamGridDb = false;
 
-        SharedDataService.SelectedGameChanged += OnSelectedGameChanged;
+        SharedDataService.SelectedProductChanged += OnSelectedProductChanged;
 
-        // Si el juego ya estaba seleccionado antes de crear este ViewModel,
-        // el evento SelectedGameChanged ya no se recibirá. Por eso leemos
+        // Si el producto ya estaba seleccionado antes de crear este ViewModel,
+        // el evento SelectedProductChanged ya no se recibirá. Por eso leemos
         // el estado actual en la construcción.
         RefreshFromCurrentSelection(requestNavigation: false);
     }
@@ -159,9 +159,9 @@ public class WebViewViewModel : WidgetViewModelBase
 
     #region Subscribed events
     /// <summary>
-    /// Actualiza el texto de búsqueda al cambiar el juego seleccionado.
+    /// Actualiza el texto de búsqueda al cambiar el producto seleccionado.
     /// </summary>
-    private void OnSelectedGameChanged(object? sender, GameChangedEventArgs e)
+    private void OnSelectedProductChanged(object? sender, ProductChangedEventArgs e)
     {
         RefreshFromCurrentSelection(requestNavigation: true);
     }
@@ -184,17 +184,15 @@ public class WebViewViewModel : WidgetViewModelBase
     }
 
     /// <summary>
-    /// Construye el texto de búsqueda usando juego y plataforma.
+    /// Construye el texto de búsqueda usando el nombre del producto seleccionado.
     /// </summary>
     private string BuildSearchStringFromCurrentSelection()
     {
-        string? gameTitle = SharedDataService.SelectedGame?.Title;
-        string? platformName = SharedDataService.SelectedPlatform?.Name;
+        string? productName = SharedDataService.SelectedProduct?.Name;
 
         return string.Join(" ", new[]
             {
-                gameTitle,
-                platformName
+                productName
             }
             .Where(value => !string.IsNullOrWhiteSpace(value))
             .Select(value => value!.Trim()));
@@ -279,7 +277,7 @@ public class WebViewViewModel : WidgetViewModelBase
     /// </summary>
     public override void Dispose()
     {
-        SharedDataService.SelectedGameChanged -= OnSelectedGameChanged;
+        SharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
     }
 
     /// <summary>

@@ -249,17 +249,6 @@ public sealed partial class WebViewControl : UserControl
 
     #region UI events
     /// <summary>
-    /// Abre el TeachingTip de ayuda del navegador.
-    /// </summary>
-    private void OnHelpClick(object sender, RoutedEventArgs e)
-    {
-        if (HelpTip != null)
-        {
-            HelpTip.IsOpen = true;
-        }
-    }
-
-    /// <summary>
     /// Navega hacia atrás en el historial del WebView si existe una página anterior.
     /// </summary>
     private void AbNavigateBack_Click(object sender, RoutedEventArgs e)

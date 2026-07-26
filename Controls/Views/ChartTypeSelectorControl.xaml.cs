@@ -27,7 +27,6 @@ namespace MM4LB.Controls.Views;
 public sealed partial class ChartTypeSelectorControl : UserControl
 {
     private ThemeService? _themeService;
-    private SharedDataService? _sharedDataService;
 
     /// <summary>Umbrales de los botones "Top X" (en orden); "All" no tiene umbral.</summary>
     private static readonly int[] TopThresholds = { 5, 10, 20, 50, 100 };
@@ -58,18 +57,6 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         // de FlipView/panel). Refresca las caras de los split-buttons (fijadas por código); los menús usan {loc:Str}.
         if (LocalizationService.Instance is LocalizationService loc)
             loc.LanguageChanged += OnLanguageChanged;
-
-        // Toggle global de ayuda: el icono de ayuda de la gráfica se oculta con la ayuda desactivada (suscripción
-        // permanente, como el tema, por la virtualización en FlipView; SharedDataService es singleton).
-        _sharedDataService = App.GetService<SharedDataService>();
-        if (_sharedDataService != null)
-            _sharedDataService.PropertyChanged += OnSharedPropertyChanged;
-    }
-
-    private void OnSharedPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SharedDataService.HelpTooltipsEnabled))
-            UpdateHelp();
     }
 
     /// <summary>El idioma cambió: reconstruye las etiquetas de las caras de los split-buttons.</summary>
@@ -95,19 +82,6 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         set => SetValue(TitleProperty, value);
     }
 
-    /// <summary>
-    /// Optional help text. When set (non-empty) a help icon appears top-right of the control and shows this text
-    /// as a tooltip on hover. Hidden when null/empty.
-    /// </summary>
-    public static readonly DependencyProperty HelpTextProperty = DependencyProperty.Register(
-        nameof(HelpText), typeof(string), typeof(ChartTypeSelectorControl),
-        new PropertyMetadata(string.Empty, OnHelpTextChanged));
-
-    public string HelpText
-    {
-        get => (string)GetValue(HelpTextProperty);
-        set => SetValue(HelpTextProperty, value);
-    }
 
     /// <summary>Chart type currently selected for this chart (defaults to <see cref="ChartType.Column"/>).</summary>
     public static readonly DependencyProperty SelectedChartTypeProperty = DependencyProperty.Register(
@@ -291,7 +265,6 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     {
         // Al (re)cargarse en el árbol, reconstruye por si el tema cambió mientras estaba descargado/virtualizado.
         UpdateTitle();
-        UpdateHelp();
         UpdateButtons();
         UpdateSortButtons();
         Rebuild();
@@ -348,37 +321,6 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         string title = Title;
         TitleText.Text = title ?? string.Empty;
         TitleText.Visibility = string.IsNullOrEmpty(title) ? Visibility.Collapsed : Visibility.Visible;
-
-        if (HelpTip != null)
-            HelpTip.Title = title ?? string.Empty;
-    }
-
-    private static void OnHelpTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((ChartTypeSelectorControl)d).UpdateHelp();
-
-    /// <summary>Vuelca el texto de ayuda al TeachingTip y muestra el botón solo si hay texto.</summary>
-    private void UpdateHelp()
-    {
-        if (HelpButton == null)
-            return;
-
-        string help = HelpText;
-        // El icono se muestra solo si hay texto de ayuda Y el toggle global de ayuda está activado.
-        bool helpEnabled = _sharedDataService?.HelpTooltipsEnabled ?? true;
-        HelpButton.Visibility = (!string.IsNullOrEmpty(help) && helpEnabled) ? Visibility.Visible : Visibility.Collapsed;
-        if (HelpTip != null)
-        {
-            HelpTip.Subtitle = help ?? string.Empty;
-            if (!helpEnabled)
-                HelpTip.IsOpen = false;
-        }
-    }
-
-    /// <summary>Abre el TeachingTip de ayuda al pulsar el botón.</summary>
-    private void OnHelpClick(object? sender, RoutedEventArgs e)
-    {
-        if (HelpTip != null)
-            HelpTip.IsOpen = true;
     }
 
     /// <summary>

@@ -30,6 +30,23 @@ public class DialogsService
         await dialog.ShowAsync(xamlRoot, title, BuildText(message), null, null, closeText);
     }
 
+    /// <summary>
+    /// Muestra un diálogo con un cuadro de texto y devuelve lo introducido (recortado), o <c>null</c> si el usuario
+    /// canceló. Útil para pedir una URL, un nombre, etc.
+    /// </summary>
+    public async Task<string?> PromptAsync(XamlRoot xamlRoot, string title, string message, string placeholder, string primaryText, string closeText)
+    {
+        var textBox = new TextBox { PlaceholderText = placeholder, AcceptsReturn = false };
+        var panel = new StackPanel { Spacing = 8, MinWidth = 420 };
+        if (!string.IsNullOrEmpty(message))
+            panel.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });
+        panel.Children.Add(textBox);
+
+        AppDialog dialog = new();
+        AppDialogResult result = await dialog.ShowAsync(xamlRoot, title, panel, primaryText, null, closeText);
+        return result == AppDialogResult.Primary ? textBox.Text?.Trim() : null;
+    }
+
     /// <summary>Texto del diálogo como TextBlock con ajuste de línea (el color lo hereda de la tarjeta).</summary>
     private static TextBlock BuildText(string message) => new()
     {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="MM4LB.Controls.Views.ChartTypeSelectorControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,13 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI" xmlns:template="using:MM4LB.Controls.Templates"
     xmlns:loc="using:MM4LB.Markup"
-    xmlns:help="using:MM4LB.Helpers"
+
     mc:Ignorable="d">
 
-    <!-- Componente autocontenido: un título opcional (Title), una toolbar (tipo de gráfica / Top N / orden, cada
-         barra un ToggleSplitButton cuya cara muestra la selección y cuyo desplegable lista las opciones 1-de-N) y,
-         debajo, la gráfica que controla (cartesiana o pie según el tipo). Las series se construyen en el code-behind
-         a partir de las propiedades de datos (Values/Labels/…), evitando x:Bind a propiedades de LiveCharts. -->
+    <!-- Componente autocontenido: un tÃ­tulo opcional (Title), una toolbar (tipo de grÃ¡fica / Top N / orden, cada
+         barra un ToggleSplitButton cuya cara muestra la selecciÃ³n y cuyo desplegable lista las opciones 1-de-N) y,
+         debajo, la grÃ¡fica que controla (cartesiana o pie segÃºn el tipo). Las series se construyen en el code-behind
+         a partir de las propiedades de datos (Values/Labels/â€¦), evitando x:Bind a propiedades de LiveCharts. -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,26 +22,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Título de la gráfica (izda., oculto si Title está vacío) y botón de ayuda (dcha., oculto si no se pasa
-             HelpText). El botón abre un TeachingTip con el texto de ayuda. Lo gestiona el code-behind. -->
+        <!-- TÃ­tulo de la grÃ¡fica (izda., oculto si Title estÃ¡ vacÃ­o) y botÃ³n de ayuda (dcha., oculto si no se pasa
+             HelpText). El botÃ³n abre un TeachingTip con el texto de ayuda. Lo gestiona el code-behind. -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="TitleText" Grid.Column="0" Margin="0 8" Style="{StaticResource TitleStyle}" Visibility="Collapsed"/>
-            <Button x:Name="HelpButton" Grid.Column="1" Style="{StaticResource Button_Icon}" Click="OnHelpClick" VerticalAlignment="Center" Margin="8 8 0 0" Padding="8" Visibility="Collapsed" help:Help.Key="Common_Help_Tooltip">
-                <FontIcon Glyph="&#xE897;" FontSize="16"/>
-            </Button>
-            <TeachingTip x:Name="HelpTip" Grid.Column="1" Target="{x:Bind HelpButton}" IsLightDismissEnabled="True" PreferredPlacement="BottomLeft"/>
         </Grid>
 
         <template:SeparatorEx Grid.Row="1" Margin="0 8 0 16" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
 
-        <!-- Toolbar: cada barra es un ToggleSplitButton (cara = selección actual, desplegable = opciones 1-de-N) -->
+        <!-- Toolbar: cada barra es un ToggleSplitButton (cara = selecciÃ³n actual, desplegable = opciones 1-de-N) -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 0 8">
-            <!-- Tipo de gráfica -->
-            <ToggleSplitButton x:Name="ChartTypeButton" IsCheckedChanged="OnSplitToggle" help:Help.Key="ChartType_TypeButton_Tooltip">
+            <!-- Tipo de grÃ¡fica -->
+            <ToggleSplitButton x:Name="ChartTypeButton" IsCheckedChanged="OnSplitToggle">
                 <ToggleSplitButton.Flyout>
                     <MenuFlyout>
                         <RadioMenuFlyoutItem x:Name="ColumnItem"   GroupName="ChartType" Tag="Column"   Text="{loc:Str Key=ChartType_Bars_Label}"   Click="OnTypeClick"/>
@@ -56,9 +52,9 @@
 
             <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
 
-            <!-- Top N: los N elementos de mayor valor. Cada opción "Top X" solo aparece si hay más de X elementos;
-                 el botón entero (y su separador) se ocultan si no califica ninguno. -->
-            <ToggleSplitButton x:Name="TopNButton" IsCheckedChanged="OnSplitToggle" help:Help.Key="ChartType_TopNButton_Tooltip">
+            <!-- Top N: los N elementos de mayor valor. Cada opciÃ³n "Top X" solo aparece si hay mÃ¡s de X elementos;
+                 el botÃ³n entero (y su separador) se ocultan si no califica ninguno. -->
+            <ToggleSplitButton x:Name="TopNButton" IsCheckedChanged="OnSplitToggle">
                 <ToggleSplitButton.Flyout>
                     <MenuFlyout>
                         <RadioMenuFlyoutItem x:Name="Top5Item"   GroupName="TopN" Tag="5"   Text="Top 5"   Click="OnTopNClick"/>
@@ -74,7 +70,7 @@
             <template:SeparatorEx x:Name="TopNSeparator" VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
 
             <!-- Orden: sin orden / ascendente / descendente (por valor) -->
-            <ToggleSplitButton x:Name="SortButton" IsCheckedChanged="OnSplitToggle" help:Help.Key="ChartType_SortButton_Tooltip">
+            <ToggleSplitButton x:Name="SortButton" IsCheckedChanged="OnSplitToggle">
                 <ToggleSplitButton.Flyout>
                     <MenuFlyout>
                         <RadioMenuFlyoutItem x:Name="SortNoneItem" GroupName="Sort" Tag="None"       Text="{loc:Str Key=ChartType_SortNone_Label}"  Click="OnSortClick"/>

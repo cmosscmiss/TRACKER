@@ -13,33 +13,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Common_Cancel_Tooltip" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
-  <data name="Common_Undo_Tooltip" xml:space="preserve">
-    <value>Deshacer</value>
-  </data>
   <!-- Console (ACTIVITY LOG) -->
   <!-- FooterEventViewer -->
-  <data name="FooterEventViewer_OlderEvent_Tooltip" xml:space="preserve">
-    <value>Evento anterior</value>
-  </data>
-  <data name="FooterEventViewer_NewerEvent_Tooltip" xml:space="preserve">
-    <value>Evento siguiente</value>
-  </data>
-  <data name="FooterEventViewer_LatestEvent_Tooltip" xml:space="preserve">
-    <value>Ãšltimo evento</value>
-  </data>
   <!-- FooterSound -->
   <!-- MainWindow -->
-  <data name="MainWindow_Platform_Label" xml:space="preserve">
-    <value>Plataforma:</value>
-  </data>
   <!-- Common auditorÃ­a/tools -->
   <!-- GamesAudit -->
-  <data name="FooterHelp_Toggle_Tooltip" xml:space="preserve">
-    <value>Mostrar u ocultar la ayuda (tooltips y paneles de ayuda).</value>
-  </data>
   <!-- Dashboard_* : compartido por los dos dashboards de imÃ¡genes. -->
   <!-- GameImagesDashboard_* : dashboard estÃ¡ndar. -->
   <!-- GameImagesRegionDashboard_* : dashboard por regiones. -->
@@ -48,16 +27,7 @@
   <!-- ThemeSettings_* -->
   <!-- AboutSettings_* -->
   <!-- *_WidgetHelp_Description : TeachingTip de ayuda de cada widget. -->
-  <data name="Console_WidgetHelp_Description" xml:space="preserve">
-    <value>Registro de actividad de las operaciones, con uso de cachÃ© y de backup y deshacer de las acciones recientes.</value>
-  </data>
-  <data name="WebView_WidgetHelp_Description" xml:space="preserve">
-    <value>Navega por Google, SteamGridDB o YouTube para buscar media y aÃ±adirla al juego seleccionado.</value>
-  </data>
   <!-- Common (mÃ¡s) -->
-  <data name="Common_Help_Tooltip" xml:space="preserve">
-    <value>Ayuda</value>
-  </data>
   <!-- ChartTypeSelector -->
   <data name="ChartType_Bars_Label" xml:space="preserve">
     <value>Barras</value>
@@ -89,15 +59,6 @@
   <data name="ChartType_SortDesc_Label" xml:space="preserve">
     <value>Desc â†“</value>
   </data>
-  <data name="ChartType_TypeButton_Tooltip" xml:space="preserve">
-    <value>Tipo de grÃ¡fica</value>
-  </data>
-  <data name="ChartType_TopNButton_Tooltip" xml:space="preserve">
-    <value>Top N</value>
-  </data>
-  <data name="ChartType_SortButton_Tooltip" xml:space="preserve">
-    <value>Orden</value>
-  </data>
   <!-- ImageAudit (MEDIA AUDIT) -->
   <!-- Common (mÃ¡s) -->
   <!-- GameList -->
@@ -105,24 +66,6 @@
   <!-- GameDetails -->
   <!-- ImageGrid -->
   <!-- WebView -->
-  <data name="WebView_UsingGoogle_Tooltip" xml:space="preserve">
-    <value>Usando Google. Pulsa para cambiar a SteamGridDB.</value>
-  </data>
-  <data name="WebView_UsingSteamDb_Tooltip" xml:space="preserve">
-    <value>Usando SteamGridDB. Pulsa para cambiar a Google.</value>
-  </data>
-  <data name="WebView_Help_Title" xml:space="preserve">
-    <value>CÃ³mo descargar media</value>
-  </data>
-  <data name="WebView_Help_Description" xml:space="preserve">
-    <value>Para tipos de imagen: doble clic o Ctrl+clic en cualquier imagen (o clic derecho &gt; "AÃ±adir a las imÃ¡genes del juego") para aÃ±adirla al juego seleccionado. Para tipos de vÃ­deo navegas por YouTube: doble clic o Ctrl+clic en un vÃ­deo (o clic derecho &gt; "AÃ±adir a los vÃ­deos del juego") para descargarlo y aÃ±adirlo al juego.</value>
-  </data>
-  <data name="WebView_Back_Tooltip" xml:space="preserve">
-    <value>AtrÃ¡s</value>
-  </data>
-  <data name="WebView_Forward_Tooltip" xml:space="preserve">
-    <value>Adelante</value>
-  </data>
   <data name="WebView_Init_Error" xml:space="preserve">
     <value>No se pudo inicializar el navegador web (WebView2).</value>
   </data>
@@ -145,19 +88,45 @@
   <!-- ConsoleViewModel -->
   <!-- ImageLoadingService -->
   <!-- Loaders / matching / progress -->
-  <data name="Progress_LazyLoading_Progress" xml:space="preserve"><value>{0}Cargando {1} archivos multimedia</value></data>
-  <data name="Progress_LazyLoaded_Progress" xml:space="preserve"><value>{0}{1} archivos multimedia cargados</value></data>
+  <data name="Progress_LazyLoading_Progress" xml:space="preserve">
+    <value>{0}Cargando {1} archivos multimedia</value>
+  </data>
+  <data name="Progress_LazyLoaded_Progress" xml:space="preserve">
+    <value>{0}{1} archivos multimedia cargados</value>
+  </data>
   <!-- ViewModels -->
   <!-- Toolbar principal -->
-  <data name="Toolbar_Layout_Tooltip" xml:space="preserve"><value>Elige el diseÃ±o del panel</value></data>
-  <data name="Toolbar_Widgets_Tooltip" xml:space="preserve"><value>Muestra u oculta widgets del panel</value></data>
-  <data name="Toolbar_QuickSettings_Tooltip" xml:space="preserve"><value>Ajustes rÃ¡pidos (miniaturas, sonido, panel de widgets)</value></data>
-  <data name="Toolbar_Resize_Tooltip" xml:space="preserve"><value>Redimensiona los widgets del panel</value></data>
-  <data name="WidgetPanel_SplittersConfirm_Tooltip" xml:space="preserve"><value>Aplica los nuevos tamaÃ±os de los paneles</value></data>
-  <data name="WidgetPanel_SplittersCancel_Tooltip" xml:space="preserve"><value>Descarta los cambios de tamaÃ±o y mantiene el diseÃ±o anterior</value></data>
-  <data name="WidgetPanel_SplittersDefault_Tooltip" xml:space="preserve"><value>Restaura los paneles a sus tamaÃ±os por defecto</value></data>
-  <data name="QuickSettings_Widgets_Header" xml:space="preserve"><value>WIDGETS</value></data>
-  <data name="QuickSettings_CornerRadius_Label" xml:space="preserve"><value>Radio de esquina</value></data>
-  <data name="QuickSettings_Gap_Label" xml:space="preserve"><value>SeparaciÃ³n</value></data>
-  <data name="QuickSettings_PanelMargin_Label" xml:space="preserve"><value>Margen del panel</value></data>
+  <data name="QuickSettings_Widgets_Header" xml:space="preserve">
+    <value>WIDGETS</value>
+  </data>
+  <data name="QuickSettings_CornerRadius_Label" xml:space="preserve">
+    <value>Radio de esquina</value>
+  </data>
+  <data name="QuickSettings_Gap_Label" xml:space="preserve">
+    <value>SeparaciÃ³n</value>
+  </data>
+  <data name="QuickSettings_PanelMargin_Label" xml:space="preserve">
+    <value>Margen del panel</value>
+  </data>
+  <data name="Footer_AddProduct_Tooltip" xml:space="preserve">
+    <value>Añadir producto</value>
+  </data>
+  <data name="AddProduct_Dialog_Title" xml:space="preserve">
+    <value>Rastrear un producto</value>
+  </data>
+  <data name="AddProduct_Dialog_Message" xml:space="preserve">
+    <value>Pega la URL del producto (Amazon u otra tienda):</value>
+  </data>
+  <data name="AddProduct_Url_Placeholder" xml:space="preserve">
+    <value>https://www.amazon.es/...</value>
+  </data>
+  <data name="Common_Add_Label" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Common_Cancel_Label" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="MainWindow_PriceChartWidget_Title" xml:space="preserve">
+    <value>HISTÓRICO DE PRECIOS</value>
+  </data>
 </root>

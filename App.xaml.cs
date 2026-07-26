@@ -62,6 +62,10 @@ public partial class App : Application
             // Services
             services.AddSingleton<WindowService>();
             services.AddSingleton<PersistAndRestoreService>();
+            services.AddSingleton<ProductDatabaseService>();
+            services.AddSingleton<ProductParsingService>();
+            services.AddSingleton<ProductService>();
+            services.AddSingleton<PriceSchedulerService>();
             services.AddSingleton<ExceptionService>();
             services.AddSingleton<ExceptionDialogService>();
             services.AddSingleton<ThemeService>();
@@ -74,8 +78,10 @@ public partial class App : Application
             services.AddSingleton<MainWindowViewModel>();
 
             // ViewModels (Controls)
-            services.AddSingleton<PlatformListViewModel>();
-            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<PlatformListViewModel>());
+            services.AddSingleton<ProductListViewModel>();
+            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ProductListViewModel>());
+            services.AddSingleton<PriceChartViewModel>();
+            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<PriceChartViewModel>());
             services.AddSingleton<ConsoleViewModel>();
             services.AddSingleton<LayoutSelectorViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<LayoutSelectorViewModel>());

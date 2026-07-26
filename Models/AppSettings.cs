@@ -32,7 +32,7 @@ public class AppSettings
     public ImageCollectionImportControlSettings ImageCollectionImportControl { get; set; } = new ImageCollectionImportControlSettings();
     public ImageGridControlSettings ImageGridControl { get; set; } = new ImageGridControlSettings();
     public LayoutSelectorControlSettings LayoutSelectorControl { get; set; } = new LayoutSelectorControlSettings();
-    public PlatformListControlSettings PlatformListControl { get; set; } = new PlatformListControlSettings();
+    public ProductListControlSettings ProductListControl { get; set; } = new ProductListControlSettings();
     public StatsGlobalControlSettings StatsGlobalControl { get; set; } = new StatsGlobalControlSettings();
     public StatsPlatformControlSettings StatsPlatformControl { get; set; } = new StatsPlatformControlSettings();
     public WebViewControlSettings WebViewControl { get; set; } = new WebViewControlSettings();
@@ -72,12 +72,6 @@ public class AppSettings
         /// caliente vía <see cref="MM4LB.Services.LocalizationService"/>; ver docs/Plan-Localizacion-Ayuda.md.
         /// </summary>
         public string Language { get; set; } = "en";
-
-        /// <summary>
-        /// Si es true (por defecto), se muestran los tooltips y los paneles de ayuda (iconos "Help"/TeachingTips). El
-        /// toggle de ayuda del footer lo alterna en caliente (HelpService, fase F0 del plan de localización/ayuda).
-        /// </summary>
-        public bool HelpTooltipsEnabled { get; set; } = true;
 
         /// <summary>
         /// Cómo se muestran los grupos de botones excluyentes de las toolbars de los widgets: como botones sueltos
@@ -396,9 +390,9 @@ public class AppSettings
     }
 
 
-    public class PlatformListControlSettings
+    public class ProductListControlSettings
     {
-        public string SelectedPlatform { get; set; } = "";
+        public string SelectedProduct { get; set; } = "";
     }
 
     public class WebViewControlSettings

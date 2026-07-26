@@ -1,7 +1,5 @@
 using System;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Extensions.Options;
 using MM4LB.Models;
 
 namespace MM4LB.Services;
@@ -12,38 +10,26 @@ namespace MM4LB.Services;
 public class SharedDataService : ObservableObject
 {
     #region Subclasses
-    public class PlatformChangedEventArgs : EventArgs
+    public class ProductChangedEventArgs : EventArgs
     {
-        public Platform? OldPlatform { get; }
-        public Platform? NewPlatform { get; }
-        public PlatformChangedEventArgs(Platform? oldPlatform, Platform? newPlatform)
+        public Product? OldProduct { get; }
+        public Product? NewProduct { get; }
+        public ProductChangedEventArgs(Product? oldProduct, Product? newProduct)
         {
-            OldPlatform = oldPlatform;
-            NewPlatform = newPlatform;
-        }
-    }
-
-    public class GameChangedEventArgs : EventArgs
-    {
-        public Game? OldGame { get; }
-        public Game? NewGame { get; }
-        public GameChangedEventArgs(Game? oldGame, Game? newGame)
-        {
-            OldGame = oldGame;
-            NewGame = newGame;
+            OldProduct = oldProduct;
+            NewProduct = newProduct;
         }
     }
     #endregion
 
     #region Attributes
-    private readonly AppSettings _appSettings;
     private bool _isUiEnabled;
-    private Game? _selectedGame;
-    private Platform? _selectedPlatform;
+    private Product? _selectedProduct;
     #endregion
 
     #region Properties
-    public ObservableCollection<Game> GamesFiltered { get; protected set; } = new();
+    /// <summary>The set of tracked products shown in the left-hand list of the main window.</summary>
+    public ProductSet ProductSet { get; } = new();
 
     public bool IsUIEnabled
     {
@@ -52,81 +38,39 @@ public class SharedDataService : ObservableObject
     }
 
     /// <summary>
-    /// Ayuda (tooltips + paneles de ayuda) activada. Espeja <see cref="AppSettings.GeneralSettings.HelpTooltipsEnabled"/>
-    /// (la fuente persistida): el valor vivo ES el del setting, así que se guarda con el resto de la config al cerrar.
-    /// Lo alterna en caliente el botón de ayuda del footer; lo consumen la attached property <c>Help.Key</c> (tooltips)
-    /// y <c>Help.AffordanceVisible</c> (visibilidad de los iconos de ayuda), que se suscriben a este cambio.
+    /// Currently selected product in the left-hand list.
     /// </summary>
-    public bool HelpTooltipsEnabled
+    public Product? SelectedProduct
     {
-        get => _appSettings.General.HelpTooltipsEnabled;
+        get => _selectedProduct;
         set
         {
-            if (_appSettings.General.HelpTooltipsEnabled != value)
+            if (!ReferenceEquals(_selectedProduct, value))
             {
-                _appSettings.General.HelpTooltipsEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public PlatformSet? PlatformSet { get; set; }
-
-    /// <summary>
-    /// Selected game of the selected platform.
-    /// </summary>
-    public Game? SelectedGame
-    {
-        get => _selectedGame;
-        set
-        {
-            if (!ReferenceEquals(_selectedGame, value))
-            {
-                var oldValue = _selectedGame;
+                var oldValue = _selectedProduct;
                 var newValue = value;
-                SetProperty(ref _selectedGame, newValue);
-                SelectedGameChanged?.Invoke(this, new GameChangedEventArgs(oldValue, newValue));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Selected platform.
-    /// </summary>
-    public Platform? SelectedPlatform
-    {
-        get => _selectedPlatform;
-        set
-        {
-            if (!ReferenceEquals(_selectedPlatform, value))
-            {
-                var oldValue = _selectedPlatform;
-                var newValue = value;
-                SetProperty(ref _selectedPlatform, value);
-                SelectedPlatformChanged?.Invoke(this, new PlatformChangedEventArgs(oldValue, newValue));
+                SetProperty(ref _selectedProduct, newValue);
+                SelectedProductChanged?.Invoke(this, new ProductChangedEventArgs(oldValue, newValue));
             }
         }
     }
     #endregion
 
     #region Constructors
-    public SharedDataService(IOptions<AppSettings> appSettings)
+    public SharedDataService()
     {
-        _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
     }
     #endregion
 
     #region
     public void NotifyInitialState()
     {
-        SelectedPlatformChanged?.Invoke(this, new PlatformChangedEventArgs(null, SelectedPlatform));
-        SelectedGameChanged?.Invoke(this, new GameChangedEventArgs(null, SelectedGame));
+        SelectedProductChanged?.Invoke(this, new ProductChangedEventArgs(null, SelectedProduct));
     }
     #endregion
 
     #region Events
-    public event EventHandler<PlatformChangedEventArgs>? SelectedPlatformChanged;
-    public event EventHandler<GameChangedEventArgs>? SelectedGameChanged;
+    public event EventHandler<ProductChangedEventArgs>? SelectedProductChanged;
 
     /// <summary>
     /// Se dispara cuando cambia el ajuste global de visibilidad de la cabecera de los widgets

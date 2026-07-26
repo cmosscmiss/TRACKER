@@ -25,7 +25,7 @@
 	<ItemGroup>
 	  <None Remove="Controls\Views\ConsoleControl.xaml" />
 	  <None Remove="Controls\Views\ChartTypeSelectorControl.xaml" />
-	  <None Remove="Controls\Views\PlatformListControl.xaml" />
+	  <None Remove="Controls\Views\ProductListControl.xaml" />
 	  <None Remove="Controls\Views\SettingsControl.xaml" />
 	  <None Remove="Controls\Views\WebViewControl.xaml" />
 	  <None Remove="Controls\Views\WidgetBaseControl.xaml" />
@@ -74,7 +74,10 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Controls\Views\PlatformListControl.xaml">
+	  <Page Update="Controls\Views\ProductListControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Update="Controls\Views\PriceChartControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
