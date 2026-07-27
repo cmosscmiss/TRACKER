@@ -134,6 +134,9 @@
   <data name="MainWindow_PriceChartWidget_Title" xml:space="preserve">
     <value>PRICE HISTORY</value>
   </data>
+  <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
+    <value>PRICE OVERVIEW</value>
+  </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Amazon marketplace</value>
   </data>
@@ -175,5 +178,38 @@
   </data>
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
     <value>Refresh all prices now</value>
+  </data>
+  <data name="PriceChart_Delete_Tooltip" xml:space="preserve">
+    <value>Delete product</value>
+  </data>
+  <data name="PriceChart_Purchased_Tooltip" xml:space="preserve">
+    <value>Mark as purchased</value>
+  </data>
+  <data name="PriceChart_DeleteDialog_Title" xml:space="preserve">
+    <value>Delete product</value>
+  </data>
+  <data name="PriceChart_DeleteDialog_Message" xml:space="preserve">
+    <value>Delete "{0}" and its price history? This cannot be undone.</value>
+  </data>
+  <data name="PriceChart_PurchasedDialog_Title" xml:space="preserve">
+    <value>Mark as purchased</value>
+  </data>
+  <data name="PriceChart_PurchasedDialog_Message" xml:space="preserve">
+    <value>Enter the purchase price for "{0}". It will no longer appear in the list.</value>
+  </data>
+  <data name="PriceChart_PurchasePrice_Placeholder" xml:space="preserve">
+    <value>Purchase price</value>
+  </data>
+  <data name="PriceChart_Purchased_Confirm_Label" xml:space="preserve">
+    <value>Mark purchased</value>
+  </data>
+  <data name="Common_Delete_Label" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ProductLog_Purchased_Progress" xml:space="preserve">
+    <value>Product marked as purchased: {0}</value>
+  </data>
+  <data name="ProductLog_Removed_Progress" xml:space="preserve">
+    <value>Product removed: {0}</value>
   </data>
 </root>

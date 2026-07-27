@@ -77,6 +77,11 @@ public sealed class ApplicationHostService : IHostedService
         _productDatabaseService.Initialize();
         _productDatabaseService.LoadInto(_sharedDataService.ProductSet);
 
+        // Selecciona el primer producto de la lista al arrancar (si hay).
+        var products = _sharedDataService.ProductSet.Products;
+        if (products.Count > 0)
+            _sharedDataService.SelectedProduct = products[0];
+
         // Aplica la preferencia de logging de excepciones ya cargada (por defecto activado). Antes de este punto
         // el logging está activo para capturar también fallos tempranos del arranque.
         ExceptionService.LoggingEnabled = _appSettings.General.ExceptionLoggingEnabled;

@@ -53,7 +53,9 @@ public sealed class ProductDatabaseService
                 Id        INTEGER PRIMARY KEY AUTOINCREMENT,
                 Name      TEXT    NOT NULL DEFAULT '',
                 ImageUrl  TEXT    NULL,
-                CreatedAt TEXT    NOT NULL
+                CreatedAt TEXT    NOT NULL,
+                Purchased INTEGER NOT NULL DEFAULT 0,
+                PurchasePrice TEXT NULL
             );
 
             CREATE TABLE IF NOT EXISTS ProductStores (
@@ -81,8 +83,10 @@ public sealed class ProductDatabaseService
         ";
         command.ExecuteNonQuery();
 
-        // Migración para bases de datos creadas antes de añadir la columna IsPrime.
+        // Migraciones para bases de datos creadas antes de añadir estas columnas.
         EnsureColumn(connection, "ProductStores", "IsPrime", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumn(connection, "Products", "Purchased", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumn(connection, "Products", "PurchasePrice", "TEXT NULL");
     }
 
     /// <summary>Añade una columna a una tabla si aún no existe (migración idempotente).</summary>
@@ -118,7 +122,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl FROM Products ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl FROM Products WHERE Purchased = 0 ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -259,6 +263,20 @@ public sealed class ProductDatabaseService
         command.CommandText = "UPDATE Products SET Name = $name, ImageUrl = $imageUrl WHERE Id = $id;";
         command.Parameters.AddWithValue("$name", product.Name);
         command.Parameters.AddWithValue("$imageUrl", (object?)product.ImageUrl ?? DBNull.Value);
+        command.Parameters.AddWithValue("$id", product.Id);
+        command.ExecuteNonQuery();
+    }
+
+    /// <summary>
+    /// Marks a product as purchased (kept in the database for the record, but hidden from the list), storing the
+    /// purchase price if given.
+    /// </summary>
+    public void MarkPurchased(Product product, decimal? purchasePrice)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "UPDATE Products SET Purchased = 1, PurchasePrice = $price WHERE Id = $id;";
+        command.Parameters.AddWithValue("$price", purchasePrice is decimal p ? FormatPrice(p) : (object)DBNull.Value);
         command.Parameters.AddWithValue("$id", product.Id);
         command.ExecuteNonQuery();
     }

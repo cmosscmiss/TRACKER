@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LiveChartsCore;
+using LiveChartsCore.Kernel;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
@@ -43,10 +44,17 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// <summary>Mínimo de los valores mostrados, para el ajuste del eje de valores (<see cref="FitValueAxis"/>).</summary>
     private double _valueAxisDataMin;
 
+    /// <summary>Índice ORIGINAL (en <see cref="Values"/>) de cada categoría mostrada, para mapear los clics tras Top N/orden.</summary>
+    private int[] _categoryOriginalIndex = System.Array.Empty<int>();
+
+    /// <summary>Se dispara al pulsar una columna/punto: da el índice ORIGINAL (en <see cref="Values"/>) de la categoría.</summary>
+    public event System.Action<int>? CategoryClicked;
+
     public ChartTypeSelectorControl()
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        Cartesian.DataPointerDown += OnCartesianPointerDown;
 
         // Suscripción PERMANENTE al cambio de tema (no atada a Loaded/Unloaded): dentro de un FlipView / del panel de
         // widgets estos controles se descargan y virtualizan, y si la suscripción dependiera de Loaded podrían estar
@@ -68,6 +76,18 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         UpdateButtons();
         UpdateTopNButtons();
         UpdateSortButtons();
+    }
+
+    /// <summary>Traduce el clic en una columna/punto al índice ORIGINAL de la categoría y lo notifica (single-serie).</summary>
+    private void OnCartesianPointerDown(IChartView chart, IEnumerable<ChartPoint> points)
+    {
+        ChartPoint? point = points?.FirstOrDefault();
+        if (point is null)
+            return;
+
+        int display = point.Index;
+        if (display >= 0 && display < _categoryOriginalIndex.Length)
+            CategoryClicked?.Invoke(_categoryOriginalIndex[display]);
     }
 
     /// <summary>Texto localizado (o la clave si no hay servicio); para las caras fijadas por código.</summary>
@@ -515,9 +535,11 @@ public sealed partial class ChartTypeSelectorControl : UserControl
             labels = fixedLabels;
         }
 
+        int[] indices = Enumerable.Range(0, values.Length).ToArray();
         int highlightIndex = HighlightIndex;
-        (values, labels, highlightIndex) = ApplyTopN(values, labels, highlightIndex);
-        (values, labels, highlightIndex) = ApplySort(values, labels, highlightIndex);
+        (values, labels, indices, highlightIndex) = ApplyTopN(values, labels, indices, highlightIndex);
+        (values, labels, indices, highlightIndex) = ApplySort(values, labels, indices, highlightIndex);
+        _categoryOriginalIndex = indices;
 
         bool hasData = values.Length > 0;
         bool pie = IsPieType;
@@ -574,10 +596,10 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// <see cref="ApplySort"/> aparte). Si <see cref="TopN"/> es 0 (All) o hay menos elementos que el límite,
     /// devuelve los datos tal cual. Remapea el índice de resaltado.
     /// </summary>
-    private (double[] Values, string[] Labels, int HighlightIndex) ApplyTopN(double[] values, string[] labels, int highlightIndex)
+    private (double[] Values, string[] Labels, int[] Indices, int HighlightIndex) ApplyTopN(double[] values, string[] labels, int[] indices, int highlightIndex)
     {
         if (TopN <= 0 || values.Length <= TopN)
-            return (values, labels, highlightIndex);
+            return (values, labels, indices, highlightIndex);
 
         // Índices de los Top N por valor; añade el resaltado si quedó fuera; luego vuelve al orden original.
         var keep = Enumerable.Range(0, values.Length)
@@ -592,26 +614,28 @@ public sealed partial class ChartTypeSelectorControl : UserControl
 
         var filteredValues = new double[keep.Count];
         var filteredLabels = new string[keep.Count];
+        var filteredIndices = new int[keep.Count];
         int newHighlight = -1;
         for (int k = 0; k < keep.Count; k++)
         {
             filteredValues[k] = values[keep[k]];
             filteredLabels[k] = labels[keep[k]];
+            filteredIndices[k] = indices[keep[k]];
             if (keep[k] == highlightIndex)
                 newHighlight = k;
         }
 
-        return (filteredValues, filteredLabels, newHighlight);
+        return (filteredValues, filteredLabels, filteredIndices, newHighlight);
     }
 
     /// <summary>
     /// Ordena los elementos por valor según <see cref="SortOrder"/> (ascendente/descendente), o los deja en su
     /// orden actual si es <see cref="SortMode.None"/>. Remapea el índice de resaltado.
     /// </summary>
-    private (double[] Values, string[] Labels, int HighlightIndex) ApplySort(double[] values, string[] labels, int highlightIndex)
+    private (double[] Values, string[] Labels, int[] Indices, int HighlightIndex) ApplySort(double[] values, string[] labels, int[] indices, int highlightIndex)
     {
         if (SortOrder == SortMode.None || values.Length == 0)
-            return (values, labels, highlightIndex);
+            return (values, labels, indices, highlightIndex);
 
         var order = Enumerable.Range(0, values.Length).ToList();
         order.Sort((a, b) => SortOrder == SortMode.Ascending
@@ -620,16 +644,18 @@ public sealed partial class ChartTypeSelectorControl : UserControl
 
         var sortedValues = new double[values.Length];
         var sortedLabels = new string[values.Length];
+        var sortedIndices = new int[values.Length];
         int newHighlight = -1;
         for (int k = 0; k < order.Count; k++)
         {
             sortedValues[k] = values[order[k]];
             sortedLabels[k] = labels[order[k]];
+            sortedIndices[k] = indices[order[k]];
             if (order[k] == highlightIndex)
                 newHighlight = k;
         }
 
-        return (sortedValues, sortedLabels, newHighlight);
+        return (sortedValues, sortedLabels, sortedIndices, newHighlight);
     }
 
     private (SKColor accent, SKColor accentDark, SKColor accentLight, SKColor text) ResolveColors()
@@ -879,6 +905,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// </summary>
     private void RebuildMultiSeries()
     {
+        _categoryOriginalIndex = Array.Empty<int>();   // multi-serie: el clic-para-seleccionar no aplica
         int seriesCount = SeriesValues.Count;
         int catCount = EffectiveCount;
 

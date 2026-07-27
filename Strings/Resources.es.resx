@@ -129,6 +129,9 @@
   <data name="MainWindow_PriceChartWidget_Title" xml:space="preserve">
     <value>HISTÓRICO DE PRECIOS</value>
   </data>
+  <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
+    <value>RESUMEN DE PRECIOS</value>
+  </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Marketplace de Amazon</value>
   </data>
@@ -170,5 +173,38 @@
   </data>
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
     <value>Refrescar todos los precios ahora</value>
+  </data>
+  <data name="PriceChart_Delete_Tooltip" xml:space="preserve">
+    <value>Borrar producto</value>
+  </data>
+  <data name="PriceChart_Purchased_Tooltip" xml:space="preserve">
+    <value>Marcar como comprado</value>
+  </data>
+  <data name="PriceChart_DeleteDialog_Title" xml:space="preserve">
+    <value>Borrar producto</value>
+  </data>
+  <data name="PriceChart_DeleteDialog_Message" xml:space="preserve">
+    <value>¿Borrar "{0}" y su histórico de precios? No se puede deshacer.</value>
+  </data>
+  <data name="PriceChart_PurchasedDialog_Title" xml:space="preserve">
+    <value>Marcar como comprado</value>
+  </data>
+  <data name="PriceChart_PurchasedDialog_Message" xml:space="preserve">
+    <value>Introduce el precio de compra de "{0}". Dejará de aparecer en la lista.</value>
+  </data>
+  <data name="PriceChart_PurchasePrice_Placeholder" xml:space="preserve">
+    <value>Precio de compra</value>
+  </data>
+  <data name="PriceChart_Purchased_Confirm_Label" xml:space="preserve">
+    <value>Marcar comprado</value>
+  </data>
+  <data name="Common_Delete_Label" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="ProductLog_Purchased_Progress" xml:space="preserve">
+    <value>Producto marcado como comprado: {0}</value>
+  </data>
+  <data name="ProductLog_Removed_Progress" xml:space="preserve">
+    <value>Producto borrado: {0}</value>
   </data>
 </root>

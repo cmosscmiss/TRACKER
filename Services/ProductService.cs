@@ -151,13 +151,42 @@ public sealed class ProductService
     public void RemoveProduct(Product product)
     {
         _database.DeleteProduct(product);
-        _sharedDataService.ProductSet.Products.Remove(product);
-        if (ReferenceEquals(_sharedDataService.SelectedProduct, product))
-            _sharedDataService.SelectedProduct = null;
+        RemoveFromListSelectingNext(product);
+
+        _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Removed_Progress), product.Name));
+    }
+
+    /// <summary>
+    /// Marks a product as purchased (storing the purchase price if given): it is kept in the database for the record
+    /// but removed from the shared list so it no longer appears among the tracked products.
+    /// </summary>
+    public void MarkPurchased(Product product, decimal? purchasePrice)
+    {
+        _database.MarkPurchased(product, purchasePrice);
+        RemoveFromListSelectingNext(product);
+
+        _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Purchased_Progress), product.Name));
     }
     #endregion
 
     #region Methods (private)
+    /// <summary>
+    /// Quita el producto de la lista y selecciona el SIGUIENTE (el que ocupa su posición), o el último si era el
+    /// último, o ninguno si la lista queda vacía.
+    /// </summary>
+    private void RemoveFromListSelectingNext(Product product)
+    {
+        var products = _sharedDataService.ProductSet.Products;
+        int index = products.IndexOf(product);
+        if (index < 0)
+            return;
+
+        products.RemoveAt(index);
+        _sharedDataService.SelectedProduct = products.Count == 0
+            ? null
+            : products[Math.Min(index, products.Count - 1)];
+    }
+
     /// <summary>
     /// Applies a parse result to a product/store: optionally its name/image (from the page) and, if a price was
     /// found, records it (in memory and the database) with the given timestamp. Persists whatever it changes.

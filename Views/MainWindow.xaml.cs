@@ -142,6 +142,7 @@ public sealed partial class MainWindow : Window
             new(ucConsoleControl.ViewModel!, ucConsoleWidget),
             new(ucWebViewControl.ViewModel!, ucWebViewWidget),
             new(ucPriceChartControl.ViewModel!, ucPriceChartWidget),
+            new(ucProductsOverviewControl.ViewModel!, ucProductsOverviewWidget),
         };
 
         WidgetPanel.SetWidgets(widgetEntries);

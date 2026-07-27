@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.ProductsOverviewControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uc="using:MM4LB.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <uc:ChartTypeSelectorControl x:Name="Chart"
+            SelectedChartType="Column"
+            Values="{x:Bind ViewModel.Values, Mode=OneWay}"
+            Labels="{x:Bind ViewModel.Labels, Mode=OneWay}"
+            HighlightIndex="{x:Bind ViewModel.HighlightIndex, Mode=OneWay}"
+            ValueSuffix="{x:Bind ViewModel.ValueSuffix, Mode=OneWay}"
+            ValueFormat="0.00"
+            LabelsRotation="45"/>
+    </Grid>
+</UserControl>

@@ -39,6 +39,7 @@ public static class LocKeys
     public const string MainWindow_ActivityLogWidget_Title = "MainWindow_ActivityLogWidget_Title";
     public const string MainWindow_WebSearchWidget_Title = "MainWindow_WebSearchWidget_Title";
     public const string MainWindow_PriceChartWidget_Title = "MainWindow_PriceChartWidget_Title";
+    public const string MainWindow_ProductsOverviewWidget_Title = "MainWindow_ProductsOverviewWidget_Title";
 
     // Common (mÃ¡s): botones de diÃ¡logo
 
@@ -131,4 +132,17 @@ public static class LocKeys
     public const string PriceChart_Prime_Label = "PriceChart_Prime_Label";
     public const string PriceChart_NoPrime_Label = "PriceChart_NoPrime_Label";
     public const string Footer_RefreshAll_Tooltip = "Footer_RefreshAll_Tooltip";
+
+    // Acciones del widget de producto
+    public const string PriceChart_Delete_Tooltip = "PriceChart_Delete_Tooltip";
+    public const string PriceChart_Purchased_Tooltip = "PriceChart_Purchased_Tooltip";
+    public const string PriceChart_DeleteDialog_Title = "PriceChart_DeleteDialog_Title";
+    public const string PriceChart_DeleteDialog_Message = "PriceChart_DeleteDialog_Message";
+    public const string PriceChart_PurchasedDialog_Title = "PriceChart_PurchasedDialog_Title";
+    public const string PriceChart_PurchasedDialog_Message = "PriceChart_PurchasedDialog_Message";
+    public const string PriceChart_PurchasePrice_Placeholder = "PriceChart_PurchasePrice_Placeholder";
+    public const string PriceChart_Purchased_Confirm_Label = "PriceChart_Purchased_Confirm_Label";
+    public const string Common_Delete_Label = "Common_Delete_Label";
+    public const string ProductLog_Purchased_Progress = "ProductLog_Purchased_Progress";
+    public const string ProductLog_Removed_Progress = "ProductLog_Removed_Progress";
 }

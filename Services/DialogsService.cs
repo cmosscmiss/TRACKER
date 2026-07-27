@@ -34,9 +34,9 @@ public class DialogsService
     /// Muestra un diálogo con un cuadro de texto y devuelve lo introducido (recortado), o <c>null</c> si el usuario
     /// canceló. Útil para pedir una URL, un nombre, etc.
     /// </summary>
-    public async Task<string?> PromptAsync(XamlRoot xamlRoot, string title, string message, string placeholder, string primaryText, string closeText)
+    public async Task<string?> PromptAsync(XamlRoot xamlRoot, string title, string message, string placeholder, string primaryText, string closeText, string initialValue = "")
     {
-        var textBox = new TextBox { PlaceholderText = placeholder, AcceptsReturn = false };
+        var textBox = new TextBox { PlaceholderText = placeholder, Text = initialValue ?? string.Empty, AcceptsReturn = false };
         var panel = new StackPanel { Spacing = 8, MinWidth = 420 };
         if (!string.IsNullOrEmpty(message))
             panel.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });

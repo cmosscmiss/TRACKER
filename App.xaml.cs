@@ -82,6 +82,8 @@ public partial class App : Application
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ProductListViewModel>());
             services.AddSingleton<PriceChartViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<PriceChartViewModel>());
+            services.AddSingleton<ProductsOverviewViewModel>();
+            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ProductsOverviewViewModel>());
             services.AddSingleton<ConsoleViewModel>();
             services.AddSingleton<LayoutSelectorViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<LayoutSelectorViewModel>());
