@@ -15,6 +15,7 @@
             <helpers:BooleanToVisibilityInvertedConverter x:Key="HiddenIfTrueConverter" />
             <helpers:NullToOpacityConverter x:Key="NullToOpacityConverter" />
             <helpers:BooleanToOpacityConverter x:Key="DimIfTrueConverter" />
+            <helpers:PriceTrendToBrushConverter x:Key="PriceTrendToBrushConverter" />
             <helpers:BooleanToStrikethroughConverter x:Key="StrikethroughIfTrueConverter" />
         </ResourceDictionary>
     </Application.Resources>

@@ -397,8 +397,8 @@ public class AppSettings
 
     public class WebViewControlSettings
     {
-        public bool SearchViaGoogle { get; set; } = true;
-        public bool SearchViaSteamGridDB { get; set; } = false;
+        /// <summary>Marketplace de Amazon seleccionado en el navegador (código: es/de/fr/be/nl).</summary>
+        public string Country { get; set; } = "es";
     }
 
     /// <summary>

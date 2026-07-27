@@ -132,6 +132,18 @@ public class ProgressService : ObservableObject
     /// toca la barra global. Para la carga lazy de imágenes: una entrada discreta en el ACTIVITY LOG,
     /// que se actualiza sola, sin mostrar barra.
     /// </summary>
+    /// <summary>
+    /// Registra un evento puntual en el ACTIVITY LOG: una entrada de fondo ya finalizada con el mensaje dado (sin
+    /// barra global ni bloqueo). Para eventos como "producto añadido". Devuelve el notifier por si se quiere ampliar.
+    /// </summary>
+    public ProgressNotifier LogEvent(string message)
+    {
+        ProgressNotifier notifier = StartBackgroundOperation();
+        notifier.Message = message;
+        notifier.FinishOperation();
+        return notifier;
+    }
+
     public ProgressNotifier StartBackgroundOperation()
     {
         var progressNotifier = new ProgressNotifier(startWatch: true)

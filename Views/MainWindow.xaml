@@ -80,7 +80,7 @@
                                 <uc:WidgetBaseControl x:Name="ucConsoleWidget" Title="{loc:Str Key=MainWindow_ActivityLogWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:ConsoleControl x:Name="ucConsoleControl" ViewModel="{Binding ConsoleViewModel}"></uc:ConsoleControl>
                                 </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucWebViewWidget" TitlePrefix="{loc:Str Key=MainWindow_WebSearchWidget_Title}" Title="{Binding WebViewViewModel.SearchString}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
+                                <uc:WidgetBaseControl x:Name="ucWebViewWidget" TitlePrefix="{loc:Str Key=MainWindow_WebSearchWidget_Title}" Title="{Binding WebViewViewModel.CurrentUrl}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:WebViewControl x:Name="ucWebViewControl" ViewModel="{Binding WebViewViewModel}"></uc:WebViewControl>
                                 </uc:WidgetBaseControl>
                                 <uc:WidgetBaseControl x:Name="ucPriceChartWidget" Title="{loc:Str Key=MainWindow_PriceChartWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
@@ -114,6 +114,9 @@
 
                         <!-- Barra de herramientas del footer (a la derecha): botón de añadir producto. -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
+                            <Button x:Name="RefreshAllButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnRefreshAllClick" ToolTipService.ToolTip="{loc:Str Key=Footer_RefreshAll_Tooltip}">
+                                <FontIcon FontSize="18" Glyph="&#xE72C;" Foreground="{ThemeResource AccentBrush}"/>
+                            </Button>
                             <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAddProductClick" ToolTipService.ToolTip="{loc:Str Key=Footer_AddProduct_Tooltip}">
                                 <FontIcon FontSize="18" Glyph="&#xE710;" Foreground="{ThemeResource AccentBrush}"/>
                             </Button>

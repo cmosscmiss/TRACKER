@@ -25,8 +25,15 @@
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <template:ToolbarButtonIcon IconName="Icon-google" Style="{StaticResource ToolbarButtonIconMediumStyle}" Command="{x:Bind ViewModel.SearchEngineChangedCommand}" Visibility="{x:Bind ViewModel.ShowGoogleToggle, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
-                <template:ToolbarButtonIcon IconName="Icon-steamDB" Style="{StaticResource ToolbarButtonIconMediumStyle}" Command="{x:Bind ViewModel.SearchEngineChangedCommand}" Visibility="{x:Bind ViewModel.ShowSteamDbToggle, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                <!-- Marketplace de Amazon: al cambiar, navega al mismo producto en ese dominio. -->
+                <ComboBox x:Name="CountrySelector" MinWidth="72" VerticalAlignment="Center" SelectionChanged="OnCountryChanged"
+                          ToolTipService.ToolTip="{loc:Str Key=WebView_Country_Tooltip}">
+                    <ComboBoxItem Content="ES" Tag="es"/>
+                    <ComboBoxItem Content="DE" Tag="de"/>
+                    <ComboBoxItem Content="FR" Tag="fr"/>
+                    <ComboBoxItem Content="BE" Tag="be"/>
+                    <ComboBoxItem Content="NL" Tag="nl"/>
+                </ComboBox>
                 <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0 8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                 <AppBarButton x:Name="abNavigateBack" LabelPosition="Collapsed" Width="40" Click="AbNavigateBack_Click">
                     <AppBarButton.Content>
@@ -40,6 +47,16 @@
                 </AppBarButton>
             </StackPanel>
             <TextBox x:Name="tbAddressBar" Text="https://" Grid.Column="1" VerticalAlignment="Center" KeyDown="TbAddressBar_KeyDown"/>
+
+            <!-- Altas desde la página mostrada: nuevo producto, o link alternativo del producto seleccionado. -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="8 0 0 0">
+                <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Click="OnAddProductClick" ToolTipService.ToolTip="{loc:Str Key=WebView_AddProduct_Tooltip}">
+                    <FontIcon Glyph="&#xE710;" FontSize="16"/>
+                </Button>
+                <Button x:Name="AddAltLinkButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Margin="4 0 0 0" Click="OnAddAlternativeLinkClick" ToolTipService.ToolTip="{loc:Str Key=WebView_AddAltLink_Tooltip}">
+                    <FontIcon Glyph="&#xE71B;" FontSize="16"/>
+                </Button>
+            </StackPanel>
 
         </Grid>
 

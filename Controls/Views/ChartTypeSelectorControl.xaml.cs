@@ -37,8 +37,11 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// <summary>Hay un <see cref="Rebuild"/> ya encolado para el final del batch de cambios de DP (ver <see cref="ScheduleRebuild"/>).</summary>
     private bool _rebuildScheduled;
 
-    /// <summary>Máximo de los valores mostrados, para acotar el eje cuando hay línea de referencia (ver <see cref="ResolveValueAxisMax"/>).</summary>
+    /// <summary>Máximo de los valores mostrados, para acotar el eje (línea de referencia o ajuste ±10%).</summary>
     private double _valueAxisDataMax;
+
+    /// <summary>Mínimo de los valores mostrados, para el ajuste del eje de valores (<see cref="FitValueAxis"/>).</summary>
+    private double _valueAxisDataMin;
 
     public ChartTypeSelectorControl()
     {
@@ -187,6 +190,20 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     {
         get => (double)GetValue(ValueMaxProperty);
         set => SetValue(ValueMaxProperty, value);
+    }
+
+    /// <summary>
+    /// Si es true, el eje de valores se ajusta al rango de datos con un margen del ±10% (en vez de empezar en 0),
+    /// para que se vea bien la variación (p. ej. precios). Ignora la línea de referencia para el límite.
+    /// </summary>
+    public static readonly DependencyProperty FitValueAxisProperty = DependencyProperty.Register(
+        nameof(FitValueAxis), typeof(bool), typeof(ChartTypeSelectorControl),
+        new PropertyMetadata(false, OnChartChanged));
+
+    public bool FitValueAxis
+    {
+        get => (bool)GetValue(FitValueAxisProperty);
+        set => SetValue(FitValueAxisProperty, value);
     }
 
     /// <summary>Rotation (degrees) of the category-axis labels when categories are on the X axis. Default 45.</summary>
@@ -523,7 +540,8 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         }
         else
         {
-            _valueAxisDataMax = values.Length > 0 ? values.Max() : 0;   // para acotar el eje si hay línea de referencia
+            _valueAxisDataMax = values.Length > 0 ? values.Max() : 0;   // para acotar el eje (referencia / ajuste ±10%)
+            _valueAxisDataMin = values.Length > 0 ? values.Min() : 0;
             Cartesian.Series = BuildCartesianSeries(values, labels, highlightIndex);
             (Cartesian.XAxes, Cartesian.YAxes) = BuildAxes(labels);
             Cartesian.Sections = BuildReferenceSections();
@@ -763,12 +781,16 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         {
             Labels = axisLabels, LabelsRotation = rotation, TextSize = 11, LabelsPaint = new SolidColorPaint(text)
         };
-        ICartesianAxis Value() => new Axis
+        ICartesianAxis Value()
         {
-            MinLimit = 0,
-            MaxLimit = ResolveValueAxisMax(),
-            TextSize = 11, LabelsPaint = new SolidColorPaint(text), Labeler = Format
-        };
+            (double? min, double? max) = ResolveValueAxisLimits();
+            return new Axis
+            {
+                MinLimit = min,
+                MaxLimit = max,
+                TextSize = 11, LabelsPaint = new SolidColorPaint(text), Labeler = Format
+            };
+        }
 
         if (SelectedChartType == ChartType.Row)
             return (new[] { Value() }, new[] { Category(0) });   // valores en X, categorías en Y (horizontales)
@@ -782,6 +804,25 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// extra), en vez de dejar que la sección de referencia (a menudo muy por encima de los valores) estire el eje y
     /// deje un gran hueco vacío arriba. Sin referencia, devuelve null (auto) como siempre.
     /// </summary>
+    /// <summary>
+    /// Límites (min, max) del eje de valores. Con <see cref="FitValueAxis"/>, ajusta el eje al rango de datos con un
+    /// margen del ±10% (para ver bien la variación, p. ej. precios). Si no, comportamiento clásico: min 0 y max según
+    /// <see cref="ResolveValueAxisMax"/>.
+    /// </summary>
+    private (double? Min, double? Max) ResolveValueAxisLimits()
+    {
+        if (FitValueAxis && _valueAxisDataMax > 0 && _valueAxisDataMax >= _valueAxisDataMin)
+        {
+            double min = Math.Max(0, _valueAxisDataMin * 0.9);
+            double max = _valueAxisDataMax * 1.1;
+            if (max <= min)
+                max = min + 1;
+            return (min, max);
+        }
+
+        return (0, ResolveValueAxisMax());
+    }
+
     private double? ResolveValueAxisMax()
     {
         if (!double.IsNaN(ValueMax))
@@ -912,7 +953,17 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         Cartesian.LegendPosition = LegendPosition.Bottom;
         Cartesian.LegendTextPaint = new SolidColorPaint(legendText);
         Cartesian.LegendTextSize = 11;
-        _valueAxisDataMax = 0;   // multi-serie no usa línea de referencia: eje en auto
+        // Rango de datos para el ajuste del eje de valores (±10%). Multi-serie no usa línea de referencia.
+        double dataMin = double.MaxValue, dataMax = double.MinValue;
+        foreach (double[] serie in orderedSeries)
+            foreach (double v in serie)
+            {
+                if (v < dataMin) dataMin = v;
+                if (v > dataMax) dataMax = v;
+            }
+        _valueAxisDataMin = dataMax >= dataMin ? dataMin : 0;
+        _valueAxisDataMax = dataMax >= dataMin ? dataMax : 0;
+
         Cartesian.Series = BuildMultiCartesianSeries(orderedSeries);
         (Cartesian.XAxes, Cartesian.YAxes) = BuildAxes(orderedLabels);
         Cartesian.Sections = BuildReferenceSections();

@@ -30,6 +30,7 @@ public sealed class ApplicationHostService : IHostedService
     private readonly PersistAndRestoreService _persistAndRestoreService;
     private readonly ProductDatabaseService _productDatabaseService;
     private readonly SharedDataService _sharedDataService;
+    private readonly ProgressService _progressService;
     private readonly ThemeService _themeService;
     private readonly LocalizationService _localizationService;
     private readonly AppSettings _appSettings;
@@ -38,11 +39,12 @@ public sealed class ApplicationHostService : IHostedService
     #endregion
 
     #region Constructor
-    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ProductDatabaseService productDatabaseService, SharedDataService sharedDataService, ThemeService themeService, LocalizationService localizationService, IOptions<AppSettings> settings)
+    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ProductDatabaseService productDatabaseService, SharedDataService sharedDataService, ProgressService progressService, ThemeService themeService, LocalizationService localizationService, IOptions<AppSettings> settings)
     {
         _persistAndRestoreService = persistAndRestoreService;
         _productDatabaseService = productDatabaseService;
         _sharedDataService = sharedDataService;
+        _progressService = progressService;
         _themeService = themeService;
         _localizationService = localizationService;
         _appSettings = settings.Value;
@@ -88,6 +90,9 @@ public sealed class ApplicationHostService : IHostedService
         LocalizationValidator.Validate();
 
         await _themeService.InitializeAsync();
+
+        // Primer evento del ACTIVITY LOG: la app se ha cargado.
+        _progressService.LogEvent(_localizationService[MM4LB.Helpers.LocKeys.AppLog_Loaded_Progress]);
 
         _isInitialized = true;
     }

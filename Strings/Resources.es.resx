@@ -129,4 +129,46 @@
   <data name="MainWindow_PriceChartWidget_Title" xml:space="preserve">
     <value>HISTÓRICO DE PRECIOS</value>
   </data>
+  <data name="WebView_Country_Tooltip" xml:space="preserve">
+    <value>Marketplace de Amazon</value>
+  </data>
+  <data name="WebView_AddProduct_Tooltip" xml:space="preserve">
+    <value>Añadir esta página como nuevo producto rastreado</value>
+  </data>
+  <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
+    <value>Añadir esta página como link alternativo del producto seleccionado</value>
+  </data>
+  <data name="PriceChart_CurrentPrice_Label" xml:space="preserve">
+    <value>Actual</value>
+  </data>
+  <data name="PriceChart_LowestPrice_Label" xml:space="preserve">
+    <value>Mínimo</value>
+  </data>
+  <data name="ProductLog_Added_Progress" xml:space="preserve">
+    <value>Nuevo producto añadido: {0}</value>
+  </data>
+  <data name="ProductLog_AltLinkAdded_Progress" xml:space="preserve">
+    <value>Link alternativo añadido a: {0}</value>
+  </data>
+  <data name="ProductLog_Refreshing_Progress" xml:space="preserve">
+    <value>Leyendo precios de {0}…</value>
+  </data>
+  <data name="ProductLog_ReadingStore_Progress" xml:space="preserve">
+    <value>Leyendo {0}…</value>
+  </data>
+  <data name="ProductLog_Refreshed_Progress" xml:space="preserve">
+    <value>{0}: {1}/{2} precios leídos</value>
+  </data>
+  <data name="AppLog_Loaded_Progress" xml:space="preserve">
+    <value>Tracker iniciado</value>
+  </data>
+  <data name="PriceChart_Prime_Label" xml:space="preserve">
+    <value>Prime</value>
+  </data>
+  <data name="PriceChart_NoPrime_Label" xml:space="preserve">
+    <value>Sin Prime</value>
+  </data>
+  <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
+    <value>Refrescar todos los precios ahora</value>
+  </data>
 </root>

@@ -1,11 +1,15 @@
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.Web.WebView2.Core;
 using MM4LB.Controls.ViewModels;
+using MM4LB.Helpers;
+using MM4LB.Models;
 using MM4LB.Services;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using Windows.System;
 
 namespace MM4LB.Controls.Views;
@@ -31,6 +35,7 @@ public sealed partial class WebViewControl : UserControl
 {
     #region Attributes
     private bool _isWidgetActive;
+    private bool _countryInitializing;
     #endregion
 
     #region Dependency Properties
@@ -81,6 +86,7 @@ public sealed partial class WebViewControl : UserControl
             ViewModel?.NavigationRequested += OnNavigationRequested;
             ViewModel?.PropertyChanged += OnViewModelPropertyChanged;
 
+            InitializeCountrySelector();
             RefreshWidgetActivation(force: true);
         }
         catch (Exception ex)
@@ -184,9 +190,11 @@ public sealed partial class WebViewControl : UserControl
     /// </summary>
     private void NavigateToCurrentViewModelUrl()
     {
-        if (!string.IsNullOrWhiteSpace(ViewModel?.SearchStringUrl))
+        Models.Product? product = ViewModel?.SharedDataService.SelectedProduct;
+        string? url = product?.BestStore?.Url ?? product?.Stores.FirstOrDefault()?.Url;
+        if (!string.IsNullOrWhiteSpace(url))
         {
-            NavigateTo(ViewModel.SearchStringUrl);
+            NavigateTo(url);
         }
     }
     #endregion
@@ -226,6 +234,7 @@ public sealed partial class WebViewControl : UserControl
         if (sender.Source is not null)
         {
             tbAddressBar.Text = sender.Source.ToString();
+            ViewModel?.SetCurrentUrl(sender.Source.ToString());
         }
 
         UpdateNavigationButtonsState();
@@ -293,9 +302,91 @@ public sealed partial class WebViewControl : UserControl
 
         ViewModel?.RequestNavigation(url);
     }
+
+    /// <summary>
+    /// Cambia el marketplace de Amazon: persiste el país y navega al MISMO producto en ese dominio (si la página
+    /// actual es de Amazon se conserva la ruta —incluye /dp/ASIN, común entre marketplaces—; si no, va a la portada).
+    /// </summary>
+    private void OnCountryChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_countryInitializing)
+            return;
+
+        if (CountrySelector.SelectedItem is not ComboBoxItem item || item.Tag is not string code)
+            return;
+
+        string? host = Amazon.HostForCountry(code);
+        if (host is null)
+            return;
+
+        App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country = code;
+        ViewModel?.RequestNavigation(BuildMarketplaceUrl(host));
+    }
+
+    /// <summary>
+    /// Botón "Añadir producto": da de alta un producto nuevo desde la PÁGINA ACTUAL (extrae nombre/precio/imagen de
+    /// lo que se está viendo, sin re-navegar) y lo selecciona.
+    /// </summary>
+    private async void OnAddProductClick(object sender, RoutedEventArgs e)
+    {
+        string? url = MyWebView.Source?.ToString();
+        if (string.IsNullOrWhiteSpace(url))
+            return;
+
+        // Alta multi-tienda: si es un producto de Amazon se rastrea en todos los marketplaces (mismo ASIN); luego
+        // se leen los precios de cada tienda navegando en segundo plano.
+        ProductService products = App.GetService<ProductService>();
+        Models.Product? product = products.AddProductFromUrl(url);
+        if (product is not null)
+            await products.RefreshProductAsync(product);
+    }
+
+    /// <summary>
+    /// Botón "Añadir link alternativo": añade la PÁGINA ACTUAL como una tienda más del producto seleccionado (p. ej.
+    /// el mismo artículo en otro Amazon), con su precio. No hace nada si no hay producto seleccionado.
+    /// </summary>
+    private async void OnAddAlternativeLinkClick(object sender, RoutedEventArgs e)
+    {
+        Models.Product? product = ViewModel?.SharedDataService.SelectedProduct;
+        string? url = MyWebView.Source?.ToString();
+        if (product is null || string.IsNullOrWhiteSpace(url))
+            return;
+
+        ProductParseResult? parsed = await App.GetService<ProductParsingService>().ExtractAsync(MyWebView);
+        App.GetService<ProductService>().AddAlternativeLink(product, url, parsed);
+    }
     #endregion
 
     #region Methods (private)
+    /// <summary>Selecciona en el combo el país guardado en configuración, sin disparar navegación.</summary>
+    private void InitializeCountrySelector()
+    {
+        string code = App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country;
+
+        _countryInitializing = true;
+        foreach (object obj in CountrySelector.Items)
+        {
+            if (obj is ComboBoxItem item && item.Tag is string tag && string.Equals(tag, code, StringComparison.OrdinalIgnoreCase))
+            {
+                CountrySelector.SelectedItem = item;
+                break;
+            }
+        }
+        if (CountrySelector.SelectedItem is null && CountrySelector.Items.Count > 0)
+            CountrySelector.SelectedIndex = 0;
+        _countryInitializing = false;
+    }
+
+    /// <summary>URL del producto actual en el marketplace <paramref name="host"/> (conserva la ruta si es Amazon).</summary>
+    private string BuildMarketplaceUrl(string host)
+    {
+        Uri? current = MyWebView.Source;
+        if (current is not null && current.Host.Contains("amazon", StringComparison.OrdinalIgnoreCase))
+            return $"https://{host}{current.PathAndQuery}";
+
+        return $"https://{host}/";
+    }
+
     /// <summary>
     /// Ejecuta la navegación efectiva del WebView.
     ///

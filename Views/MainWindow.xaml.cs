@@ -228,6 +228,12 @@ public sealed partial class MainWindow : Window
             await App.GetService<ProductService>().RefreshProductAsync(product);
     }
 
+    /// <summary>Botón "Refrescar todo" del footer: fuerza el refresco de precios de todos los productos (como el scheduler).</summary>
+    private void OnRefreshAllClick(object sender, RoutedEventArgs e)
+    {
+        _ = App.GetService<PriceSchedulerService>().RefreshAllAsync();
+    }
+
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
     private static string L(string key) => MM4LB.Services.LocalizationService.Instance?[key] ?? key;
     #endregion

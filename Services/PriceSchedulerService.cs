@@ -56,6 +56,9 @@ public sealed class PriceSchedulerService
         _timer.Tick += (_, _) => _ = RunAsync(dueOnly: false);
         _timer.Start();
     }
+
+    /// <summary>Fuerza un refresco inmediato de TODOS los productos (lo mismo que la pasada periódica). Debe llamarse en el hilo de UI.</summary>
+    public Task RefreshAllAsync() => RunAsync(dueOnly: false);
     #endregion
 
     #region Methods (private)

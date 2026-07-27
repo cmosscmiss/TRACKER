@@ -115,4 +115,20 @@ public static class LocKeys
     public const string AddProduct_Url_Placeholder = "AddProduct_Url_Placeholder";
     public const string Common_Add_Label = "Common_Add_Label";
     public const string Common_Cancel_Label = "Common_Cancel_Label";
+    public const string WebView_Country_Tooltip = "WebView_Country_Tooltip";
+    public const string WebView_AddProduct_Tooltip = "WebView_AddProduct_Tooltip";
+    public const string WebView_AddAltLink_Tooltip = "WebView_AddAltLink_Tooltip";
+    public const string PriceChart_CurrentPrice_Label = "PriceChart_CurrentPrice_Label";
+    public const string PriceChart_LowestPrice_Label = "PriceChart_LowestPrice_Label";
+
+    // Product activity log
+    public const string ProductLog_Added_Progress = "ProductLog_Added_Progress";
+    public const string ProductLog_AltLinkAdded_Progress = "ProductLog_AltLinkAdded_Progress";
+    public const string ProductLog_Refreshing_Progress = "ProductLog_Refreshing_Progress";
+    public const string ProductLog_ReadingStore_Progress = "ProductLog_ReadingStore_Progress";
+    public const string ProductLog_Refreshed_Progress = "ProductLog_Refreshed_Progress";
+    public const string AppLog_Loaded_Progress = "AppLog_Loaded_Progress";
+    public const string PriceChart_Prime_Label = "PriceChart_Prime_Label";
+    public const string PriceChart_NoPrime_Label = "PriceChart_NoPrime_Label";
+    public const string Footer_RefreshAll_Tooltip = "Footer_RefreshAll_Tooltip";
 }

@@ -3,9 +3,27 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MM4LB.Models;
+
+/// <summary>Tendencia del precio de un producto respecto a la lectura anterior.</summary>
+public enum PriceTrend
+{
+    /// <summary>Sin datos suficientes (menos de dos lecturas).</summary>
+    Unknown,
+
+    /// <summary>El precio ha bajado.</summary>
+    Down,
+
+    /// <summary>El precio se mantiene igual.</summary>
+    Same,
+
+    /// <summary>El precio ha subido.</summary>
+    Up,
+}
 
 /// <summary>
 /// A tracked product whose price is monitored across one or more store URLs (mainly Amazon
@@ -83,6 +101,41 @@ public partial class Product : ObservableObject
             return last;
         }
     }
+
+    /// <summary>Mejor precio actual formateado con su moneda (o "—" si no hay precio). Para la lista de productos.</summary>
+    public string BestPriceText
+    {
+        get
+        {
+            if (BestPrice is not decimal value)
+                return "—";
+
+            string currency = BestStore?.Currency ?? (Stores.Count > 0 ? Stores[0].Currency : null) ?? string.Empty;
+            string text = value.ToString("0.00", CultureInfo.CurrentCulture);
+            return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
+        }
+    }
+
+    /// <summary>
+    /// Tendencia del mejor precio respecto a la lectura anterior: compara el mínimo entre tiendas de la última ronda
+    /// con el de la penúltima. <see cref="PriceTrend.Unknown"/> si hay menos de dos rondas.
+    /// </summary>
+    public PriceTrend Trend
+    {
+        get
+        {
+            if (PriceHistory.Count == 0)
+                return PriceTrend.Unknown;
+
+            var rounds = PriceHistory.GroupBy(point => point.Timestamp).OrderBy(group => group.Key).ToList();
+            if (rounds.Count < 2)
+                return PriceTrend.Unknown;
+
+            decimal latest = rounds[^1].Min(point => point.Price);
+            decimal previous = rounds[^2].Min(point => point.Price);
+            return latest < previous ? PriceTrend.Down : latest > previous ? PriceTrend.Up : PriceTrend.Same;
+        }
+    }
     #endregion
 
     #region Constructor
@@ -109,6 +162,7 @@ public partial class Product : ObservableObject
         store.CurrentPrice = price;
         store.LastChecked = timestamp;
         PriceHistory.Add(new PricePoint(timestamp, price, store.Label));
+        RaiseDerivedChanged();
         PriceRecorded?.Invoke(this, EventArgs.Empty);
     }
     #endregion
@@ -138,6 +192,8 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(BestPrice));
         OnPropertyChanged(nameof(BestStore));
         OnPropertyChanged(nameof(LastChecked));
+        OnPropertyChanged(nameof(BestPriceText));
+        OnPropertyChanged(nameof(Trend));
     }
     #endregion
 }
@@ -167,6 +223,10 @@ public partial class ProductStore : ObservableObject
     /// <summary>Last observed price on this store, or <c>null</c> if never read.</summary>
     [ObservableProperty]
     private decimal? _currentPrice;
+
+    /// <summary>Whether the product is Amazon Prime on this store (as of the last read). Amazon-only.</summary>
+    [ObservableProperty]
+    private bool _isPrime;
 
     /// <summary>When <see cref="CurrentPrice"/> was last read, or <c>null</c> if never read.</summary>
     [ObservableProperty]

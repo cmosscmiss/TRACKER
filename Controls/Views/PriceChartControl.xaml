@@ -4,14 +4,87 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="using:MM4LB.Controls.Views"
+    xmlns:vm="using:MM4LB.Controls.ViewModels"
+    xmlns:loc="using:MM4LB.Markup"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid>
-        <uc:ChartTypeSelectorControl
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Cabecera del producto seleccionado: imagen + título + pills de precio actual y mínimo histórico. -->
+        <Grid Grid.Row="0" Padding="12 8" ColumnSpacing="12"
+              Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0" Width="56" Height="56" Stretch="Uniform" VerticalAlignment="Top"
+                   Source="{x:Bind ViewModel.Image, Mode=OneWay}"/>
+
+            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.ProductName, Mode=OneWay}" TextWrapping="Wrap"
+                       MaxLines="3" TextTrimming="CharacterEllipsis" FontSize="16" VerticalAlignment="Center"
+                       Foreground="{ThemeResource TextBrush}"/>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="{x:Bind ViewModel.PrimeBrush, Mode=OneWay}" CornerRadius="12" Padding="10 4"
+                        Visibility="{x:Bind ViewModel.ShowPrime, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+                    <TextBlock Text="{x:Bind ViewModel.PrimeText, Mode=OneWay}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                </Border>
+                <Border Background="{ThemeResource CardBackgroundLightBrush}" CornerRadius="12" Padding="10 4">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{loc:Str Key=PriceChart_CurrentPrice_Label}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind ViewModel.CurrentPriceText, Mode=OneWay}" Foreground="{ThemeResource AccentBrush}" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Background="{ThemeResource CardBackgroundLightBrush}" CornerRadius="12" Padding="10 4">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{loc:Str Key=PriceChart_LowestPrice_Label}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind ViewModel.LowestPriceText, Mode=OneWay}" Foreground="{ThemeResource AccentLightBrush}" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Strip de tiendas: un chip por tienda con precio actual y badge de Prime; scroll horizontal si no caben. -->
+        <ScrollViewer Grid.Row="1" Margin="12 0 12 8" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled"
+                      Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Stores, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:StoreChip">
+                        <Border Background="{ThemeResource CardBackgroundLightBrush}" CornerRadius="10" Padding="8 3">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="{x:Bind Label}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="{x:Bind PriceText}" Foreground="{ThemeResource AccentLightBrush}" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center"/>
+                                <Border Background="#FF2E7D32" CornerRadius="6" Padding="5 1" VerticalAlignment="Center"
+                                        Visibility="{x:Bind ShowPrimeBadge, Converter={StaticResource VisibleIfTrueConverter}}">
+                                    <TextBlock Text="Prime" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <uc:ChartTypeSelectorControl Grid.Row="2"
             SelectedChartType="Line"
-            Values="{x:Bind ViewModel.Values, Mode=OneWay}"
+            FitValueAxis="True"
+            SeriesValues="{x:Bind ViewModel.SeriesValues, Mode=OneWay}"
+            SeriesNames="{x:Bind ViewModel.SeriesNames, Mode=OneWay}"
             Labels="{x:Bind ViewModel.Labels, Mode=OneWay}"
             ValueSuffix="{x:Bind ViewModel.ValueSuffix, Mode=OneWay}"
             ValueFormat="0.00"

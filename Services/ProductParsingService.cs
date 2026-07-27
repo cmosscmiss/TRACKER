@@ -17,6 +17,7 @@ public sealed class ProductParseResult
     public string? ImageUrl { get; init; }
     public decimal? Price { get; init; }
     public string? Currency { get; init; }
+    public bool IsPrime { get; init; }
 }
 
 /// <summary>
@@ -60,7 +61,13 @@ public sealed class ProductParsingService
         var o = priceEl.querySelector('.a-offscreen'); if (o) offscreen = o.textContent.trim();
         if (!offscreen && priceEl.classList && priceEl.classList.contains('a-price') === false) offscreen = priceEl.textContent.trim();
     }
-    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen };
+
+    var prime = !!(document.querySelector('#corePriceDisplay_desktop_feature_div .a-icon-prime')
+                || document.querySelector('#priceBadging_feature_div .a-icon-prime')
+                || document.querySelector('#deliveryBlockMessage .a-icon-prime')
+                || document.querySelector('.a-icon-prime'));
+
+    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen, isPrime: prime };
 })();
 ";
     #endregion
@@ -127,6 +134,27 @@ public sealed class ProductParsingService
             _gate.Release();
         }
     }
+
+    /// <summary>
+    /// Extracts the product fields from the page CURRENTLY loaded in <paramref name="webView"/> (no navigation).
+    /// Used by the interactive "add" buttons of the visible web browser, which act on the page the user is viewing.
+    /// Returns <c>null</c> if the browser is not ready or nothing could be extracted. Must run on the UI thread.
+    /// </summary>
+    public async Task<ProductParseResult?> ExtractAsync(WebView2 webView)
+    {
+        if (webView?.CoreWebView2 is not CoreWebView2 core)
+            return null;
+
+        try
+        {
+            string json = await core.ExecuteScriptAsync(ExtractionScript);
+            return ParseResult(json);
+        }
+        catch
+        {
+            return null;
+        }
+    }
     #endregion
 
     #region Methods (private)
@@ -158,12 +186,15 @@ public sealed class ProductParsingService
             if (name is null && price is null && imageUrl is null)
                 return null;
 
+            bool isPrime = root.TryGetProperty("isPrime", out JsonElement primeElement) && primeElement.ValueKind == JsonValueKind.True;
+
             return new ProductParseResult
             {
                 Name = name,
                 ImageUrl = imageUrl,
                 Price = price,
-                Currency = string.IsNullOrWhiteSpace(currency) ? null : currency.Trim()
+                Currency = string.IsNullOrWhiteSpace(currency) ? null : currency.Trim(),
+                IsPrime = isPrime
             };
         }
         catch
