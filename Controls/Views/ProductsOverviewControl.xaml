@@ -10,7 +10,9 @@
 
     <Grid>
         <uc:ChartTypeSelectorControl x:Name="Chart"
-            SelectedChartType="Column"
+            SelectedChartType="{x:Bind ViewModel.SelectedChartType, Mode=TwoWay}"
+            SortOrder="{x:Bind ViewModel.SortOrder, Mode=TwoWay}"
+            TopN="{x:Bind ViewModel.TopN, Mode=TwoWay}"
             Values="{x:Bind ViewModel.Values, Mode=OneWay}"
             Labels="{x:Bind ViewModel.Labels, Mode=OneWay}"
             HighlightIndex="{x:Bind ViewModel.HighlightIndex, Mode=OneWay}"

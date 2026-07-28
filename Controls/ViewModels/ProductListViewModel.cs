@@ -37,11 +37,11 @@ public partial class ProductListViewModel : WidgetViewModelBase
     }
 
     /// <summary>
-    /// Guarda en la configuración el producto seleccionado.
+    /// Guarda en la configuración el Id del producto seleccionado, para re-seleccionarlo al arrancar.
     /// </summary>
     public override void SaveConfig()
     {
-        _appSettings.ProductListControl.SelectedProduct = SharedDataService.SelectedProduct?.Name ?? string.Empty;
+        _appSettings.ProductListControl.SelectedProductId = SharedDataService.SelectedProduct?.Id ?? 0;
     }
     #endregion
 }

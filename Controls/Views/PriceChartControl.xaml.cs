@@ -34,10 +34,18 @@ public sealed partial class PriceChartControl : UserControl
     #endregion
 
     #region UI events
-    /// <summary>Borra el producto seleccionado de la base de datos, previa confirmación.</summary>
+    /// <summary>Alterna el favorito del producto mostrado (deshabilitado si ya hay el máximo de favoritos).</summary>
+    private void OnToggleFavoriteClick(object sender, RoutedEventArgs e)
+    {
+        Product? product = ViewModel?.Product;
+        if (product is not null)
+            App.GetService<ProductService>().ToggleFavorite(product);
+    }
+
+    /// <summary>Borra el producto mostrado de la base de datos, previa confirmación.</summary>
     private async void OnDeleteProductClick(object sender, RoutedEventArgs e)
     {
-        Product? product = ViewModel?.SharedDataService.SelectedProduct;
+        Product? product = ViewModel?.Product;
         if (product is null || XamlRoot is null)
             return;
 
@@ -58,7 +66,7 @@ public sealed partial class PriceChartControl : UserControl
     /// </summary>
     private async void OnMarkPurchasedClick(object sender, RoutedEventArgs e)
     {
-        Product? product = ViewModel?.SharedDataService.SelectedProduct;
+        Product? product = ViewModel?.Product;
         if (product is null || XamlRoot is null)
             return;
 

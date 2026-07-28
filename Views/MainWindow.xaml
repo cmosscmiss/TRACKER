@@ -89,6 +89,9 @@
                                 <uc:WidgetBaseControl x:Name="ucProductsOverviewWidget" Title="{loc:Str Key=MainWindow_ProductsOverviewWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:ProductsOverviewControl x:Name="ucProductsOverviewControl" ViewModel="{Binding ProductsOverviewViewModel}"></uc:ProductsOverviewControl>
                                 </uc:WidgetBaseControl>
+                                <uc:WidgetBaseControl x:Name="ucFavoritesWidget" Title="{loc:Str Key=MainWindow_FavoritesWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
+                                    <uc:FavoritesControl x:Name="ucFavoritesControl" ViewModel="{Binding FavoritesViewModel}"></uc:FavoritesControl>
+                                </uc:WidgetBaseControl>
                             </uc:WidgetPanelControl>
                         </Grid>
                     </Grid>

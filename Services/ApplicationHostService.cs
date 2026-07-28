@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -77,10 +78,15 @@ public sealed class ApplicationHostService : IHostedService
         _productDatabaseService.Initialize();
         _productDatabaseService.LoadInto(_sharedDataService.ProductSet);
 
-        // Selecciona el primer producto de la lista al arrancar (si hay).
+        // Re-selecciona el producto que estaba seleccionado al cerrar (por Id); si no se encuentra (o no había),
+        // cae al primero de la lista.
         var products = _sharedDataService.ProductSet.Products;
         if (products.Count > 0)
-            _sharedDataService.SelectedProduct = products[0];
+        {
+            long savedId = _appSettings.ProductListControl.SelectedProductId;
+            Product? toSelect = savedId != 0 ? products.FirstOrDefault(product => product.Id == savedId) : null;
+            _sharedDataService.SelectedProduct = toSelect ?? products[0];
+        }
 
         // Aplica la preferencia de logging de excepciones ya cargada (por defecto activado). Antes de este punto
         // el logging está activo para capturar también fallos tempranos del arranque.

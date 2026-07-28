@@ -14,6 +14,11 @@ namespace MM4LB.Services;
 /// </summary>
 public sealed class ProductService
 {
+    #region Constants
+    /// <summary>Máximo de productos que se pueden marcar como favoritos.</summary>
+    public const int MaxFavorites = 10;
+    #endregion
+
     #region Attributes
     private readonly ProductDatabaseService _database;
     private readonly SharedDataService _sharedDataService;
@@ -121,6 +126,8 @@ public sealed class ProductService
                 continue;
 
             store.IsPrime = result.IsPrime;
+            store.IsAvailable = result.IsAvailable;
+            store.HasPromo = result.HasPromo;
 
             if (!infoUpdated)
             {
@@ -141,10 +148,37 @@ public sealed class ProductService
                 _database.SavePriceReading(store, price, timestamp);
                 read++;
             }
+            else
+            {
+                // Sin precio válido (p. ej. producto no disponible): no se registra lectura, pero sí se persiste el
+                // estado leído (disponibilidad / promo / Prime) para que quede al día en disco.
+                _database.UpdateStoreStatus(store, timestamp);
+            }
         }
 
         operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshed_Progress), product.Name, read, stores.Count);
         operation.FinishOperation();
+    }
+
+    /// <summary>Número de productos marcados como favoritos actualmente.</summary>
+    public int FavoriteCount => _sharedDataService.ProductSet.Products.Count(product => product.IsFavorite);
+
+    /// <summary>
+    /// Alterna el favorito de un producto y lo persiste. No permite superar <see cref="MaxFavorites"/> favoritos
+    /// (si ya se alcanzó y el producto no era favorito, no hace nada y devuelve false). Notifica el cambio.
+    /// </summary>
+    public bool ToggleFavorite(Product product)
+    {
+        if (product is null)
+            return false;
+
+        if (!product.IsFavorite && FavoriteCount >= MaxFavorites)
+            return false;
+
+        product.IsFavorite = !product.IsFavorite;
+        _database.SetFavorite(product, product.IsFavorite);
+        _sharedDataService.NotifyFavoritesChanged();
+        return true;
     }
 
     /// <summary>Removes a product from the shared list and the database (its stores and history cascade).</summary>
@@ -197,6 +231,8 @@ public sealed class ProductService
             return;
 
         store.IsPrime = parsed.IsPrime;
+        store.IsAvailable = parsed.IsAvailable;
+        store.HasPromo = parsed.HasPromo;
 
         if (updateInfo)
         {
@@ -222,6 +258,10 @@ public sealed class ProductService
 
             product.RecordPrice(store, price, timestamp);
             _database.SavePriceReading(store, price, timestamp);
+        }
+        else
+        {
+            _database.UpdateStoreStatus(store, timestamp);
         }
     }
 

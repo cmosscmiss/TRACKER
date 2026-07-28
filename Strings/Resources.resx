@@ -137,6 +137,15 @@
   <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
     <value>PRICE OVERVIEW</value>
   </data>
+  <data name="MainWindow_FavoritesWidget_Title" xml:space="preserve">
+    <value>FAVOURITES</value>
+  </data>
+  <data name="PriceChart_Favorite_Tooltip" xml:space="preserve">
+    <value>Toggle favourite</value>
+  </data>
+  <data name="FavoritesWidget_Empty" xml:space="preserve">
+    <value>No favourite products yet</value>
+  </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Amazon marketplace</value>
   </data>
@@ -175,6 +184,9 @@
   </data>
   <data name="PriceChart_NoPrime_Label" xml:space="preserve">
     <value>No Prime</value>
+  </data>
+  <data name="PriceChart_Promo_Label" xml:space="preserve">
+    <value>Promo</value>
   </data>
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
     <value>Refresh all prices now</value>

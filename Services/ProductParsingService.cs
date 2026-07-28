@@ -18,6 +18,12 @@ public sealed class ProductParseResult
     public decimal? Price { get; init; }
     public string? Currency { get; init; }
     public bool IsPrime { get; init; }
+
+    /// <summary>Whether the product is available for purchase (has a buy-box price and is not out of stock).</summary>
+    public bool IsAvailable { get; init; }
+
+    /// <summary>Whether the page shows a promotion, deal, coupon or voucher on the product.</summary>
+    public bool HasPromo { get; init; }
 }
 
 /// <summary>
@@ -49,10 +55,14 @@ public sealed class ProductParsingService
     var img = document.querySelector('#landingImage') || document.querySelector('#imgTagWrapperId img');
     var imageUrl = img ? (img.getAttribute('data-old-hires') || img.currentSrc || img.src) : null;
 
+    // Precio SOLO del buy-box (la oferta principal comprable). Deliberadamente NO se cae a un '.a-price' cualquiera
+    // de la página: eso capturaba el precio de 'otras opciones de compra'/otros vendedores cuando el producto no
+    // está disponible en la oferta principal.
     var priceEl = document.querySelector('#corePrice_feature_div .a-price')
                || document.querySelector('#corePriceDisplay_desktop_feature_div .a-price')
                || document.querySelector('#price_inside_buybox')
-               || document.querySelector('.a-price');
+               || document.querySelector('#apex_desktop .a-price')
+               || document.querySelector('#buybox .a-price');
     var whole = null, frac = null, symbol = null, offscreen = null;
     if (priceEl) {
         var w = priceEl.querySelector('.a-price-whole'); if (w) whole = w.textContent.replace(/[^0-9]/g, '');
@@ -67,7 +77,24 @@ public sealed class ProductParsingService
                 || document.querySelector('#deliveryBlockMessage .a-icon-prime')
                 || document.querySelector('.a-icon-prime'));
 
-    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen, isPrime: prime };
+    // Disponibilidad: hay precio de buy-box y no está marcado como agotado (#outOfStock es el bloque de Amazon
+    // 'Actualmente no disponible'). Independiente del idioma del marketplace.
+    var outOfStock = !!(document.querySelector('#outOfStock')
+                     || document.querySelector('#exports_desktop_outOfStock_buybox'));
+    var available = !!priceEl && !outOfStock;
+
+    // Promoción / oferta / cupón / voucher aplicable al producto.
+    var hasPromo = !!(document.querySelector('#promoPriceBlockMessage_feature_div')
+                   || document.querySelector('.promoPriceBlockMessage')
+                   || document.querySelector('#couponFeature')
+                   || document.querySelector('[id^=""couponText""]')
+                   || document.querySelector('.couponLabelText')
+                   || document.querySelector('#vpcButton')
+                   || document.querySelector('#dealBadge_feature_div')
+                   || document.querySelector('.dealBadge')
+                   || document.querySelector('.savingsPercentage'));
+
+    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen, isPrime: prime, available: available, hasPromo: hasPromo };
 })();
 ";
     #endregion
@@ -183,10 +210,18 @@ public sealed class ProductParsingService
             if (price is null)
                 price = TryParsePriceText(offscreen, ref currency);
 
+            bool available = root.TryGetProperty("available", out JsonElement availableElement) && availableElement.ValueKind == JsonValueKind.True;
+
+            // Si el producto no está disponible, se descarta el precio (no se registra ninguna lectura): el precio
+            // capturado, si lo hubiera, sería de otras opciones/vendedores, no de la oferta principal.
+            if (!available)
+                price = null;
+
             if (name is null && price is null && imageUrl is null)
                 return null;
 
             bool isPrime = root.TryGetProperty("isPrime", out JsonElement primeElement) && primeElement.ValueKind == JsonValueKind.True;
+            bool hasPromo = root.TryGetProperty("hasPromo", out JsonElement promoElement) && promoElement.ValueKind == JsonValueKind.True;
 
             return new ProductParseResult
             {
@@ -194,7 +229,9 @@ public sealed class ProductParsingService
                 ImageUrl = imageUrl,
                 Price = price,
                 Currency = string.IsNullOrWhiteSpace(currency) ? null : currency.Trim(),
-                IsPrime = isPrime
+                IsPrime = isPrime,
+                IsAvailable = available,
+                HasPromo = hasPromo
             };
         }
         catch

@@ -69,10 +69,14 @@ public class MainWindowViewModel : WidgetViewModelBase
     {
         get; private set;
     }
+    public FavoritesViewModel FavoritesViewModel
+    {
+        get; private set;
+    }
     #endregion
 
     #region Constructors
-    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, ConsoleViewModel consoleViewModel, ProductListViewModel productListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, PriceChartViewModel priceChartViewModel, ProductsOverviewViewModel productsOverviewViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
+    public MainWindowViewModel(ProgressService progressService, SharedDataService sharedDataService, ConsoleViewModel consoleViewModel, ProductListViewModel productListViewModel, LayoutSelectorViewModel layoutSelectorViewModel, WebViewViewModel webViewViewModel, PriceChartViewModel priceChartViewModel, ProductsOverviewViewModel productsOverviewViewModel, FavoritesViewModel favoritesViewModel, IOptions<AppSettings> appSettings) : base(sharedDataService, appSettings)
     {
         _progressService = progressService;
         _sharedDataService = sharedDataService;
@@ -83,6 +87,7 @@ public class MainWindowViewModel : WidgetViewModelBase
         WebViewViewModel = webViewViewModel;
         PriceChartViewModel = priceChartViewModel;
         ProductsOverviewViewModel = productsOverviewViewModel;
+        FavoritesViewModel = favoritesViewModel;
 
         LoadConfig();
     }
@@ -186,6 +191,7 @@ public class MainWindowViewModel : WidgetViewModelBase
         ProductListViewModel.Dispose();
         PriceChartViewModel.Dispose();
         ProductsOverviewViewModel.Dispose();
+        FavoritesViewModel.Dispose();
     }
     #endregion
 }

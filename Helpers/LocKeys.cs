@@ -40,6 +40,9 @@ public static class LocKeys
     public const string MainWindow_WebSearchWidget_Title = "MainWindow_WebSearchWidget_Title";
     public const string MainWindow_PriceChartWidget_Title = "MainWindow_PriceChartWidget_Title";
     public const string MainWindow_ProductsOverviewWidget_Title = "MainWindow_ProductsOverviewWidget_Title";
+    public const string MainWindow_FavoritesWidget_Title = "MainWindow_FavoritesWidget_Title";
+    public const string PriceChart_Favorite_Tooltip = "PriceChart_Favorite_Tooltip";
+    public const string FavoritesWidget_Empty = "FavoritesWidget_Empty";
 
     // Common (mÃ¡s): botones de diÃ¡logo
 
@@ -131,6 +134,7 @@ public static class LocKeys
     public const string AppLog_Loaded_Progress = "AppLog_Loaded_Progress";
     public const string PriceChart_Prime_Label = "PriceChart_Prime_Label";
     public const string PriceChart_NoPrime_Label = "PriceChart_NoPrime_Label";
+    public const string PriceChart_Promo_Label = "PriceChart_Promo_Label";
     public const string Footer_RefreshAll_Tooltip = "Footer_RefreshAll_Tooltip";
 
     // Acciones del widget de producto

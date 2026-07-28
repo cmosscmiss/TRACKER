@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using MM4LB.Enums;
 using MM4LB.Models;
 using MM4LB.Services;
 using static MM4LB.Services.SharedDataService;
@@ -19,6 +20,10 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
 {
     #region Attributes
     private readonly List<Product> _subscribed = new();
+
+    private ChartType _selectedChartType = ChartType.Column;
+    private SortMode _sortOrder = SortMode.None;
+    private int _topN;
     #endregion
 
     #region Properties
@@ -33,12 +38,38 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
 
     /// <summary>Índice del producto seleccionado (columna resaltada), o -1.</summary>
     public int HighlightIndex { get; private set; } = -1;
+
+    /// <summary>Tipo de gráfica (enlazado TwoWay al <c>ChartTypeSelectorControl</c>); se persiste en el .ini.</summary>
+    public ChartType SelectedChartType
+    {
+        get => _selectedChartType;
+        set => SetProperty(ref _selectedChartType, value);
+    }
+
+    /// <summary>Orden de los elementos de la gráfica (enlazado TwoWay); se persiste.</summary>
+    public SortMode SortOrder
+    {
+        get => _sortOrder;
+        set => SetProperty(ref _sortOrder, value);
+    }
+
+    /// <summary>Top N de la gráfica (0 = todos; enlazado TwoWay); se persiste.</summary>
+    public int TopN
+    {
+        get => _topN;
+        set => SetProperty(ref _topN, value);
+    }
     #endregion
 
     #region Constructor
     public ProductsOverviewViewModel(SharedDataService sharedDataService, IOptions<AppSettings> appSettings)
         : base(sharedDataService, appSettings)
     {
+        // Config de gráfica persistida (el .ini ya está restaurado en este punto).
+        _selectedChartType = _appSettings.ProductsOverviewControl.ChartType;
+        _sortOrder = _appSettings.ProductsOverviewControl.SortOrder;
+        _topN = _appSettings.ProductsOverviewControl.TopN;
+
         SharedDataService.ProductSet.Products.CollectionChanged += OnProductsChanged;
         SharedDataService.SelectedProductChanged += OnSelectedProductChanged;
 
@@ -125,10 +156,16 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
 
     public override void LoadConfig()
     {
+        SelectedChartType = _appSettings.ProductsOverviewControl.ChartType;
+        SortOrder = _appSettings.ProductsOverviewControl.SortOrder;
+        TopN = _appSettings.ProductsOverviewControl.TopN;
     }
 
     public override void SaveConfig()
     {
+        _appSettings.ProductsOverviewControl.ChartType = SelectedChartType;
+        _appSettings.ProductsOverviewControl.SortOrder = SortOrder;
+        _appSettings.ProductsOverviewControl.TopN = TopN;
     }
     #endregion
 }

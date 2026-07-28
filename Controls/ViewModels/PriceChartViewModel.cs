@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using MM4LB.Enums;
 using MM4LB.Helpers;
 using MM4LB.Models;
 using MM4LB.Services;
@@ -33,6 +34,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 {
     #region Attributes
     private Product? _product;
+    private bool _followSelection = true;
+
+    private ChartType _selectedChartType = ChartType.Line;
+    private SortMode _sortOrder = SortMode.None;
+    private int _topN;
     #endregion
 
     #region Properties
@@ -66,6 +72,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Se muestra el pill de Prime (solo si el mejor precio es de una tienda Amazon).</summary>
     public bool ShowPrime { get; private set; }
 
+    /// <summary>El producto tiene alguna promoción / oferta / cupón / voucher en alguna tienda (pill de promo).</summary>
+    public bool ShowPromo { get; private set; }
+
     /// <summary>Texto del pill de Prime ("Prime" / "No Prime") de la tienda del mejor precio.</summary>
     public string PrimeText { get; private set; } = string.Empty;
 
@@ -74,6 +83,36 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
     /// <summary>Una entrada por tienda del producto (etiqueta + precio actual + Prime) para el strip de la cabecera.</summary>
     public IReadOnlyList<StoreChip> Stores { get; private set; } = Array.Empty<StoreChip>();
+
+    /// <summary>Producto que se está mostrando (el seleccionado global, o el fijado con <see cref="PinTo"/>).</summary>
+    public Product? Product => _product;
+
+    /// <summary>El producto mostrado está marcado como favorito.</summary>
+    public bool IsFavorite { get; private set; }
+
+    /// <summary>Se puede alternar el favorito: hay producto y, o ya es favorito, o no se alcanzó el máximo.</summary>
+    public bool CanToggleFavorite { get; private set; }
+
+    /// <summary>Tipo de gráfica (enlazado TwoWay al <c>ChartTypeSelectorControl</c>); se persiste por widget/favorito.</summary>
+    public ChartType SelectedChartType
+    {
+        get => _selectedChartType;
+        set => SetProperty(ref _selectedChartType, value);
+    }
+
+    /// <summary>Orden de los elementos de la gráfica (enlazado TwoWay); se persiste.</summary>
+    public SortMode SortOrder
+    {
+        get => _sortOrder;
+        set => SetProperty(ref _sortOrder, value);
+    }
+
+    /// <summary>Top N de la gráfica (0 = todos; enlazado TwoWay); se persiste.</summary>
+    public int TopN
+    {
+        get => _topN;
+        set => SetProperty(ref _topN, value);
+    }
     #endregion
 
     #region Constants
@@ -85,7 +124,14 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     public PriceChartViewModel(SharedDataService sharedDataService, IOptions<AppSettings> appSettings)
         : base(sharedDataService, appSettings)
     {
+        // Config de gráfica del widget del producto seleccionado (los favoritos la sobrescriben tras PinTo). El
+        // .ini ya está restaurado en este punto, así que se leen los valores persistidos directamente a los campos.
+        _selectedChartType = _appSettings.PriceChartControl.ChartType;
+        _sortOrder = _appSettings.PriceChartControl.SortOrder;
+        _topN = _appSettings.PriceChartControl.TopN;
+
         SharedDataService.SelectedProductChanged += OnSelectedProductChanged;
+        SharedDataService.FavoritesChanged += OnFavoritesChanged;
         Bind(SharedDataService.SelectedProduct);
     }
     #endregion
@@ -94,6 +140,25 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     private void OnSelectedProductChanged(object? sender, ProductChangedEventArgs e) => Bind(e.NewProduct);
 
     private void OnPriceRecorded(object? sender, EventArgs e) => Recompute();
+
+    private void OnFavoritesChanged(object? sender, EventArgs e) => UpdateFavoriteState();
+    #endregion
+
+    #region Methods (public)
+    /// <summary>
+    /// Fija el ViewModel a un producto CONCRETO (para el FlipView de favoritos): deja de seguir la selección global
+    /// y muestra siempre <paramref name="product"/>.
+    /// </summary>
+    public void PinTo(Product? product)
+    {
+        if (_followSelection)
+        {
+            SharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
+            _followSelection = false;
+        }
+
+        Bind(product);
+    }
     #endregion
 
     #region Methods (private)
@@ -149,6 +214,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         PricePoint? lowest = history is { Count: > 0 } ? history.OrderBy(point => point.Price).First() : null;
         LowestPriceText = lowest is not null ? FormatPriceWithStore(lowest.Price, lowest.StoreLabel) : "—";
 
+        // Promoción / oferta / cupón / voucher en alguna tienda del producto.
+        ShowPromo = product?.HasPromo ?? false;
+
         // Prime del mejor precio (solo tiene sentido en Amazon).
         ShowPrime = bestStore is not null && bestStore.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase);
         bool prime = bestStore?.IsPrime ?? false;
@@ -174,9 +242,21 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(CurrentPriceText));
         OnPropertyChanged(nameof(LowestPriceText));
         OnPropertyChanged(nameof(ShowPrime));
+        OnPropertyChanged(nameof(ShowPromo));
         OnPropertyChanged(nameof(PrimeText));
         OnPropertyChanged(nameof(PrimeBrush));
         OnPropertyChanged(nameof(Stores));
+
+        UpdateFavoriteState();
+    }
+
+    private void UpdateFavoriteState()
+    {
+        IsFavorite = _product?.IsFavorite ?? false;
+        int favoriteCount = SharedDataService.ProductSet.Products.Count(product => product.IsFavorite);
+        CanToggleFavorite = _product is not null && (_product.IsFavorite || favoriteCount < ProductService.MaxFavorites);
+        OnPropertyChanged(nameof(IsFavorite));
+        OnPropertyChanged(nameof(CanToggleFavorite));
     }
 
     /// <summary>Formatea el precio de una tienda con su moneda ("39,99 €").</summary>
@@ -248,16 +328,31 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     public override void Dispose()
     {
         SharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
+        SharedDataService.FavoritesChanged -= OnFavoritesChanged;
         if (_product is not null)
             _product.PriceRecorded -= OnPriceRecorded;
     }
 
     public override void LoadConfig()
     {
+        // Solo el widget del producto seleccionado (que sigue la selección) usa la sección PriceChartControl; las
+        // instancias fijadas a un favorito gestionan su config vía FavoritesViewModel (por Id de producto).
+        if (!_followSelection)
+            return;
+
+        SelectedChartType = _appSettings.PriceChartControl.ChartType;
+        SortOrder = _appSettings.PriceChartControl.SortOrder;
+        TopN = _appSettings.PriceChartControl.TopN;
     }
 
     public override void SaveConfig()
     {
+        if (!_followSelection)
+            return;
+
+        _appSettings.PriceChartControl.ChartType = SelectedChartType;
+        _appSettings.PriceChartControl.SortOrder = SortOrder;
+        _appSettings.PriceChartControl.TopN = TopN;
     }
     #endregion
 }

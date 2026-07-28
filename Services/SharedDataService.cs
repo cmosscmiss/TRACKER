@@ -85,6 +85,9 @@ public class SharedDataService : ObservableObject
     /// excluyentes se reconstruyan en caliente. Lo emite la ventana de configuración al aceptar.
     /// </summary>
     public event EventHandler? ToolbarGroupsDisplayModeChanged;
+
+    /// <summary>Se dispara cuando cambia el conjunto de productos favoritos (para el widget de favoritos y el toggle).</summary>
+    public event EventHandler? FavoritesChanged;
     #endregion
 
     #region Methods (public)
@@ -98,6 +101,12 @@ public class SharedDataService : ObservableObject
     public void NotifyToolbarGroupsDisplayModeChanged()
     {
         ToolbarGroupsDisplayModeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Notifica que cambió el conjunto de favoritos (para reconstruir el widget de favoritos y el estado del toggle).</summary>
+    public void NotifyFavoritesChanged()
+    {
+        FavoritesChanged?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }

@@ -49,6 +49,31 @@ public static class Amazon
         return null;
     }
 
+    /// <summary>
+    /// Código de país (es/de/fr/be/nl) del marketplace de una URI de Amazon, o <c>null</c> si no es un marketplace
+    /// soportado. Tolera el prefijo <c>www.</c> (compara por el dominio sin él).
+    /// </summary>
+    public static string? CountryForHost(Uri? uri)
+    {
+        if (uri is null || !IsAmazon(uri))
+            return null;
+
+        string host = uri.Host;
+        foreach ((string Code, string Host, string Label) marketplace in Marketplaces)
+        {
+            string domain = marketplace.Host.StartsWith("www.", StringComparison.OrdinalIgnoreCase)
+                ? marketplace.Host.Substring(4)
+                : marketplace.Host;
+
+            if (string.Equals(host, marketplace.Host, StringComparison.OrdinalIgnoreCase) ||
+                host.Equals(domain, StringComparison.OrdinalIgnoreCase) ||
+                host.EndsWith("." + domain, StringComparison.OrdinalIgnoreCase))
+                return marketplace.Code;
+        }
+
+        return null;
+    }
+
     /// <summary>URL del producto (por su ASIN) y etiqueta en cada marketplace soportado.</summary>
     public static IEnumerable<(string Url, string Label)> ProductUrlsForAsin(string asin)
     {

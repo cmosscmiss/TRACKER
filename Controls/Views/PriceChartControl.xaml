@@ -21,6 +21,15 @@
         <!-- Barra de herramientas del producto: marcar comprado / borrar. -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4" Padding="8 6 8 0"
                     Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnToggleFavoriteClick"
+                    IsEnabled="{x:Bind ViewModel.CanToggleFavorite, Mode=OneWay}" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Favorite_Tooltip}">
+                <Grid>
+                    <FontIcon Glyph="&#xE735;" FontSize="16" Foreground="{ThemeResource AccentBrush}"
+                              Visibility="{x:Bind ViewModel.IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Glyph="&#xE734;" FontSize="16"
+                              Visibility="{x:Bind ViewModel.IsFavorite, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
+                </Grid>
+            </Button>
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnMarkPurchasedClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Purchased_Tooltip}">
                 <FontIcon Glyph="&#xE7BF;" FontSize="16"/>
             </Button>
@@ -46,6 +55,13 @@
                        Foreground="{ThemeResource TextBrush}"/>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="#FFCC5500" CornerRadius="12" Padding="10 4"
+                        Visibility="{x:Bind ViewModel.ShowPromo, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE719;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Str Key=PriceChart_Promo_Label}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
                 <Border Background="{x:Bind ViewModel.PrimeBrush, Mode=OneWay}" CornerRadius="12" Padding="10 4"
                         Visibility="{x:Bind ViewModel.ShowPrime, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <TextBlock Text="{x:Bind ViewModel.PrimeText, Mode=OneWay}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
@@ -93,7 +109,9 @@
         </ScrollViewer>
 
         <uc:ChartTypeSelectorControl Grid.Row="3"
-            SelectedChartType="Line"
+            SelectedChartType="{x:Bind ViewModel.SelectedChartType, Mode=TwoWay}"
+            SortOrder="{x:Bind ViewModel.SortOrder, Mode=TwoWay}"
+            TopN="{x:Bind ViewModel.TopN, Mode=TwoWay}"
             FitValueAxis="True"
             SeriesValues="{x:Bind ViewModel.SeriesValues, Mode=OneWay}"
             SeriesNames="{x:Bind ViewModel.SeriesNames, Mode=OneWay}"

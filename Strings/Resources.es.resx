@@ -132,6 +132,15 @@
   <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
     <value>RESUMEN DE PRECIOS</value>
   </data>
+  <data name="MainWindow_FavoritesWidget_Title" xml:space="preserve">
+    <value>FAVORITOS</value>
+  </data>
+  <data name="PriceChart_Favorite_Tooltip" xml:space="preserve">
+    <value>Marcar/quitar favorito</value>
+  </data>
+  <data name="FavoritesWidget_Empty" xml:space="preserve">
+    <value>Aún no hay productos favoritos</value>
+  </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Marketplace de Amazon</value>
   </data>
@@ -170,6 +179,9 @@
   </data>
   <data name="PriceChart_NoPrime_Label" xml:space="preserve">
     <value>Sin Prime</value>
+  </data>
+  <data name="PriceChart_Promo_Label" xml:space="preserve">
+    <value>Promo</value>
   </data>
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
     <value>Refrescar todos los precios ahora</value>

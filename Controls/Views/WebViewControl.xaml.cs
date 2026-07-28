@@ -235,6 +235,7 @@ public sealed partial class WebViewControl : UserControl
         {
             tbAddressBar.Text = sender.Source.ToString();
             ViewModel?.SetCurrentUrl(sender.Source.ToString());
+            SyncCountrySelectorToUrl(sender.Source);
         }
 
         UpdateNavigationButtonsState();
@@ -375,6 +376,36 @@ public sealed partial class WebViewControl : UserControl
         if (CountrySelector.SelectedItem is null && CountrySelector.Items.Count > 0)
             CountrySelector.SelectedIndex = 0;
         _countryInitializing = false;
+    }
+
+    /// <summary>
+    /// Sincroniza el combo de tienda con el marketplace de la página actualmente abierta: si la URL es de un
+    /// marketplace de Amazon soportado, selecciona su país en el combo (sin re-navegar, vía la guarda
+    /// <see cref="_countryInitializing"/>) y persiste la preferencia. Si no es un marketplace conocido, no toca el combo.
+    /// </summary>
+    private void SyncCountrySelectorToUrl(Uri? uri)
+    {
+        string? code = Amazon.CountryForHost(uri);
+        if (code is null)
+            return;
+
+        // Ya está seleccionado ese país: nada que hacer (evita trabajo y reentradas).
+        if (CountrySelector.SelectedItem is ComboBoxItem current && current.Tag is string currentCode &&
+            string.Equals(currentCode, code, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        _countryInitializing = true;
+        foreach (object obj in CountrySelector.Items)
+        {
+            if (obj is ComboBoxItem item && item.Tag is string tag && string.Equals(tag, code, StringComparison.OrdinalIgnoreCase))
+            {
+                CountrySelector.SelectedItem = item;
+                break;
+            }
+        }
+        _countryInitializing = false;
+
+        App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country = code;
     }
 
     /// <summary>URL del producto actual en el marketplace <paramref name="host"/> (conserva la ruta si es Amazon).</summary>

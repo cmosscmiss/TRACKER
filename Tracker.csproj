@@ -83,6 +83,9 @@
 	  <Page Update="Controls\Views\ProductsOverviewControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Controls\Views\FavoritesControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Resources\Buttons.xaml">

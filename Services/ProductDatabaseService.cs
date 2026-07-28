@@ -55,7 +55,8 @@ public sealed class ProductDatabaseService
                 ImageUrl  TEXT    NULL,
                 CreatedAt TEXT    NOT NULL,
                 Purchased INTEGER NOT NULL DEFAULT 0,
-                PurchasePrice TEXT NULL
+                PurchasePrice TEXT NULL,
+                IsFavorite INTEGER NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS ProductStores (
@@ -67,6 +68,8 @@ public sealed class ProductDatabaseService
                 CurrentPrice TEXT    NULL,
                 LastChecked  TEXT    NULL,
                 IsPrime      INTEGER NOT NULL DEFAULT 0,
+                IsAvailable  INTEGER NOT NULL DEFAULT 1,
+                HasPromo     INTEGER NOT NULL DEFAULT 0,
                 FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
             );
 
@@ -85,8 +88,11 @@ public sealed class ProductDatabaseService
 
         // Migraciones para bases de datos creadas antes de añadir estas columnas.
         EnsureColumn(connection, "ProductStores", "IsPrime", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumn(connection, "ProductStores", "IsAvailable", "INTEGER NOT NULL DEFAULT 1");
+        EnsureColumn(connection, "ProductStores", "HasPromo", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "Purchased", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "PurchasePrice", "TEXT NULL");
+        EnsureColumn(connection, "Products", "IsFavorite", "INTEGER NOT NULL DEFAULT 0");
     }
 
     /// <summary>Añade una columna a una tabla si aún no existe (migración idempotente).</summary>
@@ -122,7 +128,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl FROM Products WHERE Purchased = 0 ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite FROM Products WHERE Purchased = 0 ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -130,7 +136,8 @@ public sealed class ProductDatabaseService
                 {
                     Id = reader.GetInt64(0),
                     Name = reader.GetString(1),
-                    ImageUrl = reader.IsDBNull(2) ? null : reader.GetString(2)
+                    ImageUrl = reader.IsDBNull(2) ? null : reader.GetString(2),
+                    IsFavorite = !reader.IsDBNull(3) && reader.GetInt64(3) != 0
                 };
                 productsById[product.Id] = product;
                 target.Products.Add(product);
@@ -140,7 +147,7 @@ public sealed class ProductDatabaseService
         // Stores
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime FROM ProductStores ORDER BY Id;";
+            command.CommandText = "SELECT Id, ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo FROM ProductStores ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -156,7 +163,9 @@ public sealed class ProductDatabaseService
                     Currency = reader.IsDBNull(4) ? null : reader.GetString(4),
                     CurrentPrice = reader.IsDBNull(5) ? null : ParsePrice(reader.GetString(5)),
                     LastChecked = reader.IsDBNull(6) ? null : ParseTimestamp(reader.GetString(6)),
-                    IsPrime = !reader.IsDBNull(7) && reader.GetInt64(7) != 0
+                    IsPrime = !reader.IsDBNull(7) && reader.GetInt64(7) != 0,
+                    IsAvailable = reader.IsDBNull(8) || reader.GetInt64(8) != 0,
+                    HasPromo = !reader.IsDBNull(9) && reader.GetInt64(9) != 0
                 };
                 storesById[store.Id] = store;
                 product.Stores.Add(store);
@@ -233,11 +242,13 @@ public sealed class ProductDatabaseService
         using (SqliteCommand command = connection.CreateCommand())
         {
             command.Transaction = transaction;
-            command.CommandText = "UPDATE ProductStores SET CurrentPrice = $price, LastChecked = $checked, Currency = $currency, IsPrime = $prime WHERE Id = $id;";
+            command.CommandText = "UPDATE ProductStores SET CurrentPrice = $price, LastChecked = $checked, Currency = $currency, IsPrime = $prime, IsAvailable = $available, HasPromo = $promo WHERE Id = $id;";
             command.Parameters.AddWithValue("$price", FormatPrice(price));
             command.Parameters.AddWithValue("$checked", FormatTimestamp(timestampUtc));
             command.Parameters.AddWithValue("$currency", (object?)store.Currency ?? DBNull.Value);
             command.Parameters.AddWithValue("$prime", store.IsPrime ? 1 : 0);
+            command.Parameters.AddWithValue("$available", store.IsAvailable ? 1 : 0);
+            command.Parameters.AddWithValue("$promo", store.HasPromo ? 1 : 0);
             command.Parameters.AddWithValue("$id", store.Id);
             command.ExecuteNonQuery();
         }
@@ -255,6 +266,25 @@ public sealed class ProductDatabaseService
         transaction.Commit();
     }
 
+    /// <summary>
+    /// Persists a store's status flags (Prime / availability / promo / currency / last-checked) WITHOUT recording a
+    /// price reading. Used when a refresh pass read the page but there is no valid price to record (e.g. the product
+    /// is currently unavailable), so the availability/promo state is still kept up to date on disk.
+    /// </summary>
+    public void UpdateStoreStatus(ProductStore store, DateTime timestampUtc)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "UPDATE ProductStores SET LastChecked = $checked, Currency = $currency, IsPrime = $prime, IsAvailable = $available, HasPromo = $promo WHERE Id = $id;";
+        command.Parameters.AddWithValue("$checked", FormatTimestamp(timestampUtc));
+        command.Parameters.AddWithValue("$currency", (object?)store.Currency ?? DBNull.Value);
+        command.Parameters.AddWithValue("$prime", store.IsPrime ? 1 : 0);
+        command.Parameters.AddWithValue("$available", store.IsAvailable ? 1 : 0);
+        command.Parameters.AddWithValue("$promo", store.HasPromo ? 1 : 0);
+        command.Parameters.AddWithValue("$id", store.Id);
+        command.ExecuteNonQuery();
+    }
+
     /// <summary>Updates the persisted name/image of a product (e.g. after parsing its page).</summary>
     public void UpdateProductInfo(Product product)
     {
@@ -263,6 +293,17 @@ public sealed class ProductDatabaseService
         command.CommandText = "UPDATE Products SET Name = $name, ImageUrl = $imageUrl WHERE Id = $id;";
         command.Parameters.AddWithValue("$name", product.Name);
         command.Parameters.AddWithValue("$imageUrl", (object?)product.ImageUrl ?? DBNull.Value);
+        command.Parameters.AddWithValue("$id", product.Id);
+        command.ExecuteNonQuery();
+    }
+
+    /// <summary>Persists the favourite flag of a product.</summary>
+    public void SetFavorite(Product product, bool isFavorite)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "UPDATE Products SET IsFavorite = $fav WHERE Id = $id;";
+        command.Parameters.AddWithValue("$fav", isFavorite ? 1 : 0);
         command.Parameters.AddWithValue("$id", product.Id);
         command.ExecuteNonQuery();
     }
@@ -305,8 +346,8 @@ public sealed class ProductDatabaseService
         using SqliteCommand command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText = @"
-            INSERT INTO ProductStores (ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime)
-            VALUES ($productId, $url, $label, $currency, $price, $checked, $prime);";
+            INSERT INTO ProductStores (ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo)
+            VALUES ($productId, $url, $label, $currency, $price, $checked, $prime, $available, $promo);";
         command.Parameters.AddWithValue("$productId", productId);
         command.Parameters.AddWithValue("$url", store.Url);
         command.Parameters.AddWithValue("$label", store.Label);
@@ -314,6 +355,8 @@ public sealed class ProductDatabaseService
         command.Parameters.AddWithValue("$price", store.CurrentPrice is decimal p ? FormatPrice(p) : (object)DBNull.Value);
         command.Parameters.AddWithValue("$checked", store.LastChecked is DateTime d ? FormatTimestamp(d) : (object)DBNull.Value);
         command.Parameters.AddWithValue("$prime", store.IsPrime ? 1 : 0);
+        command.Parameters.AddWithValue("$available", store.IsAvailable ? 1 : 0);
+        command.Parameters.AddWithValue("$promo", store.HasPromo ? 1 : 0);
         command.ExecuteNonQuery();
         store.Id = LastInsertRowId(connection, transaction);
     }

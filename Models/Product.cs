@@ -48,6 +48,10 @@ public partial class Product : ObservableObject
     /// <summary>URL of the main product image, if parsed. Optional.</summary>
     [ObservableProperty]
     private string? _imageUrl;
+
+    /// <summary>Whether the product is marked as a favourite (shown in the favourites flip widget and the list).</summary>
+    [ObservableProperty]
+    private bool _isFavorite;
     #endregion
 
     #region Properties
@@ -73,6 +77,18 @@ public partial class Product : ObservableObject
                 if (store.CurrentPrice is decimal price && (best is null || price < best))
                     best = price;
             return best;
+        }
+    }
+
+    /// <summary>Whether any tracked store currently shows a promotion / deal / coupon / voucher on the product.</summary>
+    public bool HasPromo
+    {
+        get
+        {
+            foreach (ProductStore store in Stores)
+                if (store.HasPromo)
+                    return true;
+            return false;
         }
     }
 
@@ -183,7 +199,7 @@ public partial class Product : ObservableObject
 
     private void OnStorePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked))
+        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked) or nameof(ProductStore.HasPromo))
             RaiseDerivedChanged();
     }
 
@@ -194,6 +210,7 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(LastChecked));
         OnPropertyChanged(nameof(BestPriceText));
         OnPropertyChanged(nameof(Trend));
+        OnPropertyChanged(nameof(HasPromo));
     }
     #endregion
 }
@@ -227,6 +244,14 @@ public partial class ProductStore : ObservableObject
     /// <summary>Whether the product is Amazon Prime on this store (as of the last read). Amazon-only.</summary>
     [ObservableProperty]
     private bool _isPrime;
+
+    /// <summary>Whether the product was available for purchase on this store as of the last read. Defaults to true.</summary>
+    [ObservableProperty]
+    private bool _isAvailable = true;
+
+    /// <summary>Whether this store showed a promotion / deal / coupon / voucher as of the last read.</summary>
+    [ObservableProperty]
+    private bool _hasPromo;
 
     /// <summary>When <see cref="CurrentPrice"/> was last read, or <c>null</c> if never read.</summary>
     [ObservableProperty]

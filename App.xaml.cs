@@ -13,6 +13,8 @@ using MM4LB.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MM4LB;
@@ -23,7 +25,13 @@ namespace MM4LB;
 public partial class App : Application
 {
     private AppSettings? _appSettings { get; set; }
-    
+
+    /// <summary>
+    /// Mutex nombrado que garantiza una única instancia de la app: se mantiene vivo durante todo el proceso (campo
+    /// estático) y el SO lo libera al terminar. Si otra instancia ya lo tiene, esta no arranca (ver el constructor).
+    /// </summary>
+    private static Mutex? _singleInstanceMutex;
+
     public IHost Host { get; }
     
     public static T GetService<T>()
@@ -45,6 +53,19 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        // Instancia única: si ya hay otra copia de Tracker abierta, avisa y no arranca. El mutex se crea con nombre
+        // global-por-sesión ("Local\..."); createdNew es false si otra instancia ya lo tiene. Se comprueba antes de
+        // construir el host o mostrar UI para no inicializar nada de un proceso que va a terminar de inmediato.
+        _singleInstanceMutex = new Mutex(initiallyOwned: true, @"Local\MM4LB.Tracker.SingleInstance", out bool createdNew);
+        if (!createdNew)
+        {
+            // MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND. La localización aún no está disponible en este punto
+            // (el host no se ha construido), así que el mensaje es fijo.
+            MessageBox(IntPtr.Zero, "Tracker is already running.", "Tracker", 0x00000040 | 0x00010000);
+            Environment.Exit(0);
+            return;
+        }
+
         InitializeComponent();
         Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent();
 
@@ -84,6 +105,8 @@ public partial class App : Application
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<PriceChartViewModel>());
             services.AddSingleton<ProductsOverviewViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ProductsOverviewViewModel>());
+            services.AddSingleton<FavoritesViewModel>();
+            services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<FavoritesViewModel>());
             services.AddSingleton<ConsoleViewModel>();
             services.AddSingleton<LayoutSelectorViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<LayoutSelectorViewModel>());
@@ -265,4 +288,8 @@ public partial class App : Application
         _window = mainWindow;
         mainWindow.Activate();
     }
+
+    /// <summary>MessageBox nativo (user32) para avisar de la instancia duplicada antes de que exista UI de la app.</summary>
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
 }
