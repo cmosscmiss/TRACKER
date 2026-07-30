@@ -90,6 +90,9 @@ public sealed partial class WebViewControl : UserControl
             // comprobación de sesión de arranque en la ventana principal.
             App.GetService<AmazonAuthService>().AttachLoginBrowser(MyWebView);
 
+            // Modo "seleccionar precio": el JS de picking envía el selector CSS elegido por aquí.
+            MyWebView.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
+
             InitializeCountrySelector();
             RefreshWidgetActivation(force: true);
         }
@@ -115,6 +118,7 @@ public sealed partial class WebViewControl : UserControl
         if (MyWebView.CoreWebView2 is not null)
         {
             MyWebView.CoreWebView2.NewWindowRequested -= MyWebView_NewWindowRequested;
+            MyWebView.CoreWebView2.WebMessageReceived -= OnWebMessageReceived;
         }
     }
     #endregion
@@ -370,6 +374,104 @@ public sealed partial class WebViewControl : UserControl
         ProductParseResult? parsed = await App.GetService<ProductParsingService>().ExtractAsync(MyWebView);
         App.GetService<ProductService>().AddAlternativeLink(product, url, parsed);
     }
+
+    /// <summary>
+    /// Activa el modo "seleccionar precio": inyecta un script que resalta el elemento bajo el cursor y, al hacer clic,
+    /// envía su selector CSS (por WebMessage) para fijarlo como fuente del precio de la tienda actual. Escape cancela.
+    /// </summary>
+    private async void OnPickPriceClick(object sender, RoutedEventArgs e)
+    {
+        if (MyWebView.CoreWebView2 is null)
+            return;
+
+        await MyWebView.CoreWebView2.ExecuteScriptAsync(PricePickerScript);
+    }
+
+    /// <summary>
+    /// Recibe el selector CSS elegido en el modo picking: lo fija en la tienda que corresponde a la página actual del
+    /// producto seleccionado y refresca el producto (así lee el precio ya con el selector y lo persiste).
+    /// </summary>
+    private async void OnWebMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+    {
+        string selector;
+        try { selector = args.TryGetWebMessageAsString(); }
+        catch { return; }
+
+        if (string.IsNullOrEmpty(selector))
+            return;   // cancelado (Escape) o elemento no válido
+
+        Models.Product? product = ViewModel?.SharedDataService.SelectedProduct;
+        string? url = MyWebView.Source?.ToString();
+        if (product is null || string.IsNullOrWhiteSpace(url))
+            return;
+
+        Models.ProductStore? store = FindStoreForUrl(product, url) ?? product.Stores.FirstOrDefault();
+        if (store is null)
+            return;
+
+        ProductService products = App.GetService<ProductService>();
+        products.SetPriceSelector(store, selector);
+        await products.RefreshProductAsync(product);
+    }
+
+    /// <summary>Tienda del producto que corresponde a la URL actual (mismo host), o null.</summary>
+    private static Models.ProductStore? FindStoreForUrl(Models.Product product, string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? current))
+            return null;
+
+        foreach (Models.ProductStore store in product.Stores)
+            if (Uri.TryCreate(store.Url, UriKind.Absolute, out Uri? storeUri) &&
+                string.Equals(storeUri.Host, current.Host, StringComparison.OrdinalIgnoreCase))
+                return store;
+
+        return null;
+    }
+    #endregion
+
+    #region Price picker script
+    /// <summary>
+    /// JS del modo "seleccionar precio": resalta el elemento bajo el cursor y, al hacer clic, calcula un selector CSS
+    /// único de ese elemento y lo envía a la app con <c>window.chrome.webview.postMessage</c>. Escape cancela (envía "").
+    /// </summary>
+    private const string PricePickerScript = @"
+(function(){
+  if (window.__ppActive) return;
+  window.__ppActive = true;
+  var last = null;
+  function outline(el, on){ if (el && el.style) el.style.outline = on ? '3px solid #ff3ea5' : ''; }
+  function esc(s){ return (window.CSS && CSS.escape) ? CSS.escape(s) : s; }
+  function selectorFor(el){
+    if (!el || el.nodeType !== 1) return '';
+    if (el.id) return '#' + esc(el.id);
+    var parts = [];
+    while (el && el.nodeType === 1 && parts.length < 6) {
+      if (el.id) { parts.unshift('#' + esc(el.id)); break; }
+      var parent = el.parentElement, part = el.tagName.toLowerCase();
+      if (parent) {
+        var same = Array.prototype.filter.call(parent.children, function(c){ return c.tagName === el.tagName; });
+        if (same.length > 1) { part += ':nth-of-type(' + (Array.prototype.indexOf.call(same, el) + 1) + ')'; }
+      }
+      parts.unshift(part);
+      el = parent;
+    }
+    return parts.join(' > ');
+  }
+  function move(e){ if (last !== e.target) { outline(last, false); last = e.target; outline(last, true); } }
+  function click(e){ e.preventDefault(); e.stopPropagation(); var s = selectorFor(e.target); cleanup(); window.chrome.webview.postMessage(s || ''); }
+  function key(e){ if (e.key === 'Escape') { cleanup(); window.chrome.webview.postMessage(''); } }
+  function cleanup(){
+    outline(last, false);
+    document.removeEventListener('mousemove', move, true);
+    document.removeEventListener('click', click, true);
+    document.removeEventListener('keydown', key, true);
+    window.__ppActive = false;
+  }
+  document.addEventListener('mousemove', move, true);
+  document.addEventListener('click', click, true);
+  document.addEventListener('keydown', key, true);
+})();
+";
     #endregion
 
     #region Methods (private)

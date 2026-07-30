@@ -146,6 +146,9 @@
   <data name="WebView_AddProduct_Tooltip" xml:space="preserve">
     <value>Add this page as a new tracked product</value>
   </data>
+  <data name="WebView_PickPrice_Tooltip" xml:space="preserve">
+    <value>Pick the price element on this page (for non-Amazon stores)</value>
+  </data>
   <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
     <value>Add this page as an alternative link of the selected product</value>
   </data>
@@ -208,6 +211,12 @@
   </data>
   <data name="Product_Issues_Tooltip" xml:space="preserve">
     <value>Unavailable or no price in some store</value>
+  </data>
+  <data name="PriceChart_Preorder_Label" xml:space="preserve">
+    <value>Pre-order</value>
+  </data>
+  <data name="Product_Preorder_Tooltip" xml:space="preserve">
+    <value>Pre-order (not released yet)</value>
   </data>
   <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
     <value>Set alert price</value>

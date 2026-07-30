@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -38,8 +39,37 @@ public sealed partial class PriceChartControl : UserControl
     private async void OnRefreshProductClick(object sender, RoutedEventArgs e)
     {
         Product? product = ViewModel?.Product;
-        if (product is not null)
-            await App.GetService<ProductService>().RefreshProductAsync(product);
+        if (product is null)
+            return;
+
+        await App.GetService<ProductService>().RefreshProductAsync(product);
+
+        // Si es el producto SELECCIONADO, al terminar navega a la tienda del mejor precio (si no es ya la abierta).
+        if (ViewModel?.SharedDataService.SelectedProduct is Product selected && ReferenceEquals(selected, product))
+            NavigateToBestPriceIfNeeded(product);
+    }
+
+    /// <summary>Navega en el widget navegador a la tienda del mejor precio del producto, salvo que ya esté abierta (mismo host).</summary>
+    private static void NavigateToBestPriceIfNeeded(Product product)
+    {
+        string? bestUrl = product.BestStore?.Url;
+        if (string.IsNullOrWhiteSpace(bestUrl))
+            return;
+
+        MM4LB.Controls.ViewModels.WebViewViewModel webView = App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>();
+        if (!SameHost(bestUrl, webView.CurrentUrl))
+            webView.RequestNavigation(bestUrl);
+    }
+
+    /// <summary>True si dos URLs apuntan al mismo host (misma tienda/marketplace).</summary>
+    private static bool SameHost(string urlA, string? urlB)
+    {
+        if (string.IsNullOrWhiteSpace(urlB))
+            return false;
+
+        return Uri.TryCreate(urlA, UriKind.Absolute, out Uri? a)
+            && Uri.TryCreate(urlB, UriKind.Absolute, out Uri? b)
+            && string.Equals(a.Host, b.Host, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

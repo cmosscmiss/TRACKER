@@ -23,8 +23,11 @@
                     <TextBlock Text="{x:Bind BestPriceText, Mode=OneWay}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
                 </Border>
                 <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}" />
-                <!-- Iconos tras el título: precio bajo la alerta + aviso de problema + estrella de favorito. -->
+                <!-- Iconos tras el título: pre-order + precio bajo la alerta + aviso de problema + estrella de favorito. -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="4 0 0 0">
+                    <FontIcon Glyph="&#xE787;" FontSize="12" Foreground="#FF5B9BFF"
+                              ToolTipService.ToolTip="{loc:Str Key=Product_Preorder_Tooltip}"
+                              Visibility="{x:Bind IsPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                     <FontIcon Glyph="&#xE7ED;" FontSize="12" Foreground="{ThemeResource SuccessBrush}"
                               ToolTipService.ToolTip="{loc:Str Key=PriceChart_BelowAlert_Tooltip}"
                               Visibility="{x:Bind IsBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>

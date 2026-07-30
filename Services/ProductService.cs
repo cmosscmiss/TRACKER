@@ -61,7 +61,7 @@ public sealed class ProductService
         {
             product.Name = $"Amazon {asin}";
             foreach ((string storeUrl, string label) in Amazon.ProductUrlsForAsin(asin))
-                product.Stores.Add(new ProductStore(storeUrl, label));
+                product.Stores.Add(new ProductStore(storeUrl, label) { Currency = Amazon.Currency });
         }
         else
         {
@@ -135,7 +135,7 @@ public sealed class ProductService
         // pool. El progreso avanza a medida que cada tienda termina.
         (ProductStore Store, ProductParseResult? Result)[] parsed = await Task.WhenAll(stores.Select(async store =>
         {
-            ProductParseResult? result = await _parsing.ParseAsync(store.Url);
+            ProductParseResult? result = await _parsing.ParseAsync(store.Url, store.PriceSelector);
 
             int completed = Interlocked.Increment(ref done);
             operation.Progress = total == 0 ? 100 : (int)(completed * 100.0 / total);
@@ -163,6 +163,7 @@ public sealed class ProductService
                     store.IsPrime = result.IsPrime;
                     store.IsAvailable = result.IsAvailable;
                     store.HasPromo = result.HasPromo;
+                    store.IsPreorder = result.IsPreorder;
 
                     if (!infoUpdated)
                     {
@@ -176,8 +177,7 @@ public sealed class ProductService
 
                     if (result.Price is decimal price)
                     {
-                        if (!string.IsNullOrWhiteSpace(result.Currency))
-                            store.Currency = result.Currency;
+                        store.Currency = ResolveStoreCurrency(store, result.Currency);
 
                         product.RecordPrice(store, price, timestamp);
                         _database.SavePriceReading(store, price, timestamp);
@@ -239,6 +239,16 @@ public sealed class ProductService
         _database.SetFavorite(product, product.IsFavorite);
         _sharedDataService.NotifyFavoritesChanged();
         return true;
+    }
+
+    /// <summary>Establece (o borra, con cadena vacía) el selector de precio elegido por el usuario para una tienda, y lo persiste.</summary>
+    public void SetPriceSelector(ProductStore store, string? selector)
+    {
+        if (store is null)
+            return;
+
+        store.PriceSelector = string.IsNullOrWhiteSpace(selector) ? null : selector.Trim();
+        _database.SetPriceSelector(store, store.PriceSelector);
     }
 
     /// <summary>Establece (o borra, con null) el precio de alerta de un producto y lo persiste.</summary>
@@ -303,6 +313,7 @@ public sealed class ProductService
         store.IsPrime = parsed.IsPrime;
         store.IsAvailable = parsed.IsAvailable;
         store.HasPromo = parsed.HasPromo;
+        store.IsPreorder = parsed.IsPreorder;
 
         if (updateInfo)
         {
@@ -323,8 +334,7 @@ public sealed class ProductService
 
         if (parsed.Price is decimal price)
         {
-            if (!string.IsNullOrWhiteSpace(parsed.Currency))
-                store.Currency = parsed.Currency;
+            store.Currency = ResolveStoreCurrency(store, parsed.Currency);
 
             product.RecordPrice(store, price, timestamp);
             _database.SavePriceReading(store, price, timestamp);
@@ -333,6 +343,18 @@ public sealed class ProductService
         {
             _database.UpdateStoreStatus(store, timestamp);
         }
+    }
+
+    /// <summary>
+    /// Moneda de la tienda: € FIJO para los marketplaces de Amazon (todos eurozona, más fiable que parsear el
+    /// símbolo); para otras tiendas, la parseada de la página (o la que ya tuviera si no se pudo parsear).
+    /// </summary>
+    private static string? ResolveStoreCurrency(ProductStore store, string? parsedCurrency)
+    {
+        if (Uri.TryCreate(store.Url, UriKind.Absolute, out Uri? uri) && Amazon.IsAmazon(uri))
+            return Amazon.Currency;
+
+        return string.IsNullOrWhiteSpace(parsedCurrency) ? store.Currency : parsedCurrency;
     }
 
     /// <summary>Derives a friendly store label from the URL host, e.g. "www.amazon.es" → "Amazon.es".</summary>

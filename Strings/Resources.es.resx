@@ -141,6 +141,9 @@
   <data name="WebView_AddProduct_Tooltip" xml:space="preserve">
     <value>Añadir esta página como nuevo producto rastreado</value>
   </data>
+  <data name="WebView_PickPrice_Tooltip" xml:space="preserve">
+    <value>Seleccionar el elemento del precio en esta página (para tiendas no-Amazon)</value>
+  </data>
   <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
     <value>Añadir esta página como link alternativo del producto seleccionado</value>
   </data>
@@ -203,6 +206,12 @@
   </data>
   <data name="Product_Issues_Tooltip" xml:space="preserve">
     <value>No disponible o sin precio en alguna tienda</value>
+  </data>
+  <data name="PriceChart_Preorder_Label" xml:space="preserve">
+    <value>Reserva</value>
+  </data>
+  <data name="Product_Preorder_Tooltip" xml:space="preserve">
+    <value>Reserva (aún no publicado)</value>
   </data>
   <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
     <value>Definir precio de alerta</value>

@@ -78,6 +78,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>El producto tiene algún problema (no disponible / sin precio en alguna tienda): pill de aviso.</summary>
     public bool ShowIssues { get; private set; }
 
+    /// <summary>El producto es una reserva / pre-order (pill).</summary>
+    public bool ShowPreorder { get; private set; }
+
     /// <summary>Hay un precio de alerta configurado para el producto (cambia el icono del botón de alerta).</summary>
     public bool HasAlert { get; private set; }
 
@@ -232,6 +235,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         // Problema: no disponible / sin precio en alguna tienda.
         ShowIssues = product?.HasIssues ?? false;
 
+        // Reserva / pre-order.
+        ShowPreorder = product?.IsPreorder ?? false;
+
         // Prime del mejor precio (solo tiene sentido en Amazon).
         ShowPrime = bestStore is not null && bestStore.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase);
         bool prime = bestStore?.IsPrime ?? false;
@@ -259,6 +265,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(ShowPrime));
         OnPropertyChanged(nameof(ShowPromo));
         OnPropertyChanged(nameof(ShowIssues));
+        OnPropertyChanged(nameof(ShowPreorder));
         OnPropertyChanged(nameof(PrimeText));
         OnPropertyChanged(nameof(PrimeBrush));
         OnPropertyChanged(nameof(Stores));

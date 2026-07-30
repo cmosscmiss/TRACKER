@@ -71,18 +71,8 @@ public partial class Product : ObservableObject
     /// </summary>
     public List<PricePoint> PriceHistory { get; } = new();
 
-    /// <summary>Lowest current price across the stores that have one, or <c>null</c> if none is known yet.</summary>
-    public decimal? BestPrice
-    {
-        get
-        {
-            decimal? best = null;
-            foreach (ProductStore store in Stores)
-                if (store.CurrentPrice is decimal price && (best is null || price < best))
-                    best = price;
-            return best;
-        }
-    }
+    /// <summary>Lowest current price across the stores that share the reference currency, or <c>null</c> if none known.</summary>
+    public decimal? BestPrice => BestStore?.CurrentPrice;
 
     /// <summary>Whether any tracked store currently shows a promotion / deal / coupon / voucher on the product.</summary>
     public bool HasPromo
@@ -106,6 +96,18 @@ public partial class Product : ObservableObject
         {
             foreach (ProductStore store in Stores)
                 if (!store.IsAvailable || (store.LastChecked is not null && store.CurrentPrice is null))
+                    return true;
+            return false;
+        }
+    }
+
+    /// <summary>Whether the product is a pre-order (any tracked store reports it as such).</summary>
+    public bool IsPreorder
+    {
+        get
+        {
+            foreach (ProductStore store in Stores)
+                if (store.IsPreorder)
                     return true;
             return false;
         }
@@ -136,10 +138,26 @@ public partial class Product : ObservableObject
     {
         get
         {
+            // Solo se comparan tiendas con la MISMA moneda (la de la mayoría de tiendas con precio), para no comparar
+            // entre divisas distintas. Con los 5 marketplaces de Amazon (todos en euros) no cambia nada; protege el
+            // caso de mezclar una tienda no-EUR.
+            string referenceCurrency = Stores
+                .Where(store => store.CurrentPrice is not null)
+                .GroupBy(store => store.Currency ?? string.Empty)
+                .OrderByDescending(group => group.Count())
+                .Select(group => group.Key)
+                .FirstOrDefault() ?? string.Empty;
+
             ProductStore? best = null;
             foreach (ProductStore store in Stores)
-                if (store.CurrentPrice is decimal price && (best?.CurrentPrice is not decimal b || price < b))
+            {
+                if (store.CurrentPrice is not decimal price)
+                    continue;
+                if ((store.Currency ?? string.Empty) != referenceCurrency)
+                    continue;
+                if (best?.CurrentPrice is not decimal current || price < current)
                     best = store;
+            }
             return best;
         }
     }
@@ -238,7 +256,7 @@ public partial class Product : ObservableObject
 
     private void OnStorePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked) or nameof(ProductStore.HasPromo) or nameof(ProductStore.IsAvailable))
+        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked) or nameof(ProductStore.HasPromo) or nameof(ProductStore.IsAvailable) or nameof(ProductStore.IsPreorder))
             RaiseDerivedChanged();
     }
 
@@ -251,6 +269,7 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(Trend));
         OnPropertyChanged(nameof(HasPromo));
         OnPropertyChanged(nameof(HasIssues));
+        OnPropertyChanged(nameof(IsPreorder));
         OnPropertyChanged(nameof(IsBelowAlert));
         OnPropertyChanged(nameof(AlertPriceText));
     }
@@ -283,6 +302,12 @@ public partial class ProductStore : ObservableObject
     [ObservableProperty]
     private string _label = string.Empty;
 
+    /// <summary>
+    /// Optional CSS selector, picked by the user, of the element that holds the price on this (usually non-Amazon)
+    /// page. When set, the parser reads the price from it instead of the built-in extraction. Null = built-in.
+    /// </summary>
+    public string? PriceSelector { get; set; }
+
     /// <summary>ISO currency code / symbol of <see cref="CurrentPrice"/>, if known.</summary>
     [ObservableProperty]
     private string? _currency;
@@ -302,6 +327,10 @@ public partial class ProductStore : ObservableObject
     /// <summary>Whether this store showed a promotion / deal / coupon / voucher as of the last read.</summary>
     [ObservableProperty]
     private bool _hasPromo;
+
+    /// <summary>Whether the product is a pre-order on this store (not yet released) as of the last read.</summary>
+    [ObservableProperty]
+    private bool _isPreorder;
 
     /// <summary>When <see cref="CurrentPrice"/> was last read, or <c>null</c> if never read.</summary>
     [ObservableProperty]

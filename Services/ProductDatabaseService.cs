@@ -71,6 +71,8 @@ public sealed class ProductDatabaseService
                 IsPrime      INTEGER NOT NULL DEFAULT 0,
                 IsAvailable  INTEGER NOT NULL DEFAULT 1,
                 HasPromo     INTEGER NOT NULL DEFAULT 0,
+                IsPreorder   INTEGER NOT NULL DEFAULT 0,
+                PriceSelector TEXT   NULL,
                 FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
             );
 
@@ -91,6 +93,8 @@ public sealed class ProductDatabaseService
         EnsureColumn(connection, "ProductStores", "IsPrime", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "ProductStores", "IsAvailable", "INTEGER NOT NULL DEFAULT 1");
         EnsureColumn(connection, "ProductStores", "HasPromo", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumn(connection, "ProductStores", "IsPreorder", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumn(connection, "ProductStores", "PriceSelector", "TEXT NULL");
         EnsureColumn(connection, "Products", "Purchased", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "PurchasePrice", "TEXT NULL");
         EnsureColumn(connection, "Products", "IsFavorite", "INTEGER NOT NULL DEFAULT 0");
@@ -150,7 +154,7 @@ public sealed class ProductDatabaseService
         // Stores
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo FROM ProductStores ORDER BY Id;";
+            command.CommandText = "SELECT Id, ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo, PriceSelector, IsPreorder FROM ProductStores ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -168,7 +172,9 @@ public sealed class ProductDatabaseService
                     LastChecked = reader.IsDBNull(6) ? null : ParseTimestamp(reader.GetString(6)),
                     IsPrime = !reader.IsDBNull(7) && reader.GetInt64(7) != 0,
                     IsAvailable = reader.IsDBNull(8) || reader.GetInt64(8) != 0,
-                    HasPromo = !reader.IsDBNull(9) && reader.GetInt64(9) != 0
+                    HasPromo = !reader.IsDBNull(9) && reader.GetInt64(9) != 0,
+                    PriceSelector = reader.IsDBNull(10) ? null : reader.GetString(10),
+                    IsPreorder = !reader.IsDBNull(11) && reader.GetInt64(11) != 0
                 };
                 storesById[store.Id] = store;
                 product.Stores.Add(store);
@@ -253,13 +259,14 @@ public sealed class ProductDatabaseService
         using (SqliteCommand command = connection.CreateCommand())
         {
             command.Transaction = transaction;
-            command.CommandText = "UPDATE ProductStores SET CurrentPrice = $price, LastChecked = $checked, Currency = $currency, IsPrime = $prime, IsAvailable = $available, HasPromo = $promo WHERE Id = $id;";
+            command.CommandText = "UPDATE ProductStores SET CurrentPrice = $price, LastChecked = $checked, Currency = $currency, IsPrime = $prime, IsAvailable = $available, HasPromo = $promo, IsPreorder = $preorder WHERE Id = $id;";
             command.Parameters.AddWithValue("$price", FormatPrice(price));
             command.Parameters.AddWithValue("$checked", FormatTimestamp(timestampUtc));
             command.Parameters.AddWithValue("$currency", (object?)store.Currency ?? DBNull.Value);
             command.Parameters.AddWithValue("$prime", store.IsPrime ? 1 : 0);
             command.Parameters.AddWithValue("$available", store.IsAvailable ? 1 : 0);
             command.Parameters.AddWithValue("$promo", store.HasPromo ? 1 : 0);
+            command.Parameters.AddWithValue("$preorder", store.IsPreorder ? 1 : 0);
             command.Parameters.AddWithValue("$id", store.Id);
             command.ExecuteNonQuery();
         }
@@ -286,12 +293,13 @@ public sealed class ProductDatabaseService
     {
         using SqliteConnection connection = OpenConnection();
         using SqliteCommand command = connection.CreateCommand();
-        command.CommandText = "UPDATE ProductStores SET LastChecked = $checked, Currency = $currency, IsPrime = $prime, IsAvailable = $available, HasPromo = $promo WHERE Id = $id;";
+        command.CommandText = "UPDATE ProductStores SET LastChecked = $checked, Currency = $currency, IsPrime = $prime, IsAvailable = $available, HasPromo = $promo, IsPreorder = $preorder WHERE Id = $id;";
         command.Parameters.AddWithValue("$checked", FormatTimestamp(timestampUtc));
         command.Parameters.AddWithValue("$currency", (object?)store.Currency ?? DBNull.Value);
         command.Parameters.AddWithValue("$prime", store.IsPrime ? 1 : 0);
         command.Parameters.AddWithValue("$available", store.IsAvailable ? 1 : 0);
         command.Parameters.AddWithValue("$promo", store.HasPromo ? 1 : 0);
+        command.Parameters.AddWithValue("$preorder", store.IsPreorder ? 1 : 0);
         command.Parameters.AddWithValue("$id", store.Id);
         command.ExecuteNonQuery();
     }
@@ -316,6 +324,17 @@ public sealed class ProductDatabaseService
         command.CommandText = "UPDATE Products SET IsFavorite = $fav WHERE Id = $id;";
         command.Parameters.AddWithValue("$fav", isFavorite ? 1 : 0);
         command.Parameters.AddWithValue("$id", product.Id);
+        command.ExecuteNonQuery();
+    }
+
+    /// <summary>Persists the user-picked price selector of a store (null clears it).</summary>
+    public void SetPriceSelector(ProductStore store, string? selector)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "UPDATE ProductStores SET PriceSelector = $selector WHERE Id = $id;";
+        command.Parameters.AddWithValue("$selector", (object?)selector ?? DBNull.Value);
+        command.Parameters.AddWithValue("$id", store.Id);
         command.ExecuteNonQuery();
     }
 
@@ -376,8 +395,8 @@ public sealed class ProductDatabaseService
         using SqliteCommand command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText = @"
-            INSERT INTO ProductStores (ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo)
-            VALUES ($productId, $url, $label, $currency, $price, $checked, $prime, $available, $promo);";
+            INSERT INTO ProductStores (ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo, IsPreorder, PriceSelector)
+            VALUES ($productId, $url, $label, $currency, $price, $checked, $prime, $available, $promo, $preorder, $selector);";
         command.Parameters.AddWithValue("$productId", productId);
         command.Parameters.AddWithValue("$url", store.Url);
         command.Parameters.AddWithValue("$label", store.Label);
@@ -387,6 +406,8 @@ public sealed class ProductDatabaseService
         command.Parameters.AddWithValue("$prime", store.IsPrime ? 1 : 0);
         command.Parameters.AddWithValue("$available", store.IsAvailable ? 1 : 0);
         command.Parameters.AddWithValue("$promo", store.HasPromo ? 1 : 0);
+        command.Parameters.AddWithValue("$preorder", store.IsPreorder ? 1 : 0);
+        command.Parameters.AddWithValue("$selector", (object?)store.PriceSelector ?? DBNull.Value);
         command.ExecuteNonQuery();
         store.Id = LastInsertRowId(connection, transaction);
     }

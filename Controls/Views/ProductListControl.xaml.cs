@@ -130,10 +130,12 @@ public sealed partial class ProductListControl : UserControl
             return;
 
         // Se difiere al dispatcher: tras un alta o un reordenado alfabético, el contenedor del item puede no existir aún.
+        // Alineación Default (no Leading): solo hace scroll si el elemento NO está visible, y el mínimo necesario (no lo
+        // lleva siempre al principio de la lista).
         DispatcherQueue.TryEnqueue(() =>
         {
             if (_sharedDataService?.SelectedProduct is Models.Product current)
-                ProductListView.ScrollIntoView(current, ScrollIntoViewAlignment.Leading);
+                ProductListView.ScrollIntoView(current, ScrollIntoViewAlignment.Default);
         });
     }
     #endregion

@@ -188,6 +188,7 @@ public static class LocKeys
     public const string TemplateSlots_BuiltIn_Tooltip = "TemplateSlots_BuiltIn_Tooltip";
     public const string WebView_Country_Tooltip = "WebView_Country_Tooltip";
     public const string WebView_AddProduct_Tooltip = "WebView_AddProduct_Tooltip";
+    public const string WebView_PickPrice_Tooltip = "WebView_PickPrice_Tooltip";
     public const string WebView_AddAltLink_Tooltip = "WebView_AddAltLink_Tooltip";
     public const string PriceChart_CurrentPrice_Label = "PriceChart_CurrentPrice_Label";
     public const string PriceChart_LowestPrice_Label = "PriceChart_LowestPrice_Label";
@@ -213,6 +214,8 @@ public static class LocKeys
     public const string PriceChart_Refresh_Tooltip = "PriceChart_Refresh_Tooltip";
     public const string PriceChart_Issues_Label = "PriceChart_Issues_Label";
     public const string Product_Issues_Tooltip = "Product_Issues_Tooltip";
+    public const string PriceChart_Preorder_Label = "PriceChart_Preorder_Label";
+    public const string Product_Preorder_Tooltip = "Product_Preorder_Tooltip";
     public const string PriceChart_Alert_Tooltip = "PriceChart_Alert_Tooltip";
     public const string PriceChart_BelowAlert_Tooltip = "PriceChart_BelowAlert_Tooltip";
     public const string PriceChart_AlertDialog_Title = "PriceChart_AlertDialog_Title";

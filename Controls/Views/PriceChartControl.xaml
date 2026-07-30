@@ -66,6 +66,14 @@
                        Foreground="{ThemeResource TextBrush}"/>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="#FF2F6FED" CornerRadius="12" Padding="10 4"
+                        ToolTipService.ToolTip="{loc:Str Key=Product_Preorder_Tooltip}"
+                        Visibility="{x:Bind ViewModel.ShowPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE787;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Str Key=PriceChart_Preorder_Label}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
                 <Border Background="{ThemeResource SuccessBrush}" CornerRadius="12" Padding="10 4"
                         ToolTipService.ToolTip="{loc:Str Key=PriceChart_BelowAlert_Tooltip}"
                         Visibility="{x:Bind ViewModel.ShowBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">

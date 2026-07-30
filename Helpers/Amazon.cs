@@ -11,6 +11,9 @@ namespace MM4LB.Helpers;
 /// </summary>
 public static class Amazon
 {
+    /// <summary>Moneda de los marketplaces soportados: todos son de la eurozona (es/de/fr/be/nl), así que siempre euros.</summary>
+    public const string Currency = "€";
+
     /// <summary>Marketplaces soportados, en orden: código de país → host y etiqueta legible.</summary>
     public static readonly IReadOnlyList<(string Code, string Host, string Label)> Marketplaces = new[]
     {

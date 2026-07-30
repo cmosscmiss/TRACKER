@@ -26,6 +26,9 @@ public sealed class ProductParseResult
 
     /// <summary>Whether the page shows a promotion, deal, coupon or voucher on the product.</summary>
     public bool HasPromo { get; init; }
+
+    /// <summary>Whether the product is a pre-order (not yet released; available to reserve).</summary>
+    public bool IsPreorder { get; init; }
 }
 
 /// <summary>
@@ -52,8 +55,9 @@ public sealed class ProductParsingService
     /// <c>.a-price</c> y, en su defecto, el texto <c>.a-offscreen</c>). Devuelve un objeto que WebView2 serializa a
     /// JSON. Cualquier campo puede venir null si el selector no existe (layout distinto / página de robot).
     /// </summary>
-    private const string ExtractionScript = @"
+    private const string ExtractionScriptTemplate = @"
 (function () {
+    var customSel = __PRICE_SELECTOR__;   // selector CSS de precio elegido por el usuario (o null)
     function txt(sel) { var e = document.querySelector(sel); return e ? e.textContent.trim() : null; }
     var name = txt('#productTitle');
     var img = document.querySelector('#landingImage') || document.querySelector('#imgTagWrapperId img');
@@ -98,7 +102,31 @@ public sealed class ProductParsingService
                    || document.querySelector('.dealBadge')
                    || document.querySelector('.savingsPercentage'));
 
-    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen, isPrime: prime, available: available, hasPromo: hasPromo };
+    // Pre-order (reserva): botón/mensaje de pre-order del buy-box. Detección estructural + texto multi-idioma
+    // (en/es/de/fr/nl, incluye Bélgica). Ej.: 'Pre-order', 'Reservar', 'Vorbestellen', 'Précommander', 'Vooraf bestellen'.
+    var preRegex = /pre-?order|reserva|vorbestell|pr[eé]command|vooraf\s*bestell|reserveer/i;
+    var buyboxText = ((document.getElementById('buybox') || document.getElementById('desktop_buybox') || {}).textContent || '');
+    var atc = document.getElementById('add-to-cart-button');
+    var isPreorder = !!(document.getElementById('preorderMessage')
+                     || document.getElementById('preorder_now_button')
+                     || document.querySelector('[id*=preorder]')
+                     || (atc && preRegex.test(atc.value || ''))
+                     || preRegex.test(buyboxText));
+
+    // Selector definido por el usuario (páginas no-Amazon): si existe el elemento, su texto ES el precio; disponible
+    // = que el elemento exista. Tiene prioridad sobre la extracción integrada.
+    if (customSel) {
+        var ce = document.querySelector(customSel);
+        if (ce) {
+            offscreen = ce.textContent.trim();
+            whole = null; frac = null; symbol = null;
+            available = true;
+        } else {
+            available = false;
+        }
+    }
+
+    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen, isPrime: prime, available: available, hasPromo: hasPromo, isPreorder: isPreorder };
 })();
 ";
     #endregion
@@ -131,7 +159,7 @@ public sealed class ProductParsingService
     /// fields. Returns <c>null</c> if the browser is not ready, the URL is invalid, navigation fails/times out or
     /// nothing could be extracted. Must be called on the UI thread (WebView2 is UI-thread affine).
     /// </summary>
-    public async Task<ProductParseResult?> ParseAsync(string url)
+    public async Task<ProductParseResult?> ParseAsync(string url, string? priceSelector = null)
     {
         if (!IsReady)
             return null;
@@ -176,7 +204,7 @@ public sealed class ProductParsingService
 
             await Task.Delay(SettleDelayMs);
 
-            string json = await core.ExecuteScriptAsync(ExtractionScript);
+            string json = await core.ExecuteScriptAsync(BuildExtractionScript(priceSelector));
             return ParseResult(json);
         }
         catch
@@ -195,14 +223,14 @@ public sealed class ProductParsingService
     /// Used by the interactive "add" buttons of the visible web browser, which act on the page the user is viewing.
     /// Returns <c>null</c> if the browser is not ready or nothing could be extracted. Must run on the UI thread.
     /// </summary>
-    public async Task<ProductParseResult?> ExtractAsync(WebView2 webView)
+    public async Task<ProductParseResult?> ExtractAsync(WebView2 webView, string? priceSelector = null)
     {
         if (webView?.CoreWebView2 is not CoreWebView2 core)
             return null;
 
         try
         {
-            string json = await core.ExecuteScriptAsync(ExtractionScript);
+            string json = await core.ExecuteScriptAsync(BuildExtractionScript(priceSelector));
             return ParseResult(json);
         }
         catch
@@ -213,6 +241,10 @@ public sealed class ProductParsingService
     #endregion
 
     #region Methods (private)
+    /// <summary>Construye el script de extracción inyectando el selector de precio del usuario (o <c>null</c>) como literal JS seguro.</summary>
+    private static string BuildExtractionScript(string? priceSelector)
+        => ExtractionScriptTemplate.Replace("__PRICE_SELECTOR__", JsonSerializer.Serialize(priceSelector));
+
     /// <summary>Turns the JSON returned by the extraction script into a <see cref="ProductParseResult"/>.</summary>
     private static ProductParseResult? ParseResult(string json)
     {
@@ -250,6 +282,7 @@ public sealed class ProductParsingService
 
             bool isPrime = root.TryGetProperty("isPrime", out JsonElement primeElement) && primeElement.ValueKind == JsonValueKind.True;
             bool hasPromo = root.TryGetProperty("hasPromo", out JsonElement promoElement) && promoElement.ValueKind == JsonValueKind.True;
+            bool isPreorder = root.TryGetProperty("isPreorder", out JsonElement preorderElement) && preorderElement.ValueKind == JsonValueKind.True;
 
             return new ProductParseResult
             {
@@ -259,7 +292,8 @@ public sealed class ProductParsingService
                 Currency = string.IsNullOrWhiteSpace(currency) ? null : currency.Trim(),
                 IsPrime = isPrime,
                 IsAvailable = available,
-                HasPromo = hasPromo
+                HasPromo = hasPromo,
+                IsPreorder = isPreorder
             };
         }
         catch
