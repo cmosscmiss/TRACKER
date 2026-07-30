@@ -180,14 +180,30 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     private void Bind(Product? product)
     {
         if (_product is not null)
+        {
             _product.PriceRecorded -= OnPriceRecorded;
+            _product.PropertyChanged -= OnProductPropertyChanged;
+        }
 
         _product = product;
 
         if (_product is not null)
+        {
             _product.PriceRecorded += OnPriceRecorded;
+            _product.PropertyChanged += OnProductPropertyChanged;
+        }
 
         Recompute();
+    }
+
+    /// <summary>Cambió una propiedad del producto mostrado (p. ej. el título al editarlo): refresca el header del widget.</summary>
+    private void OnProductPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Product.Name))
+        {
+            ProductName = _product?.Name ?? string.Empty;
+            OnPropertyChanged(nameof(ProductName));
+        }
     }
 
     private void Recompute()
@@ -365,7 +381,10 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         SharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
         SharedDataService.FavoritesChanged -= OnFavoritesChanged;
         if (_product is not null)
+        {
             _product.PriceRecorded -= OnPriceRecorded;
+            _product.PropertyChanged -= OnProductPropertyChanged;
+        }
     }
 
     public override void LoadConfig()
