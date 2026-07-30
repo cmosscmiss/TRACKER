@@ -87,20 +87,17 @@ public sealed class PriceSchedulerService
                 return;
 
             // Operación global de progreso del refresco de todos los precios: avanza por producto (0..100) e indica
-            // el producto en curso. Es esta pasada la que gobierna la barra del footer, así que cada
-            // RefreshProductAsync se llama con reportGlobalProgress:false (solo reporta su detalle al log).
-            ProgressNotifier operation = _progressService.StartBackgroundOperation();
+            // el producto en curso. Es esta pasada (StartOperation) la que gobierna la barra del footer vía la
+            // propiedad observable, así que cada RefreshProductAsync se llama con reportGlobalProgress:false.
+            ProgressNotifier operation = _progressService.StartOperation();
             int total = toRefresh.Count;
-            _progressService.BeginGlobalProgress();
 
             for (int i = 0; i < total; i++)
             {
                 Product product = toRefresh[i];
-                string message = string.Format(L(LocKeys.ProductLog_RefreshingAll_Progress), product.Name, i + 1, total);
-                double percent = (int)(i * 100.0 / total);
-                operation.Message = message;
-                operation.Progress = (int)percent;
-                _progressService.ReportGlobalProgress(percent, message);
+                operation.Message = string.Format(L(LocKeys.ProductLog_RefreshingAll_Progress), product.Name, i + 1, total);
+                operation.Progress = (int)(i * 100.0 / total);
+                _progressService.ProgressNotifier.Report(operation);
 
                 await _productService.RefreshProductAsync(product, reportGlobalProgress: false);
             }
@@ -108,7 +105,8 @@ public sealed class PriceSchedulerService
             operation.Progress = 100;
             operation.Message = string.Format(L(LocKeys.ProductLog_RefreshedAll_Progress), total);
             operation.FinishOperation();
-            _progressService.EndGlobalProgress();
+            _progressService.ProgressNotifier.Report(operation);
+            _progressService.FinishOperation();
         }
         finally
         {

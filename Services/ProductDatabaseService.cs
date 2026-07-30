@@ -236,6 +236,14 @@ public sealed class ProductDatabaseService
     /// </summary>
     public void SavePriceReading(ProductStore store, decimal price, DateTime timestampUtc)
     {
+        // Guarda: un store sin persistir (Id 0) no existe en ProductStores, así que insertar su histórico violaría la
+        // clave foránea (y tumbaría el refresco). Se omite en vez de reventar; indica un fallo previo al persistir el store.
+        if (store.Id <= 0)
+        {
+            ExceptionService.LogToFile(null, $"Skipped saving a price reading for a non-persisted store (Id=0) '{store.Label}'.");
+            return;
+        }
+
         using SqliteConnection connection = OpenConnection();
         using SqliteTransaction transaction = connection.BeginTransaction();
 
@@ -338,6 +346,14 @@ public sealed class ProductDatabaseService
     {
         var connection = new SqliteConnection(_connectionString);
         connection.Open();
+
+        // WAL + espera ante bloqueos: la app ahora escribe desde varios flujos (scheduler + altas + refrescos por
+        // producto). WAL permite lectores y un escritor sin bloquearse; busy_timeout hace que un escritor espere en
+        // vez de fallar con "database is locked". Barato y idempotente por conexión.
+        using SqliteCommand pragma = connection.CreateCommand();
+        pragma.CommandText = "PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;";
+        pragma.ExecuteNonQuery();
+
         return connection;
     }
 

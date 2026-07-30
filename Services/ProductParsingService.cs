@@ -140,8 +140,10 @@ public sealed class ProductParsingService
             return null;
 
         // Toma un navegador libre del pool (espera si todos están ocupados). La concurrencia efectiva la limita el
-        // nº de permisos del semáforo (= tamaño del pool), no un hilo por tienda.
-        await _gate.WaitAsync();
+        // nº de permisos del semáforo (= tamaño del pool), no un hilo por tienda. El timeout evita que un fallo del
+        // pool pueda dejar la espera colgada indefinidamente (el llamante trata null como "no leído").
+        if (!await _gate.WaitAsync(TimeSpan.FromSeconds(90)))
+            return null;
         if (!_available.TryDequeue(out WebView2? webView))
         {
             _gate.Release();

@@ -113,10 +113,14 @@ public sealed class ProductService
     /// </summary>
     public async Task RefreshProductAsync(Product product, bool reportGlobalProgress = true)
     {
-        ProgressNotifier operation = _progressService.StartBackgroundOperation();
+        // Operación con barra del footer (StartOperation) para los refrescos sueltos (alta, refresco por favorito); la
+        // pasada global (PriceSchedulerService) ya lleva la barra, así que sus productos usan solo la entrada de log.
+        ProgressNotifier operation = reportGlobalProgress
+            ? _progressService.StartOperation()
+            : _progressService.StartBackgroundOperation();
         operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshing_Progress), product.Name);
         if (reportGlobalProgress)
-            _progressService.BeginGlobalProgress(operation.Message);
+            _progressService.ProgressNotifier.Report(operation);
 
         DateTime timestamp = DateTime.UtcNow;
         var stores = product.Stores.ToList();
@@ -133,55 +137,81 @@ public sealed class ProductService
             operation.Progress = total == 0 ? 100 : (int)(completed * 100.0 / total);
             operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_ReadingStore_Progress), product.Name, store.Label);
             if (reportGlobalProgress)
-                _progressService.ReportGlobalProgress(operation.Progress, operation.Message);
+                _progressService.ProgressNotifier.Report(operation);
 
             return (store, result);
         }));
 
-        // Aplica los resultados EN SERIE (RecordPrice / BD) con un único timestamp por pasada.
+        // Aplica los resultados EN SERIE (RecordPrice / BD) con un único timestamp por pasada. Cada tienda va en su
+        // propio try/catch: un fallo puntual (p. ej. de BD) NO debe tumbar el refresco entero ni dejar el evento
+        // colgado. El bloque finally garantiza que la operación y la barra siempre se cierran.
         int read = 0;
-        bool infoUpdated = false;
-        foreach ((ProductStore store, ProductParseResult? result) in parsed)
+        try
         {
-            if (result is null)
-                continue;
-
-            store.IsPrime = result.IsPrime;
-            store.IsAvailable = result.IsAvailable;
-            store.HasPromo = result.HasPromo;
-
-            if (!infoUpdated)
+            bool infoUpdated = false;
+            foreach ((ProductStore store, ProductParseResult? result) in parsed)
             {
-                if (!string.IsNullOrWhiteSpace(result.Name))
-                    product.Name = result.Name!;
-                if (!string.IsNullOrWhiteSpace(result.ImageUrl))
-                    product.ImageUrl = result.ImageUrl;
-                _database.UpdateProductInfo(product);
-                infoUpdated = true;
-            }
+                if (result is null)
+                    continue;
 
-            if (result.Price is decimal price)
-            {
-                if (!string.IsNullOrWhiteSpace(result.Currency))
-                    store.Currency = result.Currency;
+                try
+                {
+                    store.IsPrime = result.IsPrime;
+                    store.IsAvailable = result.IsAvailable;
+                    store.HasPromo = result.HasPromo;
 
-                product.RecordPrice(store, price, timestamp);
-                _database.SavePriceReading(store, price, timestamp);
-                read++;
-            }
-            else
-            {
-                // Sin precio válido (p. ej. producto no disponible): no se registra lectura, pero sí se persiste el
-                // estado leído (disponibilidad / promo / Prime) para que quede al día en disco.
-                _database.UpdateStoreStatus(store, timestamp);
+                    if (!infoUpdated)
+                    {
+                        if (!string.IsNullOrWhiteSpace(result.Name))
+                            product.Name = result.Name!;
+                        if (!string.IsNullOrWhiteSpace(result.ImageUrl))
+                            product.ImageUrl = result.ImageUrl;
+                        _database.UpdateProductInfo(product);
+                        infoUpdated = true;
+                    }
+
+                    if (result.Price is decimal price)
+                    {
+                        if (!string.IsNullOrWhiteSpace(result.Currency))
+                            store.Currency = result.Currency;
+
+                        product.RecordPrice(store, price, timestamp);
+                        _database.SavePriceReading(store, price, timestamp);
+                        read++;
+                    }
+                    else
+                    {
+                        // Sin precio válido (p. ej. producto no disponible): no se registra lectura, pero sí se
+                        // persiste el estado leído (disponibilidad / promo / Prime) para que quede al día en disco.
+                        _database.UpdateStoreStatus(store, timestamp);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ExceptionService.LogToFile(ex, $"Could not persist the price reading for store '{store.Label}' of '{product.Name}'.");
+                }
             }
         }
+        finally
+        {
+            // Marca la severidad del evento (el ConsoleControl la colorea vía LogEntrySeverityConverter + el punto de
+            // estado): ROJO si no se pudo leer NINGUNA página (fallo total, p. ej. Amazon bloqueó la carga), AMARILLO
+            // si la lectura fue parcial (faltan precios: no disponible o alguna tienda falló), y normal si todo OK.
+            int parsedOk = parsed.Count(pair => pair.Result is not null);
+            if (total > 0 && parsedOk == 0)
+                operation.IsException = true;
+            else if (read < total)
+                operation.IsWarning = true;
 
-        operation.Progress = 100;
-        operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshed_Progress), product.Name, read, total);
-        operation.FinishOperation();
-        if (reportGlobalProgress)
-            _progressService.EndGlobalProgress();
+            operation.Progress = 100;
+            operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshed_Progress), product.Name, read, total);
+            operation.FinishOperation();
+            if (reportGlobalProgress)
+            {
+                _progressService.ProgressNotifier.Report(operation);
+                _progressService.FinishOperation();   // oculta la barra si no queda ninguna operación en curso
+            }
+        }
     }
 
     /// <summary>Número de productos marcados como favoritos actualmente.</summary>

@@ -192,18 +192,27 @@ public sealed partial class MainWindow : Window
             {
                 for (int i = 1; i < ScraperPoolSize; i++)
                 {
-                    var webView = new Microsoft.UI.Xaml.Controls.WebView2
+                    // Cada navegador del pool va en su propio try/catch: si uno falla al inicializar, se registra y se
+                    // sigue con los demás, sin abortar el resto del pool ni el arranque del scheduler (más abajo).
+                    try
                     {
-                        Width = 1,
-                        Height = 1,
-                        Opacity = 0,
-                        IsHitTestVisible = false,
-                        HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Left,
-                        VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Top
-                    };
-                    host.Children.Add(webView);
-                    await webView.EnsureCoreWebView2Async(environment);
-                    parsing.Attach(webView);
+                        var webView = new Microsoft.UI.Xaml.Controls.WebView2
+                        {
+                            Width = 1,
+                            Height = 1,
+                            Opacity = 0,
+                            IsHitTestVisible = false,
+                            HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Left,
+                            VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Top
+                        };
+                        host.Children.Add(webView);
+                        await webView.EnsureCoreWebView2Async(environment);
+                        parsing.Attach(webView);
+                    }
+                    catch (Exception ex)
+                    {
+                        ExceptionService.LogToFile(ex, $"Could not initialize scraper WebView2 #{i} of the pool; continuing with fewer.");
+                    }
                 }
             }
 
