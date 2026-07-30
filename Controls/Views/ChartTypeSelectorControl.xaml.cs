@@ -295,6 +295,21 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         get => (int)GetValue(MaxLabelLengthProperty);
         set => SetValue(MaxLabelLengthProperty, value);
     }
+
+    /// <summary>
+    /// Si es true (por defecto), se muestran las etiquetas del eje de categorías (el eje X en columnas/línea/área,
+    /// o el Y en barras horizontales) — p. ej. las fechas de actualización del gráfico de precios. Si es false, el
+    /// eje sigue ahí (líneas/escala) pero sin texto de categoría. No afecta a pie/doughnut.
+    /// </summary>
+    public static readonly DependencyProperty ShowCategoryLabelsProperty = DependencyProperty.Register(
+        nameof(ShowCategoryLabels), typeof(bool), typeof(ChartTypeSelectorControl),
+        new PropertyMetadata(true, OnChartChanged));
+
+    public bool ShowCategoryLabels
+    {
+        get => (bool)GetValue(ShowCategoryLabelsProperty);
+        set => SetValue(ShowCategoryLabelsProperty, value);
+    }
     #endregion
 
     #region Lifecycle / events
@@ -482,6 +497,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
             _ => L(LocKeys.ChartType_SortNone_Label),
         };
     }
+
     #endregion
 
     #region Series building
@@ -803,9 +819,11 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         // Las etiquetas del eje se recortan a MaxLabelLength (+ "..."); los tooltips usan el texto completo aparte.
         string[] axisLabels = TruncateLabels(labels);
 
+        // Si el usuario ocultó las etiquetas de categoría, el eje se conserva (escala/líneas) pero sin texto.
+        SolidColorPaint? categoryLabelsPaint = ShowCategoryLabels ? new SolidColorPaint(text) : null;
         ICartesianAxis Category(double rotation) => new Axis
         {
-            Labels = axisLabels, LabelsRotation = rotation, TextSize = 11, LabelsPaint = new SolidColorPaint(text)
+            Labels = axisLabels, LabelsRotation = rotation, TextSize = 11, LabelsPaint = categoryLabelsPaint
         };
         ICartesianAxis Value()
         {

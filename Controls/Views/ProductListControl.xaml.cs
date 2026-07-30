@@ -64,8 +64,10 @@ public sealed partial class ProductListControl : UserControl
         _sharedDataService = ViewModel.SharedDataService;
         _sharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
         _sharedDataService.SelectedProductChanged += OnSelectedProductChanged;
-        _sharedDataService.ProductSet.Products.CollectionChanged -= OnProductsChanged;
-        _sharedDataService.ProductSet.Products.CollectionChanged += OnProductsChanged;
+        // Se escucha la colección FILTRADA (lo que muestra el ListView): al reconciliarla (mover/insertar/quitar) el
+        // ListView puede perder la selección, así que se re-sincroniza.
+        ViewModel.FilteredProducts.CollectionChanged -= OnProductsChanged;
+        ViewModel.FilteredProducts.CollectionChanged += OnProductsChanged;
 
         // Refleja la selección actual en el ListView y la trae a la vista.
         SyncListViewToSelection();
@@ -78,7 +80,8 @@ public sealed partial class ProductListControl : UserControl
             return;
 
         _sharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
-        _sharedDataService.ProductSet.Products.CollectionChanged -= OnProductsChanged;
+        if (ViewModel is not null)
+            ViewModel.FilteredProducts.CollectionChanged -= OnProductsChanged;
     }
 
     /// <summary>El usuario (o el código) seleccionó un item: refleja la selección en el modelo. Ignora deselecciones (null).</summary>
@@ -100,12 +103,12 @@ public sealed partial class ProductListControl : UserControl
         ScrollSelectedIntoView();
     }
 
-    /// <summary>Tras reordenar la lista (Move), re-selecciona el producto en el ListView (que pudo perder la selección).</summary>
+    /// <summary>
+    /// Tras reconciliar la lista filtrada (mover al reordenar, o insertar/quitar al cambiar el filtro), re-selecciona
+    /// el producto en el ListView (que pudo perder la selección). El reset es cuando cambia todo el ItemsSource.
+    /// </summary>
     private void OnProductsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action != NotifyCollectionChangedAction.Move)
-            return;
-
         DispatcherQueue.TryEnqueue(SyncListViewToSelection);
     }
     #endregion

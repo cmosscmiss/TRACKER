@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MM4LB.Models"
+    xmlns:template="using:MM4LB.Controls.Templates"
     xmlns:loc="using:MM4LB.Markup"
     mc:Ignorable="d">
 
@@ -42,8 +43,57 @@
     </UserControl.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Banda de filtro: TextBox por nombre (subcadena, en vivo) + ToggleSplitButton con los filtros por variable.
+             La cara del split-button activa/desactiva todos los filtros; su desplegable lista cada variable. -->
+        <Grid Grid.Row="0" ColumnSpacing="8" Padding="16 0 16 8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Text="{x:Bind ViewModel.FilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="{loc:Str Key=ProductList_Filter_Placeholder}"/>
+
+            <ToggleSplitButton Grid.Column="1" HorizontalAlignment="Left"
+                               IsChecked="{x:Bind ViewModel.FiltersEnabled, Mode=TwoWay}"
+                               ToolTipService.ToolTip="{loc:Str Key=ProductList_Filters_Tooltip}">
+                <SymbolIcon Symbol="Filter"/>
+                <ToggleSplitButton.Flyout>
+                    <MenuFlyout>
+                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterFavorites_Label}"
+                            IsChecked="{x:Bind ViewModel.ActiveFilters.Favorites, Mode=TwoWay}"
+                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterIssues_Label}"
+                            IsChecked="{x:Bind ViewModel.ActiveFilters.WithIssues, Mode=TwoWay}"
+                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPriceChange_Label}"
+                            IsChecked="{x:Bind ViewModel.ActiveFilters.WithPriceChange, Mode=TwoWay}"
+                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterAlert_Label}"
+                            IsChecked="{x:Bind ViewModel.ActiveFilters.WithAlert, Mode=TwoWay}"
+                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                    </MenuFlyout>
+                </ToggleSplitButton.Flyout>
+            </ToggleSplitButton>
+        </Grid>
+
         <!-- La selección se gestiona en code-behind (no TwoWay): así una deselección transitoria al reordenar la lista
              alfabéticamente (Move al cargar el título) no borra el producto seleccionado. -->
-        <ListView x:Name="ProductListView" ItemsSource="{x:Bind ViewModel.SharedDataService.ProductSet.Products, Mode=OneWay}" SelectionChanged="OnSelectionChanged" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+        <ListView x:Name="ProductListView" Grid.Row="1" ItemsSource="{x:Bind ViewModel.FilteredProducts, Mode=OneWay}" SelectionChanged="OnSelectionChanged" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+
+        <!-- Pie: nº de productos mostrados frente al total rastreado (mismo estilo que la antigua lista de juegos). -->
+        <template:SeparatorEx Grid.Row="2" Margin="0 0 0 8" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="16 0 16 12" HorizontalAlignment="Right">
+            <TextBlock Text="{x:Bind ViewModel.CountText, Mode=OneWay}" Foreground="{ThemeResource TextSecondaryBrush}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

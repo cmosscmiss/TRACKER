@@ -207,15 +207,28 @@ public static class LocKeys
     public const string PriceChart_NoPrime_Label = "PriceChart_NoPrime_Label";
     public const string PriceChart_Promo_Label = "PriceChart_Promo_Label";
     public const string Footer_RefreshAll_Tooltip = "Footer_RefreshAll_Tooltip";
+    public const string Footer_AxisLabels_Tooltip = "Footer_AxisLabels_Tooltip";
 
     // Acciones del widget de producto
     public const string PriceChart_Delete_Tooltip = "PriceChart_Delete_Tooltip";
     public const string PriceChart_Purchased_Tooltip = "PriceChart_Purchased_Tooltip";
     public const string PriceChart_Refresh_Tooltip = "PriceChart_Refresh_Tooltip";
+    public const string PriceChart_Edit_Tooltip = "PriceChart_Edit_Tooltip";
+    public const string PriceChart_Search_Tooltip = "PriceChart_Search_Tooltip";
+    public const string PriceChart_EditDialog_Title = "PriceChart_EditDialog_Title";
+    public const string PriceChart_EditDialog_Message = "PriceChart_EditDialog_Message";
+    public const string PriceChart_EditName_Placeholder = "PriceChart_EditName_Placeholder";
     public const string PriceChart_Issues_Label = "PriceChart_Issues_Label";
     public const string Product_Issues_Tooltip = "Product_Issues_Tooltip";
     public const string PriceChart_Preorder_Label = "PriceChart_Preorder_Label";
     public const string Product_Preorder_Tooltip = "Product_Preorder_Tooltip";
+    public const string ProductList_Filter_Placeholder = "ProductList_Filter_Placeholder";
+    public const string ProductList_Filters_Tooltip = "ProductList_Filters_Tooltip";
+    public const string ProductList_FilterFavorites_Label = "ProductList_FilterFavorites_Label";
+    public const string ProductList_FilterIssues_Label = "ProductList_FilterIssues_Label";
+    public const string ProductList_FilterPriceChange_Label = "ProductList_FilterPriceChange_Label";
+    public const string ProductList_FilterAlert_Label = "ProductList_FilterAlert_Label";
+    public const string ProductList_Count_Format = "ProductList_Count_Format";
     public const string PriceChart_Alert_Tooltip = "PriceChart_Alert_Tooltip";
     public const string PriceChart_BelowAlert_Tooltip = "PriceChart_BelowAlert_Tooltip";
     public const string PriceChart_AlertDialog_Title = "PriceChart_AlertDialog_Title";

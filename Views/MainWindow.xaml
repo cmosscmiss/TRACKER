@@ -115,8 +115,13 @@
                              animación de transición. ViewModel se pasa por Binding (DataContext del root = MainWindowViewModel). -->
                         <uc:FooterEventViewerControl Grid.Column="0" ViewModel="{Binding ConsoleViewModel}" Visibility="{Binding ConsoleViewModel.IsFooterViewerVisible, Converter={StaticResource VisibleIfTrueConverter}}"/>
 
-                        <!-- Barra de herramientas del footer (a la derecha): botón de añadir producto. -->
+                        <!-- Barra de herramientas del footer (a la derecha): leyenda del eje, login, refrescar, añadir. -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
+                            <ToggleButton x:Name="AxisLabelsToggle" Style="{StaticResource ToggleButton_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
+                                          IsChecked="{Binding SharedDataService.ShowChartAxisLabels, Mode=TwoWay}"
+                                          ToolTipService.ToolTip="{loc:Str Key=Footer_AxisLabels_Tooltip}">
+                                <FontIcon FontSize="18" Glyph="&#xE787;" Foreground="{ThemeResource TextSecondaryBrush}"/>
+                            </ToggleButton>
                             <Button x:Name="AmazonAuthButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAmazonAuthClick">
                                 <FontIcon x:Name="AmazonAuthIcon" FontSize="18" Glyph="&#xE77B;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>

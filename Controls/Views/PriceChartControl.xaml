@@ -24,6 +24,12 @@
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnRefreshProductClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Refresh_Tooltip}">
                 <FontIcon Glyph="&#xE72C;" FontSize="16"/>
             </Button>
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnEditNameClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Edit_Tooltip}">
+                <FontIcon Glyph="&#xE70F;" FontSize="16"/>
+            </Button>
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSearchProductClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Search_Tooltip}">
+                <FontIcon Glyph="&#xE721;" FontSize="16"/>
+            </Button>
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSetAlertClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Alert_Tooltip}">
                 <Grid>
                     <FontIcon Glyph="&#xE7ED;" FontSize="16" Foreground="{ThemeResource AccentBrush}"
@@ -147,6 +153,7 @@
             SelectedChartType="{x:Bind ViewModel.SelectedChartType, Mode=TwoWay}"
             SortOrder="{x:Bind ViewModel.SortOrder, Mode=TwoWay}"
             TopN="{x:Bind ViewModel.TopN, Mode=TwoWay}"
+            ShowCategoryLabels="{x:Bind ViewModel.SharedDataService.ShowChartAxisLabels, Mode=OneWay}"
             FitValueAxis="True"
             SeriesValues="{x:Bind ViewModel.SeriesValues, Mode=OneWay}"
             SeriesNames="{x:Bind ViewModel.SeriesNames, Mode=OneWay}"

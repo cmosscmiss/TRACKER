@@ -94,6 +94,13 @@ public class AppSettings
         public bool FooterEventViewerAlwaysVisible { get; set; } = true;
 
         /// <summary>
+        /// Si es true, las gráficas del widget de productos (producto seleccionado y favoritos) muestran las etiquetas
+        /// del eje X (las fechas de actualización). Por defecto false (leyenda oculta). Lo controla un toggle del pie y
+        /// se aplica en caliente a todas esas gráficas vía <see cref="MM4LB.Services.SharedDataService.ShowChartAxisLabels"/>.
+        /// </summary>
+        public bool ShowChartAxisLabels { get; set; } = false;
+
+        /// <summary>
         /// Volumen (0–100) de la reproducción de vídeo en toda la aplicación (preview del dashboard y vídeo de la
         /// ficha de plataforma). 0 = silencio; cualquier valor mayor reproduce con sonido a ese nivel. Por defecto 0
         /// para mantener el comportamiento silencioso histórico.

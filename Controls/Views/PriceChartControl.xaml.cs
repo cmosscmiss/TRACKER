@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using MM4LB.Controls.ViewModels;
@@ -70,6 +71,45 @@ public sealed partial class PriceChartControl : UserControl
         return Uri.TryCreate(urlA, UriKind.Absolute, out Uri? a)
             && Uri.TryCreate(urlB, UriKind.Absolute, out Uri? b)
             && string.Equals(a.Host, b.Host, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Lanza una búsqueda del título del producto en el marketplace de Amazon seleccionado actualmente (el del
+    /// navegador), navegando el widget navegador a la página de resultados.
+    /// </summary>
+    private void OnSearchProductClick(object sender, RoutedEventArgs e)
+    {
+        Product? product = ViewModel?.Product;
+        if (product is null || string.IsNullOrWhiteSpace(product.Name))
+            return;
+
+        string country = App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country;
+        string host = Amazon.HostForCountry(country) ?? "www.amazon.es";
+        string url = Amazon.SearchUrl(host, product.Name);
+
+        App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>().RequestNavigation(url);
+    }
+
+    /// <summary>Edita el título del producto mostrado mediante un diálogo (prerrelleno con el nombre actual).</summary>
+    private async void OnEditNameClick(object sender, RoutedEventArgs e)
+    {
+        Product? product = ViewModel?.Product;
+        if (product is null || XamlRoot is null)
+            return;
+
+        string? entered = await App.GetService<DialogsService>().PromptAsync(
+            XamlRoot,
+            L(LocKeys.PriceChart_EditDialog_Title),
+            L(LocKeys.PriceChart_EditDialog_Message),
+            L(LocKeys.PriceChart_EditName_Placeholder),
+            L(LocKeys.Common_Save_Label),
+            L(LocKeys.Common_Cancel_Label),
+            product.Name);
+
+        if (string.IsNullOrWhiteSpace(entered))
+            return;   // cancelado o vacío
+
+        App.GetService<ProductService>().RenameProduct(product, entered);
     }
 
     /// <summary>

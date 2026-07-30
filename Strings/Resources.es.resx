@@ -192,6 +192,9 @@
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
     <value>Refrescar todos los precios ahora</value>
   </data>
+  <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
+    <value>Mostrar/ocultar etiquetas del eje (fechas de actualización)</value>
+  </data>
   <data name="PriceChart_Delete_Tooltip" xml:space="preserve">
     <value>Borrar producto</value>
   </data>
@@ -200,6 +203,21 @@
   </data>
   <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
     <value>Refrescar este producto ahora</value>
+  </data>
+  <data name="PriceChart_Edit_Tooltip" xml:space="preserve">
+    <value>Editar el título del producto</value>
+  </data>
+  <data name="PriceChart_Search_Tooltip" xml:space="preserve">
+    <value>Buscar este título en la tienda de Amazon seleccionada</value>
+  </data>
+  <data name="PriceChart_EditDialog_Title" xml:space="preserve">
+    <value>Editar título</value>
+  </data>
+  <data name="PriceChart_EditDialog_Message" xml:space="preserve">
+    <value>Título del producto:</value>
+  </data>
+  <data name="PriceChart_EditName_Placeholder" xml:space="preserve">
+    <value>Título del producto</value>
   </data>
   <data name="PriceChart_Issues_Label" xml:space="preserve">
     <value>Aviso</value>
@@ -212,6 +230,27 @@
   </data>
   <data name="Product_Preorder_Tooltip" xml:space="preserve">
     <value>Reserva (aún no publicado)</value>
+  </data>
+  <data name="ProductList_Filter_Placeholder" xml:space="preserve">
+    <value>Filtrar por nombre…</value>
+  </data>
+  <data name="ProductList_Filters_Tooltip" xml:space="preserve">
+    <value>Filtros</value>
+  </data>
+  <data name="ProductList_FilterFavorites_Label" xml:space="preserve">
+    <value>Favoritos</value>
+  </data>
+  <data name="ProductList_FilterIssues_Label" xml:space="preserve">
+    <value>Con avisos</value>
+  </data>
+  <data name="ProductList_FilterPriceChange_Label" xml:space="preserve">
+    <value>Con cambio de precio</value>
+  </data>
+  <data name="ProductList_FilterAlert_Label" xml:space="preserve">
+    <value>Con alerta de precio</value>
+  </data>
+  <data name="ProductList_Count_Format" xml:space="preserve">
+    <value>Mostrando {0} de {1} productos</value>
   </data>
   <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
     <value>Definir precio de alerta</value>

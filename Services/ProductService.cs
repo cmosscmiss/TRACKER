@@ -241,6 +241,16 @@ public sealed class ProductService
         return true;
     }
 
+    /// <summary>Cambia el título (nombre) de un producto y lo persiste. Ignora nombres vacíos.</summary>
+    public void RenameProduct(Product product, string newName)
+    {
+        if (product is null || string.IsNullOrWhiteSpace(newName))
+            return;
+
+        product.Name = newName.Trim();
+        _database.UpdateProductInfo(product);
+    }
+
     /// <summary>Establece (o borra, con cadena vacía) el selector de precio elegido por el usuario para una tienda, y lo persiste.</summary>
     public void SetPriceSelector(ProductStore store, string? selector)
     {

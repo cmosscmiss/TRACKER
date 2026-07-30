@@ -77,6 +77,10 @@ public static class Amazon
         return null;
     }
 
+    /// <summary>URL de búsqueda por texto en un marketplace (host de un país), con la consulta escapada.</summary>
+    public static string SearchUrl(string host, string query)
+        => $"https://{host}/s?k={Uri.EscapeDataString(query ?? string.Empty)}";
+
     /// <summary>URL del producto (por su ASIN) y etiqueta en cada marketplace soportado.</summary>
     public static IEnumerable<(string Url, string Label)> ProductUrlsForAsin(string asin)
     {

@@ -25,6 +25,7 @@ public class SharedDataService : ObservableObject
     #region Attributes
     private bool _isUiEnabled;
     private Product? _selectedProduct;
+    private bool _showChartAxisLabels;
     #endregion
 
     #region Properties
@@ -35,6 +36,17 @@ public class SharedDataService : ObservableObject
     {
         get => _isUiEnabled;
         set => SetProperty(ref _isUiEnabled, value);
+    }
+
+    /// <summary>
+    /// Ajuste global (persistido en el .ini) de si las gráficas del widget de productos muestran las etiquetas del eje
+    /// X (fechas de actualización). Observable: el toggle del pie lo cambia y todas las gráficas lo aplican en caliente.
+    /// Por defecto false (leyenda oculta).
+    /// </summary>
+    public bool ShowChartAxisLabels
+    {
+        get => _showChartAxisLabels;
+        set => SetProperty(ref _showChartAxisLabels, value);
     }
 
     /// <summary>

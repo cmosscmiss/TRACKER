@@ -400,4 +400,79 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- Variante ToggleButton del Button_Icon: mismo chrome sutil, con estados "Checked" (activo) que usan las brochas
+         de checked ya definidas. Se usa p. ej. en el toggle de leyenda del eje del footer. -->
+    <Style x:Key="ToggleButton_Icon" TargetType="ToggleButton">
+        <Setter Property="Foreground" Value="{StaticResource ButtonBrushForeground}"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid x:Name="RootGrid">
+                        <Border x:Name="Chrome" Background="{StaticResource ButtonBrushBackgroundSubtle}" BorderBrush="{StaticResource ButtonBrushBorder}" BorderThickness="1" CornerRadius="4">
+                            <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background" Value="{StaticResource ButtonBrushBackgroundSubtlePointerOver}"/>
+                                        <Setter Target="Chrome.BorderBrush" Value="{StaticResource ButtonBrushBorderPointerOver}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ButtonBrushForegroundPointerOver}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background" Value="{StaticResource ButtonBrushBackgroundSubtlePressed}"/>
+                                        <Setter Target="Chrome.BorderBrush" Value="{StaticResource ButtonBrushBorderPressed}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ButtonBrushForegroundPressed}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background" Value="{StaticResource ButtonBrushBackgroundSubtleDisabled}"/>
+                                        <Setter Target="Chrome.BorderBrush" Value="{StaticResource ButtonBrushBorderDisabled}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ButtonBrushForegroundDisabled}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background" Value="{StaticResource ButtonBrushBackgroundChecked}"/>
+                                        <Setter Target="Chrome.BorderBrush" Value="{StaticResource ButtonBrushBorderChecked}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ButtonBrushForegroundChecked}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background" Value="{StaticResource ButtonBrushBackgroundCheckedPointerOver}"/>
+                                        <Setter Target="Chrome.BorderBrush" Value="{StaticResource ButtonBrushBorderCheckedPointerOver}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ButtonBrushForegroundCheckedPointerOver}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background" Value="{StaticResource ButtonBrushBackgroundCheckedPressed}"/>
+                                        <Setter Target="Chrome.BorderBrush" Value="{StaticResource ButtonBrushBorderCheckedPressed}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ButtonBrushForegroundCheckedPressed}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="Chrome.Background" Value="{StaticResource ButtonBrushBackgroundCheckedDisabled}"/>
+                                        <Setter Target="Chrome.BorderBrush" Value="{StaticResource ButtonBrushBorderCheckedDisabled}"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{StaticResource ButtonBrushForegroundCheckedDisabled}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
