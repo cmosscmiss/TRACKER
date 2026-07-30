@@ -56,7 +56,8 @@ public sealed class ProductDatabaseService
                 CreatedAt TEXT    NOT NULL,
                 Purchased INTEGER NOT NULL DEFAULT 0,
                 PurchasePrice TEXT NULL,
-                IsFavorite INTEGER NOT NULL DEFAULT 0
+                IsFavorite INTEGER NOT NULL DEFAULT 0,
+                AlertPrice TEXT NULL
             );
 
             CREATE TABLE IF NOT EXISTS ProductStores (
@@ -93,6 +94,7 @@ public sealed class ProductDatabaseService
         EnsureColumn(connection, "Products", "Purchased", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "PurchasePrice", "TEXT NULL");
         EnsureColumn(connection, "Products", "IsFavorite", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumn(connection, "Products", "AlertPrice", "TEXT NULL");
     }
 
     /// <summary>Añade una columna a una tabla si aún no existe (migración idempotente).</summary>
@@ -128,7 +130,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite FROM Products WHERE Purchased = 0 ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice FROM Products WHERE Purchased = 0 ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -137,7 +139,8 @@ public sealed class ProductDatabaseService
                     Id = reader.GetInt64(0),
                     Name = reader.GetString(1),
                     ImageUrl = reader.IsDBNull(2) ? null : reader.GetString(2),
-                    IsFavorite = !reader.IsDBNull(3) && reader.GetInt64(3) != 0
+                    IsFavorite = !reader.IsDBNull(3) && reader.GetInt64(3) != 0,
+                    AlertPrice = reader.IsDBNull(4) ? null : ParsePrice(reader.GetString(4))
                 };
                 productsById[product.Id] = product;
                 target.Products.Add(product);
@@ -312,6 +315,17 @@ public sealed class ProductDatabaseService
         using SqliteCommand command = connection.CreateCommand();
         command.CommandText = "UPDATE Products SET IsFavorite = $fav WHERE Id = $id;";
         command.Parameters.AddWithValue("$fav", isFavorite ? 1 : 0);
+        command.Parameters.AddWithValue("$id", product.Id);
+        command.ExecuteNonQuery();
+    }
+
+    /// <summary>Persists the alert price of a product (null clears it).</summary>
+    public void SetAlertPrice(Product product, decimal? alertPrice)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "UPDATE Products SET AlertPrice = $price WHERE Id = $id;";
+        command.Parameters.AddWithValue("$price", alertPrice is decimal value ? FormatPrice(value) : (object)DBNull.Value);
         command.Parameters.AddWithValue("$id", product.Id);
         command.ExecuteNonQuery();
     }

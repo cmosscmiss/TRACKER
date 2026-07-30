@@ -42,6 +42,49 @@ public sealed partial class PriceChartControl : UserControl
             await App.GetService<ProductService>().RefreshProductAsync(product);
     }
 
+    /// <summary>
+    /// Define (o borra) el precio de alerta del producto mostrado: pide un precio (prerrelleno con el actual o el mejor
+    /// precio); vacío = quitar la alerta. Cuando el mejor precio esté en/por debajo, se marca como objetivo alcanzado.
+    /// </summary>
+    private async void OnSetAlertClick(object sender, RoutedEventArgs e)
+    {
+        Product? product = ViewModel?.Product;
+        if (product is null || XamlRoot is null)
+            return;
+
+        string initial = product.AlertPrice is decimal alert
+            ? alert.ToString("0.00", CultureInfo.CurrentCulture)
+            : product.BestPrice is decimal best ? best.ToString("0.00", CultureInfo.CurrentCulture) : string.Empty;
+
+        string? entered = await App.GetService<DialogsService>().PromptAsync(
+            XamlRoot,
+            L(LocKeys.PriceChart_AlertDialog_Title),
+            L(LocKeys.PriceChart_AlertDialog_Message),
+            L(LocKeys.PriceChart_AlertPrice_Placeholder),
+            L(LocKeys.Common_Save_Label),
+            L(LocKeys.Common_Cancel_Label),
+            initial);
+
+        if (entered is null)
+            return;   // cancelado
+
+        decimal? newAlert;
+        if (string.IsNullOrWhiteSpace(entered))
+        {
+            newAlert = null;   // vacío: quitar la alerta
+        }
+        else
+        {
+            decimal? parsed = ParsePrice(entered);
+            if (parsed is null)
+                return;   // valor no válido: no se toca la alerta
+            newAlert = parsed;
+        }
+
+        App.GetService<ProductService>().SetAlertPrice(product, newAlert);
+        ViewModel?.RefreshAlertState();
+    }
+
     /// <summary>Alterna el favorito del producto mostrado (deshabilitado si ya hay el máximo de favoritos).</summary>
     private void OnToggleFavoriteClick(object sender, RoutedEventArgs e)
     {

@@ -52,6 +52,10 @@ public partial class Product : ObservableObject
     /// <summary>Whether the product is marked as a favourite (shown in the favourites flip widget and the list).</summary>
     [ObservableProperty]
     private bool _isFavorite;
+
+    /// <summary>Optional alert price: when the best price drops to/below it, the product is flagged as a good deal. Null = no alert.</summary>
+    [ObservableProperty]
+    private decimal? _alertPrice;
     #endregion
 
     #region Properties
@@ -89,6 +93,41 @@ public partial class Product : ObservableObject
                 if (store.HasPromo)
                     return true;
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Whether the product has an issue in some store: it was checked but is not available there, or it was checked
+    /// and no price could be read (e.g. it doesn't exist in that marketplace). Used to flag it in the UI.
+    /// </summary>
+    public bool HasIssues
+    {
+        get
+        {
+            foreach (ProductStore store in Stores)
+                if (!store.IsAvailable || (store.LastChecked is not null && store.CurrentPrice is null))
+                    return true;
+            return false;
+        }
+    }
+
+    /// <summary>Whether an alert price is configured for this product.</summary>
+    public bool HasAlert => AlertPrice.HasValue;
+
+    /// <summary>Whether the current best price is at or below the configured alert price (a good deal to flag).</summary>
+    public bool IsBelowAlert => AlertPrice is decimal alert && BestPrice is decimal best && best <= alert;
+
+    /// <summary>Alert price formatted with the product's currency (or "—" if no alert).</summary>
+    public string AlertPriceText
+    {
+        get
+        {
+            if (AlertPrice is not decimal value)
+                return "—";
+
+            string currency = BestStore?.Currency ?? (Stores.Count > 0 ? Stores[0].Currency : null) ?? string.Empty;
+            string text = value.ToString("0.00", CultureInfo.CurrentCulture);
+            return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
         }
     }
 
@@ -199,7 +238,7 @@ public partial class Product : ObservableObject
 
     private void OnStorePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked) or nameof(ProductStore.HasPromo))
+        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked) or nameof(ProductStore.HasPromo) or nameof(ProductStore.IsAvailable))
             RaiseDerivedChanged();
     }
 
@@ -211,6 +250,17 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(BestPriceText));
         OnPropertyChanged(nameof(Trend));
         OnPropertyChanged(nameof(HasPromo));
+        OnPropertyChanged(nameof(HasIssues));
+        OnPropertyChanged(nameof(IsBelowAlert));
+        OnPropertyChanged(nameof(AlertPriceText));
+    }
+
+    /// <summary>Al cambiar el precio de alerta, refresca las propiedades derivadas del alerta.</summary>
+    partial void OnAlertPriceChanged(decimal? value)
+    {
+        OnPropertyChanged(nameof(HasAlert));
+        OnPropertyChanged(nameof(IsBelowAlert));
+        OnPropertyChanged(nameof(AlertPriceText));
     }
     #endregion
 }

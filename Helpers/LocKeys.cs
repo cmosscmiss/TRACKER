@@ -158,6 +158,26 @@ public static class LocKeys
     public const string AboutSettings_AccentNote_Text = "AboutSettings_AccentNote_Text";
     public const string AboutSettings_Copyright_Text = "AboutSettings_Copyright_Text";
 
+    // Amazon login/logout
+    public const string AmazonLogin_Tooltip = "AmazonLogin_Tooltip";
+    public const string AmazonLogout_Tooltip = "AmazonLogout_Tooltip";
+    public const string AmazonLogin_Title = "AmazonLogin_Title";
+    public const string AmazonLogin_Message = "AmazonLogin_Message";
+    public const string AmazonLogin_Email_Label = "AmazonLogin_Email_Label";
+    public const string AmazonLogin_Email_Placeholder = "AmazonLogin_Email_Placeholder";
+    public const string AmazonLogin_Password_Label = "AmazonLogin_Password_Label";
+    public const string AmazonLogin_Note = "AmazonLogin_Note";
+    public const string AmazonLogin_SignIn_Label = "AmazonLogin_SignIn_Label";
+    public const string AmazonLogin_NoBrowser_Title = "AmazonLogin_NoBrowser_Title";
+    public const string AmazonLogin_NoBrowser_Message = "AmazonLogin_NoBrowser_Message";
+    public const string AmazonLogout_ConfirmTitle = "AmazonLogout_ConfirmTitle";
+    public const string AmazonLogout_ConfirmMessage = "AmazonLogout_ConfirmMessage";
+    public const string AmazonLogout_Confirm_Label = "AmazonLogout_Confirm_Label";
+    public const string AmazonLogin_Progress_SigningIn = "AmazonLogin_Progress_SigningIn";
+    public const string AmazonLogin_Progress_Done = "AmazonLogin_Progress_Done";
+    public const string AmazonLogout_Progress_SigningOut = "AmazonLogout_Progress_SigningOut";
+    public const string AmazonLogout_Progress_Done = "AmazonLogout_Progress_Done";
+
     // Templates (guardar/seleccionar)
     public const string Toolbar_Templates_Tooltip = "Toolbar_Templates_Tooltip";
     public const string Toolbar_SaveTemplate_Tooltip = "Toolbar_SaveTemplate_Tooltip";
@@ -174,6 +194,7 @@ public static class LocKeys
 
     // Product activity log
     public const string ProductLog_Added_Progress = "ProductLog_Added_Progress";
+    public const string ProductLog_AddedAndRead_Progress = "ProductLog_AddedAndRead_Progress";
     public const string ProductLog_AltLinkAdded_Progress = "ProductLog_AltLinkAdded_Progress";
     public const string ProductLog_Refreshing_Progress = "ProductLog_Refreshing_Progress";
     public const string ProductLog_ReadingStore_Progress = "ProductLog_ReadingStore_Progress";
@@ -190,6 +211,13 @@ public static class LocKeys
     public const string PriceChart_Delete_Tooltip = "PriceChart_Delete_Tooltip";
     public const string PriceChart_Purchased_Tooltip = "PriceChart_Purchased_Tooltip";
     public const string PriceChart_Refresh_Tooltip = "PriceChart_Refresh_Tooltip";
+    public const string PriceChart_Issues_Label = "PriceChart_Issues_Label";
+    public const string Product_Issues_Tooltip = "Product_Issues_Tooltip";
+    public const string PriceChart_Alert_Tooltip = "PriceChart_Alert_Tooltip";
+    public const string PriceChart_BelowAlert_Tooltip = "PriceChart_BelowAlert_Tooltip";
+    public const string PriceChart_AlertDialog_Title = "PriceChart_AlertDialog_Title";
+    public const string PriceChart_AlertDialog_Message = "PriceChart_AlertDialog_Message";
+    public const string PriceChart_AlertPrice_Placeholder = "PriceChart_AlertPrice_Placeholder";
     public const string PriceChart_DeleteDialog_Title = "PriceChart_DeleteDialog_Title";
     public const string PriceChart_DeleteDialog_Message = "PriceChart_DeleteDialog_Message";
     public const string PriceChart_PurchasedDialog_Title = "PriceChart_PurchasedDialog_Title";

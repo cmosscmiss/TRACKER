@@ -24,6 +24,14 @@
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnRefreshProductClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Refresh_Tooltip}">
                 <FontIcon Glyph="&#xE72C;" FontSize="16"/>
             </Button>
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSetAlertClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Alert_Tooltip}">
+                <Grid>
+                    <FontIcon Glyph="&#xE7ED;" FontSize="16" Foreground="{ThemeResource AccentBrush}"
+                              Visibility="{x:Bind ViewModel.HasAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Glyph="&#xE7ED;" FontSize="16"
+                              Visibility="{x:Bind ViewModel.HasAlert, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
+                </Grid>
+            </Button>
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnToggleFavoriteClick"
                     IsEnabled="{x:Bind ViewModel.CanToggleFavorite, Mode=OneWay}" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Favorite_Tooltip}">
                 <Grid>
@@ -58,6 +66,22 @@
                        Foreground="{ThemeResource TextBrush}"/>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="{ThemeResource SuccessBrush}" CornerRadius="12" Padding="10 4"
+                        ToolTipService.ToolTip="{loc:Str Key=PriceChart_BelowAlert_Tooltip}"
+                        Visibility="{x:Bind ViewModel.ShowBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE7ED;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind ViewModel.AlertPriceText, Mode=OneWay}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Background="{ThemeResource WarningBrush}" CornerRadius="12" Padding="10 4"
+                        ToolTipService.ToolTip="{loc:Str Key=Product_Issues_Tooltip}"
+                        Visibility="{x:Bind ViewModel.ShowIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Text="{loc:Str Key=PriceChart_Issues_Label}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
                 <Border Background="#FFCC5500" CornerRadius="12" Padding="10 4"
                         Visibility="{x:Bind ViewModel.ShowPromo, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="4">

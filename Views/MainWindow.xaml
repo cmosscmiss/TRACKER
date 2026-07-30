@@ -117,6 +117,9 @@
 
                         <!-- Barra de herramientas del footer (a la derecha): botón de añadir producto. -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
+                            <Button x:Name="AmazonAuthButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAmazonAuthClick">
+                                <FontIcon x:Name="AmazonAuthIcon" FontSize="18" Glyph="&#xE77B;" Foreground="{ThemeResource TextSecondaryBrush}"/>
+                            </Button>
                             <Button x:Name="RefreshAllButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnRefreshAllClick" ToolTipService.ToolTip="{loc:Str Key=Footer_RefreshAll_Tooltip}">
                                 <FontIcon FontSize="18" Glyph="&#xE72C;" Foreground="{ThemeResource AccentBrush}"/>
                             </Button>

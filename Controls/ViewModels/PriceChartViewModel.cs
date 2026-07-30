@@ -75,6 +75,18 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>El producto tiene alguna promoción / oferta / cupón / voucher en alguna tienda (pill de promo).</summary>
     public bool ShowPromo { get; private set; }
 
+    /// <summary>El producto tiene algún problema (no disponible / sin precio en alguna tienda): pill de aviso.</summary>
+    public bool ShowIssues { get; private set; }
+
+    /// <summary>Hay un precio de alerta configurado para el producto (cambia el icono del botón de alerta).</summary>
+    public bool HasAlert { get; private set; }
+
+    /// <summary>El mejor precio está en/por debajo del precio de alerta configurado (pill de "objetivo").</summary>
+    public bool ShowBelowAlert { get; private set; }
+
+    /// <summary>Precio de alerta formateado con su moneda (para el pill/tooltip), o "—".</summary>
+    public string AlertPriceText { get; private set; } = "—";
+
     /// <summary>Texto del pill de Prime ("Prime" / "No Prime") de la tienda del mejor precio.</summary>
     public string PrimeText { get; private set; } = string.Empty;
 
@@ -217,6 +229,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         // Promoción / oferta / cupón / voucher en alguna tienda del producto.
         ShowPromo = product?.HasPromo ?? false;
 
+        // Problema: no disponible / sin precio en alguna tienda.
+        ShowIssues = product?.HasIssues ?? false;
+
         // Prime del mejor precio (solo tiene sentido en Amazon).
         ShowPrime = bestStore is not null && bestStore.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase);
         bool prime = bestStore?.IsPrime ?? false;
@@ -243,11 +258,24 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(LowestPriceText));
         OnPropertyChanged(nameof(ShowPrime));
         OnPropertyChanged(nameof(ShowPromo));
+        OnPropertyChanged(nameof(ShowIssues));
         OnPropertyChanged(nameof(PrimeText));
         OnPropertyChanged(nameof(PrimeBrush));
         OnPropertyChanged(nameof(Stores));
 
         UpdateFavoriteState();
+        RefreshAlertState();
+    }
+
+    /// <summary>Recalcula el estado del precio de alerta (configurado / por debajo / texto). Público para refrescar tras fijarlo.</summary>
+    public void RefreshAlertState()
+    {
+        HasAlert = _product?.HasAlert ?? false;
+        ShowBelowAlert = _product?.IsBelowAlert ?? false;
+        AlertPriceText = _product?.AlertPriceText ?? "—";
+        OnPropertyChanged(nameof(HasAlert));
+        OnPropertyChanged(nameof(ShowBelowAlert));
+        OnPropertyChanged(nameof(AlertPriceText));
     }
 
     private void UpdateFavoriteState()

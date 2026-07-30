@@ -28,9 +28,11 @@ public sealed partial class MainWindow : Window
     private readonly MainWindowViewModel _viewModel;
     private readonly WindowService _windowService;
     private readonly ThemeService _themeService;
+    private readonly AmazonAuthService _amazonAuth;
     private readonly TrayIcon _trayIcon = new();
 
     private bool _initialized;
+    private bool _amazonStartupPromptDone;
     #endregion
 
     #region Properties
@@ -84,6 +86,12 @@ public sealed partial class MainWindow : Window
         // no se propagan solos al cambiar de tema en caliente: se refrescan por código al recibir ThemeChanged.
         _themeService = App.GetService<ThemeService>();
         _themeService.ThemeChanged += OnThemeChanged;
+
+        // Login de Amazon: refresca el botón del footer cuando cambia el estado de sesión, y lanza la comprobación de
+        // arranque en cuanto el navegador visible está listo (si no hay sesión, pide login).
+        _amazonAuth = App.GetService<AmazonAuthService>();
+        _amazonAuth.StateChanged += OnAmazonAuthStateChanged;
+        _amazonAuth.LoginBrowserReady += OnAmazonLoginBrowserReady;
 
         if (Content is FrameworkElement root)
         {
@@ -185,6 +193,7 @@ public sealed partial class MainWindow : Window
             // Primer navegador del pool: el declarado en XAML.
             await ScraperWebView.EnsureCoreWebView2Async(environment);
             parsing.Attach(ScraperWebView);
+            _amazonAuth.AttachCookieBrowser(ScraperWebView);   // permite consultar la sesión aunque el widget web no esté visible
 
             // Resto del pool: navegadores 1x1 ocultos creados por código, que COMPARTEN el mismo entorno (misma
             // carpeta de datos de usuario), para poder leer varias tiendas en paralelo (ver ProductParsingService).
@@ -208,6 +217,7 @@ public sealed partial class MainWindow : Window
                         host.Children.Add(webView);
                         await webView.EnsureCoreWebView2Async(environment);
                         parsing.Attach(webView);
+                        _amazonAuth.AttachCookieBrowser(webView);
                     }
                     catch (Exception ex)
                     {
@@ -267,7 +277,14 @@ public sealed partial class MainWindow : Window
 
         var product = App.GetService<ProductService>().AddProductFromUrl(url);
         if (product is not null)
-            await App.GetService<ProductService>().RefreshProductAsync(product);
+        {
+            await App.GetService<ProductService>().RefreshProductAsync(product, addedProduct: true);
+
+            // Al terminar la carga de precios, navega a la tienda con el precio más bajo (en el widget navegador).
+            string? bestUrl = product.BestStore?.Url;
+            if (!string.IsNullOrWhiteSpace(bestUrl))
+                App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>().RequestNavigation(bestUrl);
+        }
     }
 
     /// <summary>Botón "Refrescar todo" del footer: fuerza el refresco de precios de todos los productos (como el scheduler).</summary>
@@ -275,6 +292,92 @@ public sealed partial class MainWindow : Window
     {
         _ = App.GetService<PriceSchedulerService>().RefreshAllAsync();
     }
+
+    /// <summary>
+    /// Botón de sesión de Amazon del footer: si hay sesión iniciada, cierra sesión (previa confirmación); si no,
+    /// abre el diálogo de login (email + contraseña) e intenta iniciar sesión en el navegador visible.
+    /// </summary>
+    private async void OnAmazonAuthClick(object sender, RoutedEventArgs e)
+    {
+        if (Content is not FrameworkElement root)
+            return;
+
+        if (await _amazonAuth.IsLoggedInAsync())
+        {
+            bool confirmed = await App.GetService<DialogsService>().ConfirmAsync(
+                root.XamlRoot,
+                L(MM4LB.Helpers.LocKeys.AmazonLogout_ConfirmTitle),
+                L(MM4LB.Helpers.LocKeys.AmazonLogout_ConfirmMessage),
+                L(MM4LB.Helpers.LocKeys.AmazonLogout_Confirm_Label),
+                L(MM4LB.Helpers.LocKeys.Common_Cancel_Label));
+
+            if (confirmed)
+                await _amazonAuth.LogoutAsync();
+        }
+        else
+        {
+            await StartAmazonLoginFlowAsync(root.XamlRoot);
+        }
+
+        await RefreshAmazonAuthButtonAsync();
+    }
+
+    /// <summary>Abre el diálogo de login de Amazon y, si se confirma, intenta iniciar sesión en el navegador visible.</summary>
+    private async Task StartAmazonLoginFlowAsync(Microsoft.UI.Xaml.XamlRoot xamlRoot)
+    {
+        // El login necesita el navegador VISIBLE (para que el usuario vea captcha/verificación en dos pasos).
+        if (!_amazonAuth.CanLogin)
+        {
+            await App.GetService<DialogsService>().AlertAsync(
+                xamlRoot,
+                L(MM4LB.Helpers.LocKeys.AmazonLogin_NoBrowser_Title),
+                L(MM4LB.Helpers.LocKeys.AmazonLogin_NoBrowser_Message),
+                L(MM4LB.Helpers.LocKeys.Common_OK_Label));
+            return;
+        }
+
+        (string Email, string Password)? credentials = await App.GetService<DialogsService>().ShowAmazonLoginAsync(xamlRoot);
+        if (credentials is null)
+            return;
+
+        await _amazonAuth.LoginAsync(credentials.Value.Email, credentials.Value.Password);
+    }
+
+    /// <summary>El estado de sesión pudo cambiar (login/logout, o navegación manual del usuario): refresca el botón.</summary>
+    private void OnAmazonAuthStateChanged(object? sender, System.EventArgs e)
+    {
+        DispatcherQueue.TryEnqueue(async () => await RefreshAmazonAuthButtonAsync());
+    }
+
+    /// <summary>El navegador visible está listo: comprueba UNA vez la sesión al arrancar y pide login si no la hay.</summary>
+    private void OnAmazonLoginBrowserReady(object? sender, System.EventArgs e)
+    {
+        if (_amazonStartupPromptDone)
+            return;
+        _amazonStartupPromptDone = true;
+
+        DispatcherQueue.TryEnqueue(async () =>
+        {
+            await RefreshAmazonAuthButtonAsync();
+            if (Content is FrameworkElement root && !await _amazonAuth.IsLoggedInAsync())
+            {
+                await StartAmazonLoginFlowAsync(root.XamlRoot);
+                await RefreshAmazonAuthButtonAsync();
+            }
+        });
+    }
+
+    /// <summary>Refresca el icono/tooltip del botón de sesión de Amazon según haya sesión iniciada o no.</summary>
+    private async Task RefreshAmazonAuthButtonAsync()
+    {
+        bool loggedIn = await _amazonAuth.IsLoggedInAsync();
+        AmazonAuthIcon.Foreground = ResolveBrush(loggedIn ? "SuccessBrush" : "TextSecondaryBrush");
+        Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(AmazonAuthButton, L(loggedIn ? MM4LB.Helpers.LocKeys.AmazonLogout_Tooltip : MM4LB.Helpers.LocKeys.AmazonLogin_Tooltip));
+    }
+
+    /// <summary>Resuelve un brush de los recursos de la aplicación (los genera ThemeService); null si no existe.</summary>
+    private static Microsoft.UI.Xaml.Media.Brush? ResolveBrush(string key)
+        => Application.Current.Resources.TryGetValue(key, out object? value) ? value as Microsoft.UI.Xaml.Media.Brush : null;
 
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
     private static string L(string key) => MM4LB.Services.LocalizationService.Instance?[key] ?? key;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="MM4LB.Controls.Dialogs.AmazonLoginDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:loc="using:MM4LB.Markup"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="12" MinWidth="420">
+        <TextBlock Text="{loc:Str Key=AmazonLogin_Message}" TextWrapping="Wrap" Foreground="{ThemeResource TextSecondaryBrush}"/>
+
+        <TextBlock Text="{loc:Str Key=AmazonLogin_Email_Label}" Foreground="{ThemeResource TextBrush}"/>
+        <TextBox x:Name="EmailBox" PlaceholderText="{loc:Str Key=AmazonLogin_Email_Placeholder}" TextChanged="OnEmailChanged"/>
+
+        <TextBlock Text="{loc:Str Key=AmazonLogin_Password_Label}" Foreground="{ThemeResource TextBrush}"/>
+        <PasswordBox x:Name="PasswordBox" PasswordChanged="OnPasswordChanged"/>
+
+        <TextBlock Text="{loc:Str Key=AmazonLogin_Note}" TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextSecondaryBrush}"/>
+    </StackPanel>
+</Page>

@@ -85,6 +85,7 @@ public partial class App : Application
             services.AddSingleton<PersistAndRestoreService>();
             services.AddSingleton<ProductDatabaseService>();
             services.AddSingleton<ProductParsingService>();
+            services.AddSingleton<AmazonAuthService>();
             services.AddSingleton<ProductService>();
             services.AddSingleton<PriceSchedulerService>();
             services.AddSingleton<ExceptionService>();

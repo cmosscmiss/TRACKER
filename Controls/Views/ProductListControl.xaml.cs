@@ -1,6 +1,8 @@
+using System.Collections.Specialized;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using MM4LB.Controls.ViewModels;
+using MM4LB.Services;
 
 namespace MM4LB.Controls.Views;
 
@@ -9,9 +11,20 @@ namespace MM4LB.Controls.Views;
 /// (<see cref="ListView"/>) en la columna izquierda de la ventana principal. Expone su
 /// <see cref="ProductListViewModel"/> mediante una <see cref="DependencyProperty"/> para que la ventana
 /// principal pueda inyectar el ViewModel desde el exterior.
+///
+/// La selección se sincroniza a mano con <see cref="SharedDataService.SelectedProduct"/> (en vez de un binding
+/// TwoWay) para poder IGNORAR las deselecciones transitorias del ListView al reordenar la lista alfabéticamente
+/// (un <c>Move</c> cuando un producto recién añadido carga su título), que si no borrarían la selección.
 /// </summary>
 public sealed partial class ProductListControl : UserControl
 {
+    #region Attributes
+    private SharedDataService? _sharedDataService;
+
+    /// <summary>Evita la reentrada al sincronizar la selección del ListView con el modelo (y viceversa).</summary>
+    private bool _syncingSelection;
+    #endregion
+
     #region Dependency Properties
     /// <summary>
     /// ViewModel asociado al control: da acceso a la colección de productos y al producto seleccionado.
@@ -31,21 +44,97 @@ public sealed partial class ProductListControl : UserControl
         InitializeComponent();
 
         Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
     #endregion
 
     #region Subscribed Events
     /// <summary>
-    /// Al cargarse en el árbol visual, restaura el estado guardado del control vía su ViewModel.
+    /// Al cargarse: restaura el estado del control, sincroniza la selección inicial y se suscribe a los cambios de
+    /// selección (para hacer scroll al seleccionado) y a los cambios de la colección (para re-sincronizar la
+    /// selección tras un reordenado).
     /// </summary>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        Loaded -= OnLoaded;
-
         if (ViewModel is null)
             return;
 
         ViewModel.LoadConfig();
+
+        _sharedDataService = ViewModel.SharedDataService;
+        _sharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
+        _sharedDataService.SelectedProductChanged += OnSelectedProductChanged;
+        _sharedDataService.ProductSet.Products.CollectionChanged -= OnProductsChanged;
+        _sharedDataService.ProductSet.Products.CollectionChanged += OnProductsChanged;
+
+        // Refleja la selección actual en el ListView y la trae a la vista.
+        SyncListViewToSelection();
+        ScrollSelectedIntoView();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (_sharedDataService is null)
+            return;
+
+        _sharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
+        _sharedDataService.ProductSet.Products.CollectionChanged -= OnProductsChanged;
+    }
+
+    /// <summary>El usuario (o el código) seleccionó un item: refleja la selección en el modelo. Ignora deselecciones (null).</summary>
+    private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_syncingSelection || _sharedDataService is null)
+            return;
+
+        // Solo se propaga una selección REAL; una deselección transitoria (SelectedItem == null, típica al reordenar
+        // la lista) NO borra el producto seleccionado del modelo.
+        if (ProductListView.SelectedItem is Models.Product product)
+            _sharedDataService.SelectedProduct = product;
+    }
+
+    /// <summary>Cambió el producto seleccionado (lista, alta o gráfico de productos): sincroniza el ListView y hace scroll.</summary>
+    private void OnSelectedProductChanged(object? sender, SharedDataService.ProductChangedEventArgs e)
+    {
+        SyncListViewToSelection();
+        ScrollSelectedIntoView();
+    }
+
+    /// <summary>Tras reordenar la lista (Move), re-selecciona el producto en el ListView (que pudo perder la selección).</summary>
+    private void OnProductsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action != NotifyCollectionChangedAction.Move)
+            return;
+
+        DispatcherQueue.TryEnqueue(SyncListViewToSelection);
+    }
+    #endregion
+
+    #region Methods (private)
+    /// <summary>Pone el <c>SelectedItem</c> del ListView igual al producto seleccionado del modelo (sin reentrada).</summary>
+    private void SyncListViewToSelection()
+    {
+        Models.Product? selected = _sharedDataService?.SelectedProduct;
+        if (ReferenceEquals(ProductListView.SelectedItem, selected))
+            return;
+
+        _syncingSelection = true;
+        ProductListView.SelectedItem = selected;
+        _syncingSelection = false;
+    }
+
+    /// <summary>Hace scroll para que el producto seleccionado quede visible (diferido para que exista su contenedor).</summary>
+    private void ScrollSelectedIntoView()
+    {
+        if (_sharedDataService?.SelectedProduct is null)
+            return;
+
+        // Se difiere al dispatcher: tras un alta o un reordenado alfabético, el contenedor del item puede no existir aún.
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            if (_sharedDataService?.SelectedProduct is Models.Product current)
+                ProductListView.ScrollIntoView(current, ScrollIntoViewAlignment.Leading);
+        });
     }
     #endregion
 }

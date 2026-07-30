@@ -77,6 +77,18 @@ public class DialogsService
             content.Apply();
     }
 
+    /// <summary>
+    /// Diálogo de inicio de sesión de Amazon: pide email + contraseña. Devuelve <c>(email, password)</c> si se
+    /// confirma, o <c>null</c> si se cancela. Las credenciales NO se almacenan (solo para un autorrelleno puntual).
+    /// </summary>
+    public async Task<(string Email, string Password)?> ShowAmazonLoginAsync(XamlRoot xamlRoot)
+    {
+        AmazonLoginDialog content = new();
+        AppDialog dialog = new();
+        AppDialogResult result = await dialog.ShowAsync(xamlRoot, L(LocKeys.AmazonLogin_Title), content, L(LocKeys.AmazonLogin_SignIn_Label), null, L(LocKeys.Common_Cancel_Label));
+        return result == AppDialogResult.Primary ? (content.Email, content.Password) : null;
+    }
+
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
     private static string L(string key) => LocalizationService.Instance?[key] ?? key;
 

@@ -153,6 +153,9 @@
   <data name="ProductLog_Added_Progress" xml:space="preserve">
     <value>Nuevo producto añadido: {0}</value>
   </data>
+  <data name="ProductLog_AddedAndRead_Progress" xml:space="preserve">
+    <value>Nuevo producto añadido: {0} ({1}/{2} precios leídos)</value>
+  </data>
   <data name="ProductLog_AltLinkAdded_Progress" xml:space="preserve">
     <value>Link alternativo añadido a: {0}</value>
   </data>
@@ -194,6 +197,27 @@
   </data>
   <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
     <value>Refrescar este producto ahora</value>
+  </data>
+  <data name="PriceChart_Issues_Label" xml:space="preserve">
+    <value>Aviso</value>
+  </data>
+  <data name="Product_Issues_Tooltip" xml:space="preserve">
+    <value>No disponible o sin precio en alguna tienda</value>
+  </data>
+  <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
+    <value>Definir precio de alerta</value>
+  </data>
+  <data name="PriceChart_BelowAlert_Tooltip" xml:space="preserve">
+    <value>Mejor precio en o por debajo del precio de alerta</value>
+  </data>
+  <data name="PriceChart_AlertDialog_Title" xml:space="preserve">
+    <value>Precio de alerta</value>
+  </data>
+  <data name="PriceChart_AlertDialog_Message" xml:space="preserve">
+    <value>Marca el producto cuando su mejor precio esté en o por debajo de este valor. Déjalo vacío para quitar la alerta.</value>
+  </data>
+  <data name="PriceChart_AlertPrice_Placeholder" xml:space="preserve">
+    <value>Precio de alerta</value>
   </data>
   <data name="PriceChart_DeleteDialog_Title" xml:space="preserve">
     <value>Borrar producto</value>
@@ -356,5 +380,59 @@
   </data>
   <data name="AboutSettings_Copyright_Text" xml:space="preserve">
     <value>Hecho con WinUI 3 y el Windows App SDK.</value>
+  </data>
+  <data name="AmazonLogin_Tooltip" xml:space="preserve">
+    <value>Iniciar sesión en Amazon</value>
+  </data>
+  <data name="AmazonLogout_Tooltip" xml:space="preserve">
+    <value>Cerrar sesión de Amazon</value>
+  </data>
+  <data name="AmazonLogin_Title" xml:space="preserve">
+    <value>Iniciar sesión en Amazon</value>
+  </data>
+  <data name="AmazonLogin_Message" xml:space="preserve">
+    <value>Introduce tus credenciales de Amazon. Solo se usan para rellenar el formulario de acceso; no se almacenan.</value>
+  </data>
+  <data name="AmazonLogin_Email_Label" xml:space="preserve">
+    <value>Email o teléfono</value>
+  </data>
+  <data name="AmazonLogin_Email_Placeholder" xml:space="preserve">
+    <value>tucorreo@ejemplo.com</value>
+  </data>
+  <data name="AmazonLogin_Password_Label" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="AmazonLogin_Note" xml:space="preserve">
+    <value>Si Amazon pide un captcha o un código de verificación, complétalo en el widget de navegador web. Después, la sesión se mantiene entre arranques.</value>
+  </data>
+  <data name="AmazonLogin_SignIn_Label" xml:space="preserve">
+    <value>Iniciar sesión</value>
+  </data>
+  <data name="AmazonLogin_NoBrowser_Title" xml:space="preserve">
+    <value>Navegador web no disponible</value>
+  </data>
+  <data name="AmazonLogin_NoBrowser_Message" xml:space="preserve">
+    <value>Coloca antes el widget de navegador web en un hueco, para poder mostrar la página de acceso de Amazon.</value>
+  </data>
+  <data name="AmazonLogout_ConfirmTitle" xml:space="preserve">
+    <value>Cerrar sesión de Amazon</value>
+  </data>
+  <data name="AmazonLogout_ConfirmMessage" xml:space="preserve">
+    <value>¿Cerrar tu sesión de Amazon en el navegador?</value>
+  </data>
+  <data name="AmazonLogout_Confirm_Label" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
+  <data name="AmazonLogin_Progress_SigningIn" xml:space="preserve">
+    <value>Iniciando sesión en {0} ({1}/{2})…</value>
+  </data>
+  <data name="AmazonLogin_Progress_Done" xml:space="preserve">
+    <value>Sesión de Amazon iniciada: {0}/{1} tiendas</value>
+  </data>
+  <data name="AmazonLogout_Progress_SigningOut" xml:space="preserve">
+    <value>Cerrando sesión en {0} ({1}/{2})…</value>
+  </data>
+  <data name="AmazonLogout_Progress_Done" xml:space="preserve">
+    <value>Sesión de Amazon cerrada</value>
   </data>
 </root>

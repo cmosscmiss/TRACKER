@@ -117,18 +117,25 @@ public sealed class PriceSchedulerService
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
     private static string L(string key) => LocalizationService.Instance?[key] ?? key;
 
-    /// <summary>A product is due if it has a store whose last reading is missing or at least one interval old.</summary>
+    /// <summary>
+    /// Indica si el producto toca refrescarse en la pasada de arranque (catch-up):
+    /// - Si NUNCA se ha leído (ninguna tienda con lectura): sí (es nuevo, hay que cargarlo).
+    /// - Si ya se leyó alguna vez: solo si alguna tienda YA leída ha caducado (≥ intervalo).
+    /// Las tiendas que nunca cargaron (LastChecked nulo) se IGNORAN: no fuerzan un refresco en cada arranque (una
+    /// tienda que falla siempre no debe reintentarse indefinidamente; su recarga se deja a la pasada periódica de 12 h).
+    /// </summary>
     private static bool IsDue(Product product)
     {
         if (product.Stores.Count == 0)
             return false;
 
-        DateTime now = DateTime.UtcNow;
-        foreach (ProductStore store in product.Stores)
-            if (store.LastChecked is not DateTime checkedAt || now - checkedAt >= Interval)
-                return true;
+        // Producto nunca cargado: hay que cargarlo.
+        if (product.Stores.All(store => store.LastChecked is null))
+            return true;
 
-        return false;
+        // Ya cargado alguna vez: due solo si alguna tienda con lectura previa ha caducado.
+        DateTime now = DateTime.UtcNow;
+        return product.Stores.Any(store => store.LastChecked is DateTime checkedAt && now - checkedAt >= Interval);
     }
     #endregion
 }

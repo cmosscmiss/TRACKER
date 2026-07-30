@@ -71,10 +71,11 @@ public sealed class ProductService
         }
 
         _database.InsertProduct(product);
-        _sharedDataService.ProductSet.Products.Add(product);
+        _sharedDataService.ProductSet.AddSorted(product);
         _sharedDataService.SelectedProduct = product;
 
-        _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Added_Progress), product.Name));
+        // No se registra aquí el evento de "producto añadido": lo hace la operación de refresco (una única entrada
+        // que cubre alta + carga de precios) cuando se llama con addedProduct=true.
         return product;
     }
 
@@ -111,14 +112,17 @@ public sealed class ProductService
     /// <paramref name="reportGlobalProgress"/> is true (standalone refreshes: add product, per-favourite refresh), to
     /// the footer progress bar; the batch pass (<see cref="PriceSchedulerService"/>) drives that bar itself and passes false.
     /// </summary>
-    public async Task RefreshProductAsync(Product product, bool reportGlobalProgress = true)
+    public async Task RefreshProductAsync(Product product, bool reportGlobalProgress = true, bool addedProduct = false)
     {
         // Operación con barra del footer (StartOperation) para los refrescos sueltos (alta, refresco por favorito); la
         // pasada global (PriceSchedulerService) ya lleva la barra, así que sus productos usan solo la entrada de log.
         ProgressNotifier operation = reportGlobalProgress
             ? _progressService.StartOperation()
             : _progressService.StartBackgroundOperation();
-        operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshing_Progress), product.Name);
+        // Alta: la MISMA entrada de log cubre "producto añadido" + la carga de precios (log único).
+        operation.Message = addedProduct
+            ? string.Format(L(Helpers.LocKeys.ProductLog_Added_Progress), product.Name)
+            : string.Format(L(Helpers.LocKeys.ProductLog_Refreshing_Progress), product.Name);
         if (reportGlobalProgress)
             _progressService.ProgressNotifier.Report(operation);
 
@@ -204,7 +208,9 @@ public sealed class ProductService
                 operation.IsWarning = true;
 
             operation.Progress = 100;
-            operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshed_Progress), product.Name, read, total);
+            operation.Message = addedProduct
+                ? string.Format(L(Helpers.LocKeys.ProductLog_AddedAndRead_Progress), product.Name, read, total)
+                : string.Format(L(Helpers.LocKeys.ProductLog_Refreshed_Progress), product.Name, read, total);
             operation.FinishOperation();
             if (reportGlobalProgress)
             {
@@ -233,6 +239,16 @@ public sealed class ProductService
         _database.SetFavorite(product, product.IsFavorite);
         _sharedDataService.NotifyFavoritesChanged();
         return true;
+    }
+
+    /// <summary>Establece (o borra, con null) el precio de alerta de un producto y lo persiste.</summary>
+    public void SetAlertPrice(Product product, decimal? alertPrice)
+    {
+        if (product is null)
+            return;
+
+        product.AlertPrice = alertPrice;
+        _database.SetAlertPrice(product, alertPrice);
     }
 
     /// <summary>Removes a product from the shared list and the database (its stores and history cascade).</summary>

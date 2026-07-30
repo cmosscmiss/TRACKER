@@ -60,7 +60,13 @@ public partial class FavoritesViewModel : WidgetViewModelBase
     #endregion
 
     #region Subscribed events
-    private void OnProductsChanged(object? sender, NotifyCollectionChangedEventArgs e) => Rebuild();
+    private void OnProductsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        // Reordenar la lista (orden alfabético) no cambia el conjunto de favoritos: no hace falta reconstruir el FlipView.
+        if (e.Action == NotifyCollectionChangedAction.Move)
+            return;
+        Rebuild();
+    }
 
     private void OnFavoritesChanged(object? sender, EventArgs e) => Rebuild();
     #endregion

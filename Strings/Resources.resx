@@ -158,6 +158,9 @@
   <data name="ProductLog_Added_Progress" xml:space="preserve">
     <value>New product added: {0}</value>
   </data>
+  <data name="ProductLog_AddedAndRead_Progress" xml:space="preserve">
+    <value>New product added: {0} ({1}/{2} prices read)</value>
+  </data>
   <data name="ProductLog_AltLinkAdded_Progress" xml:space="preserve">
     <value>Alternative link added to: {0}</value>
   </data>
@@ -199,6 +202,27 @@
   </data>
   <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
     <value>Refresh this product now</value>
+  </data>
+  <data name="PriceChart_Issues_Label" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="Product_Issues_Tooltip" xml:space="preserve">
+    <value>Unavailable or no price in some store</value>
+  </data>
+  <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
+    <value>Set alert price</value>
+  </data>
+  <data name="PriceChart_BelowAlert_Tooltip" xml:space="preserve">
+    <value>Best price at or below the alert price</value>
+  </data>
+  <data name="PriceChart_AlertDialog_Title" xml:space="preserve">
+    <value>Alert price</value>
+  </data>
+  <data name="PriceChart_AlertDialog_Message" xml:space="preserve">
+    <value>Flag the product when its best price is at or below this value. Leave empty to remove the alert.</value>
+  </data>
+  <data name="PriceChart_AlertPrice_Placeholder" xml:space="preserve">
+    <value>Alert price</value>
   </data>
   <data name="PriceChart_DeleteDialog_Title" xml:space="preserve">
     <value>Delete product</value>
@@ -361,5 +385,59 @@
   </data>
   <data name="AboutSettings_Copyright_Text" xml:space="preserve">
     <value>Built with WinUI 3 and the Windows App SDK.</value>
+  </data>
+  <data name="AmazonLogin_Tooltip" xml:space="preserve">
+    <value>Sign in to Amazon</value>
+  </data>
+  <data name="AmazonLogout_Tooltip" xml:space="preserve">
+    <value>Sign out of Amazon</value>
+  </data>
+  <data name="AmazonLogin_Title" xml:space="preserve">
+    <value>Sign in to Amazon</value>
+  </data>
+  <data name="AmazonLogin_Message" xml:space="preserve">
+    <value>Enter your Amazon credentials. They are used only to fill in the sign-in form and are not stored.</value>
+  </data>
+  <data name="AmazonLogin_Email_Label" xml:space="preserve">
+    <value>Email or phone</value>
+  </data>
+  <data name="AmazonLogin_Email_Placeholder" xml:space="preserve">
+    <value>you@example.com</value>
+  </data>
+  <data name="AmazonLogin_Password_Label" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="AmazonLogin_Note" xml:space="preserve">
+    <value>If Amazon asks for a captcha or a verification code, complete it in the web browser widget. Your session is then kept between launches.</value>
+  </data>
+  <data name="AmazonLogin_SignIn_Label" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="AmazonLogin_NoBrowser_Title" xml:space="preserve">
+    <value>Web browser not ready</value>
+  </data>
+  <data name="AmazonLogin_NoBrowser_Message" xml:space="preserve">
+    <value>Add the web browser widget to a slot first, so the Amazon sign-in page can be shown.</value>
+  </data>
+  <data name="AmazonLogout_ConfirmTitle" xml:space="preserve">
+    <value>Sign out of Amazon</value>
+  </data>
+  <data name="AmazonLogout_ConfirmMessage" xml:space="preserve">
+    <value>Sign out of your Amazon session in the browser?</value>
+  </data>
+  <data name="AmazonLogout_Confirm_Label" xml:space="preserve">
+    <value>Sign out</value>
+  </data>
+  <data name="AmazonLogin_Progress_SigningIn" xml:space="preserve">
+    <value>Signing in to {0} ({1}/{2})…</value>
+  </data>
+  <data name="AmazonLogin_Progress_Done" xml:space="preserve">
+    <value>Signed in to Amazon: {0}/{1} stores</value>
+  </data>
+  <data name="AmazonLogout_Progress_SigningOut" xml:space="preserve">
+    <value>Signing out of {0} ({1}/{2})…</value>
+  </data>
+  <data name="AmazonLogout_Progress_Done" xml:space="preserve">
+    <value>Signed out of Amazon</value>
   </data>
 </root>

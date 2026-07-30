@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MM4LB.Models"
+    xmlns:loc="using:MM4LB.Markup"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -22,14 +23,24 @@
                     <TextBlock Text="{x:Bind BestPriceText, Mode=OneWay}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
                 </Border>
                 <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}" />
-                <!-- Estrella de favorito tras el título. -->
-                <FontIcon Grid.Column="2" Glyph="&#xE735;" FontSize="12" Foreground="{ThemeResource AccentBrush}" VerticalAlignment="Center" Margin="4 0 0 0"
-                          Visibility="{x:Bind IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                <!-- Iconos tras el título: precio bajo la alerta + aviso de problema + estrella de favorito. -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="4 0 0 0">
+                    <FontIcon Glyph="&#xE7ED;" FontSize="12" Foreground="{ThemeResource SuccessBrush}"
+                              ToolTipService.ToolTip="{loc:Str Key=PriceChart_BelowAlert_Tooltip}"
+                              Visibility="{x:Bind IsBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="{ThemeResource WarningBrush}"
+                              ToolTipService.ToolTip="{loc:Str Key=Product_Issues_Tooltip}"
+                              Visibility="{x:Bind HasIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Glyph="&#xE735;" FontSize="12" Foreground="{ThemeResource AccentBrush}"
+                              Visibility="{x:Bind IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                </StackPanel>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
-        <ListView x:Name="ProductListView" ItemsSource="{x:Bind ViewModel.SharedDataService.ProductSet.Products, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SharedDataService.SelectedProduct, Mode=TwoWay}" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+        <!-- La selección se gestiona en code-behind (no TwoWay): así una deselección transitoria al reordenar la lista
+             alfabéticamente (Move al cargar el título) no borra el producto seleccionado. -->
+        <ListView x:Name="ProductListView" ItemsSource="{x:Bind ViewModel.SharedDataService.ProductSet.Products, Mode=OneWay}" SelectionChanged="OnSelectionChanged" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
     </Grid>
 </UserControl>

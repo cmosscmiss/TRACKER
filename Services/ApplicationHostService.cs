@@ -77,6 +77,7 @@ public sealed class ApplicationHostService : IHostedService
         // los productos persistidos (con sus tiendas e histórico) en el ProductSet compartido antes de mostrar la UI.
         _productDatabaseService.Initialize();
         _productDatabaseService.LoadInto(_sharedDataService.ProductSet);
+        _sharedDataService.ProductSet.SortByName();   // lista en orden alfabético desde el arranque
 
         // Re-selecciona el producto que estaba seleccionado al cerrar (por Id); si no se encuentra (o no había),
         // cae al primero de la lista.

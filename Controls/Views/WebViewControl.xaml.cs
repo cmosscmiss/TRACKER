@@ -86,6 +86,10 @@ public sealed partial class WebViewControl : UserControl
             ViewModel?.NavigationRequested += OnNavigationRequested;
             ViewModel?.PropertyChanged += OnViewModelPropertyChanged;
 
+            // Registra este navegador VISIBLE como el que usa el login de Amazon (para ver captcha/2FA). Dispara la
+            // comprobación de sesión de arranque en la ventana principal.
+            App.GetService<AmazonAuthService>().AttachLoginBrowser(MyWebView);
+
             InitializeCountrySelector();
             RefreshWidgetActivation(force: true);
         }
@@ -238,6 +242,9 @@ public sealed partial class WebViewControl : UserControl
             SyncCountrySelectorToUrl(sender.Source);
         }
 
+        // El usuario pudo iniciar/cerrar sesión de Amazon navegando a mano: refresca el estado del botón de sesión.
+        App.GetService<AmazonAuthService>().NotifyNavigated();
+
         UpdateNavigationButtonsState();
     }
 
@@ -339,7 +346,14 @@ public sealed partial class WebViewControl : UserControl
         ProductService products = App.GetService<ProductService>();
         Models.Product? product = products.AddProductFromUrl(url);
         if (product is not null)
-            await products.RefreshProductAsync(product);
+        {
+            await products.RefreshProductAsync(product, addedProduct: true);
+
+            // Al terminar la carga de precios, navega a la tienda con el precio más bajo.
+            string? bestUrl = product.BestStore?.Url;
+            if (!string.IsNullOrWhiteSpace(bestUrl))
+                ViewModel?.RequestNavigation(bestUrl);
+        }
     }
 
     /// <summary>
