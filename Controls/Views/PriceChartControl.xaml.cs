@@ -34,6 +34,14 @@ public sealed partial class PriceChartControl : UserControl
     #endregion
 
     #region UI events
+    /// <summary>Fuerza el refresco de precios del producto mostrado en ESTA página (la del seleccionado o la de un favorito).</summary>
+    private async void OnRefreshProductClick(object sender, RoutedEventArgs e)
+    {
+        Product? product = ViewModel?.Product;
+        if (product is not null)
+            await App.GetService<ProductService>().RefreshProductAsync(product);
+    }
+
     /// <summary>Alterna el favorito del producto mostrado (deshabilitado si ya hay el máximo de favoritos).</summary>
     private void OnToggleFavoriteClick(object sender, RoutedEventArgs e)
     {

@@ -21,6 +21,9 @@
         <!-- Barra de herramientas del producto: marcar comprado / borrar. -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4" Padding="8 6 8 0"
                     Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnRefreshProductClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Refresh_Tooltip}">
+                <FontIcon Glyph="&#xE72C;" FontSize="16"/>
+            </Button>
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnToggleFavoriteClick"
                     IsEnabled="{x:Bind ViewModel.CanToggleFavorite, Mode=OneWay}" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Favorite_Tooltip}">
                 <Grid>

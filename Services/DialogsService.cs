@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using MM4LB.Controls.Dialogs;
+using MM4LB.Helpers;
 using System.Threading.Tasks;
 
 namespace MM4LB.Services;
@@ -46,6 +47,21 @@ public class DialogsService
         AppDialogResult result = await dialog.ShowAsync(xamlRoot, title, panel, primaryText, null, closeText);
         return result == AppDialogResult.Primary ? textBox.Text?.Trim() : null;
     }
+
+    /// <summary>
+    /// Diálogo de GRABAR template: elige uno de los 3 slots (con su miniatura/nombre actuales) y un nombre opcional.
+    /// Devuelve (slot, nombre) si se confirma, o <c>null</c> si se cancela.
+    /// </summary>
+    public async Task<(int Slot, string Name)?> ShowSaveTemplateAsync(XamlRoot xamlRoot)
+    {
+        TemplateNameDialog content = new();
+        AppDialog dialog = new();
+        AppDialogResult result = await dialog.ShowAsync(xamlRoot, L(LocKeys.DialogsService_SaveTemplate_Title), content, L(LocKeys.Common_Save_Label), null, L(LocKeys.Common_Cancel_Label));
+        return result == AppDialogResult.Primary ? (content.SelectedSlot, content.TemplateName) : null;
+    }
+
+    /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
+    private static string L(string key) => LocalizationService.Instance?[key] ?? key;
 
     /// <summary>Texto del diálogo como TextBlock con ajuste de línea (el color lo hereda de la tarjeta).</summary>
     private static TextBlock BuildText(string message) => new()

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MM4LB.Helpers;
 using MM4LB.Models;
@@ -103,25 +104,45 @@ public sealed class ProductService
 
     /// <summary>
     /// Re-reads every store of the product through the browser parser and persists what it finds: the product's
-    /// name/image (from the first store that yields them) and a fresh price reading per store. All readings of one
-    /// pass share a single timestamp, so the stores' points line up as columns in the price chart. Must run on the
-    /// UI thread (the parser drives the WebView2). Stores that fail to parse are skipped. Reports progress to the log.
+    /// name/image (from the first store that yields them) and a fresh price reading per store. The stores are parsed
+    /// CONCURRENTLY (one WebView2 of the pool per store) and then their results are applied sequentially with a single
+    /// shared timestamp, so the stores' points line up as columns in the price chart. Must run on the UI thread (the
+    /// parser drives WebView2). Stores that fail to parse are skipped. Reports progress to the log and, when
+    /// <paramref name="reportGlobalProgress"/> is true (standalone refreshes: add product, per-favourite refresh), to
+    /// the footer progress bar; the batch pass (<see cref="PriceSchedulerService"/>) drives that bar itself and passes false.
     /// </summary>
-    public async Task RefreshProductAsync(Product product)
+    public async Task RefreshProductAsync(Product product, bool reportGlobalProgress = true)
     {
         ProgressNotifier operation = _progressService.StartBackgroundOperation();
         operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshing_Progress), product.Name);
+        if (reportGlobalProgress)
+            _progressService.BeginGlobalProgress(operation.Message);
 
         DateTime timestamp = DateTime.UtcNow;
         var stores = product.Stores.ToList();
+        int total = stores.Count;
+        int done = 0;
+
+        // Lee todas las tiendas EN PARALELO (una por navegador del pool); la concurrencia real la acota el tamaño del
+        // pool. El progreso avanza a medida que cada tienda termina.
+        (ProductStore Store, ProductParseResult? Result)[] parsed = await Task.WhenAll(stores.Select(async store =>
+        {
+            ProductParseResult? result = await _parsing.ParseAsync(store.Url);
+
+            int completed = Interlocked.Increment(ref done);
+            operation.Progress = total == 0 ? 100 : (int)(completed * 100.0 / total);
+            operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_ReadingStore_Progress), product.Name, store.Label);
+            if (reportGlobalProgress)
+                _progressService.ReportGlobalProgress(operation.Progress, operation.Message);
+
+            return (store, result);
+        }));
+
+        // Aplica los resultados EN SERIE (RecordPrice / BD) con un único timestamp por pasada.
         int read = 0;
         bool infoUpdated = false;
-
-        foreach (ProductStore store in stores)
+        foreach ((ProductStore store, ProductParseResult? result) in parsed)
         {
-            operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_ReadingStore_Progress), store.Label);
-
-            ProductParseResult? result = await _parsing.ParseAsync(store.Url);
             if (result is null)
                 continue;
 
@@ -156,8 +177,11 @@ public sealed class ProductService
             }
         }
 
-        operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshed_Progress), product.Name, read, stores.Count);
+        operation.Progress = 100;
+        operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_Refreshed_Progress), product.Name, read, total);
         operation.FinishOperation();
+        if (reportGlobalProgress)
+            _progressService.EndGlobalProgress();
     }
 
     /// <summary>Número de productos marcados como favoritos actualmente.</summary>

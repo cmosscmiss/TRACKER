@@ -88,6 +88,19 @@ public class SharedDataService : ObservableObject
 
     /// <summary>Se dispara cuando cambia el conjunto de productos favoritos (para el widget de favoritos y el toggle).</summary>
     public event EventHandler? FavoritesChanged;
+
+    /// <summary>
+    /// Se dispara ANTES de grabar un template: pide a los ViewModels que vuelquen su estado en vivo a
+    /// <see cref="Models.AppSettings"/> (lo que normalmente solo se hace al cerrar), para que el template capture el
+    /// estado ACTUAL y no el de arranque.
+    /// </summary>
+    public event EventHandler? SaveConfigRequested;
+
+    /// <summary>
+    /// Se dispara al CARGAR un template: pide a los ViewModels que recarguen su configuración desde
+    /// <see cref="Models.AppSettings"/> y se re-aplique el layout, para reflejar el template EN CALIENTE (sin reiniciar).
+    /// </summary>
+    public event EventHandler? SettingsReloaded;
     #endregion
 
     #region Methods (public)
@@ -107,6 +120,18 @@ public class SharedDataService : ObservableObject
     public void NotifyFavoritesChanged()
     {
         FavoritesChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Pide volcar el estado en vivo de los ViewModels a AppSettings (antes de grabar un template).</summary>
+    public void NotifySaveConfigRequested()
+    {
+        SaveConfigRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Pide recargar la configuración en los ViewModels y re-aplicar el layout (al cargar un template).</summary>
+    public void NotifySettingsReloaded()
+    {
+        SettingsReloaded?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 }

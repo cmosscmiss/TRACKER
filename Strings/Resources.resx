@@ -131,9 +131,6 @@
   <data name="Common_Cancel_Label" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="MainWindow_PriceChartWidget_Title" xml:space="preserve">
-    <value>PRICE HISTORY</value>
-  </data>
   <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
     <value>PRICE OVERVIEW</value>
   </data>
@@ -142,9 +139,6 @@
   </data>
   <data name="PriceChart_Favorite_Tooltip" xml:space="preserve">
     <value>Toggle favourite</value>
-  </data>
-  <data name="FavoritesWidget_Empty" xml:space="preserve">
-    <value>No favourite products yet</value>
   </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Amazon marketplace</value>
@@ -171,10 +165,16 @@
     <value>Reading prices for {0}…</value>
   </data>
   <data name="ProductLog_ReadingStore_Progress" xml:space="preserve">
-    <value>Reading {0}…</value>
+    <value>Reading {0} — {1}…</value>
   </data>
   <data name="ProductLog_Refreshed_Progress" xml:space="preserve">
     <value>{0}: {1}/{2} prices read</value>
+  </data>
+  <data name="ProductLog_RefreshingAll_Progress" xml:space="preserve">
+    <value>Refreshing prices: {0} ({1}/{2})</value>
+  </data>
+  <data name="ProductLog_RefreshedAll_Progress" xml:space="preserve">
+    <value>Prices updated: {0} product(s)</value>
   </data>
   <data name="AppLog_Loaded_Progress" xml:space="preserve">
     <value>Tracker started</value>
@@ -196,6 +196,9 @@
   </data>
   <data name="PriceChart_Purchased_Tooltip" xml:space="preserve">
     <value>Mark as purchased</value>
+  </data>
+  <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
+    <value>Refresh this product now</value>
   </data>
   <data name="PriceChart_DeleteDialog_Title" xml:space="preserve">
     <value>Delete product</value>
@@ -223,5 +226,29 @@
   </data>
   <data name="ProductLog_Removed_Progress" xml:space="preserve">
     <value>Product removed: {0}</value>
+  </data>
+  <data name="Common_Save_Label" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Toolbar_Templates_Tooltip" xml:space="preserve">
+    <value>Templates</value>
+  </data>
+  <data name="Toolbar_SaveTemplate_Tooltip" xml:space="preserve">
+    <value>Save current layout as a template</value>
+  </data>
+  <data name="DialogsService_SaveTemplate_Title" xml:space="preserve">
+    <value>Save template</value>
+  </data>
+  <data name="TemplateNameDialog_ChooseSlot_Text" xml:space="preserve">
+    <value>Choose a slot to save into (an occupied slot will be overwritten):</value>
+  </data>
+  <data name="TemplateNameDialog_Name_Label" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TemplateNameDialog_Name_Placeholder" xml:space="preserve">
+    <value>Template name</value>
+  </data>
+  <data name="TemplateSlots_BuiltIn_Tooltip" xml:space="preserve">
+    <value>Built-in template (read-only)</value>
   </data>
 </root>

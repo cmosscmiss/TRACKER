@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using MM4LB.Helpers;
 using MM4LB.Models;
 
 namespace MM4LB.Services;
@@ -25,16 +27,18 @@ public sealed class PriceSchedulerService
     #region Attributes
     private readonly SharedDataService _sharedDataService;
     private readonly ProductService _productService;
+    private readonly ProgressService _progressService;
 
     private DispatcherQueueTimer? _timer;
     private bool _running;
     #endregion
 
     #region Constructor
-    public PriceSchedulerService(SharedDataService sharedDataService, ProductService productService)
+    public PriceSchedulerService(SharedDataService sharedDataService, ProductService productService, ProgressService progressService)
     {
         _sharedDataService = sharedDataService;
         _productService = productService;
+        _progressService = progressService;
     }
     #endregion
 
@@ -75,19 +79,45 @@ public sealed class PriceSchedulerService
         _running = true;
         try
         {
-            foreach (Product product in _sharedDataService.ProductSet.Products.ToList())
-            {
-                if (dueOnly && !IsDue(product))
-                    continue;
+            List<Product> toRefresh = _sharedDataService.ProductSet.Products.ToList();
+            if (dueOnly)
+                toRefresh = toRefresh.Where(IsDue).ToList();
 
-                await _productService.RefreshProductAsync(product);
+            if (toRefresh.Count == 0)
+                return;
+
+            // Operación global de progreso del refresco de todos los precios: avanza por producto (0..100) e indica
+            // el producto en curso. Es esta pasada la que gobierna la barra del footer, así que cada
+            // RefreshProductAsync se llama con reportGlobalProgress:false (solo reporta su detalle al log).
+            ProgressNotifier operation = _progressService.StartBackgroundOperation();
+            int total = toRefresh.Count;
+            _progressService.BeginGlobalProgress();
+
+            for (int i = 0; i < total; i++)
+            {
+                Product product = toRefresh[i];
+                string message = string.Format(L(LocKeys.ProductLog_RefreshingAll_Progress), product.Name, i + 1, total);
+                double percent = (int)(i * 100.0 / total);
+                operation.Message = message;
+                operation.Progress = (int)percent;
+                _progressService.ReportGlobalProgress(percent, message);
+
+                await _productService.RefreshProductAsync(product, reportGlobalProgress: false);
             }
+
+            operation.Progress = 100;
+            operation.Message = string.Format(L(LocKeys.ProductLog_RefreshedAll_Progress), total);
+            operation.FinishOperation();
+            _progressService.EndGlobalProgress();
         }
         finally
         {
             _running = false;
         }
     }
+
+    /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
+    private static string L(string key) => LocalizationService.Instance?[key] ?? key;
 
     /// <summary>A product is due if it has a store whose last reading is missing or at least one interval old.</summary>
     private static bool IsDue(Product product)

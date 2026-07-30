@@ -94,6 +94,7 @@ public partial class App : Application
             services.AddSingleton<LocalizationService>();
             services.AddSingleton<ProgressService>();
             services.AddSingleton<DialogsService>();
+            services.AddSingleton<TemplateService>();
 
             // ViewModels (Windows)
             services.AddSingleton<MainWindowViewModel>();

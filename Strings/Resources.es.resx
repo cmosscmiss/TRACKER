@@ -126,9 +126,6 @@
   <data name="Common_Cancel_Label" xml:space="preserve">
     <value>Cancelar</value>
   </data>
-  <data name="MainWindow_PriceChartWidget_Title" xml:space="preserve">
-    <value>HISTÓRICO DE PRECIOS</value>
-  </data>
   <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
     <value>RESUMEN DE PRECIOS</value>
   </data>
@@ -137,9 +134,6 @@
   </data>
   <data name="PriceChart_Favorite_Tooltip" xml:space="preserve">
     <value>Marcar/quitar favorito</value>
-  </data>
-  <data name="FavoritesWidget_Empty" xml:space="preserve">
-    <value>Aún no hay productos favoritos</value>
   </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Marketplace de Amazon</value>
@@ -166,10 +160,16 @@
     <value>Leyendo precios de {0}…</value>
   </data>
   <data name="ProductLog_ReadingStore_Progress" xml:space="preserve">
-    <value>Leyendo {0}…</value>
+    <value>Leyendo {0} — {1}…</value>
   </data>
   <data name="ProductLog_Refreshed_Progress" xml:space="preserve">
     <value>{0}: {1}/{2} precios leídos</value>
+  </data>
+  <data name="ProductLog_RefreshingAll_Progress" xml:space="preserve">
+    <value>Refrescando precios: {0} ({1}/{2})</value>
+  </data>
+  <data name="ProductLog_RefreshedAll_Progress" xml:space="preserve">
+    <value>Precios actualizados: {0} producto(s)</value>
   </data>
   <data name="AppLog_Loaded_Progress" xml:space="preserve">
     <value>Tracker iniciado</value>
@@ -191,6 +191,9 @@
   </data>
   <data name="PriceChart_Purchased_Tooltip" xml:space="preserve">
     <value>Marcar como comprado</value>
+  </data>
+  <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
+    <value>Refrescar este producto ahora</value>
   </data>
   <data name="PriceChart_DeleteDialog_Title" xml:space="preserve">
     <value>Borrar producto</value>
@@ -218,5 +221,29 @@
   </data>
   <data name="ProductLog_Removed_Progress" xml:space="preserve">
     <value>Producto borrado: {0}</value>
+  </data>
+  <data name="Common_Save_Label" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Toolbar_Templates_Tooltip" xml:space="preserve">
+    <value>Plantillas</value>
+  </data>
+  <data name="Toolbar_SaveTemplate_Tooltip" xml:space="preserve">
+    <value>Guardar la disposición actual como plantilla</value>
+  </data>
+  <data name="DialogsService_SaveTemplate_Title" xml:space="preserve">
+    <value>Guardar plantilla</value>
+  </data>
+  <data name="TemplateNameDialog_ChooseSlot_Text" xml:space="preserve">
+    <value>Elige un slot donde guardar (si está ocupado se sobrescribe):</value>
+  </data>
+  <data name="TemplateNameDialog_Name_Label" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="TemplateNameDialog_Name_Placeholder" xml:space="preserve">
+    <value>Nombre de la plantilla</value>
+  </data>
+  <data name="TemplateSlots_BuiltIn_Tooltip" xml:space="preserve">
+    <value>Plantilla de la app (solo lectura)</value>
   </data>
 </root>

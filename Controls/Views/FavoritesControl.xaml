@@ -16,10 +16,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Un FlipView con la vista de producto (con su toolbar) por cada favorito. -->
+        <!-- FlipView: página 0 = producto seleccionado, resto = favoritos. Cada página es la vista de producto. -->
         <FlipView x:Name="Flip" Grid.Row="0" ItemsSource="{x:Bind ViewModel.FavoriteViews, Mode=OneWay}"
-                  SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
-                  Visibility="{x:Bind ViewModel.HasFavorites, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
+                  SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}">
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="vm:PriceChartViewModel">
                     <uc:PriceChartControl ViewModel="{x:Bind}"/>
@@ -27,14 +26,10 @@
             </FlipView.ItemTemplate>
         </FlipView>
 
-        <!-- Selector de vista (puntitos) sincronizado con el FlipView. -->
+        <!-- Selector de vista (puntitos): solo si hay más de una página (seleccionado + algún favorito). -->
         <PipsPager Grid.Row="1" HorizontalAlignment="Center" Margin="0 4 0 8"
                    NumberOfPages="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}"
                    SelectedPageIndex="{x:Bind Flip.SelectedIndex, Mode=TwoWay}"
-                   Visibility="{x:Bind ViewModel.HasFavorites, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-
-        <TextBlock Grid.RowSpan="2" Text="{loc:Str Key=FavoritesWidget_Empty}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Foreground="{ThemeResource TextSecondaryBrush}"
-                   Visibility="{x:Bind ViewModel.HasFavorites, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
+                   Visibility="{x:Bind ViewModel.ShowPager, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
     </Grid>
 </UserControl>

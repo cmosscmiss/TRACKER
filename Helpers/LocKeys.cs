@@ -38,11 +38,9 @@ public static class LocKeys
     // MainWindow : tÃ­tulos de widgets
     public const string MainWindow_ActivityLogWidget_Title = "MainWindow_ActivityLogWidget_Title";
     public const string MainWindow_WebSearchWidget_Title = "MainWindow_WebSearchWidget_Title";
-    public const string MainWindow_PriceChartWidget_Title = "MainWindow_PriceChartWidget_Title";
     public const string MainWindow_ProductsOverviewWidget_Title = "MainWindow_ProductsOverviewWidget_Title";
     public const string MainWindow_FavoritesWidget_Title = "MainWindow_FavoritesWidget_Title";
     public const string PriceChart_Favorite_Tooltip = "PriceChart_Favorite_Tooltip";
-    public const string FavoritesWidget_Empty = "FavoritesWidget_Empty";
 
     // Common (mÃ¡s): botones de diÃ¡logo
 
@@ -119,6 +117,16 @@ public static class LocKeys
     public const string AddProduct_Url_Placeholder = "AddProduct_Url_Placeholder";
     public const string Common_Add_Label = "Common_Add_Label";
     public const string Common_Cancel_Label = "Common_Cancel_Label";
+    public const string Common_Save_Label = "Common_Save_Label";
+
+    // Templates (guardar/seleccionar)
+    public const string Toolbar_Templates_Tooltip = "Toolbar_Templates_Tooltip";
+    public const string Toolbar_SaveTemplate_Tooltip = "Toolbar_SaveTemplate_Tooltip";
+    public const string DialogsService_SaveTemplate_Title = "DialogsService_SaveTemplate_Title";
+    public const string TemplateNameDialog_ChooseSlot_Text = "TemplateNameDialog_ChooseSlot_Text";
+    public const string TemplateNameDialog_Name_Label = "TemplateNameDialog_Name_Label";
+    public const string TemplateNameDialog_Name_Placeholder = "TemplateNameDialog_Name_Placeholder";
+    public const string TemplateSlots_BuiltIn_Tooltip = "TemplateSlots_BuiltIn_Tooltip";
     public const string WebView_Country_Tooltip = "WebView_Country_Tooltip";
     public const string WebView_AddProduct_Tooltip = "WebView_AddProduct_Tooltip";
     public const string WebView_AddAltLink_Tooltip = "WebView_AddAltLink_Tooltip";
@@ -131,6 +139,8 @@ public static class LocKeys
     public const string ProductLog_Refreshing_Progress = "ProductLog_Refreshing_Progress";
     public const string ProductLog_ReadingStore_Progress = "ProductLog_ReadingStore_Progress";
     public const string ProductLog_Refreshed_Progress = "ProductLog_Refreshed_Progress";
+    public const string ProductLog_RefreshingAll_Progress = "ProductLog_RefreshingAll_Progress";
+    public const string ProductLog_RefreshedAll_Progress = "ProductLog_RefreshedAll_Progress";
     public const string AppLog_Loaded_Progress = "AppLog_Loaded_Progress";
     public const string PriceChart_Prime_Label = "PriceChart_Prime_Label";
     public const string PriceChart_NoPrime_Label = "PriceChart_NoPrime_Label";
@@ -140,6 +150,7 @@ public static class LocKeys
     // Acciones del widget de producto
     public const string PriceChart_Delete_Tooltip = "PriceChart_Delete_Tooltip";
     public const string PriceChart_Purchased_Tooltip = "PriceChart_Purchased_Tooltip";
+    public const string PriceChart_Refresh_Tooltip = "PriceChart_Refresh_Tooltip";
     public const string PriceChart_DeleteDialog_Title = "PriceChart_DeleteDialog_Title";
     public const string PriceChart_DeleteDialog_Message = "PriceChart_DeleteDialog_Message";
     public const string PriceChart_PurchasedDialog_Title = "PriceChart_PurchasedDialog_Title";

@@ -89,7 +89,37 @@ public class MainWindowViewModel : WidgetViewModelBase
         ProductsOverviewViewModel = productsOverviewViewModel;
         FavoritesViewModel = favoritesViewModel;
 
+        // Templates: volcar el estado en vivo antes de grabar y re-aplicar la config al cargar (en caliente).
+        _sharedDataService.SaveConfigRequested += OnSaveConfigRequested;
+        _sharedDataService.SettingsReloaded += OnSettingsReloaded;
+
         LoadConfig();
+    }
+    #endregion
+
+    #region Subscribed events (templates)
+    /// <summary>
+    /// Antes de GRABAR un template: vuelca a AppSettings el estado en vivo de todos los ViewModels (que normalmente
+    /// solo se persiste al cerrar la app), para que el template capture el estado ACTUAL. Igual que el shutdown
+    /// (SaveConfig en todos los IWidgetViewModelBase) más este VM (slots de widgets).
+    /// </summary>
+    private void OnSaveConfigRequested(object? sender, EventArgs e)
+    {
+        foreach (IWidgetViewModelBase vm in App.GetService<IEnumerable<IWidgetViewModelBase>>())
+            vm.SaveConfig();
+        SaveConfig();   // este VM: SaveWidgetSlots
+    }
+
+    /// <summary>
+    /// Al CARGAR un template, re-aplica en vivo la configuración recargada (el tema se excluye del template): recarga
+    /// cada ViewModel desde AppSettings (layout, config de gráficas, etc.) y re-coloca los widgets por slot.
+    /// </summary>
+    private void OnSettingsReloaded(object? sender, EventArgs e)
+    {
+        foreach (IWidgetViewModelBase vm in App.GetService<IEnumerable<IWidgetViewModelBase>>())
+            vm.LoadConfig();
+        LoadConfig();
+        RestoreWidgetSlots();   // widgets visibles por slot -> el panel se re-organiza
     }
     #endregion
 
@@ -188,6 +218,9 @@ public class MainWindowViewModel : WidgetViewModelBase
 
     public override void Dispose()
     {
+        _sharedDataService.SaveConfigRequested -= OnSaveConfigRequested;
+        _sharedDataService.SettingsReloaded -= OnSettingsReloaded;
+
         ProductListViewModel.Dispose();
         PriceChartViewModel.Dispose();
         ProductsOverviewViewModel.Dispose();

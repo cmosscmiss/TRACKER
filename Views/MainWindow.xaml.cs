@@ -15,6 +15,13 @@ public sealed partial class MainWindow : Window
     #region Constants
     private const int DefaultWindowWidth = 2800;
     private const int DefaultWindowHeight = 1400;
+
+    /// <summary>
+    /// Nº de navegadores WebView2 ocultos del pool de scraping. A más navegadores, más tiendas se leen en paralelo
+    /// (una por navegador), a costa de más memoria (cada uno es un proceso de Chromium). 4 equilibra velocidad y RAM
+    /// para los 5 marketplaces de Amazon; se puede subir/bajar aquí.
+    /// </summary>
+    private const int ScraperPoolSize = 4;
     #endregion
 
     #region Attributes
@@ -141,7 +148,6 @@ public sealed partial class MainWindow : Window
         {
             new(ucConsoleControl.ViewModel!, ucConsoleWidget),
             new(ucWebViewControl.ViewModel!, ucWebViewWidget),
-            new(ucPriceChartControl.ViewModel!, ucPriceChartWidget),
             new(ucProductsOverviewControl.ViewModel!, ucProductsOverviewWidget),
             new(ucFavoritesControl.ViewModel!, ucFavoritesWidget),
         };
@@ -173,8 +179,33 @@ public sealed partial class MainWindow : Window
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
                 "Tracker", "WebView2");
             var environment = await Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateWithOptionsAsync(null, userDataFolder, null);
+
+            ProductParsingService parsing = App.GetService<ProductParsingService>();
+
+            // Primer navegador del pool: el declarado en XAML.
             await ScraperWebView.EnsureCoreWebView2Async(environment);
-            App.GetService<ProductParsingService>().Attach(ScraperWebView);
+            parsing.Attach(ScraperWebView);
+
+            // Resto del pool: navegadores 1x1 ocultos creados por código, que COMPARTEN el mismo entorno (misma
+            // carpeta de datos de usuario), para poder leer varias tiendas en paralelo (ver ProductParsingService).
+            if (ScraperWebView.Parent is Microsoft.UI.Xaml.Controls.Panel host)
+            {
+                for (int i = 1; i < ScraperPoolSize; i++)
+                {
+                    var webView = new Microsoft.UI.Xaml.Controls.WebView2
+                    {
+                        Width = 1,
+                        Height = 1,
+                        Opacity = 0,
+                        IsHitTestVisible = false,
+                        HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Left,
+                        VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Top
+                    };
+                    host.Children.Add(webView);
+                    await webView.EnsureCoreWebView2Async(environment);
+                    parsing.Attach(webView);
+                }
+            }
 
             // El scraper ya está listo: arranca el planificador de precios (catch-up + cada 12 h) en este hilo de UI.
             App.GetService<PriceSchedulerService>().Start(DispatcherQueue);

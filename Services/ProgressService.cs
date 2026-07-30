@@ -144,6 +144,45 @@ public class ProgressService : ObservableObject
         return notifier;
     }
 
+    #region Global progress bar (footer)
+    /// <summary>Nº de operaciones que están mostrando la barra global; la barra se oculta al terminar todas.</summary>
+    private int _globalProgressOwners;
+
+    /// <summary>
+    /// Muestra la barra de progreso global del footer para una operación (add/refresco). Cuenta cuántas operaciones
+    /// la están usando para no ocultarla mientras alguna siga en curso. Debe llamarse en el hilo de UI.
+    /// </summary>
+    public void BeginGlobalProgress(string? message = null)
+    {
+        _globalProgressOwners++;
+        ProgressIsIndeterminate = false;
+        ProgressValue = 0;
+        if (message is not null)
+            ProgressMessage = message;
+        ProgressVisibility = Visibility.Visible;
+    }
+
+    /// <summary>Actualiza el valor (0..100) y, opcionalmente, el mensaje de la barra de progreso global.</summary>
+    public void ReportGlobalProgress(double percent, string? message = null)
+    {
+        ProgressValue = percent;
+        if (message is not null)
+            ProgressMessage = message;
+    }
+
+    /// <summary>Da por terminada una operación con barra global; oculta la barra cuando ya no queda ninguna.</summary>
+    public void EndGlobalProgress()
+    {
+        if (--_globalProgressOwners > 0)
+            return;
+
+        _globalProgressOwners = 0;
+        ProgressVisibility = Visibility.Collapsed;
+        ProgressValue = 0;
+        ProgressIsIndeterminate = false;
+    }
+    #endregion
+
     public ProgressNotifier StartBackgroundOperation()
     {
         var progressNotifier = new ProgressNotifier(startWatch: true)

@@ -129,6 +129,36 @@ public class PersistAndRestoreService
         }
     };
 
+    /// <summary>Serializa la configuración actual (<see cref="AppSettings"/>) a JSON indentado. Lo usa el guardado de templates.</summary>
+    public string SerializeCurrentSettings() => JsonConvert.SerializeObject(_appSettings, BuildJsonSettings(indented: true));
+
+    /// <summary>
+    /// Vuelca sobre el <see cref="AppSettings"/> vivo la configuración contenida en <paramref name="json"/> (misma
+    /// mecánica que <see cref="RestoreData"/> pero desde una cadena arbitraria). Lo usa la carga de templates. Las
+    /// secciones de <paramref name="skipSections"/> NO se aplican (p. ej. "Theme": el tema no forma parte del template).
+    /// </summary>
+    public void RestoreFromJson(string json, params string[] skipSections)
+    {
+        IDictionary? properties;
+        try
+        {
+            properties = JsonConvert.DeserializeObject<IDictionary>(json, BuildJsonSettings(indented: false));
+        }
+        catch (Exception ex)
+        {
+            ExceptionService.LogToFile(ex, "Could not parse the template settings; it was ignored.");
+            return;
+        }
+
+        if (properties is null)
+            return;
+
+        foreach (string section in skipSections)
+            properties.Remove(section);
+
+        _appSettings.BindProperties(properties, Serializer);
+    }
+
     public void PersistData()
     {
         try

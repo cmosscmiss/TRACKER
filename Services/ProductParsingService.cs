@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
@@ -31,9 +33,11 @@ public sealed class ProductParseResult
 /// navigating to the URL and running an extraction script in the real browser. Using a real Chromium browser
 /// (instead of a raw HttpClient) gets the actual rendered page and avoids most of Amazon's plain-scraper blocking.
 ///
-/// The WebView2 lives in the main window (hidden); <see cref="Attach"/> hands it to this singleton once it is
-/// initialized. All navigation is serialized through a gate, so the price scheduler and manual refreshes never
-/// drive the single browser concurrently. Callers must invoke <see cref="ParseAsync"/> on the UI thread.
+/// A POOL of hidden WebView2 instances lives in the main window; <see cref="Attach"/> hands each one to this
+/// singleton once it is initialized. <see cref="ParseAsync"/> leases a free browser from the pool, so several stores
+/// of the same product (or several products) can be parsed CONCURRENTLY (one browser per store, up to the pool size),
+/// instead of serialising every navigation through a single browser. Callers must invoke <see cref="ParseAsync"/> on
+/// the UI thread (WebView2 is UI-thread affine; the concurrency is cooperative async, not extra threads).
 /// </summary>
 public sealed class ProductParsingService
 {
@@ -100,16 +104,27 @@ public sealed class ProductParsingService
     #endregion
 
     #region Attributes
-    private readonly SemaphoreSlim _gate = new(1, 1);
-    private WebView2? _webView;
+    /// <summary>Todos los WebView2 del pool (para consultar disponibilidad). Se rellena con cada <see cref="Attach"/>.</summary>
+    private readonly List<WebView2> _all = new();
+
+    /// <summary>Navegadores libres del pool: se saca uno para parsear y se devuelve al terminar.</summary>
+    private readonly ConcurrentQueue<WebView2> _available = new();
+
+    /// <summary>Permisos = nº de navegadores del pool; acota la concurrencia de <see cref="ParseAsync"/> al tamaño del pool.</summary>
+    private readonly SemaphoreSlim _gate = new(0);
     #endregion
 
     #region Methods (public)
-    /// <summary>Registers the initialized hidden WebView2 used for scraping. Called once from the main window.</summary>
-    public void Attach(WebView2 webView) => _webView = webView;
+    /// <summary>Registra un WebView2 inicializado en el pool de scraping. La ventana principal llama una vez por instancia.</summary>
+    public void Attach(WebView2 webView)
+    {
+        _all.Add(webView);
+        _available.Enqueue(webView);
+        _gate.Release();   // un navegador más disponible
+    }
 
-    /// <summary>Whether a scraper WebView2 is attached and ready.</summary>
-    public bool IsReady => _webView?.CoreWebView2 is not null;
+    /// <summary>Whether at least one scraper WebView2 is attached and ready.</summary>
+    public bool IsReady => _all.Exists(webView => webView.CoreWebView2 is not null);
 
     /// <summary>
     /// Navigates the hidden browser to <paramref name="url"/>, waits for it to load and extracts the product
@@ -118,16 +133,26 @@ public sealed class ProductParsingService
     /// </summary>
     public async Task<ProductParseResult?> ParseAsync(string url)
     {
-        WebView2? webView = _webView;
-        if (webView?.CoreWebView2 is not CoreWebView2 core)
+        if (!IsReady)
             return null;
         if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uri) ||
             (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
             return null;
 
+        // Toma un navegador libre del pool (espera si todos están ocupados). La concurrencia efectiva la limita el
+        // nº de permisos del semáforo (= tamaño del pool), no un hilo por tienda.
         await _gate.WaitAsync();
+        if (!_available.TryDequeue(out WebView2? webView))
+        {
+            _gate.Release();
+            return null;
+        }
+
         try
         {
+            if (webView.CoreWebView2 is not CoreWebView2 core)
+                return null;
+
             var navigation = new TaskCompletionSource<bool>();
             TypedEventHandler<CoreWebView2, CoreWebView2NavigationCompletedEventArgs> onCompleted = null!;
             onCompleted = (_, args) =>
@@ -158,6 +183,7 @@ public sealed class ProductParsingService
         }
         finally
         {
+            _available.Enqueue(webView);   // devuelve el navegador al pool
             _gate.Release();
         }
     }

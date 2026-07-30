@@ -83,9 +83,6 @@
                                 <uc:WidgetBaseControl x:Name="ucWebViewWidget" TitlePrefix="{loc:Str Key=MainWindow_WebSearchWidget_Title}" Title="{Binding WebViewViewModel.CurrentUrl}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:WebViewControl x:Name="ucWebViewControl" ViewModel="{Binding WebViewViewModel}"></uc:WebViewControl>
                                 </uc:WidgetBaseControl>
-                                <uc:WidgetBaseControl x:Name="ucPriceChartWidget" Title="{loc:Str Key=MainWindow_PriceChartWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
-                                    <uc:PriceChartControl x:Name="ucPriceChartControl" ViewModel="{Binding PriceChartViewModel}"></uc:PriceChartControl>
-                                </uc:WidgetBaseControl>
                                 <uc:WidgetBaseControl x:Name="ucProductsOverviewWidget" Title="{loc:Str Key=MainWindow_ProductsOverviewWidget_Title}" WidgetCornerRadius="{Binding LayoutSelectorViewModel.WidgetCornerRadius, Mode=OneWay}">
                                     <uc:ProductsOverviewControl x:Name="ucProductsOverviewControl" ViewModel="{Binding ProductsOverviewViewModel}"></uc:ProductsOverviewControl>
                                 </uc:WidgetBaseControl>
