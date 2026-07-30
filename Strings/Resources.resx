@@ -251,4 +251,115 @@
   <data name="TemplateSlots_BuiltIn_Tooltip" xml:space="preserve">
     <value>Built-in template (read-only)</value>
   </data>
+  <data name="Common_OK_Label" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_Apply_Label" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Common_AppName" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="Toolbar_Settings_Tooltip" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="DialogsService_Settings_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="DialogsSettingsControl_Placeholder_Text" xml:space="preserve">
+    <value>Select a category.</value>
+  </data>
+  <data name="SettingsDialog_General_Title" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsDialog_Theme_Title" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsDialog_About_Title" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsDialog_ToolbarGroupsSeparate_Label" xml:space="preserve">
+    <value>Separate buttons</value>
+  </data>
+  <data name="SettingsDialog_ToolbarGroupsGrouped_Label" xml:space="preserve">
+    <value>Grouped</value>
+  </data>
+  <data name="SettingsDialog_ToolbarGroupsAuto_Label" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="GeneralSettings_Language_Label" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="GeneralSettings_ToolbarGroups_Label" xml:space="preserve">
+    <value>Toolbar button groups</value>
+  </data>
+  <data name="GeneralSettings_ShowWidgetHeader_Label" xml:space="preserve">
+    <value>Show widget headers</value>
+  </data>
+  <data name="GeneralSettings_FooterEventViewer_Label" xml:space="preserve">
+    <value>Always show the footer event viewer</value>
+  </data>
+  <data name="GeneralSettings_LogExceptions_Label" xml:space="preserve">
+    <value>Log exceptions to a file</value>
+  </data>
+  <data name="ThemeSettings_Theme_Label" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="ThemeSettings_RandomTheme_Label" xml:space="preserve">
+    <value>Pick a random theme on each launch</value>
+  </data>
+  <data name="ThemeSettings_BackgroundOverlay_Header" xml:space="preserve">
+    <value>BACKGROUND OVERLAY (MAIN WINDOW)</value>
+  </data>
+  <data name="ThemeSettings_TintOpacity_Label" xml:space="preserve">
+    <value>Tint opacity</value>
+  </data>
+  <data name="ThemeSettings_TintSaturation_Label" xml:space="preserve">
+    <value>Tint saturation</value>
+  </data>
+  <data name="ThemeSettings_TintBrightness_Label" xml:space="preserve">
+    <value>Tint brightness</value>
+  </data>
+  <data name="ThemeSettings_OverlayBlur_Label" xml:space="preserve">
+    <value>Overlay blur</value>
+  </data>
+  <data name="ThemeSettings_OverlayOpacity_Label" xml:space="preserve">
+    <value>Overlay opacity</value>
+  </data>
+  <data name="ThemeSettings_LoadingBackground_Header" xml:space="preserve">
+    <value>LOADING WINDOW BACKGROUND</value>
+  </data>
+  <data name="ThemeSettings_TintBackground_Label" xml:space="preserve">
+    <value>Tint the background</value>
+  </data>
+  <data name="ThemeSettings_NeonFrame_Label" xml:space="preserve">
+    <value>Neon frame</value>
+  </data>
+  <data name="AboutSettings_Tagline_Text" xml:space="preserve">
+    <value>Amazon price tracker</value>
+  </data>
+  <data name="AboutSettings_Description_Text" xml:space="preserve">
+    <value>Tracker monitors the prices of your Amazon products across marketplaces, charts their history and highlights the best deals.</value>
+  </data>
+  <data name="AboutSettings_Details_Header" xml:space="preserve">
+    <value>DETAILS</value>
+  </data>
+  <data name="AboutSettings_Build_Label" xml:space="preserve">
+    <value>Build</value>
+  </data>
+  <data name="AboutSettings_Runtime_Label" xml:space="preserve">
+    <value>Runtime</value>
+  </data>
+  <data name="AboutSettings_Architecture_Label" xml:space="preserve">
+    <value>Architecture</value>
+  </data>
+  <data name="AboutSettings_ThirdParty_Header" xml:space="preserve">
+    <value>THIRD-PARTY COMPONENTS</value>
+  </data>
+  <data name="AboutSettings_AccentNote_Text" xml:space="preserve">
+    <value>The accent color comes from the active theme.</value>
+  </data>
+  <data name="AboutSettings_Copyright_Text" xml:space="preserve">
+    <value>Built with WinUI 3 and the Windows App SDK.</value>
+  </data>
 </root>

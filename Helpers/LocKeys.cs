@@ -118,6 +118,45 @@ public static class LocKeys
     public const string Common_Add_Label = "Common_Add_Label";
     public const string Common_Cancel_Label = "Common_Cancel_Label";
     public const string Common_Save_Label = "Common_Save_Label";
+    public const string Common_OK_Label = "Common_OK_Label";
+    public const string Common_Apply_Label = "Common_Apply_Label";
+    public const string Common_AppName = "Common_AppName";
+
+    // Settings (ventana de configuración: General / Theme / About)
+    public const string Toolbar_Settings_Tooltip = "Toolbar_Settings_Tooltip";
+    public const string DialogsService_Settings_Title = "DialogsService_Settings_Title";
+    public const string DialogsSettingsControl_Placeholder_Text = "DialogsSettingsControl_Placeholder_Text";
+    public const string SettingsDialog_General_Title = "SettingsDialog_General_Title";
+    public const string SettingsDialog_Theme_Title = "SettingsDialog_Theme_Title";
+    public const string SettingsDialog_About_Title = "SettingsDialog_About_Title";
+    public const string SettingsDialog_ToolbarGroupsSeparate_Label = "SettingsDialog_ToolbarGroupsSeparate_Label";
+    public const string SettingsDialog_ToolbarGroupsGrouped_Label = "SettingsDialog_ToolbarGroupsGrouped_Label";
+    public const string SettingsDialog_ToolbarGroupsAuto_Label = "SettingsDialog_ToolbarGroupsAuto_Label";
+    public const string GeneralSettings_Language_Label = "GeneralSettings_Language_Label";
+    public const string GeneralSettings_ToolbarGroups_Label = "GeneralSettings_ToolbarGroups_Label";
+    public const string GeneralSettings_ShowWidgetHeader_Label = "GeneralSettings_ShowWidgetHeader_Label";
+    public const string GeneralSettings_FooterEventViewer_Label = "GeneralSettings_FooterEventViewer_Label";
+    public const string GeneralSettings_LogExceptions_Label = "GeneralSettings_LogExceptions_Label";
+    public const string ThemeSettings_Theme_Label = "ThemeSettings_Theme_Label";
+    public const string ThemeSettings_RandomTheme_Label = "ThemeSettings_RandomTheme_Label";
+    public const string ThemeSettings_BackgroundOverlay_Header = "ThemeSettings_BackgroundOverlay_Header";
+    public const string ThemeSettings_TintOpacity_Label = "ThemeSettings_TintOpacity_Label";
+    public const string ThemeSettings_TintSaturation_Label = "ThemeSettings_TintSaturation_Label";
+    public const string ThemeSettings_TintBrightness_Label = "ThemeSettings_TintBrightness_Label";
+    public const string ThemeSettings_OverlayBlur_Label = "ThemeSettings_OverlayBlur_Label";
+    public const string ThemeSettings_OverlayOpacity_Label = "ThemeSettings_OverlayOpacity_Label";
+    public const string ThemeSettings_LoadingBackground_Header = "ThemeSettings_LoadingBackground_Header";
+    public const string ThemeSettings_TintBackground_Label = "ThemeSettings_TintBackground_Label";
+    public const string ThemeSettings_NeonFrame_Label = "ThemeSettings_NeonFrame_Label";
+    public const string AboutSettings_Tagline_Text = "AboutSettings_Tagline_Text";
+    public const string AboutSettings_Description_Text = "AboutSettings_Description_Text";
+    public const string AboutSettings_Details_Header = "AboutSettings_Details_Header";
+    public const string AboutSettings_Build_Label = "AboutSettings_Build_Label";
+    public const string AboutSettings_Runtime_Label = "AboutSettings_Runtime_Label";
+    public const string AboutSettings_Architecture_Label = "AboutSettings_Architecture_Label";
+    public const string AboutSettings_ThirdParty_Header = "AboutSettings_ThirdParty_Header";
+    public const string AboutSettings_AccentNote_Text = "AboutSettings_AccentNote_Text";
+    public const string AboutSettings_Copyright_Text = "AboutSettings_Copyright_Text";
 
     // Templates (guardar/seleccionar)
     public const string Toolbar_Templates_Tooltip = "Toolbar_Templates_Tooltip";

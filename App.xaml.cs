@@ -99,6 +99,9 @@ public partial class App : Application
             // ViewModels (Windows)
             services.AddSingleton<MainWindowViewModel>();
 
+            // Ventana de configuración (staging): transient para releer AppSettings en cada apertura.
+            services.AddTransient<SettingsDialogViewModel>();
+
             // ViewModels (Controls)
             services.AddSingleton<ProductListViewModel>();
             services.AddSingleton<IWidgetViewModelBase>(sp => sp.GetRequiredService<ProductListViewModel>());

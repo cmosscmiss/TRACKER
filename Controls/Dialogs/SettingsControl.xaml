@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Dialogs.SettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:MM4LB.Controls.Views"
+    xmlns:helpers="using:MM4LB.Helpers"
+    xmlns:loc="using:MM4LB.Markup"
+    mc:Ignorable="d">
+
+    <!-- El diálogo se muestra en un Popup; los converters globales de App.xaml no siempre se alcanzan desde ahí, así
+         que se declara localmente el que usa este contenido. -->
+    <UserControl.Resources>
+        <helpers:BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter"/>
+    </UserControl.Resources>
+
+    <!-- Contenido de la ventana de configuración (dentro del AppDialog, que aporta cabecera con logo y botones
+         OK/Apply/Cancel). 2 columnas: categorías (izq) + opciones de la categoría (der). -->
+    <Grid Width="806" Height="460" ColumnDefinitions="190, *">
+
+        <!-- Columna izquierda: lista de categorías. -->
+        <Border Grid.Column="0" CornerRadius="4" Background="{ThemeResource CardBackgroundBrush}">
+            <ListView ItemsSource="{Binding Sections}"
+                      SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
+                      Background="Transparent" SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" FontSize="15" Foreground="{ThemeResource TextBrush}" Padding="4 2"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+
+        <!-- Columna derecha: cabecera de la categoría + página de opciones. -->
+        <Border Grid.Column="1" CornerRadius="4" Margin="8 0 0 0" Background="{ThemeResource CardBackgroundBrush}">
+            <Grid RowDefinitions="Auto, *">
+                <Border Grid.Row="0" Background="{ThemeResource BackgroundLightBrush}" CornerRadius="4 4 0 0" Padding="12 8">
+                    <TextBlock Text="{Binding SelectedSection.Title}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{ThemeResource AccentLightBrush}"/>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" Padding="16" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <uc:GeneralSettingsControl Visibility="{Binding IsGeneral, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                        <uc:ThemeSettingsControl Visibility="{Binding IsTheme, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                        <uc:AboutSettingsControl Visibility="{Binding IsAbout, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                        <TextBlock Text="{loc:Str Key=DialogsSettingsControl_Placeholder_Text}" Foreground="{ThemeResource TextSecondaryBrush}" TextWrapping="Wrap"
+                                   Visibility="{Binding IsPlaceholder, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -33,6 +33,7 @@
                         <StackPanel Orientation="Horizontal" Spacing="16">
                             <template:ToolbarButtonIcon x:Name="SplittersToggle" CheckedIconName="Icon-resize" UncheckedIconName="Icon-resize-off" Style="{StaticResource ToolbarButtonIconStyle}"/>
                             <template:ToolbarButtonIcon x:Name="TemplateSaveButton" IconName="Icon-save-template" ToolTipService.ToolTip="{loc:Str Key=Toolbar_SaveTemplate_Tooltip}" Style="{StaticResource ToolbarButtonIconStyle}"/>
+                            <template:ToolbarButtonIcon x:Name="SettingsButton" IconName="Icon-settings" ToolTipService.ToolTip="{loc:Str Key=Toolbar_Settings_Tooltip}" Style="{StaticResource ToolbarButtonIconStyle}"/>
                         </StackPanel>
                     </StackPanel>
 

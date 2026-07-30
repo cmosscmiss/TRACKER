@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="MM4LB.Controls.Views.GeneralSettingsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:template="using:MM4LB.Controls.Templates"
+    xmlns:loc="using:MM4LB.Markup"
+    mc:Ignorable="d">
+
+    <!-- Página de la categoría General. Los controles editan el staging del SettingsDialogViewModel (DataContext
+         heredado); OK/Apply los aplica a AppSettings, Cancel los descarta. -->
+    <StackPanel Spacing="14">
+
+        <!-- Idioma de la interfaz. Cambia EN CALIENTE al aceptar un idioma distinto. -->
+        <Grid ColumnDefinitions="240,*">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_Language_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <ComboBox x:Name="LanguageCombo" Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
+                      ItemsSource="{Binding LanguageOptions}"
+                      DisplayMemberPath="DisplayName"
+                      SelectionChanged="OnLanguageSelectionChanged"/>
+        </Grid>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
+        <!-- Grupos de botones de las toolbars. -->
+        <Grid ColumnDefinitions="240,*">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_ToolbarGroups_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <ComboBox x:Name="ToolbarGroupsCombo" Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
+                      ItemsSource="{Binding ToolbarGroupsModeOptions}"
+                      DisplayMemberPath="Label"
+                      SelectionChanged="OnToolbarGroupsSelectionChanged"/>
+        </Grid>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
+        <!-- Interruptores. -->
+        <CheckBox Content="{loc:Str Key=GeneralSettings_ShowWidgetHeader_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ShowWidgetHeader, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=GeneralSettings_FooterEventViewer_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding FooterEventViewerAlwaysVisible, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=GeneralSettings_LogExceptions_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ExceptionLoggingEnabled, Mode=TwoWay}"/>
+
+    </StackPanel>
+</UserControl>

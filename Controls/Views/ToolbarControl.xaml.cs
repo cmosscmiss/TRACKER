@@ -71,6 +71,9 @@ public sealed partial class ToolbarControl : UserControl
         // Grabar template: captura pantallazo + elige slot + nombre + guarda. Vive en el grupo derecho.
         TemplateSaveButton.Clicked += (_, __) => SaveTemplate();
 
+        // Ventana de configuración (General / Theme / About), como diálogo sobre el overlay de la app.
+        SettingsButton.Clicked += (_, __) => OpenSettings();
+
         // Al activar un template en el selector (app o usuario), se carga por su ruta. El panel se deja abierto para
         // poder probar varios templates seguidos sin reabrirlo.
         ucTemplateSlots.TemplateActivated += (_, jsonPath) =>
@@ -476,6 +479,19 @@ public sealed partial class ToolbarControl : UserControl
         // 3) Guardar en el slot (sobreescribe json + jpg) y refrescar el selector.
         await App.GetService<TemplateService>().SaveToSlotAsync(choice.Value.Slot, choice.Value.Name, screenshot);
         await ucTemplateSlots.RefreshAsync();
+    }
+
+    #endregion
+
+    #region Methods (private) - Settings
+
+    /// <summary>Abre la ventana de configuración (General / Theme / About) como diálogo (AppDialog) sobre el overlay.</summary>
+    private async void OpenSettings()
+    {
+        if (XamlRoot is null)
+            return;
+
+        await App.GetService<DialogsService>().ShowSettingsAsync(XamlRoot);
     }
 
     #endregion

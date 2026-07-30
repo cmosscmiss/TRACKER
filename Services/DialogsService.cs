@@ -60,6 +60,23 @@ public class DialogsService
         return result == AppDialogResult.Primary ? (content.SelectedSlot, content.TemplateName) : null;
     }
 
+    /// <summary>
+    /// Muestra la ventana de configuración de la app (secciones General / Theme / About) en un <see cref="AppDialog"/>.
+    /// "Apply" aplica en caliente sin cerrar; "OK" aplica y cierra; "Cancel" cierra sin aplicar.
+    /// </summary>
+    public async Task ShowSettingsAsync(XamlRoot xamlRoot)
+    {
+        SettingsControl content = new();
+        AppDialog dialog = new();
+        AppDialogResult result = await dialog.ShowAsync(
+            xamlRoot, L(LocKeys.DialogsService_Settings_Title), content,
+            L(LocKeys.Common_OK_Label), null, L(LocKeys.Common_Cancel_Label),
+            applyText: L(LocKeys.Common_Apply_Label), onApply: content.Apply);
+
+        if (result == AppDialogResult.Primary)
+            content.Apply();
+    }
+
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
     private static string L(string key) => LocalizationService.Instance?[key] ?? key;
 
