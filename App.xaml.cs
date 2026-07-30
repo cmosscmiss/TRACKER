@@ -262,8 +262,7 @@ public partial class App : Application
         var exceptionDialogService = Host.Services.GetRequiredService<ExceptionDialogService>();
         var themeService = Host.Services.GetRequiredService<ThemeService>();
 
-        // Await host start before creating or showing any UI. The loading window will be
-        // created only after the host has finished starting.
+        // Await host start before creating or showing any UI.
         try
         {
             await Host.StartAsync();

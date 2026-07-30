@@ -79,14 +79,5 @@
             <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
                        Text="{Binding OverlayImageOpacity}"/>
         </Grid>
-
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
-        <!-- Fondo de la ventana de carga (loading window). -->
-        <TextBlock Text="{loc:Str Key=ThemeSettings_LoadingBackground_Header}" Foreground="{ThemeResource TextSecondaryBrush}"/>
-        <CheckBox Content="{loc:Str Key=ThemeSettings_TintBackground_Label}" Foreground="{ThemeResource TextBrush}"
-                  IsChecked="{Binding BackgroundImageTinted, Mode=TwoWay}"/>
-        <CheckBox Content="{loc:Str Key=ThemeSettings_NeonFrame_Label}" Foreground="{ThemeResource TextBrush}"
-                  IsChecked="{Binding BackgroundImageFramed, Mode=TwoWay}"/>
     </StackPanel>
 </UserControl>

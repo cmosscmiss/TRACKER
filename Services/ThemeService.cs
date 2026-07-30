@@ -56,8 +56,6 @@ public class ThemeService : ObservableObject
     public Uri? BackgroundImageUri => string.IsNullOrWhiteSpace(_currentTheme.BackgroundImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.BackgroundImage}");
     public Uri? LogoImageUri => string.IsNullOrWhiteSpace(_currentTheme.LogoImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.LogoImage}");
     public Uri? OverlayImageUri => string.IsNullOrWhiteSpace(_currentTheme.OverlayImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.OverlayImage}");
-    public bool BackgroundImageTinted => _appSettings.Theme.BackgroundImageTinted;
-    public bool BackgroundImageFramed => _appSettings.Theme.BackgroundImageFramed;
     public double TintOpacity => _appSettings.Theme.TintOpacity;
     public double TintSaturation => _appSettings.Theme.TintSaturation;
     public double TintBrightness => _appSettings.Theme.TintBrightness;
@@ -348,8 +346,6 @@ public class ThemeService : ObservableObject
         dict["BackgroundImage"] = BackgroundImageUri;
         dict["LogoImage"] = LogoImageUri;
         dict["OverlayImageUri"] = OverlayImageUri;
-
-        dict["BackgroundImageTinted"] = _appSettings.Theme.BackgroundImageTinted;
 
         dict["TintOpacity"] = TintOpacity;
         dict["TintSaturation"] = TintSaturation;

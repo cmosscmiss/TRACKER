@@ -145,9 +145,6 @@ public static class LocKeys
     public const string ThemeSettings_TintBrightness_Label = "ThemeSettings_TintBrightness_Label";
     public const string ThemeSettings_OverlayBlur_Label = "ThemeSettings_OverlayBlur_Label";
     public const string ThemeSettings_OverlayOpacity_Label = "ThemeSettings_OverlayOpacity_Label";
-    public const string ThemeSettings_LoadingBackground_Header = "ThemeSettings_LoadingBackground_Header";
-    public const string ThemeSettings_TintBackground_Label = "ThemeSettings_TintBackground_Label";
-    public const string ThemeSettings_NeonFrame_Label = "ThemeSettings_NeonFrame_Label";
     public const string AboutSettings_Tagline_Text = "AboutSettings_Tagline_Text";
     public const string AboutSettings_Description_Text = "AboutSettings_Description_Text";
     public const string AboutSettings_Details_Header = "AboutSettings_Details_Header";

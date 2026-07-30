@@ -286,8 +286,6 @@ public class AppSettings
     public class ThemeSettings
     {
         public string Name { get; set; } = "Cyber City";
-        public bool BackgroundImageFramed { get; set; } = false;
-        public bool BackgroundImageTinted { get; set; } = true;
         public int OverlayImageBlur { get; set; } = 10;
         public double OverlayImageOpacity { get; set; } = 0.35;
         public bool RandomTheme { get; set; } = false;

@@ -398,15 +398,6 @@
   <data name="ThemeSettings_OverlayOpacity_Label" xml:space="preserve">
     <value>Overlay opacity</value>
   </data>
-  <data name="ThemeSettings_LoadingBackground_Header" xml:space="preserve">
-    <value>LOADING WINDOW BACKGROUND</value>
-  </data>
-  <data name="ThemeSettings_TintBackground_Label" xml:space="preserve">
-    <value>Tint the background</value>
-  </data>
-  <data name="ThemeSettings_NeonFrame_Label" xml:space="preserve">
-    <value>Neon frame</value>
-  </data>
   <data name="AboutSettings_Tagline_Text" xml:space="preserve">
     <value>Amazon price tracker</value>
   </data>

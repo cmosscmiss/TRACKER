@@ -96,8 +96,6 @@ public partial class SettingsDialogViewModel : ObservableObject
     [ObservableProperty] private string? selectedThemeName;
 
     [ObservableProperty] private bool randomTheme;
-    [ObservableProperty] private bool backgroundImageTinted;
-    [ObservableProperty] private bool backgroundImageFramed;
     [ObservableProperty] private double tintOpacity;
     [ObservableProperty] private double tintSaturation;
     [ObservableProperty] private double tintBrightness;
@@ -262,13 +260,11 @@ public partial class SettingsDialogViewModel : ObservableObject
             _sharedDataService.NotifyWidgetHeaderVisibilityChanged();
 
         // Tema: nombre (comparado con el tema REALMENTE activo, no con Theme.Name, que con RandomTheme puede diferir)
-        // y el resto de parámetros (tinte del overlay, aleatorio, fondo de la ventana de carga).
+        // y el resto de parámetros (tinte del overlay, aleatorio).
         AppSettings.ThemeSettings t = _appSettings.Theme;
         bool themeNameChanged = !string.IsNullOrEmpty(SelectedThemeName) && SelectedThemeName != _themeService.CurrentThemeName;
         bool themeParamsChanged =
             t.RandomTheme != RandomTheme ||
-            t.BackgroundImageTinted != BackgroundImageTinted ||
-            t.BackgroundImageFramed != BackgroundImageFramed ||
             t.TintOpacity != TintOpacity ||
             t.TintSaturation != TintSaturation ||
             t.TintBrightness != TintBrightness ||
@@ -278,8 +274,6 @@ public partial class SettingsDialogViewModel : ObservableObject
         if (themeNameChanged)
             t.Name = SelectedThemeName!;
         t.RandomTheme = RandomTheme;
-        t.BackgroundImageTinted = BackgroundImageTinted;
-        t.BackgroundImageFramed = BackgroundImageFramed;
         t.TintOpacity = TintOpacity;
         t.TintSaturation = TintSaturation;
         t.TintBrightness = TintBrightness;
@@ -307,8 +301,6 @@ public partial class SettingsDialogViewModel : ObservableObject
 
         AppSettings.ThemeSettings t = _appSettings.Theme;
         RandomTheme = t.RandomTheme;
-        BackgroundImageTinted = t.BackgroundImageTinted;
-        BackgroundImageFramed = t.BackgroundImageFramed;
         TintOpacity = t.TintOpacity;
         TintSaturation = t.TintSaturation;
         TintBrightness = t.TintBrightness;
