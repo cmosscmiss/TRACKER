@@ -123,8 +123,13 @@ public sealed partial class ProductListControl : UserControl
         if (ViewModel is null || sender is not FrameworkElement item || item.Tag is not string tag)
             return;
 
-        ViewModel.SortDescending = tag == "desc";
+        bool descending = tag == "desc";
+        ViewModel.SortDescending = descending;
         ViewModel.SortByPrice = true;
+
+        // Exclusividad manual (los ToggleMenuFlyoutItem alternan su propio check): deja marcada solo la dirección activa.
+        SortAscItem.IsChecked = !descending;
+        SortDescItem.IsChecked = descending;
     }
     #endregion
 

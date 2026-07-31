@@ -100,9 +100,11 @@
                     <SymbolIcon Symbol="Sort"/>
                     <ToggleSplitButton.Flyout>
                         <MenuFlyout>
-                            <RadioMenuFlyoutItem x:Name="SortAscItem" GroupName="ProductSort" Tag="asc" IsChecked="True"
+                            <!-- ToggleMenuFlyoutItem (como el filtro) para que el check de la opción activa coincida y
+                                 quede alineado con el del desplegable de filtrar. La exclusividad se gestiona en código. -->
+                            <ToggleMenuFlyoutItem x:Name="SortAscItem" Tag="asc" IsChecked="True"
                                 Text="{loc:Str Key=ProductList_SortPriceAsc_Label}" Click="OnSortDirectionClick"/>
-                            <RadioMenuFlyoutItem x:Name="SortDescItem" GroupName="ProductSort" Tag="desc"
+                            <ToggleMenuFlyoutItem x:Name="SortDescItem" Tag="desc"
                                 Text="{loc:Str Key=ProductList_SortPriceDesc_Label}" Click="OnSortDirectionClick"/>
                         </MenuFlyout>
                     </ToggleSplitButton.Flyout>

@@ -200,6 +200,9 @@
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Show/hide chart axis labels (update dates)</value>
   </data>
+  <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
+    <value>Time until the next automatic price update</value>
+  </data>
   <data name="PriceChart_Delete_Tooltip" xml:space="preserve">
     <value>Delete product</value>
   </data>

@@ -195,6 +195,9 @@
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Mostrar/ocultar etiquetas del eje (fechas de actualización)</value>
   </data>
+  <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
+    <value>Tiempo hasta la siguiente actualización automática de precios</value>
+  </data>
   <data name="PriceChart_Delete_Tooltip" xml:space="preserve">
     <value>Borrar producto</value>
   </data>

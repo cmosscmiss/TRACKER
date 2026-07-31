@@ -115,8 +115,13 @@
                              animación de transición. ViewModel se pasa por Binding (DataContext del root = MainWindowViewModel). -->
                         <uc:FooterEventViewerControl Grid.Column="0" ViewModel="{Binding ConsoleViewModel}" Visibility="{Binding ConsoleViewModel.IsFooterViewerVisible, Converter={StaticResource VisibleIfTrueConverter}}"/>
 
-                        <!-- Barra de herramientas del footer (a la derecha): leyenda del eje, login, refrescar, añadir. -->
+                        <!-- Barra de herramientas del footer (a la derecha): tiempo hasta la próxima actualización
+                             automática (justo antes de la toolbar), leyenda del eje, login, refrescar, añadir. -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
+                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+                            <uc:SplitFlapClock x:Name="NextUpdateClock" VerticalAlignment="Center" Margin="8 0"
+                                               ToolTipService.ToolTip="{loc:Str Key=Footer_NextUpdate_Tooltip}"/>
+                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
                             <ToggleButton x:Name="AxisLabelsToggle" Style="{StaticResource ToggleButton_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
                                           IsChecked="{Binding SharedDataService.ShowChartAxisLabels, Mode=TwoWay}"
                                           ToolTipService.ToolTip="{loc:Str Key=Footer_AxisLabels_Tooltip}">

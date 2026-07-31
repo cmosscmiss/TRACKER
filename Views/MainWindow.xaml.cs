@@ -1,6 +1,8 @@
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using MM4LB.Controls.Templates;
 using MM4LB.Controls.Views;
+using MM4LB.Helpers;
 using MM4LB.Services;
 using MM4LB.ViewModels;
 using System;
@@ -30,6 +32,8 @@ public sealed partial class MainWindow : Window
     private readonly ThemeService _themeService;
     private readonly AmazonAuthService _amazonAuth;
     private readonly TrayIcon _trayIcon = new();
+
+    private DispatcherQueueTimer? _nextUpdateTimer;
 
     private bool _initialized;
     private bool _amazonStartupPromptDone;
@@ -228,11 +232,41 @@ public sealed partial class MainWindow : Window
 
             // El scraper ya está listo: arranca el planificador de precios (catch-up + cada 12 h) en este hilo de UI.
             App.GetService<PriceSchedulerService>().Start(DispatcherQueue);
+
+            // Cuenta atrás del footer hacia la siguiente pasada automática.
+            StartNextUpdateCountdown();
         }
         catch (System.Exception ex)
         {
             App.GetService<ExceptionService>().Handle(ex, "The price scraper browser could not be initialized.");
         }
+    }
+
+    /// <summary>Arranca la cuenta atrás (cada segundo) que refresca el mensaje del footer con el tiempo hasta la próxima pasada automática.</summary>
+    private void StartNextUpdateCountdown()
+    {
+        if (_nextUpdateTimer is not null)
+            return;
+
+        _nextUpdateTimer = DispatcherQueue.CreateTimer();
+        _nextUpdateTimer.Interval = TimeSpan.FromSeconds(1);
+        _nextUpdateTimer.Tick += (_, _) => UpdateNextUpdateText();
+        _nextUpdateTimer.Start();
+        UpdateNextUpdateText();
+    }
+
+    /// <summary>Actualiza el reloj split-flap del footer con el tiempo que falta para la siguiente actualización automática.</summary>
+    private void UpdateNextUpdateText()
+    {
+        if (App.GetService<PriceSchedulerService>().NextRunUtc is not DateTime nextUtc)
+        {
+            NextUpdateClock.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        NextUpdateClock.Visibility = Visibility.Visible;
+        TimeSpan remaining = nextUtc - DateTime.UtcNow;
+        NextUpdateClock.Value = remaining < TimeSpan.Zero ? TimeSpan.Zero : remaining;
     }
 
     private void OnClosed(object sender, WindowEventArgs e)
@@ -244,6 +278,8 @@ public sealed partial class MainWindow : Window
 
         Activated -= OnWindowActivated;
         Closed -= OnClosed;
+
+        _nextUpdateTimer?.Stop();
 
         DisposeToolbarBehavior();
         _trayIcon.Dispose();

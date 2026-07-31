@@ -205,6 +205,7 @@ public static class LocKeys
     public const string PriceChart_Promo_Label = "PriceChart_Promo_Label";
     public const string Footer_RefreshAll_Tooltip = "Footer_RefreshAll_Tooltip";
     public const string Footer_AxisLabels_Tooltip = "Footer_AxisLabels_Tooltip";
+    public const string Footer_NextUpdate_Tooltip = "Footer_NextUpdate_Tooltip";
 
     // Acciones del widget de producto
     public const string PriceChart_Delete_Tooltip = "PriceChart_Delete_Tooltip";

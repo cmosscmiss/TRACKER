@@ -33,6 +33,14 @@ public sealed class PriceSchedulerService
     private bool _running;
     #endregion
 
+    #region Properties
+    /// <summary>
+    /// Momento (UTC) en que está programada la PRÓXIMA pasada periódica automática, o null si el planificador aún no ha
+    /// arrancado. Sirve para mostrar en el footer el tiempo que queda hasta la siguiente actualización de precios.
+    /// </summary>
+    public DateTime? NextRunUtc { get; private set; }
+    #endregion
+
     #region Constructor
     public PriceSchedulerService(SharedDataService sharedDataService, ProductService productService, ProgressService progressService)
     {
@@ -57,7 +65,13 @@ public sealed class PriceSchedulerService
 
         _timer = uiDispatcher.CreateTimer();
         _timer.Interval = Interval;
-        _timer.Tick += (_, _) => _ = RunAsync(dueOnly: false);
+        _timer.Tick += (_, _) =>
+        {
+            // Al disparar, la siguiente pasada queda a un intervalo vista (para la cuenta atrás del footer).
+            NextRunUtc = DateTime.UtcNow + Interval;
+            _ = RunAsync(dueOnly: false);
+        };
+        NextRunUtc = DateTime.UtcNow + Interval;
         _timer.Start();
     }
 
