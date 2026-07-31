@@ -252,6 +252,15 @@
   <data name="ProductList_Count_Format" xml:space="preserve">
     <value>Mostrando {0} de {1} productos</value>
   </data>
+  <data name="ProductList_Sort_Tooltip" xml:space="preserve">
+    <value>Ordenar</value>
+  </data>
+  <data name="ProductList_SortPriceAsc_Label" xml:space="preserve">
+    <value>Precio: de menor a mayor</value>
+  </data>
+  <data name="ProductList_SortPriceDesc_Label" xml:space="preserve">
+    <value>Precio: de mayor a menor</value>
+  </data>
   <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
     <value>Definir precio de alerta</value>
   </data>

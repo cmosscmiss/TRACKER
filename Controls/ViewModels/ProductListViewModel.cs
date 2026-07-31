@@ -26,13 +26,15 @@ public partial class ProductListViewModel : WidgetViewModelBase
     #region Attributes
     private string _filterBy = string.Empty;
     private bool _filtersEnabled;
+    private bool _sortByPrice;
+    private bool _sortDescending;
     private RelayCommand? _filtersChangedCommand;
 
-    /// <summary>Propiedades de un producto que, al cambiar, pueden alterar si pasa o no los filtros.</summary>
+    /// <summary>Propiedades de un producto que, al cambiar, pueden alterar si pasa los filtros o el orden por precio.</summary>
     private static readonly HashSet<string> FilterAffectingProperties = new()
     {
         nameof(Product.Name), nameof(Product.IsFavorite), nameof(Product.HasIssues),
-        nameof(Product.Trend), nameof(Product.HasAlert),
+        nameof(Product.Trend), nameof(Product.HasAlert), nameof(Product.BestPrice),
     };
     #endregion
 
@@ -59,6 +61,24 @@ public partial class ProductListViewModel : WidgetViewModelBase
 
     /// <summary>Comando que dispara cada toggle de variable: sincroniza el interruptor maestro y refiltra.</summary>
     public RelayCommand FiltersChangedCommand => _filtersChangedCommand ??= new RelayCommand(OnFiltersChanged);
+
+    /// <summary>
+    /// Interruptor maestro del orden (la cara del <c>ToggleSplitButton</c>, igual que el filtro): si está activo la
+    /// lista se ordena por el mejor precio (según <see cref="SortDescending"/>); si no, se mantiene el orden alfabético
+    /// de la fuente. Al cambiar, reordena en el acto.
+    /// </summary>
+    public bool SortByPrice
+    {
+        get => _sortByPrice;
+        set { if (SetProperty(ref _sortByPrice, value)) ApplyFilters(); }
+    }
+
+    /// <summary>Dirección del orden por precio: false = ascendente (por defecto), true = descendente. Al cambiar, reordena.</summary>
+    public bool SortDescending
+    {
+        get => _sortDescending;
+        set { if (SetProperty(ref _sortDescending, value)) ApplyFilters(); }
+    }
 
     /// <summary>Texto "N / Total" del pie de la lista (productos mostrados frente al total rastreado).</summary>
     public string CountText => string.Format(
@@ -110,6 +130,12 @@ public partial class ProductListViewModel : WidgetViewModelBase
 
         if (!string.IsNullOrWhiteSpace(FilterBy))
             source = source.Where(product => product.Name.Contains(FilterBy, StringComparison.CurrentCultureIgnoreCase));
+
+        // Orden: si el maestro está activo, por mejor precio (sin precio => al final); si no, se conserva el alfabético.
+        if (SortByPrice)
+            source = SortDescending
+                ? source.OrderByDescending(product => product.BestPrice ?? decimal.MinValue)
+                : source.OrderBy(product => product.BestPrice ?? decimal.MaxValue);
 
         Reconcile(source.ToList());
         OnPropertyChanged(nameof(CountText));

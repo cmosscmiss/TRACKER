@@ -32,7 +32,7 @@
             <!-- Content area -->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="350" />
+                    <ColumnDefinition Width="450" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 

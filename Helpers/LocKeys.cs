@@ -226,6 +226,9 @@ public static class LocKeys
     public const string ProductList_FilterPriceChange_Label = "ProductList_FilterPriceChange_Label";
     public const string ProductList_FilterAlert_Label = "ProductList_FilterAlert_Label";
     public const string ProductList_Count_Format = "ProductList_Count_Format";
+    public const string ProductList_Sort_Tooltip = "ProductList_Sort_Tooltip";
+    public const string ProductList_SortPriceAsc_Label = "ProductList_SortPriceAsc_Label";
+    public const string ProductList_SortPriceDesc_Label = "ProductList_SortPriceDesc_Label";
     public const string PriceChart_Alert_Tooltip = "PriceChart_Alert_Tooltip";
     public const string PriceChart_BelowAlert_Tooltip = "PriceChart_BelowAlert_Tooltip";
     public const string PriceChart_AlertDialog_Title = "PriceChart_AlertDialog_Title";

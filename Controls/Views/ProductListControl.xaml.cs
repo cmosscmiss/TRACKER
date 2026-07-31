@@ -113,6 +113,21 @@ public sealed partial class ProductListControl : UserControl
     }
     #endregion
 
+    #region Sort UI events
+    /// <summary>
+    /// Clic en una dirección del desplegable de orden: fija asc/desc (su <c>Tag</c>) y ACTIVA la ordenación por precio
+    /// (igual que en el filtro, elegir una opción activa la función). Al desactivar la cara se vuelve al orden alfabético.
+    /// </summary>
+    private void OnSortDirectionClick(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null || sender is not FrameworkElement item || item.Tag is not string tag)
+            return;
+
+        ViewModel.SortDescending = tag == "desc";
+        ViewModel.SortByPrice = true;
+    }
+    #endregion
+
     #region Methods (private)
     /// <summary>Pone el <c>SelectedItem</c> del ListView igual al producto seleccionado del modelo (sin reentrada).</summary>
     private void SyncListViewToSelection()

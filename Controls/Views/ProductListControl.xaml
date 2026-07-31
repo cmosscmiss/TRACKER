@@ -24,20 +24,28 @@
                     <TextBlock Text="{x:Bind BestPriceText, Mode=OneWay}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
                 </Border>
                 <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}" />
-                <!-- Iconos tras el título: pre-order + precio bajo la alerta + aviso de problema + estrella de favorito. -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="4 0 0 0">
-                    <FontIcon Glyph="&#xE787;" FontSize="12" Foreground="#FF5B9BFF"
+                <!-- Iconos tras el título: pre-order + precio bajo la alerta + aviso de problema + estrella de favorito.
+                     Cada tipo en su propia columna de ancho fijo, de modo que aunque alguno esté oculto los demás
+                     conservan su posición y quedan verticalmente alineados entre filas. -->
+                <Grid Grid.Column="2" VerticalAlignment="Center" Margin="4 0 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="16"/>
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="12" Foreground="#FF5B9BFF" HorizontalAlignment="Center"
                               ToolTipService.ToolTip="{loc:Str Key=Product_Preorder_Tooltip}"
                               Visibility="{x:Bind IsPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Glyph="&#xE7ED;" FontSize="12" Foreground="{ThemeResource SuccessBrush}"
+                    <FontIcon Grid.Column="1" Glyph="&#xE7ED;" FontSize="12" Foreground="{ThemeResource SuccessBrush}" HorizontalAlignment="Center"
                               ToolTipService.ToolTip="{loc:Str Key=PriceChart_BelowAlert_Tooltip}"
                               Visibility="{x:Bind IsBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="{ThemeResource WarningBrush}"
+                    <FontIcon Grid.Column="2" Glyph="&#xE7BA;" FontSize="12" Foreground="{ThemeResource WarningBrush}" HorizontalAlignment="Center"
                               ToolTipService.ToolTip="{loc:Str Key=Product_Issues_Tooltip}"
                               Visibility="{x:Bind HasIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Glyph="&#xE735;" FontSize="12" Foreground="{ThemeResource AccentBrush}"
+                    <FontIcon Grid.Column="3" Glyph="&#xE735;" FontSize="12" Foreground="{ThemeResource AccentBrush}" HorizontalAlignment="Center"
                               Visibility="{x:Bind IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                </StackPanel>
+                </Grid>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
@@ -62,27 +70,44 @@
                      Text="{x:Bind ViewModel.FilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="{loc:Str Key=ProductList_Filter_Placeholder}"/>
 
-            <ToggleSplitButton Grid.Column="1" HorizontalAlignment="Left"
-                               IsChecked="{x:Bind ViewModel.FiltersEnabled, Mode=TwoWay}"
-                               ToolTipService.ToolTip="{loc:Str Key=ProductList_Filters_Tooltip}">
-                <SymbolIcon Symbol="Filter"/>
-                <ToggleSplitButton.Flyout>
-                    <MenuFlyout>
-                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterFavorites_Label}"
-                            IsChecked="{x:Bind ViewModel.ActiveFilters.Favorites, Mode=TwoWay}"
-                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterIssues_Label}"
-                            IsChecked="{x:Bind ViewModel.ActiveFilters.WithIssues, Mode=TwoWay}"
-                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPriceChange_Label}"
-                            IsChecked="{x:Bind ViewModel.ActiveFilters.WithPriceChange, Mode=TwoWay}"
-                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                        <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterAlert_Label}"
-                            IsChecked="{x:Bind ViewModel.ActiveFilters.WithAlert, Mode=TwoWay}"
-                            Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                    </MenuFlyout>
-                </ToggleSplitButton.Flyout>
-            </ToggleSplitButton>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                <ToggleSplitButton IsChecked="{x:Bind ViewModel.FiltersEnabled, Mode=TwoWay}"
+                                   ToolTipService.ToolTip="{loc:Str Key=ProductList_Filters_Tooltip}">
+                    <SymbolIcon Symbol="Filter"/>
+                    <ToggleSplitButton.Flyout>
+                        <MenuFlyout>
+                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterFavorites_Label}"
+                                IsChecked="{x:Bind ViewModel.ActiveFilters.Favorites, Mode=TwoWay}"
+                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterIssues_Label}"
+                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithIssues, Mode=TwoWay}"
+                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPriceChange_Label}"
+                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithPriceChange, Mode=TwoWay}"
+                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterAlert_Label}"
+                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithAlert, Mode=TwoWay}"
+                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                        </MenuFlyout>
+                    </ToggleSplitButton.Flyout>
+                </ToggleSplitButton>
+
+                <!-- Orden (igual que el filtro): la cara activa/desactiva la ordenación por precio; sin activar se ordena
+                     por título (alfabético). El desplegable elige la dirección (asc/desc), que además activa el orden. -->
+                <ToggleSplitButton x:Name="SortButton"
+                                   IsChecked="{x:Bind ViewModel.SortByPrice, Mode=TwoWay}"
+                                   ToolTipService.ToolTip="{loc:Str Key=ProductList_Sort_Tooltip}">
+                    <SymbolIcon Symbol="Sort"/>
+                    <ToggleSplitButton.Flyout>
+                        <MenuFlyout>
+                            <RadioMenuFlyoutItem x:Name="SortAscItem" GroupName="ProductSort" Tag="asc" IsChecked="True"
+                                Text="{loc:Str Key=ProductList_SortPriceAsc_Label}" Click="OnSortDirectionClick"/>
+                            <RadioMenuFlyoutItem x:Name="SortDescItem" GroupName="ProductSort" Tag="desc"
+                                Text="{loc:Str Key=ProductList_SortPriceDesc_Label}" Click="OnSortDirectionClick"/>
+                        </MenuFlyout>
+                    </ToggleSplitButton.Flyout>
+                </ToggleSplitButton>
+            </StackPanel>
         </Grid>
 
         <!-- La selección se gestiona en code-behind (no TwoWay): así una deselección transitoria al reordenar la lista

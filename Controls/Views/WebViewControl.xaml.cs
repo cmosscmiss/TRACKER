@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.Web.WebView2.Core;
 using MM4LB.Controls.ViewModels;
@@ -35,7 +36,6 @@ public sealed partial class WebViewControl : UserControl
 {
     #region Attributes
     private bool _isWidgetActive;
-    private bool _countryInitializing;
     #endregion
 
     #region Dependency Properties
@@ -94,6 +94,7 @@ public sealed partial class WebViewControl : UserControl
             MyWebView.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
 
             InitializeCountrySelector();
+            UpdatePickPriceButtonState(MyWebView.Source);
             RefreshWidgetActivation(force: true);
         }
         catch (Exception ex)
@@ -244,6 +245,7 @@ public sealed partial class WebViewControl : UserControl
             tbAddressBar.Text = sender.Source.ToString();
             ViewModel?.SetCurrentUrl(sender.Source.ToString());
             SyncCountrySelectorToUrl(sender.Source);
+            UpdatePickPriceButtonState(sender.Source);
         }
 
         // El usuario pudo iniciar/cerrar sesión de Amazon navegando a mano: refresca el estado del botón de sesión.
@@ -316,22 +318,32 @@ public sealed partial class WebViewControl : UserControl
     }
 
     /// <summary>
-    /// Cambia el marketplace de Amazon: persiste el país y navega al MISMO producto en ese dominio (si la página
-    /// actual es de Amazon se conserva la ruta —incluye /dp/ASIN, común entre marketplaces—; si no, va a la portada).
+    /// Toggle de marketplace de Amazon: hace exclusiva la selección (marca este país y desmarca el resto), persiste el
+    /// país y, si cambió, navega al MISMO producto en ese dominio (si la página actual es de Amazon se conserva la ruta
+    /// —incluye /dp/ASIN, común entre marketplaces—; si no, va a la portada).
     /// </summary>
-    private void OnCountryChanged(object sender, SelectionChangedEventArgs e)
+    private void OnCountryToggle(object sender, RoutedEventArgs e)
     {
-        if (_countryInitializing)
-            return;
-
-        if (CountrySelector.SelectedItem is not ComboBoxItem item || item.Tag is not string code)
+        if (sender is not ToggleButton button || button.Tag is not string code)
             return;
 
         string? host = Amazon.HostForCountry(code);
         if (host is null)
+        {
+            SelectCountryVisual(App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country);
+            return;
+        }
+
+        AppSettings.WebViewControlSettings settings = App.GetService<IOptions<AppSettings>>().Value.WebViewControl;
+        bool changed = !string.Equals(settings.Country, code, StringComparison.OrdinalIgnoreCase);
+
+        // Exclusividad: marca este y desmarca los demás (también re-marca si se clicó el ya activo, para no dejarlo suelto).
+        SelectCountryVisual(code);
+
+        if (!changed)
             return;
 
-        App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country = code;
+        settings.Country = code;
         ViewModel?.RequestNavigation(BuildMarketplaceUrl(host));
     }
 
@@ -475,29 +487,22 @@ public sealed partial class WebViewControl : UserControl
     #endregion
 
     #region Methods (private)
-    /// <summary>Selecciona en el combo el país guardado en configuración, sin disparar navegación.</summary>
+    /// <summary>Marca en el grupo de toggles el país guardado en configuración (o el primero si no es válido), sin navegar.</summary>
     private void InitializeCountrySelector()
     {
         string code = App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country;
+        SelectCountryVisual(code);
 
-        _countryInitializing = true;
-        foreach (object obj in CountrySelector.Items)
-        {
-            if (obj is ComboBoxItem item && item.Tag is string tag && string.Equals(tag, code, StringComparison.OrdinalIgnoreCase))
-            {
-                CountrySelector.SelectedItem = item;
-                break;
-            }
-        }
-        if (CountrySelector.SelectedItem is null && CountrySelector.Items.Count > 0)
-            CountrySelector.SelectedIndex = 0;
-        _countryInitializing = false;
+        // Si el código guardado no coincide con ningún toggle, marca el primero por defecto.
+        if (!CountryToggles.Children.OfType<ToggleButton>().Any(toggle => toggle.IsChecked == true) &&
+            CountryToggles.Children.OfType<ToggleButton>().FirstOrDefault() is ToggleButton first)
+            first.IsChecked = true;
     }
 
     /// <summary>
-    /// Sincroniza el combo de tienda con el marketplace de la página actualmente abierta: si la URL es de un
-    /// marketplace de Amazon soportado, selecciona su país en el combo (sin re-navegar, vía la guarda
-    /// <see cref="_countryInitializing"/>) y persiste la preferencia. Si no es un marketplace conocido, no toca el combo.
+    /// Sincroniza el grupo de toggles con el marketplace de la página actualmente abierta: si la URL es de un
+    /// marketplace de Amazon soportado, marca su país (sin re-navegar) y persiste la preferencia. Si no es un
+    /// marketplace conocido, no toca los toggles.
     /// </summary>
     private void SyncCountrySelectorToUrl(Uri? uri)
     {
@@ -505,23 +510,21 @@ public sealed partial class WebViewControl : UserControl
         if (code is null)
             return;
 
-        // Ya está seleccionado ese país: nada que hacer (evita trabajo y reentradas).
-        if (CountrySelector.SelectedItem is ComboBoxItem current && current.Tag is string currentCode &&
-            string.Equals(currentCode, code, StringComparison.OrdinalIgnoreCase))
-            return;
-
-        _countryInitializing = true;
-        foreach (object obj in CountrySelector.Items)
-        {
-            if (obj is ComboBoxItem item && item.Tag is string tag && string.Equals(tag, code, StringComparison.OrdinalIgnoreCase))
-            {
-                CountrySelector.SelectedItem = item;
-                break;
-            }
-        }
-        _countryInitializing = false;
-
+        SelectCountryVisual(code);
         App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country = code;
+    }
+
+    /// <summary>Hace exclusiva la selección de país en el grupo de toggles: marca el del código dado y desmarca el resto.</summary>
+    private void SelectCountryVisual(string code)
+    {
+        foreach (ToggleButton toggle in CountryToggles.Children.OfType<ToggleButton>())
+            toggle.IsChecked = toggle.Tag is string tag && string.Equals(tag, code, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>Habilita el botón de seleccionar el elemento del precio solo fuera de Amazon (en Amazon el precio se lee solo).</summary>
+    private void UpdatePickPriceButtonState(Uri? uri)
+    {
+        PickPriceButton.IsEnabled = uri is null || !Amazon.IsAmazon(uri);
     }
 
     /// <summary>URL del producto actual en el marketplace <paramref name="host"/> (conserva la ruta si es Amazon).</summary>

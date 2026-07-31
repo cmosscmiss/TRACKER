@@ -25,15 +25,16 @@
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <!-- Marketplace de Amazon: al cambiar, navega al mismo producto en ese dominio. -->
-                <ComboBox x:Name="CountrySelector" MinWidth="72" VerticalAlignment="Center" SelectionChanged="OnCountryChanged"
-                          ToolTipService.ToolTip="{loc:Str Key=WebView_Country_Tooltip}">
-                    <ComboBoxItem Content="ES" Tag="es"/>
-                    <ComboBoxItem Content="DE" Tag="de"/>
-                    <ComboBoxItem Content="FR" Tag="fr"/>
-                    <ComboBoxItem Content="BE" Tag="be"/>
-                    <ComboBoxItem Content="NL" Tag="nl"/>
-                </ComboBox>
+                <!-- Marketplace de Amazon: toggle buttons excluyentes entre sí; al elegir uno, navega al mismo producto
+                     en ese dominio. -->
+                <StackPanel x:Name="CountryToggles" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center"
+                            ToolTipService.ToolTip="{loc:Str Key=WebView_Country_Tooltip}">
+                    <ToggleButton Content="ES" Tag="es" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
+                    <ToggleButton Content="DE" Tag="de" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
+                    <ToggleButton Content="FR" Tag="fr" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
+                    <ToggleButton Content="BE" Tag="be" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
+                    <ToggleButton Content="NL" Tag="nl" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
+                </StackPanel>
                 <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0 8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                 <AppBarButton x:Name="abNavigateBack" LabelPosition="Collapsed" Width="40" Click="AbNavigateBack_Click">
                     <AppBarButton.Content>
@@ -48,16 +49,18 @@
             </StackPanel>
             <TextBox x:Name="tbAddressBar" Text="https://" Grid.Column="1" VerticalAlignment="Center" KeyDown="TbAddressBar_KeyDown"/>
 
-            <!-- Altas desde la página mostrada: nuevo producto, o link alternativo del producto seleccionado. -->
+            <!-- Altas desde la página mostrada: nuevo producto, o link alternativo del producto seleccionado; y al final,
+                 tras un separador, el selector del elemento del precio (deshabilitado en páginas de Amazon). -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="8 0 0 0">
-                <Button x:Name="PickPriceButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Margin="0 0 4 0" Click="OnPickPriceClick" ToolTipService.ToolTip="{loc:Str Key=WebView_PickPrice_Tooltip}">
-                    <FontIcon Glyph="&#xE719;" FontSize="16"/>
-                </Button>
                 <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Click="OnAddProductClick" ToolTipService.ToolTip="{loc:Str Key=WebView_AddProduct_Tooltip}">
                     <FontIcon Glyph="&#xE710;" FontSize="16"/>
                 </Button>
                 <Button x:Name="AddAltLinkButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Margin="4 0 0 0" Click="OnAddAlternativeLinkClick" ToolTipService.ToolTip="{loc:Str Key=WebView_AddAltLink_Tooltip}">
                     <FontIcon Glyph="&#xE71B;" FontSize="16"/>
+                </Button>
+                <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
+                <Button x:Name="PickPriceButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Click="OnPickPriceClick" ToolTipService.ToolTip="{loc:Str Key=WebView_PickPrice_Tooltip}">
+                    <FontIcon Glyph="&#xE719;" FontSize="16"/>
                 </Button>
             </StackPanel>
 
