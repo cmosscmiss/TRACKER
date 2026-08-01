@@ -110,6 +110,7 @@ public partial class App : Application
             services.AddSingleton<ProgressService>();
             services.AddSingleton<DialogsService>();
             services.AddSingleton<TemplateService>();
+            services.AddSingleton<NotificationService>();
 
             // ViewModels (Windows)
             services.AddSingleton<MainWindowViewModel>();
@@ -294,11 +295,17 @@ public partial class App : Application
         // Resolve application settings configured in DI and store them in a property
         _appSettings = Host.Services.GetRequiredService<IOptions<AppSettings>>().Value;
 
+        // Notificaciones de Windows (AppNotificationManager): registra y, al pulsar una notificación, trae la app al frente.
+        NotificationService notifications = Host.Services.GetRequiredService<NotificationService>();
+        notifications.Activated += () => ActivationRequested?.Invoke();
+        notifications.Register();
+
         // Show the main window directly (no loading/splash window). Al cerrarla, se detiene y libera el host
         // (persistiendo la configuración) y se termina el proceso.
         var mainWindow = Host.Services.GetRequiredService<MainWindow>();
         mainWindow.Closed += async (_, _) =>
         {
+            notifications.Unregister();
             try { await Host.StopAsync(); } catch (Exception ex) { ExceptionService.LogToFile(ex, "Error stopping the host on shutdown (settings may not have been saved)."); }
             try { Host.Dispose(); } catch (Exception ex) { ExceptionService.LogToFile(ex, "Error disposing the host on shutdown."); }
             Environment.Exit(0);

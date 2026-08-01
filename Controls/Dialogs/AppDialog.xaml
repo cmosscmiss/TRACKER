@@ -55,7 +55,7 @@
 
                 <!-- Cabecera: logo + título en accent. -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" Padding="12">
-                    <Image Source="ms-appx:///Assets/MM4LB-Logo.png" VerticalAlignment="Center" Height="24"/>
+                    <Image Source="ms-appx:///Assets/TRACKER-Logo.png" VerticalAlignment="Center" Height="24"/>
                     <TextBlock x:Name="TitleText" Style="{StaticResource SubTitleStyle}"/>
                 </StackPanel>
 

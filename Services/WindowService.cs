@@ -489,7 +489,7 @@ public class WindowService
     {
         try
         {
-            string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "MM4LB.ico");
+            string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "TRACKER.ico");
             appWindow.SetIcon(iconPath);
         }
         catch (Exception ex)

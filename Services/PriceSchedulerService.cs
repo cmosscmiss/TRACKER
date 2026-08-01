@@ -37,11 +37,11 @@ public sealed class PriceSchedulerService
 
     #region Events
     /// <summary>
-    /// Se dispara al terminar una actualización TOTAL (manual o automática) con el resumen ya formateado (título +
-    /// cuerpo) para mostrar UNA notificación de Windows: resumen (actualizados/bajadas/avisos) + precio de alerta
-    /// alcanzado, nuevo mínimo histórico, vuelta a stock y pre-orders publicados. La capa de UI solo la muestra.
+    /// Se dispara al terminar una actualización TOTAL (manual o automática) con el título y las líneas ya localizadas
+    /// para mostrar UNA notificación de Windows: resumen (actualizados/bajadas/avisos) + precio de alerta alcanzado,
+    /// nuevo mínimo histórico, vuelta a stock y pre-orders publicados. La capa de UI solo la muestra.
     /// </summary>
-    public event Action<string, string>? NotificationReady;
+    public event Action<string, IReadOnlyList<string>, string?>? NotificationReady;
     #endregion
 
     #region Properties
@@ -123,11 +123,32 @@ public sealed class PriceSchedulerService
     /// <summary>Fuerza un refresco inmediato de TODOS los productos (lo mismo que la pasada periódica). Debe llamarse en el hilo de UI.</summary>
     public Task RefreshAllAsync() => RunAsync(dueOnly: false);
 
-    /// <summary>Reaplica el intervalo tras cambiarlo en ajustes: reinicia la cuenta atrás y el temporizador desde ahora.</summary>
+    /// <summary>
+    /// Reaplica el intervalo tras cambiarlo en ajustes: recalcula cuándo toca la próxima actualización CONTANDO desde
+    /// la última lectura (última + nuevo intervalo). Si ya ha pasado, lanza el refresco ahora; si no, el reloj/temporizador
+    /// arrancan con el tiempo restante hasta esa próxima actualización.
+    /// </summary>
     public void ApplyIntervalChange()
     {
-        if (_timer is not null)
-            RearmSchedule();
+        if (_timer is null)
+            return;
+
+        TimeSpan remaining = Interval;
+        if (LastGlobalUpdateUtc() is DateTime last)
+            remaining = last + Interval - DateTime.UtcNow;
+
+        if (remaining <= TimeSpan.Zero)
+        {
+            // Ya toca: refresca ahora (RunAsync reprograma a "ahora + intervalo").
+            _ = RunAsync(dueOnly: false);
+            return;
+        }
+
+        // Aún no toca: la cuenta atrás muestra el tiempo restante hasta la próxima actualización.
+        _timer.Stop();
+        _timer.Interval = remaining;
+        NextRunUtc = DateTime.UtcNow + remaining;
+        _timer.Start();
     }
     #endregion
 
@@ -207,6 +228,7 @@ public sealed class PriceSchedulerService
         var lows = new List<string>();
         var back = new List<string>();
         var released = new List<string>();
+        string? featuredImage = null;   // imagen del primer producto que bajó de precio (para el toast)
 
         foreach (Product product in products)
         {
@@ -215,7 +237,11 @@ public sealed class PriceSchedulerService
             string currency = product.BestStore?.Currency ?? string.Empty;
 
             if (oldBest is decimal ob && now is decimal nb && nb < ob)
+            {
                 drops++;
+                if (featuredImage is null && !string.IsNullOrWhiteSpace(product.ImageUrl))
+                    featuredImage = product.ImageUrl;
+            }
             if (product.HasIssues)
                 issues++;
 
@@ -236,13 +262,14 @@ public sealed class PriceSchedulerService
                 released.Add(string.Format(L(LocKeys.Notify_PreorderReleased_Line), product.Name));
         }
 
+        // Resumen como primera línea; luego cada tipo con evento (sin separadores).
         var lines = new List<string> { string.Format(L(LocKeys.Notify_Summary_Line), total, drops, issues) };
         lines.AddRange(alerts);
         lines.AddRange(lows);
         lines.AddRange(back);
         lines.AddRange(released);
 
-        NotificationReady?.Invoke(L(LocKeys.Notify_Summary_Title), string.Join(Environment.NewLine, lines));
+        NotificationReady?.Invoke(L(LocKeys.Notify_Summary_Title), lines, featuredImage);
     }
 
     /// <summary>Formatea un precio con su moneda ("39,99 €").</summary>

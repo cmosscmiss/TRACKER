@@ -183,16 +183,6 @@ public sealed partial class MainWindow : Window
         if (sender is FrameworkElement fe)
             fe.Loaded -= OnWindowLoaded;
 
-        // TEMPORAL (quitar): notificación de prueba al arrancar con un ejemplo del resumen real.
-        _trayIcon.ShowNotification(L(MM4LB.Helpers.LocKeys.Notify_Summary_Title), string.Join(Environment.NewLine, new[]
-        {
-            string.Format(L(MM4LB.Helpers.LocKeys.Notify_Summary_Line), 12, 3, 1),
-            string.Format(L(MM4LB.Helpers.LocKeys.Notify_AlertReached_Line), "Zelda: Tears of the Kingdom", "49,99 €"),
-            string.Format(L(MM4LB.Helpers.LocKeys.Notify_NewLow_Line), "Steam Deck OLED 512GB", "519,00 €"),
-            string.Format(L(MM4LB.Helpers.LocKeys.Notify_BackInStock_Line), "LEGO Icons Bonsai"),
-            string.Format(L(MM4LB.Helpers.LocKeys.Notify_PreorderReleased_Line), "Silksong"),
-        }));
-
         // Deja terminar los bindings y el primer layout pass.
         await Task.Yield();
 
@@ -456,9 +446,10 @@ public sealed partial class MainWindow : Window
     private void OnToggleIncludeShippingClick(object sender, RoutedEventArgs e)
         => _viewModel.SharedDataService.IncludeShippingInPrice = !_viewModel.SharedDataService.IncludeShippingInPrice;
 
-    /// <summary>Muestra la notificación de Windows del resumen del refresco (título + cuerpo ya compuestos por el scheduler).</summary>
-    private void OnSchedulerNotification(string title, string body)
-        => DispatcherQueue.TryEnqueue(() => _trayIcon.ShowNotification(title, body));
+    /// <summary>Muestra la notificación de Windows del resumen del refresco (líneas + imagen ya compuestas por el scheduler).</summary>
+    private void OnSchedulerNotification(string title, System.Collections.Generic.IReadOnlyList<string> lines, string? imageUri)
+        => DispatcherQueue.TryEnqueue(() =>
+            _ = App.GetService<NotificationService>().ShowAsync(title, lines, L(MM4LB.Helpers.LocKeys.Notify_Open_Label), imageUri));
 
     /// <summary>Cambió un ajuste compartido: si se alternaron los tooltips, refresca el del botón de Amazon (fijado por código).</summary>
     private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

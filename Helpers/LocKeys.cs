@@ -216,6 +216,7 @@ public static class LocKeys
     public const string Notify_NewLow_Line = "Notify_NewLow_Line";
     public const string Notify_BackInStock_Line = "Notify_BackInStock_Line";
     public const string Notify_PreorderReleased_Line = "Notify_PreorderReleased_Line";
+    public const string Notify_Open_Label = "Notify_Open_Label";
     public const string Footer_NextUpdate_Tooltip = "Footer_NextUpdate_Tooltip";
 
     // Acciones del widget de producto

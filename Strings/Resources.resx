@@ -227,6 +227,9 @@
   <data name="Notify_PreorderReleased_Line" xml:space="preserve">
     <value>Now on sale: {0}</value>
   </data>
+  <data name="Notify_Open_Label" xml:space="preserve">
+    <value>Open</value>
+  </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Time until the next automatic price update</value>
   </data>
