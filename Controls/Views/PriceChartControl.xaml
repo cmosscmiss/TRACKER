@@ -5,7 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:uc="using:MM4LB.Controls.Views"
     xmlns:vm="using:MM4LB.Controls.ViewModels"
+    xmlns:template="using:MM4LB.Controls.Templates"
     xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -15,22 +17,27 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Barra de herramientas del producto: marcar comprado / borrar. -->
+        <!-- Barra de herramientas del producto, en grupos separados por barras verticales:
+             refrescar/buscar | editar/alerta | comprado/borrar | favorito. -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4" Padding="8 6 8 0"
                     Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
-            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnRefreshProductClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Refresh_Tooltip}">
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnRefreshProductClick" help:Help.Key="PriceChart_Refresh_Tooltip">
                 <FontIcon Glyph="&#xE72C;" FontSize="16"/>
             </Button>
-            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnEditNameClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Edit_Tooltip}">
-                <FontIcon Glyph="&#xE70F;" FontSize="16"/>
-            </Button>
-            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSearchProductClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Search_Tooltip}">
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSearchProductClick" help:Help.Key="PriceChart_Search_Tooltip">
                 <FontIcon Glyph="&#xE721;" FontSize="16"/>
             </Button>
-            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSetAlertClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Alert_Tooltip}">
+
+            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="2 4" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnEditNameClick" help:Help.Key="PriceChart_Edit_Tooltip">
+                <FontIcon Glyph="&#xE70F;" FontSize="16"/>
+            </Button>
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSetAlertClick" help:Help.Key="PriceChart_Alert_Tooltip">
                 <Grid>
                     <FontIcon Glyph="&#xE7ED;" FontSize="16" Foreground="{ThemeResource AccentBrush}"
                               Visibility="{x:Bind ViewModel.HasAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
@@ -38,8 +45,20 @@
                               Visibility="{x:Bind ViewModel.HasAlert, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
                 </Grid>
             </Button>
+
+            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="2 4" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnMarkPurchasedClick" help:Help.Key="PriceChart_Purchased_Tooltip">
+                <FontIcon Glyph="&#xE7BF;" FontSize="16"/>
+            </Button>
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnDeleteProductClick" help:Help.Key="PriceChart_Delete_Tooltip">
+                <FontIcon Glyph="&#xE74D;" FontSize="16"/>
+            </Button>
+
+            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="2 4" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnToggleFavoriteClick"
-                    IsEnabled="{x:Bind ViewModel.CanToggleFavorite, Mode=OneWay}" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Favorite_Tooltip}">
+                    IsEnabled="{x:Bind ViewModel.CanToggleFavorite, Mode=OneWay}" help:Help.Key="PriceChart_Favorite_Tooltip">
                 <Grid>
                     <FontIcon Glyph="&#xE735;" FontSize="16" Foreground="{ThemeResource AccentBrush}"
                               Visibility="{x:Bind ViewModel.IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
@@ -47,16 +66,14 @@
                               Visibility="{x:Bind ViewModel.IsFavorite, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
                 </Grid>
             </Button>
-            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnMarkPurchasedClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Purchased_Tooltip}">
-                <FontIcon Glyph="&#xE7BF;" FontSize="16"/>
-            </Button>
-            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnDeleteProductClick" ToolTipService.ToolTip="{loc:Str Key=PriceChart_Delete_Tooltip}">
-                <FontIcon Glyph="&#xE74D;" FontSize="16"/>
-            </Button>
         </StackPanel>
 
+        <!-- Separador horizontal tras la toolbar (solo con producto). -->
+        <template:SeparatorEx Grid.Row="1" Margin="8 6 8 0" Thickness="1" UseGradient="True"
+                              Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+
         <!-- Cabecera del producto seleccionado: imagen + título + pills de precio actual y mínimo histórico. -->
-        <Grid Grid.Row="1" Padding="12 8" ColumnSpacing="12"
+        <Grid Grid.Row="2" Padding="12 8" ColumnSpacing="12"
               Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -73,7 +90,7 @@
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <Border Background="#FF2F6FED" CornerRadius="12" Padding="10 4"
-                        ToolTipService.ToolTip="{loc:Str Key=Product_Preorder_Tooltip}"
+                        help:Help.Key="Product_Preorder_Tooltip"
                         Visibility="{x:Bind ViewModel.ShowPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <FontIcon Glyph="&#xE787;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
@@ -81,7 +98,7 @@
                     </StackPanel>
                 </Border>
                 <Border Background="{ThemeResource SuccessBrush}" CornerRadius="12" Padding="10 4"
-                        ToolTipService.ToolTip="{loc:Str Key=PriceChart_BelowAlert_Tooltip}"
+                        help:Help.Key="PriceChart_BelowAlert_Tooltip"
                         Visibility="{x:Bind ViewModel.ShowBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <FontIcon Glyph="&#xE7ED;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
@@ -89,7 +106,7 @@
                     </StackPanel>
                 </Border>
                 <Border Background="{ThemeResource WarningBrush}" CornerRadius="12" Padding="10 4"
-                        ToolTipService.ToolTip="{loc:Str Key=Product_Issues_Tooltip}"
+                        help:Help.Key="Product_Issues_Tooltip"
                         Visibility="{x:Bind ViewModel.ShowIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
@@ -123,7 +140,7 @@
         </Grid>
 
         <!-- Strip de tiendas: un chip por tienda con precio actual y badge de Prime; scroll horizontal si no caben. -->
-        <ScrollViewer Grid.Row="2" Margin="12 0 12 8" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto"
+        <ScrollViewer Grid.Row="3" Margin="12 0 12 8" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto"
                       VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled"
                       Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
             <ItemsControl ItemsSource="{x:Bind ViewModel.Stores, Mode=OneWay}">
@@ -142,6 +159,10 @@
                                         Visibility="{x:Bind ShowPrimeBadge, Converter={StaticResource VisibleIfTrueConverter}}">
                                     <TextBlock Text="Prime" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
                                 </Border>
+                                <!-- Coste de envío (Amazon), aparte del precio. Solo si se detectó (> 0). -->
+                                <TextBlock Text="{x:Bind ShippingText}" Foreground="{ThemeResource WarningBrush}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"
+                                           help:Help.Key="PriceChart_Shipping_Tooltip"
+                                           Visibility="{x:Bind ShowShipping, Converter={StaticResource VisibleIfTrueConverter}}"/>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
@@ -149,7 +170,7 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <uc:ChartTypeSelectorControl Grid.Row="3"
+        <uc:ChartTypeSelectorControl Grid.Row="4"
             SelectedChartType="{x:Bind ViewModel.SelectedChartType, Mode=TwoWay}"
             SortOrder="{x:Bind ViewModel.SortOrder, Mode=TwoWay}"
             TopN="{x:Bind ViewModel.TopN, Mode=TwoWay}"

@@ -26,6 +26,8 @@ public class SharedDataService : ObservableObject
     private bool _isUiEnabled;
     private Product? _selectedProduct;
     private bool _showChartAxisLabels;
+    private bool _helpTooltipsEnabled = true;
+    private bool _includeShippingInPrice;
     #endregion
 
     #region Properties
@@ -47,6 +49,33 @@ public class SharedDataService : ObservableObject
     {
         get => _showChartAxisLabels;
         set => SetProperty(ref _showChartAxisLabels, value);
+    }
+
+    /// <summary>
+    /// Ajuste global (persistido en el .ini) de si se muestran los tooltips de los botones. Observable: el toggle del
+    /// footer lo cambia y la attached property <c>Help.Key</c> lo aplica en caliente. Por defecto true.
+    /// </summary>
+    public bool HelpTooltipsEnabled
+    {
+        get => _helpTooltipsEnabled;
+        set => SetProperty(ref _helpTooltipsEnabled, value);
+    }
+
+    /// <summary>
+    /// Ajuste global (persistido) de si el precio de un producto INCLUYE el envío (precio + gastos de envío). Observable:
+    /// el toggle del footer lo cambia; al cambiar, se notifica a todos los productos para que recalculen su mejor precio
+    /// y derivados (los widgets/gráficas se refrescan en caliente). Por defecto false. El precio efectivo lo calcula
+    /// <see cref="Models.ProductStore.EffectivePrice"/>.
+    /// </summary>
+    public bool IncludeShippingInPrice
+    {
+        get => _includeShippingInPrice;
+        set
+        {
+            if (SetProperty(ref _includeShippingInPrice, value))
+                foreach (Product product in ProductSet.Products)
+                    product.NotifyPricingChanged();
+        }
     }
 
     /// <summary>

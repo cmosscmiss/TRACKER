@@ -12,6 +12,7 @@
     xmlns:template="using:MM4LB.Controls.Templates" xmlns:sys="using:System"
     xmlns:wv="using:Microsoft.UI.Xaml.Controls"
     xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
     mc:Ignorable="d"
     Title="MM4LB">
 
@@ -118,23 +119,44 @@
                         <!-- Barra de herramientas del footer (a la derecha): tiempo hasta la próxima actualización
                              automática (justo antes de la toolbar), leyenda del eje, login, refrescar, añadir. -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
-                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
                             <uc:SplitFlapClock x:Name="NextUpdateClock" VerticalAlignment="Center" Margin="8 0"
-                                               ToolTipService.ToolTip="{loc:Str Key=Footer_NextUpdate_Tooltip}"/>
+                                               help:Help.Key="Footer_NextUpdate_Tooltip"/>
                             <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
-                            <ToggleButton x:Name="AxisLabelsToggle" Style="{StaticResource ToggleButton_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
-                                          IsChecked="{Binding SharedDataService.ShowChartAxisLabels, Mode=TwoWay}"
-                                          ToolTipService.ToolTip="{loc:Str Key=Footer_AxisLabels_Tooltip}">
-                                <FontIcon FontSize="18" Glyph="&#xE787;" Foreground="{ThemeResource TextSecondaryBrush}"/>
-                            </ToggleButton>
+                            <!-- Toggles con estilo de botón normal (Button_Icon): el estado se indica por color del icono
+                                 (acento = activo / atenuado = inactivo), con dos iconos superpuestos. El tooltip de este
+                                 botón usa loc directo (no gateado) para seguir siendo descubrible con los tooltips apagados. -->
+                            <Button x:Name="TooltipsToggle" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
+                                    Click="OnToggleTooltipsClick" ToolTipService.ToolTip="{loc:Str Key=Footer_Tooltips_Tooltip}">
+                                <Grid>
+                                    <FontIcon FontSize="18" Glyph="&#xE897;" Foreground="{ThemeResource AccentBrush}" Visibility="{Binding SharedDataService.HelpTooltipsEnabled, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                    <FontIcon FontSize="18" Glyph="&#xE897;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.HelpTooltipsEnabled, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                                </Grid>
+                            </Button>
+                            <Button x:Name="AxisLabelsToggle" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
+                                    Click="OnToggleAxisLabelsClick" help:Help.Key="Footer_AxisLabels_Tooltip">
+                                <Grid>
+                                    <FontIcon FontSize="18" Glyph="&#xE787;" Foreground="{ThemeResource AccentBrush}" Visibility="{Binding SharedDataService.ShowChartAxisLabels, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                    <FontIcon FontSize="18" Glyph="&#xE787;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.ShowChartAxisLabels, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                                </Grid>
+                            </Button>
+                            <!-- Incluir envío en el precio (acento = activo). -->
+                            <Button x:Name="IncludeShippingToggle" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
+                                    Click="OnToggleIncludeShippingClick" help:Help.Key="Footer_IncludeShipping_Tooltip">
+                                <Grid>
+                                    <FontIcon FontSize="18" Glyph="&#xE7B8;" Foreground="{ThemeResource AccentBrush}" Visibility="{Binding SharedDataService.IncludeShippingInPrice, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                    <FontIcon FontSize="18" Glyph="&#xE7B8;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.IncludeShippingInPrice, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                                </Grid>
+                            </Button>
+                            <!-- Login/logout (no es toggle-control, pero el icono va en acento si hay sesión; lo fija el code-behind). -->
                             <Button x:Name="AmazonAuthButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAmazonAuthClick">
                                 <FontIcon x:Name="AmazonAuthIcon" FontSize="18" Glyph="&#xE77B;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>
-                            <Button x:Name="RefreshAllButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnRefreshAllClick" ToolTipService.ToolTip="{loc:Str Key=Footer_RefreshAll_Tooltip}">
-                                <FontIcon FontSize="18" Glyph="&#xE72C;" Foreground="{ThemeResource AccentBrush}"/>
+                            <!-- Acciones (no toggles): icono en color normal. -->
+                            <Button x:Name="RefreshAllButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnRefreshAllClick" help:Help.Key="Footer_RefreshAll_Tooltip">
+                                <FontIcon FontSize="18" Glyph="&#xE72C;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>
-                            <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAddProductClick" ToolTipService.ToolTip="{loc:Str Key=Footer_AddProduct_Tooltip}">
-                                <FontIcon FontSize="18" Glyph="&#xE710;" Foreground="{ThemeResource AccentBrush}"/>
+                            <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAddProductClick" help:Help.Key="Footer_AddProduct_Tooltip">
+                                <FontIcon FontSize="18" Glyph="&#xE710;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>
                         </StackPanel>
                     </Grid>

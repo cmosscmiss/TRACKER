@@ -57,6 +57,9 @@ public sealed class TrayIcon : IDisposable
         AddIcon(tooltip);
     }
 
+    /// <summary>Restaura y trae al frente la ventana (equivale a pulsar el icono de la bandeja). Para activarla desde otra instancia.</summary>
+    public void Restore() => RestoreFromTray();
+
     /// <summary>Removes the tray icon and the window-proc subclass.</summary>
     public void Dispose()
     {

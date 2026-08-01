@@ -203,6 +203,12 @@
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Show/hide chart axis labels (update dates)</value>
   </data>
+  <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
+    <value>Show/hide button tooltips</value>
+  </data>
+  <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
+    <value>Include shipping cost in the price</value>
+  </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Time until the next automatic price update</value>
   </data>
@@ -220,6 +226,9 @@
   </data>
   <data name="PriceChart_Search_Tooltip" xml:space="preserve">
     <value>Search this title on the selected Amazon store</value>
+  </data>
+  <data name="PriceChart_Shipping_Tooltip" xml:space="preserve">
+    <value>Estimated shipping cost (not included in the price)</value>
   </data>
   <data name="PriceChart_EditDialog_Title" xml:space="preserve">
     <value>Edit title</value>
@@ -445,6 +454,9 @@
   </data>
   <data name="AmazonLogout_Tooltip" xml:space="preserve">
     <value>Sign out of Amazon</value>
+  </data>
+  <data name="AmazonSession_Startup_Log" xml:space="preserve">
+    <value>Amazon: signed in to {0} of {1} stores</value>
   </data>
   <data name="AmazonLogin_Title" xml:space="preserve">
     <value>Sign in to Amazon</value>

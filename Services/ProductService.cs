@@ -164,6 +164,7 @@ public sealed class ProductService
                     store.IsAvailable = result.IsAvailable;
                     store.HasPromo = result.HasPromo;
                     store.IsPreorder = result.IsPreorder;
+                    store.ShippingCost = result.ShippingCost;
 
                     if (!infoUpdated)
                     {
@@ -334,6 +335,7 @@ public sealed class ProductService
         store.IsAvailable = parsed.IsAvailable;
         store.HasPromo = parsed.HasPromo;
         store.IsPreorder = parsed.IsPreorder;
+        store.ShippingCost = parsed.ShippingCost;
 
         if (updateInfo)
         {

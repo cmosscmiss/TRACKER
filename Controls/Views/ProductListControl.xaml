@@ -9,6 +9,7 @@
     xmlns:models="using:MM4LB.Models"
     xmlns:template="using:MM4LB.Controls.Templates"
     xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -29,21 +30,25 @@
                      conservan su posición y quedan verticalmente alineados entre filas. -->
                 <Grid Grid.Column="2" VerticalAlignment="Center" Margin="4 0 0 0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="18"/>
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="12" Foreground="#FF5B9BFF" HorizontalAlignment="Center"
-                              ToolTipService.ToolTip="{loc:Str Key=Product_Preorder_Tooltip}"
+                    <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="14" Foreground="{ThemeResource AccentBrush}" HorizontalAlignment="Center"
+                              help:Help.Key="Product_Preorder_Tooltip"
                               Visibility="{x:Bind IsPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="1" Glyph="&#xE7ED;" FontSize="12" Foreground="{ThemeResource SuccessBrush}" HorizontalAlignment="Center"
-                              ToolTipService.ToolTip="{loc:Str Key=PriceChart_BelowAlert_Tooltip}"
+                    <FontIcon Grid.Column="1" Glyph="&#xE7ED;" FontSize="14" Foreground="{ThemeResource AccentBrush}" HorizontalAlignment="Center"
+                              help:Help.Key="PriceChart_BelowAlert_Tooltip"
                               Visibility="{x:Bind IsBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="2" Glyph="&#xE7BA;" FontSize="12" Foreground="{ThemeResource WarningBrush}" HorizontalAlignment="Center"
-                              ToolTipService.ToolTip="{loc:Str Key=Product_Issues_Tooltip}"
+                    <FontIcon Grid.Column="2" Glyph="&#xE7BA;" FontSize="14" Foreground="{ThemeResource AccentBrush}" HorizontalAlignment="Center"
+                              help:Help.Key="Product_Issues_Tooltip"
                               Visibility="{x:Bind HasIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="3" Glyph="&#xE735;" FontSize="12" Foreground="{ThemeResource AccentBrush}" HorizontalAlignment="Center"
+                    <FontIcon Grid.Column="3" Glyph="&#xE7B8;" FontSize="14" Foreground="{ThemeResource AccentBrush}" HorizontalAlignment="Center"
+                              help:Help.Key="PriceChart_Shipping_Tooltip"
+                              Visibility="{x:Bind HasShipping, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Grid.Column="4" Glyph="&#xE735;" FontSize="14" Foreground="{ThemeResource AccentBrush}" HorizontalAlignment="Center"
                               Visibility="{x:Bind IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                 </Grid>
             </Grid>
@@ -72,7 +77,7 @@
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
                 <ToggleSplitButton IsChecked="{x:Bind ViewModel.FiltersEnabled, Mode=TwoWay}"
-                                   ToolTipService.ToolTip="{loc:Str Key=ProductList_Filters_Tooltip}">
+                                   help:Help.Key="ProductList_Filters_Tooltip">
                     <SymbolIcon Symbol="Filter"/>
                     <ToggleSplitButton.Flyout>
                         <MenuFlyout>
@@ -96,7 +101,7 @@
                      por título (alfabético). El desplegable elige la dirección (asc/desc), que además activa el orden. -->
                 <ToggleSplitButton x:Name="SortButton"
                                    IsChecked="{x:Bind ViewModel.SortByPrice, Mode=TwoWay}"
-                                   ToolTipService.ToolTip="{loc:Str Key=ProductList_Sort_Tooltip}">
+                                   help:Help.Key="ProductList_Sort_Tooltip">
                     <SymbolIcon Symbol="Sort"/>
                     <ToggleSplitButton.Flyout>
                         <MenuFlyout>

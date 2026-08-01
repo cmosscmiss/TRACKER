@@ -91,6 +91,23 @@ public sealed class AmazonAuthService
     /// <summary>True si hay sesión de Amazon iniciada en el marketplace configurado (existe la cookie de auth con valor).</summary>
     public Task<bool> IsLoggedInAsync() => IsLoggedInOnHostAsync(FirstReadyCore(), Host);
 
+    /// <summary>Número total de marketplaces de Amazon soportados.</summary>
+    public int StoreCount => Amazon.Marketplaces.Count;
+
+    /// <summary>Cuenta en cuántos marketplaces soportados hay sesión iniciada (cookie de auth con valor).</summary>
+    public async Task<int> CountLoggedInStoresAsync()
+    {
+        CoreWebView2? core = FirstReadyCore();
+        if (core is null)
+            return 0;
+
+        int count = 0;
+        foreach ((string _, string host, string _) in Amazon.Marketplaces)
+            if (await IsLoggedInOnHostAsync(core, host))
+                count++;
+        return count;
+    }
+
     /// <summary>
     /// Inicia sesión en Amazon con <paramref name="email"/>/<paramref name="password"/> en el navegador VISIBLE, y lo
     /// hace en TODOS los marketplaces soportados (la cuenta es la misma, pero la cookie de sesión es por dominio, así

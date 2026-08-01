@@ -158,6 +158,7 @@ public static class LocKeys
     // Amazon login/logout
     public const string AmazonLogin_Tooltip = "AmazonLogin_Tooltip";
     public const string AmazonLogout_Tooltip = "AmazonLogout_Tooltip";
+    public const string AmazonSession_Startup_Log = "AmazonSession_Startup_Log";
     public const string AmazonLogin_Title = "AmazonLogin_Title";
     public const string AmazonLogin_Message = "AmazonLogin_Message";
     public const string AmazonLogin_Email_Label = "AmazonLogin_Email_Label";
@@ -206,6 +207,8 @@ public static class LocKeys
     public const string PriceChart_Promo_Label = "PriceChart_Promo_Label";
     public const string Footer_RefreshAll_Tooltip = "Footer_RefreshAll_Tooltip";
     public const string Footer_AxisLabels_Tooltip = "Footer_AxisLabels_Tooltip";
+    public const string Footer_Tooltips_Tooltip = "Footer_Tooltips_Tooltip";
+    public const string Footer_IncludeShipping_Tooltip = "Footer_IncludeShipping_Tooltip";
     public const string Footer_NextUpdate_Tooltip = "Footer_NextUpdate_Tooltip";
 
     // Acciones del widget de producto
@@ -214,6 +217,7 @@ public static class LocKeys
     public const string PriceChart_Refresh_Tooltip = "PriceChart_Refresh_Tooltip";
     public const string PriceChart_Edit_Tooltip = "PriceChart_Edit_Tooltip";
     public const string PriceChart_Search_Tooltip = "PriceChart_Search_Tooltip";
+    public const string PriceChart_Shipping_Tooltip = "PriceChart_Shipping_Tooltip";
     public const string PriceChart_EditDialog_Title = "PriceChart_EditDialog_Title";
     public const string PriceChart_EditDialog_Message = "PriceChart_EditDialog_Message";
     public const string PriceChart_EditName_Placeholder = "PriceChart_EditName_Placeholder";

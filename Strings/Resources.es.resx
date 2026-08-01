@@ -198,6 +198,12 @@
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Mostrar/ocultar etiquetas del eje (fechas de actualización)</value>
   </data>
+  <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
+    <value>Mostrar/ocultar los tooltips de los botones</value>
+  </data>
+  <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
+    <value>Incluir los gastos de envío en el precio</value>
+  </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Tiempo hasta la siguiente actualización automática de precios</value>
   </data>
@@ -215,6 +221,9 @@
   </data>
   <data name="PriceChart_Search_Tooltip" xml:space="preserve">
     <value>Buscar este título en la tienda de Amazon seleccionada</value>
+  </data>
+  <data name="PriceChart_Shipping_Tooltip" xml:space="preserve">
+    <value>Gastos de envío estimados (no incluidos en el precio)</value>
   </data>
   <data name="PriceChart_EditDialog_Title" xml:space="preserve">
     <value>Editar título</value>
@@ -440,6 +449,9 @@
   </data>
   <data name="AmazonLogout_Tooltip" xml:space="preserve">
     <value>Cerrar sesión de Amazon</value>
+  </data>
+  <data name="AmazonSession_Startup_Log" xml:space="preserve">
+    <value>Amazon: sesión iniciada en {0} de {1} tiendas</value>
   </data>
   <data name="AmazonLogin_Title" xml:space="preserve">
     <value>Iniciar sesión en Amazon</value>

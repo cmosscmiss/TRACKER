@@ -32,6 +32,18 @@ public partial class App : Application
     /// </summary>
     private static Mutex? _singleInstanceMutex;
 
+    /// <summary>Nombre del evento (por sesión) con el que una segunda instancia pide a la principal que se traiga al frente.</summary>
+    private const string ActivateEventName = @"Local\MM4LB.Tracker.Activate";
+
+    /// <summary>Evento de activación de la instancia principal (lo señala una segunda instancia al arrancar). Vivo todo el proceso.</summary>
+    private static EventWaitHandle? _activateEvent;
+
+    /// <summary>
+    /// Acción que restaura/trae al frente la ventana principal. La fija la ventana principal cuando está lista; la
+    /// invoca el hilo que escucha <see cref="_activateEvent"/> cuando otra instancia intenta arrancar.
+    /// </summary>
+    public static Action? ActivationRequested { get; set; }
+
     public IHost Host { get; }
     
     public static T GetService<T>()
@@ -53,18 +65,20 @@ public partial class App : Application
     /// </summary>
     public App()
     {
-        // Instancia única: si ya hay otra copia de Tracker abierta, avisa y no arranca. El mutex se crea con nombre
+        // Instancia única: si ya hay otra copia de Tracker abierta, en vez de avisar y salir, se le pide que se traiga
+        // al frente (como pulsar el icono de la bandeja) y esta segunda instancia termina. El mutex se crea con nombre
         // global-por-sesión ("Local\..."); createdNew es false si otra instancia ya lo tiene. Se comprueba antes de
         // construir el host o mostrar UI para no inicializar nada de un proceso que va a terminar de inmediato.
         _singleInstanceMutex = new Mutex(initiallyOwned: true, @"Local\MM4LB.Tracker.SingleInstance", out bool createdNew);
         if (!createdNew)
         {
-            // MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND. La localización aún no está disponible en este punto
-            // (el host no se ha construido), así que el mensaje es fijo.
-            MessageBox(IntPtr.Zero, "Tracker is already running.", "Tracker", 0x00000040 | 0x00010000);
-            Environment.Exit(0);
+            SignalExistingInstanceAndExit();
             return;
         }
+
+        // Instancia principal: crea el evento de activación y escucha señales de futuras segundas instancias para
+        // restaurar la ventana en pantalla (la acción real la fija la ventana principal en ActivationRequested).
+        StartActivationListener();
 
         InitializeComponent();
         Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent();
@@ -293,7 +307,73 @@ public partial class App : Application
         mainWindow.Activate();
     }
 
+    /// <summary>
+    /// Instancia principal: crea el evento de activación y lanza un hilo en segundo plano que espera señales de futuras
+    /// segundas instancias; al recibir una, invoca <see cref="ActivationRequested"/> (que la ventana restaura en pantalla).
+    /// </summary>
+    private static void StartActivationListener()
+    {
+        try
+        {
+            _activateEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ActivateEventName);
+        }
+        catch
+        {
+            return;   // sin evento, simplemente no habrá activación remota (no es crítico)
+        }
+
+        var thread = new Thread(() =>
+        {
+            while (true)
+            {
+                try
+                {
+                    if (!_activateEvent.WaitOne())
+                        break;
+                }
+                catch
+                {
+                    break;
+                }
+                ActivationRequested?.Invoke();
+            }
+        })
+        {
+            IsBackground = true,
+            Name = "TrackerActivationListener",
+        };
+        thread.Start();
+    }
+
+    /// <summary>
+    /// Segunda instancia: concede permiso de primer plano y señala a la instancia principal para que se traiga a
+    /// pantalla; luego termina. Si no puede señalar (no existe el evento), cae al aviso clásico.
+    /// </summary>
+    private static void SignalExistingInstanceAndExit()
+    {
+        try
+        {
+            // Permite que la instancia principal pueda llamar a SetForegroundWindow aunque no esté en primer plano.
+            AllowSetForegroundWindow(ASFW_ANY);
+            using EventWaitHandle activate = EventWaitHandle.OpenExisting(ActivateEventName);
+            activate.Set();
+        }
+        catch
+        {
+            // MB_OK | MB_ICONINFORMATION | MB_SETFOREGROUND. La localización aún no está disponible aquí (host no construido).
+            MessageBox(IntPtr.Zero, "Tracker is already running.", "Tracker", 0x00000040 | 0x00010000);
+        }
+
+        Environment.Exit(0);
+    }
+
     /// <summary>MessageBox nativo (user32) para avisar de la instancia duplicada antes de que exista UI de la app.</summary>
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+
+    /// <summary>Concede a otros procesos permiso para llevar su ventana al primer plano (ASFW_ANY = -1).</summary>
+    private const int ASFW_ANY = -1;
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool AllowSetForegroundWindow(int dwProcessId);
 }

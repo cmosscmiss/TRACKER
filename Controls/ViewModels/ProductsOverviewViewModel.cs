@@ -72,6 +72,7 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
 
         SharedDataService.ProductSet.Products.CollectionChanged += OnProductsChanged;
         SharedDataService.SelectedProductChanged += OnSelectedProductChanged;
+        SharedDataService.PropertyChanged += OnSharedDataChanged;
 
         Subscribe();
         Recompute();
@@ -92,6 +93,13 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     }
 
     private void OnProductPriceRecorded(object? sender, EventArgs e) => Recompute();
+
+    /// <summary>Al cambiar el ajuste de incluir envío en el precio, recalcula los valores (precio efectivo).</summary>
+    private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SharedDataService.IncludeShippingInPrice))
+            Recompute();
+    }
     #endregion
 
     #region Methods (public)
@@ -148,6 +156,7 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     {
         SharedDataService.ProductSet.Products.CollectionChanged -= OnProductsChanged;
         SharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
+        SharedDataService.PropertyChanged -= OnSharedDataChanged;
 
         foreach (Product product in _subscribed)
             product.PriceRecorded -= OnProductPriceRecorded;

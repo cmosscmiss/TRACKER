@@ -22,6 +22,12 @@ public sealed class StoreChip
 
     /// <summary>Muestra el badge verde de Prime (solo si la tienda es Amazon y es Prime).</summary>
     public bool ShowPrimeBadge { get; init; }
+
+    /// <summary>Coste de envío formateado ("+3,99 €"), o vacío si no hay coste.</summary>
+    public string ShippingText { get; init; } = string.Empty;
+
+    /// <summary>Hay coste de envío detectado (&gt; 0) para mostrar la pastilla.</summary>
+    public bool ShowShipping { get; init; }
 }
 
 /// <summary>
@@ -147,6 +153,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
         SharedDataService.SelectedProductChanged += OnSelectedProductChanged;
         SharedDataService.FavoritesChanged += OnFavoritesChanged;
+        SharedDataService.PropertyChanged += OnSharedDataChanged;
         Bind(SharedDataService.SelectedProduct);
     }
     #endregion
@@ -157,6 +164,13 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     private void OnPriceRecorded(object? sender, EventArgs e) => Recompute();
 
     private void OnFavoritesChanged(object? sender, EventArgs e) => UpdateFavoriteState();
+
+    /// <summary>Al cambiar el ajuste de incluir envío en el precio, recalcula la gráfica y las pastillas (precio efectivo).</summary>
+    private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SharedDataService.IncludeShippingInPrice))
+            Recompute();
+    }
     #endregion
 
     #region Methods (public)
@@ -235,9 +249,16 @@ public partial class PriceChartViewModel : WidgetViewModelBase
                 .Distinct()
                 .ToList();
 
+            // Si el ajuste incluye el envío, se suma el envío ACTUAL de cada tienda a toda su serie (aproximación del
+            // histórico, que no guarda el envío de cada momento).
+            bool includeShipping = SharedDataService.IncludeShippingInPrice;
             SeriesNames = storeLabels;
             SeriesValues = storeLabels
-                .Select(label => (IReadOnlyList<double>)BuildStoreSeries(label, rounds, history))
+                .Select(label =>
+                {
+                    double shipping = includeShipping && product.Stores.FirstOrDefault(s => s.Label == label)?.ShippingCost is decimal cost ? (double)cost : 0;
+                    return (IReadOnlyList<double>)BuildStoreSeries(label, rounds, history, shipping);
+                })
                 .ToList();
         }
 
@@ -247,8 +268,19 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
         ProductStore? bestStore = product?.BestStore;
         CurrentPriceText = FormatPriceWithStore(product?.BestPrice, bestStore?.Label);
-        PricePoint? lowest = history is { Count: > 0 } ? history.OrderBy(point => point.Price).First() : null;
-        LowestPriceText = lowest is not null ? FormatPriceWithStore(lowest.Price, lowest.StoreLabel) : "—";
+
+        // Precio más bajo del histórico, por precio EFECTIVO (suma el envío actual de la tienda si el ajuste lo incluye).
+        if (product is not null && history is { Count: > 0 })
+        {
+            bool includeShippingLow = SharedDataService.IncludeShippingInPrice;
+            decimal EffectiveOf(PricePoint p) => p.Price + (includeShippingLow && product.Stores.FirstOrDefault(s => s.Label == p.StoreLabel)?.ShippingCost is decimal c ? c : 0);
+            PricePoint lowest = history.OrderBy(EffectiveOf).First();
+            LowestPriceText = FormatPriceWithStore(EffectiveOf(lowest), lowest.StoreLabel);
+        }
+        else
+        {
+            LowestPriceText = "—";
+        }
 
         // Promoción / oferta / cupón / voucher en alguna tienda del producto.
         ShowPromo = product?.HasPromo ?? false;
@@ -270,8 +302,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             : product.Stores.Select(store => new StoreChip
             {
                 Label = store.Label,
-                PriceText = store.CurrentPrice is decimal price ? FormatStorePrice(price, store.Currency) : "—",
-                ShowPrimeBadge = store.IsPrime && store.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase)
+                PriceText = store.EffectivePrice is decimal price ? FormatStorePrice(price, store.Currency) : "—",
+                ShowPrimeBadge = store.IsPrime && store.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase),
+                ShippingText = store.ShippingCost is decimal shipping ? "+" + FormatStorePrice(shipping, store.Currency) : string.Empty,
+                // Si el envío ya va incluido en el precio, no se muestra aparte.
+                ShowShipping = !SharedDataService.IncludeShippingInPrice && store.ShippingCost is decimal shippingCost && shippingCost > 0
             }).ToList();
 
         OnPropertyChanged(nameof(SeriesValues));
@@ -330,7 +365,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// y, si falta (fallo de lectura), arrastra el último conocido; las rondas anteriores a su primera lectura se
     /// rellenan con esa primera lectura (para no dibujar caídas a 0).
     /// </summary>
-    private static double[] BuildStoreSeries(string label, List<DateTime> rounds, List<PricePoint> history)
+    private static double[] BuildStoreSeries(string label, List<DateTime> rounds, List<PricePoint> history, double shippingOffset = 0)
     {
         var byTimestamp = new Dictionary<DateTime, double>();
         foreach (PricePoint point in history)
@@ -351,7 +386,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         {
             if (byTimestamp.TryGetValue(rounds[i], out double value))
                 last = value;
-            series[i] = last;
+            series[i] = last + shippingOffset;   // + envío si el ajuste lo incluye (offset constante por tienda)
         }
         return series;
     }
@@ -385,6 +420,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     {
         SharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
         SharedDataService.FavoritesChanged -= OnFavoritesChanged;
+        SharedDataService.PropertyChanged -= OnSharedDataChanged;
         if (_product is not null)
         {
             _product.PriceRecorded -= OnPriceRecorded;

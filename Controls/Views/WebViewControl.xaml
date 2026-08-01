@@ -9,6 +9,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:template="using:MM4LB.Controls.Templates"
     xmlns:loc="using:MM4LB.Markup"
+    xmlns:help="using:MM4LB.Helpers"
     mc:Ignorable="d">
 
     <Grid>
@@ -28,7 +29,7 @@
                 <!-- Marketplace de Amazon: toggle buttons excluyentes entre sí; al elegir uno, navega al mismo producto
                      en ese dominio. -->
                 <StackPanel x:Name="CountryToggles" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center"
-                            ToolTipService.ToolTip="{loc:Str Key=WebView_Country_Tooltip}">
+                            help:Help.Key="WebView_Country_Tooltip">
                     <ToggleButton Content="ES" Tag="es" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
                     <ToggleButton Content="DE" Tag="de" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
                     <ToggleButton Content="FR" Tag="fr" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
@@ -52,17 +53,17 @@
             <!-- Altas desde la página mostrada: nuevo producto, o link alternativo del producto seleccionado; y al final,
                  tras un separador, los selectores del elemento de la imagen y del precio (deshabilitados en Amazon). -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="8 0 0 0">
-                <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Click="OnAddProductClick" ToolTipService.ToolTip="{loc:Str Key=WebView_AddProduct_Tooltip}">
+                <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Click="OnAddProductClick" help:Help.Key="WebView_AddProduct_Tooltip">
                     <FontIcon Glyph="&#xE710;" FontSize="16"/>
                 </Button>
-                <Button x:Name="AddAltLinkButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Margin="4 0 0 0" Click="OnAddAlternativeLinkClick" ToolTipService.ToolTip="{loc:Str Key=WebView_AddAltLink_Tooltip}">
+                <Button x:Name="AddAltLinkButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Margin="4 0 0 0" Click="OnAddAlternativeLinkClick" help:Help.Key="WebView_AddAltLink_Tooltip">
                     <FontIcon Glyph="&#xE71B;" FontSize="16"/>
                 </Button>
                 <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                <Button x:Name="PickImageButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Margin="0 0 4 0" Click="OnPickImageClick" ToolTipService.ToolTip="{loc:Str Key=WebView_PickImage_Tooltip}">
+                <Button x:Name="PickImageButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Margin="0 0 4 0" Click="OnPickImageClick" help:Help.Key="WebView_PickImage_Tooltip">
                     <FontIcon Glyph="&#xEB9F;" FontSize="16"/>
                 </Button>
-                <Button x:Name="PickPriceButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Click="OnPickPriceClick" ToolTipService.ToolTip="{loc:Str Key=WebView_PickPrice_Tooltip}">
+                <Button x:Name="PickPriceButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" VerticalAlignment="Center" Click="OnPickPriceClick" help:Help.Key="WebView_PickPrice_Tooltip">
                     <FontIcon Glyph="&#xE719;" FontSize="16"/>
                 </Button>
             </StackPanel>

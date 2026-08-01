@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MM4LB.Services;
 
 namespace MM4LB.Models;
 
@@ -92,8 +93,8 @@ public partial class Product : ObservableObject
     /// </summary>
     public List<PricePoint> PriceHistory { get; } = new();
 
-    /// <summary>Lowest current price across the stores that share the reference currency, or <c>null</c> if none known.</summary>
-    public decimal? BestPrice => BestStore?.CurrentPrice;
+    /// <summary>Mejor precio EFECTIVO actual (con envío si el ajuste global lo incluye) entre las tiendas de la moneda de referencia, o <c>null</c>.</summary>
+    public decimal? BestPrice => BestStore?.EffectivePrice;
 
     /// <summary>Whether any tracked store currently shows a promotion / deal / coupon / voucher on the product.</summary>
     public bool HasPromo
@@ -137,6 +138,13 @@ public partial class Product : ObservableObject
     /// <summary>Whether an alert price is configured for this product.</summary>
     public bool HasAlert => AlertPrice.HasValue;
 
+    /// <summary>
+    /// La tienda del mejor precio tiene gastos de envío (&gt; 0) Y el envío NO está incluido en el precio (si lo está,
+    /// ya va dentro y no se marca aparte). Para el icono de la lista y la pastilla del widget.
+    /// </summary>
+    public bool HasShipping =>
+        !App.GetService<SharedDataService>().IncludeShippingInPrice && BestStore?.ShippingCost is decimal shipping && shipping > 0;
+
     /// <summary>Whether the current best price is at or below the configured alert price (a good deal to flag).</summary>
     public bool IsBelowAlert => AlertPrice is decimal alert && BestPrice is decimal best && best <= alert;
 
@@ -169,15 +177,21 @@ public partial class Product : ObservableObject
                 .Select(group => group.Key)
                 .FirstOrDefault() ?? string.Empty;
 
+            // Se compara por PRECIO EFECTIVO (con envío si el ajuste global lo incluye), de modo que la tienda "más
+            // barata" refleje el coste final. Solo entre tiendas de la moneda de referencia.
             ProductStore? best = null;
+            decimal bestEffective = 0;
             foreach (ProductStore store in Stores)
             {
-                if (store.CurrentPrice is not decimal price)
+                if (store.EffectivePrice is not decimal effective)
                     continue;
                 if ((store.Currency ?? string.Empty) != referenceCurrency)
                     continue;
-                if (best?.CurrentPrice is not decimal current || price < current)
+                if (best is null || effective < bestEffective)
+                {
                     best = store;
+                    bestEffective = effective;
+                }
             }
             return best;
         }
@@ -227,7 +241,7 @@ public partial class Product : ObservableObject
             var rounds = PriceHistory
                 .GroupBy(point => point.Timestamp)
                 .OrderBy(group => group.Key)
-                .Select(group => (Time: group.Key, Min: group.Min(point => point.Price)))
+                .Select(group => (Time: group.Key, Min: group.Min(point => EffectiveHistoricalPrice(point))))
                 .ToList();
             if (rounds.Count < 2)
                 return PriceTrend.Unknown;
@@ -254,7 +268,7 @@ public partial class Product : ObservableObject
             if (BestPrice is not decimal best || PriceHistory.Count == 0)
                 return false;
 
-            return best <= PriceHistory.Min(point => point.Price);
+            return best <= PriceHistory.Min(point => EffectiveHistoricalPrice(point));
         }
     }
 
@@ -322,9 +336,25 @@ public partial class Product : ObservableObject
 
     private void OnStorePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked) or nameof(ProductStore.HasPromo) or nameof(ProductStore.IsAvailable) or nameof(ProductStore.IsPreorder))
+        if (e.PropertyName is nameof(ProductStore.CurrentPrice) or nameof(ProductStore.LastChecked) or nameof(ProductStore.HasPromo) or nameof(ProductStore.IsAvailable) or nameof(ProductStore.IsPreorder) or nameof(ProductStore.ShippingCost))
             RaiseDerivedChanged();
     }
+
+    /// <summary>
+    /// Precio efectivo de un punto del histórico: su precio + el envío ACTUAL de su tienda si el ajuste global de
+    /// incluir envío está activo (aproximación: no se registró el envío histórico de cada momento).
+    /// </summary>
+    private decimal EffectiveHistoricalPrice(PricePoint point)
+    {
+        if (!App.GetService<SharedDataService>().IncludeShippingInPrice)
+            return point.Price;
+
+        decimal shipping = Stores.FirstOrDefault(store => store.Label == point.StoreLabel)?.ShippingCost ?? 0;
+        return point.Price + shipping;
+    }
+
+    /// <summary>Recalcula el mejor precio y todos los derivados (p. ej. al cambiar el toggle de incluir envío en el precio).</summary>
+    public void NotifyPricingChanged() => RaiseDerivedChanged();
 
     private void RaiseDerivedChanged()
     {
@@ -338,6 +368,7 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(HasPromo));
         OnPropertyChanged(nameof(HasIssues));
         OnPropertyChanged(nameof(IsPreorder));
+        OnPropertyChanged(nameof(HasShipping));
         OnPropertyChanged(nameof(IsBelowAlert));
         OnPropertyChanged(nameof(AlertPriceText));
     }
@@ -400,9 +431,30 @@ public partial class ProductStore : ObservableObject
     [ObservableProperty]
     private bool _isPreorder;
 
+    /// <summary>Coste de envío detectado en esta tienda (Amazon), o <c>null</c> si es gratis/desconocido. Best-effort.</summary>
+    [ObservableProperty]
+    private decimal? _shippingCost;
+
     /// <summary>When <see cref="CurrentPrice"/> was last read, or <c>null</c> if never read.</summary>
     [ObservableProperty]
     private DateTime? _lastChecked;
+
+    /// <summary>
+    /// Precio efectivo de la tienda: <see cref="CurrentPrice"/> + <see cref="ShippingCost"/> si el ajuste global de
+    /// incluir envío está activo; si no, el precio a secas. <c>null</c> si no hay precio.
+    /// </summary>
+    public decimal? EffectivePrice
+    {
+        get
+        {
+            if (CurrentPrice is not decimal price)
+                return null;
+
+            return App.GetService<SharedDataService>().IncludeShippingInPrice && ShippingCost is decimal shipping
+                ? price + shipping
+                : price;
+        }
+    }
 
     public ProductStore()
     {

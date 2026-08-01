@@ -29,6 +29,9 @@ public sealed class ProductParseResult
 
     /// <summary>Whether the product is a pre-order (not yet released; available to reserve).</summary>
     public bool IsPreorder { get; init; }
+
+    /// <summary>Coste de envío detectado (Amazon), o <c>null</c> si es gratis/desconocido. Best-effort (depende de dirección/idioma).</summary>
+    public decimal? ShippingCost { get; init; }
 }
 
 /// <summary>
@@ -122,6 +125,24 @@ public sealed class ProductParsingService
                      || (atc && preRegex.test(atc.value || ''))
                      || preRegex.test(buyboxText));
 
+    // Coste de envío (Amazon), best-effort: usa el atributo estructurado del bloque de entrega si existe y, si no, su
+    // texto. Envío gratis (o desconocido) => ''; con coste => el importe (la app lo parsea). Solo si hay buy-box.
+    function shippingCost() {
+        var el = document.querySelector('[data-csa-c-delivery-price]');
+        var text = el ? (el.getAttribute('data-csa-c-delivery-price') || '') : '';
+        if (!text) {
+            var db = document.getElementById('mir-layout-DELIVERY_BLOCK')
+                  || document.getElementById('deliveryBlockMessage')
+                  || document.getElementById('price-shipping-message');
+            text = db ? db.textContent : '';
+        }
+        if (!text) return '';
+        if (/gratis|free|kostenlos|gratuit/i.test(text)) return '';   // envío gratis => sin pastilla
+        var m = text.match(/(?:eur|€|\$|£)\s*([0-9]+(?:[.,][0-9]{1,2})?)|([0-9]+(?:[.,][0-9]{1,2})?)\s*(?:eur|€)/i);
+        return m ? (m[1] || m[2]) : '';
+    }
+    var shipping = available ? shippingCost() : '';
+
     // Selector definido por el usuario (páginas no-Amazon): si existe el elemento, su texto ES el precio; disponible
     // = que el elemento exista. Tiene prioridad sobre la extracción integrada.
     if (customSel) {
@@ -135,7 +156,7 @@ public sealed class ProductParsingService
         }
     }
 
-    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen, isPrime: prime, available: available, hasPromo: hasPromo, isPreorder: isPreorder };
+    return { name: name, imageUrl: imageUrl, whole: whole, frac: frac, symbol: symbol, offscreen: offscreen, isPrime: prime, available: available, hasPromo: hasPromo, isPreorder: isPreorder, shipping: shipping };
 })();
 ";
     #endregion
@@ -292,6 +313,7 @@ public sealed class ProductParsingService
             bool isPrime = root.TryGetProperty("isPrime", out JsonElement primeElement) && primeElement.ValueKind == JsonValueKind.True;
             bool hasPromo = root.TryGetProperty("hasPromo", out JsonElement promoElement) && promoElement.ValueKind == JsonValueKind.True;
             bool isPreorder = root.TryGetProperty("isPreorder", out JsonElement preorderElement) && preorderElement.ValueKind == JsonValueKind.True;
+            decimal? shippingCost = ParseShipping(GetString(root, "shipping"));
 
             return new ProductParseResult
             {
@@ -302,7 +324,8 @@ public sealed class ProductParsingService
                 IsPrime = isPrime,
                 IsAvailable = available,
                 HasPromo = hasPromo,
-                IsPreorder = isPreorder
+                IsPreorder = isPreorder,
+                ShippingCost = shippingCost
             };
         }
         catch
@@ -315,6 +338,27 @@ public sealed class ProductParsingService
         => root.TryGetProperty(property, out JsonElement value) && value.ValueKind == JsonValueKind.String
             ? value.GetString()
             : null;
+
+    /// <summary>Parsea el importe de envío extraído (p. ej. "3,99"). Devuelve el valor solo si es &gt; 0; en otro caso null (gratis/desconocido).</summary>
+    private static decimal? ParseShipping(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return null;
+
+        string number = new string(text.Where(ch => char.IsDigit(ch) || ch == '.' || ch == ',').ToArray());
+        if (number.Length == 0)
+            return null;
+
+        int lastDot = number.LastIndexOf('.');
+        int lastComma = number.LastIndexOf(',');
+        char decimalSeparator = lastDot >= lastComma ? '.' : ',';
+        char thousandsSeparator = decimalSeparator == '.' ? ',' : '.';
+        number = number.Replace(thousandsSeparator.ToString(), string.Empty).Replace(decimalSeparator, '.');
+
+        return decimal.TryParse(number, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal value) && value > 0
+            ? value
+            : null;
+    }
 
     /// <summary>Builds a price from Amazon's structured whole/fraction parts (e.g. "39" + "99" → 39.99).</summary>
     private static decimal? BuildPrice(string? whole, string? frac)

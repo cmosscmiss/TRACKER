@@ -97,6 +97,9 @@ public sealed partial class MainWindow : Window
         _amazonAuth.StateChanged += OnAmazonAuthStateChanged;
         _amazonAuth.LoginBrowserReady += OnAmazonLoginBrowserReady;
 
+        // Al alternar los tooltips, el del botón de Amazon (que se fija por código) también debe ocultarse/mostrarse.
+        _viewModel.SharedDataService.PropertyChanged += OnSharedDataChanged;
+
         if (Content is FrameworkElement root)
         {
             root.DataContext = _viewModel;
@@ -108,6 +111,10 @@ public sealed partial class MainWindow : Window
         // Minimizar a la bandeja del sistema: al minimizar se oculta de la barra de tareas y el icono de la bandeja
         // la restaura. Mantener el proceso vivo en la bandeja es lo que permite al scheduler seguir leyendo precios.
         _trayIcon.Initialize(WinRT.Interop.WindowNative.GetWindowHandle(this), "Tracker");
+
+        // Si se intenta abrir una segunda instancia, la principal (esta) restaura la ventana en pantalla en vez de
+        // mostrar un aviso. La señal llega en un hilo en segundo plano; se marshalea al hilo de UI.
+        App.ActivationRequested = () => DispatcherQueue.TryEnqueue(() => _trayIcon.Restore());
 
         Activated += OnWindowActivated;
         Closed += OnClosed;
@@ -279,6 +286,8 @@ public sealed partial class MainWindow : Window
         Activated -= OnWindowActivated;
         Closed -= OnClosed;
 
+        App.ActivationRequested = null;
+        _viewModel.SharedDataService.PropertyChanged -= OnSharedDataChanged;
         _nextUpdateTimer?.Stop();
 
         DisposeToolbarBehavior();
@@ -395,6 +404,12 @@ public sealed partial class MainWindow : Window
         DispatcherQueue.TryEnqueue(async () =>
         {
             await RefreshAmazonAuthButtonAsync();
+
+            // Deja constancia en la consola del estado de sesión de Amazon comprobado al arrancar.
+            int loggedInStores = await _amazonAuth.CountLoggedInStoresAsync();
+            App.GetService<ProgressService>().LogEvent(
+                string.Format(L(MM4LB.Helpers.LocKeys.AmazonSession_Startup_Log), loggedInStores, _amazonAuth.StoreCount));
+
             if (Content is FrameworkElement root && !await _amazonAuth.IsLoggedInAsync())
             {
                 await StartAmazonLoginFlowAsync(root.XamlRoot);
@@ -407,8 +422,31 @@ public sealed partial class MainWindow : Window
     private async Task RefreshAmazonAuthButtonAsync()
     {
         bool loggedIn = await _amazonAuth.IsLoggedInAsync();
-        AmazonAuthIcon.Foreground = ResolveBrush(loggedIn ? "SuccessBrush" : "TextSecondaryBrush");
-        Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(AmazonAuthButton, L(loggedIn ? MM4LB.Helpers.LocKeys.AmazonLogout_Tooltip : MM4LB.Helpers.LocKeys.AmazonLogin_Tooltip));
+        // Icono en acento si hay sesión (es un "toggle" login/logout), secundario si no.
+        AmazonAuthIcon.Foreground = ResolveBrush(loggedIn ? "AccentBrush" : "TextSecondaryBrush");
+        // Tooltip gateado por el toggle global de tooltips (se fija por código, así que se aplica aquí a mano).
+        bool tips = _viewModel.SharedDataService.HelpTooltipsEnabled;
+        Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(AmazonAuthButton,
+            tips ? L(loggedIn ? MM4LB.Helpers.LocKeys.AmazonLogout_Tooltip : MM4LB.Helpers.LocKeys.AmazonLogin_Tooltip) : null);
+    }
+
+    /// <summary>Alterna la visibilidad global de los tooltips de los botones.</summary>
+    private void OnToggleTooltipsClick(object sender, RoutedEventArgs e)
+        => _viewModel.SharedDataService.HelpTooltipsEnabled = !_viewModel.SharedDataService.HelpTooltipsEnabled;
+
+    /// <summary>Alterna la visibilidad de las etiquetas del eje de las gráficas de productos.</summary>
+    private void OnToggleAxisLabelsClick(object sender, RoutedEventArgs e)
+        => _viewModel.SharedDataService.ShowChartAxisLabels = !_viewModel.SharedDataService.ShowChartAxisLabels;
+
+    /// <summary>Alterna si el precio de los productos incluye los gastos de envío (afecta a toda la app).</summary>
+    private void OnToggleIncludeShippingClick(object sender, RoutedEventArgs e)
+        => _viewModel.SharedDataService.IncludeShippingInPrice = !_viewModel.SharedDataService.IncludeShippingInPrice;
+
+    /// <summary>Cambió un ajuste compartido: si se alternaron los tooltips, refresca el del botón de Amazon (fijado por código).</summary>
+    private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MM4LB.Services.SharedDataService.HelpTooltipsEnabled))
+            DispatcherQueue.TryEnqueue(async () => await RefreshAmazonAuthButtonAsync());
     }
 
     /// <summary>Resuelve un brush de los recursos de la aplicación (los genera ThemeService); null si no existe.</summary>

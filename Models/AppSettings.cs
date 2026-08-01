@@ -94,6 +94,20 @@ public class AppSettings
         public bool FooterEventViewerAlwaysVisible { get; set; } = true;
 
         /// <summary>
+        /// Si es true (por defecto), se muestran los tooltips de los botones. Un toggle del footer lo alterna en
+        /// caliente (vía <see cref="MM4LB.Services.SharedDataService.HelpTooltipsEnabled"/> y la attached property
+        /// <c>Help.Key</c>).
+        /// </summary>
+        public bool HelpTooltipsEnabled { get; set; } = true;
+
+        /// <summary>
+        /// Si es true, el precio de los productos incluye los gastos de envío (precio + envío) en toda la app. Lo
+        /// alterna un toggle del footer (vía <see cref="MM4LB.Services.SharedDataService.IncludeShippingInPrice"/>).
+        /// Por defecto false.
+        /// </summary>
+        public bool IncludeShippingInPrice { get; set; } = false;
+
+        /// <summary>
         /// Si es true, las gráficas del widget de productos (producto seleccionado y favoritos) muestran las etiquetas
         /// del eje X (las fechas de actualización). Por defecto false (leyenda oculta). Lo controla un toggle del pie y
         /// se aplica en caliente a todas esas gráficas vía <see cref="MM4LB.Services.SharedDataService.ShowChartAxisLabels"/>.

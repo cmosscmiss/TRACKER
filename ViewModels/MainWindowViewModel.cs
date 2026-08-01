@@ -209,14 +209,18 @@ public class MainWindowViewModel : WidgetViewModelBase
 
     public override void LoadConfig()
     {
-        // Ajuste global de leyenda del eje de las gráficas de productos: del .ini al observable compartido (en caliente).
+        // Ajustes globales del .ini a los observables compartidos (en caliente): leyenda del eje y tooltips.
         _sharedDataService.ShowChartAxisLabels = _appSettings.General.ShowChartAxisLabels;
+        _sharedDataService.HelpTooltipsEnabled = _appSettings.General.HelpTooltipsEnabled;
+        _sharedDataService.IncludeShippingInPrice = _appSettings.General.IncludeShippingInPrice;
     }
 
     public override void SaveConfig()
     {
         SaveWidgetSlots();
         _appSettings.General.ShowChartAxisLabels = _sharedDataService.ShowChartAxisLabels;
+        _appSettings.General.HelpTooltipsEnabled = _sharedDataService.HelpTooltipsEnabled;
+        _appSettings.General.IncludeShippingInPrice = _sharedDataService.IncludeShippingInPrice;
     }
 
     public override void Dispose()

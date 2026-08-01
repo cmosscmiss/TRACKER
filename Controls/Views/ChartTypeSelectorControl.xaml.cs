@@ -523,6 +523,9 @@ public sealed partial class ChartTypeSelectorControl : UserControl
 
     private string Format(double v) => v.ToString(ValueFormat ?? "0") + (ValueSuffix ?? string.Empty);
 
+    /// <summary>Etiqueta del eje de valores: entero (sin decimales) con el sufijo de moneda. Los tooltips/data-labels usan <see cref="Format"/>.</summary>
+    private string FormatAxis(double v) => v.ToString("0") + (ValueSuffix ?? string.Empty);
+
     /// <summary>Reconstruye las series del tipo actual a partir de los datos, o vacía y oculta si no hay datos.</summary>
     private void Rebuild()
     {
@@ -607,8 +610,8 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     }
 
     /// <summary>
-    /// SELECCIONA los <see cref="TopN"/> elementos de mayor valor (incluyendo SIEMPRE el resaltado aunque no
-    /// esté entre los mayores), conservando el ORDEN ORIGINAL (el orden de visualización lo aplica
+    /// SELECCIONA los <see cref="TopN"/> elementos de MENOR valor (precio más bajo; incluyendo SIEMPRE el resaltado
+    /// aunque no esté entre los más baratos), conservando el ORDEN ORIGINAL (el orden de visualización lo aplica
     /// <see cref="ApplySort"/> aparte). Si <see cref="TopN"/> es 0 (All) o hay menos elementos que el límite,
     /// devuelve los datos tal cual. Remapea el índice de resaltado.
     /// </summary>
@@ -617,9 +620,9 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         if (TopN <= 0 || values.Length <= TopN)
             return (values, labels, indices, highlightIndex);
 
-        // Índices de los Top N por valor; añade el resaltado si quedó fuera; luego vuelve al orden original.
+        // Índices de los Top N por MENOR valor (precio más bajo); añade el resaltado si quedó fuera; luego vuelve al orden original.
         var keep = Enumerable.Range(0, values.Length)
-            .OrderByDescending(i => values[i])
+            .OrderBy(i => values[i])
             .Take(TopN)
             .ToList();
 
@@ -832,7 +835,11 @@ public sealed partial class ChartTypeSelectorControl : UserControl
             {
                 MinLimit = min,
                 MaxLimit = max,
-                TextSize = 11, LabelsPaint = new SolidColorPaint(text), Labeler = Format
+                // Etiquetas del eje de valores (leyenda de precios) SIEMPRE en enteros, sin decimales; los tooltips y
+                // las data-labels siguen usando ValueFormat (con decimales). MinStep 1 evita ticks fraccionarios que
+                // producirían etiquetas enteras repetidas.
+                MinStep = 1,
+                TextSize = 11, LabelsPaint = new SolidColorPaint(text), Labeler = FormatAxis
             };
         }
 
@@ -1015,7 +1022,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     }
 
     /// <summary>
-    /// Orden de las categorías a mostrar según el estado de Top N (las de mayor total) y de orden
+    /// Orden de las categorías a mostrar según el estado de Top N (las de MENOR total: precio más bajo) y de orden
     /// (asc/desc por total), espejo del comportamiento de una sola serie pero sobre el total por categoría.
     /// </summary>
     private int[] BuildColumnOrder(double[] totals)
@@ -1024,7 +1031,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         var keep = new List<int>(n);
         if (TopN > 0 && n > TopN)
         {
-            keep.AddRange(Enumerable.Range(0, n).OrderByDescending(i => totals[i]).Take(TopN));
+            keep.AddRange(Enumerable.Range(0, n).OrderBy(i => totals[i]).Take(TopN));   // los TopN de MENOR total (precio más bajo)
             keep.Sort();   // vuelve al orden original; el de visualización lo decide el orden de abajo
         }
         else
