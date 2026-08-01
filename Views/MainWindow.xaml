@@ -68,10 +68,11 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <!--Menu-->
+                        <!--Menu: nombre del producto seleccionado, con longitud limitada y recorte con puntos suspensivos. -->
                         <Grid Grid.Row="0" Grid.RowSpan="2">
                             <StackPanel Orientation="Horizontal" Padding="16">
-                                <TextBlock Text="{Binding SharedDataService.SelectedProduct.Name}" Foreground="{ThemeResource AccentLightBrush}" FontSize="28" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding SharedDataService.SelectedProduct.Name}" Foreground="{ThemeResource AccentLightBrush}" FontSize="28" FontWeight="Bold"
+                                           MaxWidth="900" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Top"/>
                             </StackPanel>
                         </Grid>
 

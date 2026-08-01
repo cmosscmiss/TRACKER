@@ -137,6 +137,7 @@ public static class LocKeys
     public const string GeneralSettings_ShowWidgetHeader_Label = "GeneralSettings_ShowWidgetHeader_Label";
     public const string GeneralSettings_FooterEventViewer_Label = "GeneralSettings_FooterEventViewer_Label";
     public const string GeneralSettings_LogExceptions_Label = "GeneralSettings_LogExceptions_Label";
+    public const string GeneralSettings_AutoRefreshHours_Label = "GeneralSettings_AutoRefreshHours_Label";
     public const string ThemeSettings_Theme_Label = "ThemeSettings_Theme_Label";
     public const string ThemeSettings_RandomTheme_Label = "ThemeSettings_RandomTheme_Label";
     public const string ThemeSettings_BackgroundOverlay_Header = "ThemeSettings_BackgroundOverlay_Header";

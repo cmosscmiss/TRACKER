@@ -81,6 +81,9 @@ public partial class SettingsDialogViewModel : ObservableObject
     [ObservableProperty] private bool footerEventViewerAlwaysVisible;
     [ObservableProperty] private bool exceptionLoggingEnabled;
 
+    /// <summary>Horas entre actualizaciones automáticas de precios (mínimo 1). Se aplica al planificador al aceptar.</summary>
+    [ObservableProperty] private double autoRefreshHours;
+
     /// <summary>Idiomas disponibles para el combo (código + nombre). Vienen del <see cref="LocalizationService"/>.</summary>
     public IReadOnlyList<LocalizationService.LanguageOption> LanguageOptions { get; }
 
@@ -238,6 +241,10 @@ public partial class SettingsDialogViewModel : ObservableObject
         bool footerViewerChanged = g.FooterEventViewerAlwaysVisible != FooterEventViewerAlwaysVisible;
         bool toolbarGroupsChanged = g.ToolbarGroupsDisplayMode != toolbarGroupsMode;
 
+        int refreshHours = Math.Max(1, (int)Math.Round(AutoRefreshHours));
+        bool refreshHoursChanged = g.AutoRefreshHours != refreshHours;
+        g.AutoRefreshHours = refreshHours;
+
         g.ToolbarGroupsDisplayMode = toolbarGroupsMode;
         g.ShowWidgetHeader = ShowWidgetHeader;
         // Recuerda la categoría abierta para restaurarla al reabrir el diálogo.
@@ -252,6 +259,8 @@ public partial class SettingsDialogViewModel : ObservableObject
         _localizationService.SetLanguage(newLanguage);
 
         ExceptionService.LoggingEnabled = ExceptionLoggingEnabled;
+        if (refreshHoursChanged)
+            App.GetService<PriceSchedulerService>().ApplyIntervalChange();
         if (footerViewerChanged)
             _consoleViewModel.NotifyFooterViewerVisibilityChanged();
         if (toolbarGroupsChanged)
@@ -297,6 +306,7 @@ public partial class SettingsDialogViewModel : ObservableObject
         ShowWidgetHeader = g.ShowWidgetHeader;
         FooterEventViewerAlwaysVisible = g.FooterEventViewerAlwaysVisible;
         ExceptionLoggingEnabled = g.ExceptionLoggingEnabled;
+        AutoRefreshHours = g.AutoRefreshHours;
         SelectedLanguageOption = LanguageOptions.FirstOrDefault(o => o.Code == g.Language) ?? LanguageOptions[0];
 
         AppSettings.ThemeSettings t = _appSettings.Theme;

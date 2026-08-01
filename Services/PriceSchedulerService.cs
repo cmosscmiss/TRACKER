@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Dispatching;
 using MM4LB.Helpers;
 using MM4LB.Models;
@@ -10,8 +11,8 @@ namespace MM4LB.Services;
 
 /// <summary>
 /// Periodically refreshes the price of every tracked product, so the price history keeps growing while the app is
-/// running (including minimized to the system tray). Prices are read every <see cref="Interval"/> (12 h); on
-/// startup it also does a catch-up pass for products whose last reading is older than that (or missing).
+/// running (including minimized to the system tray). Prices are read every <see cref="Interval"/> (configurable, 24 h
+/// by default); on startup it also does a catch-up pass for products whose last reading is older than that (or missing).
 ///
 /// The refresh drives the WebView2 parser, which is UI-thread affine, so the work runs on the UI
 /// <see cref="DispatcherQueue"/> (the periodic timer ticks there and the initial pass is started from the UI
@@ -19,18 +20,19 @@ namespace MM4LB.Services;
 /// </summary>
 public sealed class PriceSchedulerService
 {
-    #region Constants
-    /// <summary>How often every product's price is re-read.</summary>
-    public static readonly TimeSpan Interval = TimeSpan.FromHours(12);
-    #endregion
-
     #region Attributes
     private readonly SharedDataService _sharedDataService;
     private readonly ProductService _productService;
     private readonly ProgressService _progressService;
+    private readonly IOptions<AppSettings> _appSettings;
 
     private DispatcherQueueTimer? _timer;
     private bool _running;
+    #endregion
+
+    #region Properties
+    /// <summary>Cada cuánto se re-lee el precio de cada producto (configurable en ajustes; mínimo 1 h).</summary>
+    public TimeSpan Interval => TimeSpan.FromHours(Math.Max(1, _appSettings.Value.General.AutoRefreshHours));
     #endregion
 
     #region Properties
@@ -42,11 +44,12 @@ public sealed class PriceSchedulerService
     #endregion
 
     #region Constructor
-    public PriceSchedulerService(SharedDataService sharedDataService, ProductService productService, ProgressService progressService)
+    public PriceSchedulerService(SharedDataService sharedDataService, ProductService productService, ProgressService progressService, IOptions<AppSettings> appSettings)
     {
         _sharedDataService = sharedDataService;
         _productService = productService;
         _progressService = progressService;
+        _appSettings = appSettings;
     }
     #endregion
 
@@ -110,6 +113,13 @@ public sealed class PriceSchedulerService
 
     /// <summary>Fuerza un refresco inmediato de TODOS los productos (lo mismo que la pasada periódica). Debe llamarse en el hilo de UI.</summary>
     public Task RefreshAllAsync() => RunAsync(dueOnly: false);
+
+    /// <summary>Reaplica el intervalo tras cambiarlo en ajustes: reinicia la cuenta atrás y el temporizador desde ahora.</summary>
+    public void ApplyIntervalChange()
+    {
+        if (_timer is not null)
+            RearmSchedule();
+    }
     #endregion
 
     #region Methods (private)
@@ -176,7 +186,7 @@ public sealed class PriceSchedulerService
     /// Las tiendas que nunca cargaron (LastChecked nulo) se IGNORAN: no fuerzan un refresco en cada arranque (una
     /// tienda que falla siempre no debe reintentarse indefinidamente; su recarga se deja a la pasada periódica de 12 h).
     /// </summary>
-    private static bool IsDue(Product product)
+    private bool IsDue(Product product)
     {
         if (product.Stores.Count == 0)
             return false;

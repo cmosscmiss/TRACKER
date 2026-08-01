@@ -393,6 +393,9 @@
   <data name="GeneralSettings_LogExceptions_Label" xml:space="preserve">
     <value>Registrar excepciones en un fichero</value>
   </data>
+  <data name="GeneralSettings_AutoRefreshHours_Label" xml:space="preserve">
+    <value>Actualizar precios cada (horas)</value>
+  </data>
   <data name="ThemeSettings_Theme_Label" xml:space="preserve">
     <value>Tema</value>
   </data>

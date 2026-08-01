@@ -108,6 +108,12 @@ public class AppSettings
         public bool IncludeShippingInPrice { get; set; } = false;
 
         /// <summary>
+        /// Cada cuántas horas se refrescan automáticamente todos los precios (planificador). Por defecto 24. Se aplica
+        /// un mínimo de 1 h. Configurable desde la ventana de ajustes.
+        /// </summary>
+        public int AutoRefreshHours { get; set; } = 24;
+
+        /// <summary>
         /// Si es true, las gráficas del widget de productos (producto seleccionado y favoritos) muestran las etiquetas
         /// del eje X (las fechas de actualización). Por defecto false (leyenda oculta). Lo controla un toggle del pie y
         /// se aplica en caliente a todas esas gráficas vía <see cref="MM4LB.Services.SharedDataService.ShowChartAxisLabels"/>.

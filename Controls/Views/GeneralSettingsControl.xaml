@@ -35,6 +35,16 @@
 
         <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
 
+        <!-- Intervalo de actualización automática de precios (horas). -->
+        <Grid ColumnDefinitions="240,*">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_AutoRefreshHours_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <NumberBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" Minimum="1" Maximum="168"
+                       SpinButtonPlacementMode="Inline" SmallChange="1" LargeChange="6"
+                       Value="{Binding AutoRefreshHours, Mode=TwoWay}"/>
+        </Grid>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
         <!-- Interruptores. -->
         <CheckBox Content="{loc:Str Key=GeneralSettings_ShowWidgetHeader_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ShowWidgetHeader, Mode=TwoWay}"/>
         <CheckBox Content="{loc:Str Key=GeneralSettings_FooterEventViewer_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding FooterEventViewerAlwaysVisible, Mode=TwoWay}"/>
