@@ -139,11 +139,10 @@ public partial class Product : ObservableObject
     public bool HasAlert => AlertPrice.HasValue;
 
     /// <summary>
-    /// La tienda del mejor precio tiene gastos de envío (&gt; 0) Y el envío NO está incluido en el precio (si lo está,
-    /// ya va dentro y no se marca aparte). Para el icono de la lista y la pastilla del widget.
+    /// La tienda del mejor precio tiene gastos de envío (&gt; 0). Para el icono de la lista (se muestra siempre que
+    /// haya envío, aunque el precio ya lo incluya).
     /// </summary>
-    public bool HasShipping =>
-        !App.GetService<SharedDataService>().IncludeShippingInPrice && BestStore?.ShippingCost is decimal shipping && shipping > 0;
+    public bool HasShipping => BestStore?.ShippingCost is decimal shipping && shipping > 0;
 
     /// <summary>Whether the current best price is at or below the configured alert price (a good deal to flag).</summary>
     public bool IsBelowAlert => AlertPrice is decimal alert && BestPrice is decimal best && best <= alert;
