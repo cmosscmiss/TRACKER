@@ -64,14 +64,6 @@ public class AppSettings
         public string Language { get; set; } = "en";
 
         /// <summary>
-        /// Cómo se muestran los grupos de botones excluyentes de las toolbars de los widgets: como botones sueltos
-        /// (<see cref="ToolbarGroupsDisplayMode.Expanded"/>), colapsados en un ToggleSplitButton por grupo
-        /// (<see cref="ToolbarGroupsDisplayMode.Collapsed"/>), o automático por tamaño de la toolbar
-        /// (<see cref="ToolbarGroupsDisplayMode.Auto"/>, por defecto).
-        /// </summary>
-        public ToolbarGroupsDisplayMode ToolbarGroupsDisplayMode { get; set; } = ToolbarGroupsDisplayMode.Auto;
-
-        /// <summary>
         /// Última categoría abierta en la ventana de configuración (nombre del <c>SettingsSectionKind</c>, p. ej.
         /// "General", "Theme"). Se guarda al aceptar y se restaura al reabrir el diálogo. Se persiste como texto para no
         /// acoplar el modelo a un enum de la capa de ViewModels; si el valor no existe, se cae a la primera categoría.

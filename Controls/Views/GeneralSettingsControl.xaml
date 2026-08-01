@@ -24,17 +24,6 @@
 
         <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
 
-        <!-- Grupos de botones de las toolbars. -->
-        <Grid ColumnDefinitions="240,*">
-            <TextBlock Text="{loc:Str Key=GeneralSettings_ToolbarGroups_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <ComboBox x:Name="ToolbarGroupsCombo" Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
-                      ItemsSource="{Binding ToolbarGroupsModeOptions}"
-                      DisplayMemberPath="Label"
-                      SelectionChanged="OnToolbarGroupsSelectionChanged"/>
-        </Grid>
-
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
         <!-- Intervalo de actualización automática de precios (horas). -->
         <Grid ColumnDefinitions="240,*">
             <TextBlock Text="{loc:Str Key=GeneralSettings_AutoRefreshHours_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>

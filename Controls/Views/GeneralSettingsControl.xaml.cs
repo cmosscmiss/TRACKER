@@ -29,16 +29,8 @@ public sealed partial class GeneralSettingsControl : UserControl
             if (DataContext is not SettingsDialogViewModel vm)
                 return;
 
-            ToolbarGroupsCombo.SelectedItem = vm.SelectedToolbarGroupsOption;
             LanguageCombo.SelectedItem = vm.SelectedLanguageOption;
         });
-    }
-
-    /// <summary>Vuelca la selección del combo de grupos de toolbar al staging del VM.</summary>
-    private void OnToolbarGroupsSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (DataContext is SettingsDialogViewModel vm && ToolbarGroupsCombo.SelectedItem is SettingsDialogViewModel.ToolbarGroupsModeOption option)
-            vm.SelectedToolbarGroupsOption = option;
     }
 
     /// <summary>Vuelca el idioma seleccionado al staging del VM.</summary>

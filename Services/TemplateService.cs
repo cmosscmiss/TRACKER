@@ -180,7 +180,6 @@ public class TemplateService
         // El tema NO se toca al cargar un template (se excluye del restore).
 
         _sharedDataService.NotifyWidgetHeaderVisibilityChanged();
-        _sharedDataService.NotifyToolbarGroupsDisplayModeChanged();
         _sharedDataService.NotifySettingsReloaded();
     }
     #endregion

@@ -69,14 +69,6 @@ public partial class SettingsDialogViewModel : ObservableObject
     #endregion
 
     #region General settings (staging)
-    /// <summary>Una opción del combo del modo de grupos de la toolbar (valor + etiqueta mostrada).</summary>
-    public sealed record ToolbarGroupsModeOption(ToolbarGroupsDisplayMode Value, string Label);
-
-    /// <summary>Opciones del combo del modo de grupos de la toolbar (con etiqueta localizada).</summary>
-    public IReadOnlyList<ToolbarGroupsModeOption> ToolbarGroupsModeOptions { get; }
-
-    /// <summary>Opción seleccionada del combo de grupos de toolbar (igualdad por referencia del record).</summary>
-    [ObservableProperty] private ToolbarGroupsModeOption? selectedToolbarGroupsOption;
     [ObservableProperty] private bool showWidgetHeader;
     [ObservableProperty] private bool footerEventViewerAlwaysVisible;
     [ObservableProperty] private bool exceptionLoggingEnabled;
@@ -205,14 +197,6 @@ public partial class SettingsDialogViewModel : ObservableObject
 
         LanguageOptions = _localizationService.AvailableLanguages;
 
-        // Opciones del combo de grupos de toolbar, localizadas (el VM es transient: toma el idioma actual al abrir).
-        ToolbarGroupsModeOptions = new[]
-        {
-            new ToolbarGroupsModeOption(ToolbarGroupsDisplayMode.Expanded, _localizationService.Get(LocKeys.SettingsDialog_ToolbarGroupsSeparate_Label)),
-            new ToolbarGroupsModeOption(ToolbarGroupsDisplayMode.Collapsed, _localizationService.Get(LocKeys.SettingsDialog_ToolbarGroupsGrouped_Label)),
-            new ToolbarGroupsModeOption(ToolbarGroupsDisplayMode.Auto, _localizationService.Get(LocKeys.SettingsDialog_ToolbarGroupsAuto_Label)),
-        };
-
         Sections = new List<SettingsSection>
         {
             new(SettingsSectionKind.General, _localizationService.Get(LocKeys.SettingsDialog_General_Title)),
@@ -236,16 +220,13 @@ public partial class SettingsDialogViewModel : ObservableObject
     public void Apply()
     {
         AppSettings.GeneralSettings g = _appSettings.General;
-        ToolbarGroupsDisplayMode toolbarGroupsMode = SelectedToolbarGroupsOption?.Value ?? ToolbarGroupsDisplayMode.Auto;
         bool headerChanged = g.ShowWidgetHeader != ShowWidgetHeader;
         bool footerViewerChanged = g.FooterEventViewerAlwaysVisible != FooterEventViewerAlwaysVisible;
-        bool toolbarGroupsChanged = g.ToolbarGroupsDisplayMode != toolbarGroupsMode;
 
         int refreshHours = Math.Max(1, (int)Math.Round(AutoRefreshHours));
         bool refreshHoursChanged = g.AutoRefreshHours != refreshHours;
         g.AutoRefreshHours = refreshHours;
 
-        g.ToolbarGroupsDisplayMode = toolbarGroupsMode;
         g.ShowWidgetHeader = ShowWidgetHeader;
         // Recuerda la categoría abierta para restaurarla al reabrir el diálogo.
         if (SelectedSection != null)
@@ -263,8 +244,6 @@ public partial class SettingsDialogViewModel : ObservableObject
             App.GetService<PriceSchedulerService>().ApplyIntervalChange();
         if (footerViewerChanged)
             _consoleViewModel.NotifyFooterViewerVisibilityChanged();
-        if (toolbarGroupsChanged)
-            _sharedDataService.NotifyToolbarGroupsDisplayModeChanged();
         if (headerChanged)
             _sharedDataService.NotifyWidgetHeaderVisibilityChanged();
 
@@ -302,7 +281,6 @@ public partial class SettingsDialogViewModel : ObservableObject
     private void LoadGeneralFromSettings()
     {
         AppSettings.GeneralSettings g = _appSettings.General;
-        SelectedToolbarGroupsOption = ToolbarGroupsModeOptions.FirstOrDefault(o => o.Value == g.ToolbarGroupsDisplayMode) ?? ToolbarGroupsModeOptions[0];
         ShowWidgetHeader = g.ShowWidgetHeader;
         FooterEventViewerAlwaysVisible = g.FooterEventViewerAlwaysVisible;
         ExceptionLoggingEnabled = g.ExceptionLoggingEnabled;

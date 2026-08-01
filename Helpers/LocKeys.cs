@@ -129,11 +129,7 @@ public static class LocKeys
     public const string SettingsDialog_General_Title = "SettingsDialog_General_Title";
     public const string SettingsDialog_Theme_Title = "SettingsDialog_Theme_Title";
     public const string SettingsDialog_About_Title = "SettingsDialog_About_Title";
-    public const string SettingsDialog_ToolbarGroupsSeparate_Label = "SettingsDialog_ToolbarGroupsSeparate_Label";
-    public const string SettingsDialog_ToolbarGroupsGrouped_Label = "SettingsDialog_ToolbarGroupsGrouped_Label";
-    public const string SettingsDialog_ToolbarGroupsAuto_Label = "SettingsDialog_ToolbarGroupsAuto_Label";
     public const string GeneralSettings_Language_Label = "GeneralSettings_Language_Label";
-    public const string GeneralSettings_ToolbarGroups_Label = "GeneralSettings_ToolbarGroups_Label";
     public const string GeneralSettings_ShowWidgetHeader_Label = "GeneralSettings_ShowWidgetHeader_Label";
     public const string GeneralSettings_FooterEventViewer_Label = "GeneralSettings_FooterEventViewer_Label";
     public const string GeneralSettings_LogExceptions_Label = "GeneralSettings_LogExceptions_Label";

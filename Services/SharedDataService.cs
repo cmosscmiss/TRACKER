@@ -120,13 +120,6 @@ public class SharedDataService : ObservableObject
     /// </summary>
     public event EventHandler? WidgetHeaderVisibilityChanged;
 
-    /// <summary>
-    /// Se dispara cuando cambia el modo de grupos de las toolbars
-    /// (<see cref="Models.AppSettings.GeneralSettings.ToolbarGroupsDisplayMode"/>), para que las toolbars con grupos
-    /// excluyentes se reconstruyan en caliente. Lo emite la ventana de configuración al aceptar.
-    /// </summary>
-    public event EventHandler? ToolbarGroupsDisplayModeChanged;
-
     /// <summary>Se dispara cuando cambia el conjunto de productos favoritos (para el widget de favoritos y el toggle).</summary>
     public event EventHandler? FavoritesChanged;
 
@@ -149,12 +142,6 @@ public class SharedDataService : ObservableObject
     public void NotifyWidgetHeaderVisibilityChanged()
     {
         WidgetHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>Notifica que el modo de grupos de las toolbars cambió, para reconstruir las toolbars con grupos excluyentes.</summary>
-    public void NotifyToolbarGroupsDisplayModeChanged()
-    {
-        ToolbarGroupsDisplayModeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>Notifica que cambió el conjunto de favoritos (para reconstruir el widget de favoritos y el estado del toggle).</summary>

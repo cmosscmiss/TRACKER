@@ -390,20 +390,8 @@
   <data name="SettingsDialog_About_Title" xml:space="preserve">
     <value>Acerca de</value>
   </data>
-  <data name="SettingsDialog_ToolbarGroupsSeparate_Label" xml:space="preserve">
-    <value>Botones sueltos</value>
-  </data>
-  <data name="SettingsDialog_ToolbarGroupsGrouped_Label" xml:space="preserve">
-    <value>Agrupados</value>
-  </data>
-  <data name="SettingsDialog_ToolbarGroupsAuto_Label" xml:space="preserve">
-    <value>Automático</value>
-  </data>
   <data name="GeneralSettings_Language_Label" xml:space="preserve">
     <value>Idioma</value>
-  </data>
-  <data name="GeneralSettings_ToolbarGroups_Label" xml:space="preserve">
-    <value>Grupos de botones de la toolbar</value>
   </data>
   <data name="GeneralSettings_ShowWidgetHeader_Label" xml:space="preserve">
     <value>Mostrar la cabecera de los widgets</value>
