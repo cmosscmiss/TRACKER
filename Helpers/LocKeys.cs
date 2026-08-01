@@ -210,6 +210,12 @@ public static class LocKeys
     public const string Footer_AxisLabels_Tooltip = "Footer_AxisLabels_Tooltip";
     public const string Footer_Tooltips_Tooltip = "Footer_Tooltips_Tooltip";
     public const string Footer_IncludeShipping_Tooltip = "Footer_IncludeShipping_Tooltip";
+    public const string Notify_Summary_Title = "Notify_Summary_Title";
+    public const string Notify_Summary_Line = "Notify_Summary_Line";
+    public const string Notify_AlertReached_Line = "Notify_AlertReached_Line";
+    public const string Notify_NewLow_Line = "Notify_NewLow_Line";
+    public const string Notify_BackInStock_Line = "Notify_BackInStock_Line";
+    public const string Notify_PreorderReleased_Line = "Notify_PreorderReleased_Line";
     public const string Footer_NextUpdate_Tooltip = "Footer_NextUpdate_Tooltip";
 
     // Acciones del widget de producto

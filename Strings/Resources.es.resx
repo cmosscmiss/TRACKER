@@ -204,6 +204,24 @@
   <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
     <value>Incluir los gastos de envío en el precio</value>
   </data>
+  <data name="Notify_Summary_Title" xml:space="preserve">
+    <value>Tracker: actualización de precios</value>
+  </data>
+  <data name="Notify_Summary_Line" xml:space="preserve">
+    <value>{0} actualizados · {1} bajadas · {2} con avisos</value>
+  </data>
+  <data name="Notify_AlertReached_Line" xml:space="preserve">
+    <value>Precio objetivo: {0} {1}</value>
+  </data>
+  <data name="Notify_NewLow_Line" xml:space="preserve">
+    <value>Nuevo mínimo: {0} {1}</value>
+  </data>
+  <data name="Notify_BackInStock_Line" xml:space="preserve">
+    <value>De nuevo disponible: {0}</value>
+  </data>
+  <data name="Notify_PreorderReleased_Line" xml:space="preserve">
+    <value>Ya a la venta: {0}</value>
+  </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Tiempo hasta la siguiente actualización automática de precios</value>
   </data>

@@ -35,6 +35,15 @@ public sealed class PriceSchedulerService
     public TimeSpan Interval => TimeSpan.FromHours(Math.Max(1, _appSettings.Value.General.AutoRefreshHours));
     #endregion
 
+    #region Events
+    /// <summary>
+    /// Se dispara al terminar una actualización TOTAL (manual o automática) con el resumen ya formateado (título +
+    /// cuerpo) para mostrar UNA notificación de Windows: resumen (actualizados/bajadas/avisos) + precio de alerta
+    /// alcanzado, nuevo mínimo histórico, vuelta a stock y pre-orders publicados. La capa de UI solo la muestra.
+    /// </summary>
+    public event Action<string, string>? NotificationReady;
+    #endregion
+
     #region Properties
     /// <summary>
     /// Momento (UTC) en que está programada la PRÓXIMA pasada periódica automática, o null si el planificador aún no ha
@@ -148,6 +157,12 @@ public sealed class PriceSchedulerService
             if (toRefresh.Count == 0)
                 return;
 
+            // Pasada TOTAL: guarda el estado ANTES (mejor precio, si está bajo alerta y si es pre-order) para detectar
+            // al terminar los eventos a notificar (bajadas, alerta alcanzada, nuevo mínimo, vuelta a stock, publicado).
+            Dictionary<Product, (decimal? Best, bool BelowAlert, bool Preorder)>? before = dueOnly
+                ? null
+                : toRefresh.ToDictionary(p => p, p => (p.BestPrice, p.IsBelowAlert, p.IsPreorder));
+
             // Operación global de progreso del refresco de todos los precios: avanza por producto (0..100) e indica
             // el producto en curso. Es esta pasada (StartOperation) la que gobierna la barra del footer vía la
             // propiedad observable, así que cada RefreshProductAsync se llama con reportGlobalProgress:false.
@@ -169,11 +184,72 @@ public sealed class PriceSchedulerService
             operation.FinishOperation();
             _progressService.ProgressNotifier.Report(operation);
             _progressService.FinishOperation();
+
+            // Resumen de la pasada total, en UNA notificación (resumen + eventos destacados).
+            if (before is not null && total > 0)
+                BuildAndRaiseNotification(toRefresh, before, total);
         }
         finally
         {
             _running = false;
         }
+    }
+
+    /// <summary>
+    /// Compara el estado previo con el actual y compone una única notificación: línea de resumen
+    /// (actualizados/bajadas/avisos) + precio de alerta alcanzado, nuevo mínimo histórico, vuelta a stock y pre-orders
+    /// publicados. Prioriza lo más relevante primero (el cuerpo se trunca a ~255 car. en el globo del tray).
+    /// </summary>
+    private void BuildAndRaiseNotification(List<Product> products, Dictionary<Product, (decimal? Best, bool BelowAlert, bool Preorder)> before, int total)
+    {
+        int drops = 0, issues = 0;
+        var alerts = new List<string>();
+        var lows = new List<string>();
+        var back = new List<string>();
+        var released = new List<string>();
+
+        foreach (Product product in products)
+        {
+            (decimal? oldBest, bool oldBelow, bool oldPreorder) = before[product];
+            decimal? now = product.BestPrice;
+            string currency = product.BestStore?.Currency ?? string.Empty;
+
+            if (oldBest is decimal ob && now is decimal nb && nb < ob)
+                drops++;
+            if (product.HasIssues)
+                issues++;
+
+            // Precio de alerta recién alcanzado.
+            if (!oldBelow && product.IsBelowAlert && now is decimal ap)
+                alerts.Add(string.Format(L(LocKeys.Notify_AlertReached_Line), product.Name, FormatPrice(ap, currency)));
+
+            // Nuevo mínimo histórico (bajó respecto a la pasada previa y ahora es el mínimo de todo el histórico).
+            if (now is decimal nl && oldBest is decimal obl && nl < obl && product.IsHistoricalLow)
+                lows.Add(string.Format(L(LocKeys.Notify_NewLow_Line), product.Name, FormatPrice(nl, currency)));
+
+            // Vuelta a stock: antes sin precio (no disponible), ahora con precio.
+            if (oldBest is null && now is not null)
+                back.Add(string.Format(L(LocKeys.Notify_BackInStock_Line), product.Name));
+
+            // Pre-order publicado: antes en reserva, ahora ya no.
+            if (oldPreorder && !product.IsPreorder)
+                released.Add(string.Format(L(LocKeys.Notify_PreorderReleased_Line), product.Name));
+        }
+
+        var lines = new List<string> { string.Format(L(LocKeys.Notify_Summary_Line), total, drops, issues) };
+        lines.AddRange(alerts);
+        lines.AddRange(lows);
+        lines.AddRange(back);
+        lines.AddRange(released);
+
+        NotificationReady?.Invoke(L(LocKeys.Notify_Summary_Title), string.Join(Environment.NewLine, lines));
+    }
+
+    /// <summary>Formatea un precio con su moneda ("39,99 €").</summary>
+    private static string FormatPrice(decimal value, string? currency)
+    {
+        string text = value.ToString("0.00", System.Globalization.CultureInfo.CurrentCulture);
+        return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
     }
 
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>

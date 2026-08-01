@@ -27,16 +27,20 @@ public sealed class TrayIcon : IDisposable
     private const int SW_RESTORE = 9;
 
     private const int NIM_ADD = 0;
+    private const int NIM_MODIFY = 1;
     private const int NIM_DELETE = 2;
     private const uint NIF_MESSAGE = 0x0001;
     private const uint NIF_ICON = 0x0002;
     private const uint NIF_TIP = 0x0004;
+    private const uint NIF_INFO = 0x0010;
+    private const int NIIF_NONE = 0x0000;   // sin icono extra del sistema: el toast usa el icono de la bandeja (el de la app)
 
     private const int TrayIconId = 1;
     #endregion
 
     #region Attributes
     private IntPtr _hwnd;
+    private IntPtr _appIcon;
     private bool _iconAdded;
     private bool _disposed;
 
@@ -59,6 +63,24 @@ public sealed class TrayIcon : IDisposable
 
     /// <summary>Restaura y trae al frente la ventana (equivale a pulsar el icono de la bandeja). Para activarla desde otra instancia.</summary>
     public void Restore() => RestoreFromTray();
+
+    /// <summary>Muestra una notificación de Windows (globo del icono de bandeja, popup abajo a la derecha).</summary>
+    public void ShowNotification(string title, string message)
+    {
+        if (!_iconAdded || _hwnd == IntPtr.Zero)
+            return;
+
+        var data = CreateData();
+        data.uFlags = NIF_INFO | NIF_ICON;
+        data.hIcon = AppIcon();   // asegura el icono de la bandeja (el de la app), que es el que muestra el toast
+        data.szInfoTitle = Truncate(title, 63);
+        data.szInfo = Truncate(message, 255);
+        data.dwInfoFlags = NIIF_NONE;   // sin el icono "i" del sistema; el toast usa el icono de la app
+        Shell_NotifyIcon(NIM_MODIFY, ref data);
+    }
+
+    private static string Truncate(string? value, int max)
+        => string.IsNullOrEmpty(value) ? string.Empty : (value.Length <= max ? value : value.Substring(0, max));
 
     /// <summary>Removes the tray icon and the window-proc subclass.</summary>
     public void Dispose()
@@ -88,7 +110,7 @@ public sealed class TrayIcon : IDisposable
         var data = CreateData();
         data.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
         data.uCallbackMessage = WM_TRAY;
-        data.hIcon = LoadAppIcon();
+        data.hIcon = AppIcon();
         data.szTip = tooltip;
         _iconAdded = Shell_NotifyIcon(NIM_ADD, ref data);
     }
@@ -99,6 +121,14 @@ public sealed class TrayIcon : IDisposable
         hWnd = _hwnd,
         uID = TrayIconId
     };
+
+    /// <summary>Icono de la app (cacheado): se usa tanto para el icono de la bandeja como para el de las notificaciones.</summary>
+    private IntPtr AppIcon()
+    {
+        if (_appIcon == IntPtr.Zero)
+            _appIcon = LoadAppIcon();
+        return _appIcon;
+    }
 
     private static IntPtr LoadAppIcon()
     {

@@ -209,6 +209,24 @@
   <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
     <value>Include shipping cost in the price</value>
   </data>
+  <data name="Notify_Summary_Title" xml:space="preserve">
+    <value>Tracker: price update</value>
+  </data>
+  <data name="Notify_Summary_Line" xml:space="preserve">
+    <value>{0} updated · {1} drops · {2} with issues</value>
+  </data>
+  <data name="Notify_AlertReached_Line" xml:space="preserve">
+    <value>Target reached: {0} {1}</value>
+  </data>
+  <data name="Notify_NewLow_Line" xml:space="preserve">
+    <value>New low: {0} {1}</value>
+  </data>
+  <data name="Notify_BackInStock_Line" xml:space="preserve">
+    <value>Back in stock: {0}</value>
+  </data>
+  <data name="Notify_PreorderReleased_Line" xml:space="preserve">
+    <value>Now on sale: {0}</value>
+  </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Time until the next automatic price update</value>
   </data>

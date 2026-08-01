@@ -100,6 +100,9 @@ public sealed partial class MainWindow : Window
         // Al alternar los tooltips, el del botón de Amazon (que se fija por código) también debe ocultarse/mostrarse.
         _viewModel.SharedDataService.PropertyChanged += OnSharedDataChanged;
 
+        // Notificación de Windows (resumen + destacados) tras un refresco total (manual o automático).
+        App.GetService<PriceSchedulerService>().NotificationReady += OnSchedulerNotification;
+
         if (Content is FrameworkElement root)
         {
             root.DataContext = _viewModel;
@@ -179,6 +182,16 @@ public sealed partial class MainWindow : Window
 
         if (sender is FrameworkElement fe)
             fe.Loaded -= OnWindowLoaded;
+
+        // TEMPORAL (quitar): notificación de prueba al arrancar con un ejemplo del resumen real.
+        _trayIcon.ShowNotification(L(MM4LB.Helpers.LocKeys.Notify_Summary_Title), string.Join(Environment.NewLine, new[]
+        {
+            string.Format(L(MM4LB.Helpers.LocKeys.Notify_Summary_Line), 12, 3, 1),
+            string.Format(L(MM4LB.Helpers.LocKeys.Notify_AlertReached_Line), "Zelda: Tears of the Kingdom", "49,99 €"),
+            string.Format(L(MM4LB.Helpers.LocKeys.Notify_NewLow_Line), "Steam Deck OLED 512GB", "519,00 €"),
+            string.Format(L(MM4LB.Helpers.LocKeys.Notify_BackInStock_Line), "LEGO Icons Bonsai"),
+            string.Format(L(MM4LB.Helpers.LocKeys.Notify_PreorderReleased_Line), "Silksong"),
+        }));
 
         // Deja terminar los bindings y el primer layout pass.
         await Task.Yield();
@@ -288,6 +301,7 @@ public sealed partial class MainWindow : Window
 
         App.ActivationRequested = null;
         _viewModel.SharedDataService.PropertyChanged -= OnSharedDataChanged;
+        App.GetService<PriceSchedulerService>().NotificationReady -= OnSchedulerNotification;
         _nextUpdateTimer?.Stop();
 
         DisposeToolbarBehavior();
@@ -441,6 +455,10 @@ public sealed partial class MainWindow : Window
     /// <summary>Alterna si el precio de los productos incluye los gastos de envío (afecta a toda la app).</summary>
     private void OnToggleIncludeShippingClick(object sender, RoutedEventArgs e)
         => _viewModel.SharedDataService.IncludeShippingInPrice = !_viewModel.SharedDataService.IncludeShippingInPrice;
+
+    /// <summary>Muestra la notificación de Windows del resumen del refresco (título + cuerpo ya compuestos por el scheduler).</summary>
+    private void OnSchedulerNotification(string title, string body)
+        => DispatcherQueue.TryEnqueue(() => _trayIcon.ShowNotification(title, body));
 
     /// <summary>Cambió un ajuste compartido: si se alternaron los tooltips, refresca el del botón de Amazon (fijado por código).</summary>
     private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
