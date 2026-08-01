@@ -36,6 +36,10 @@ public sealed partial class WebViewControl : UserControl
 {
     #region Attributes
     private bool _isWidgetActive;
+
+    /// <summary>Qué está eligiendo el usuario con el modo "picking" (para interpretar el mensaje que devuelve el JS).</summary>
+    private enum PickMode { None, Price, Image }
+    private PickMode _pickMode = PickMode.None;
     #endregion
 
     #region Dependency Properties
@@ -396,25 +400,54 @@ public sealed partial class WebViewControl : UserControl
         if (MyWebView.CoreWebView2 is null)
             return;
 
+        _pickMode = PickMode.Price;
         await MyWebView.CoreWebView2.ExecuteScriptAsync(PricePickerScript);
     }
 
     /// <summary>
-    /// Recibe el selector CSS elegido en el modo picking: lo fija en la tienda que corresponde a la página actual del
-    /// producto seleccionado y refresca el producto (así lee el precio ya con el selector y lo persiste).
+    /// Activa el modo "seleccionar imagen": resalta el elemento bajo el cursor y, al hacer clic, extrae la URL de su
+    /// imagen (o la del &lt;img&gt; que contenga, o su background-image) y la fija como imagen del producto seleccionado.
+    /// Escape cancela. Pensado para páginas no-Amazon donde la imagen no se detecta sola.
+    /// </summary>
+    private async void OnPickImageClick(object sender, RoutedEventArgs e)
+    {
+        if (MyWebView.CoreWebView2 is null)
+            return;
+
+        _pickMode = PickMode.Image;
+        await MyWebView.CoreWebView2.ExecuteScriptAsync(ImagePickerScript);
+    }
+
+    /// <summary>
+    /// Recibe el mensaje del modo picking. Según <see cref="_pickMode"/>: si es IMAGEN, la cadena es la URL de la
+    /// imagen elegida y se fija como imagen del producto seleccionado; si es PRECIO, es el selector CSS del precio, que
+    /// se fija en la tienda de la página actual y se refresca el producto. Cadena vacía = cancelado (Escape).
     /// </summary>
     private async void OnWebMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
     {
-        string selector;
-        try { selector = args.TryGetWebMessageAsString(); }
+        string message;
+        try { message = args.TryGetWebMessageAsString(); }
         catch { return; }
 
-        if (string.IsNullOrEmpty(selector))
+        PickMode mode = _pickMode;
+        _pickMode = PickMode.None;
+
+        if (string.IsNullOrEmpty(message))
             return;   // cancelado (Escape) o elemento no válido
 
         Models.Product? product = ViewModel?.SharedDataService.SelectedProduct;
+        if (product is null)
+            return;
+
+        if (mode == PickMode.Image)
+        {
+            App.GetService<ProductService>().SetProductImage(product, message);
+            return;
+        }
+
+        // Precio: fija el selector en la tienda que corresponde a la página actual y refresca.
         string? url = MyWebView.Source?.ToString();
-        if (product is null || string.IsNullOrWhiteSpace(url))
+        if (string.IsNullOrWhiteSpace(url))
             return;
 
         Models.ProductStore? store = FindStoreForUrl(product, url) ?? product.Stores.FirstOrDefault();
@@ -422,7 +455,7 @@ public sealed partial class WebViewControl : UserControl
             return;
 
         ProductService products = App.GetService<ProductService>();
-        products.SetPriceSelector(store, selector);
+        products.SetPriceSelector(store, message);
         await products.RefreshProductAsync(product);
     }
 
@@ -484,6 +517,45 @@ public sealed partial class WebViewControl : UserControl
   document.addEventListener('keydown', key, true);
 })();
 ";
+
+    /// <summary>
+    /// JS del modo "seleccionar imagen": resalta el elemento bajo el cursor y, al hacer clic, resuelve la URL de su
+    /// imagen —el propio &lt;img&gt;, un &lt;img&gt; que contenga, o su <c>background-image</c>— y la envía a la app
+    /// (URL absoluta) con <c>postMessage</c>. Escape cancela (envía "").
+    /// </summary>
+    private const string ImagePickerScript = @"
+(function(){
+  if (window.__ipActive) return;
+  window.__ipActive = true;
+  var last = null;
+  function outline(el, on){ if (el && el.style) el.style.outline = on ? '3px solid #33c1ff' : ''; }
+  function abs(u){ if (!u) return ''; try { return new URL(u, document.baseURI).href; } catch(e) { return u; } }
+  function fromImg(im){ return im ? abs(im.currentSrc || im.src || im.getAttribute('data-old-hires') || im.getAttribute('data-src') || '') : ''; }
+  function imageUrl(el){
+    if (!el) return '';
+    if (el.tagName === 'IMG') return fromImg(el);
+    var inner = el.querySelector && el.querySelector('img');
+    if (inner) return fromImg(inner);
+    var bg = '';
+    try { bg = getComputedStyle(el).backgroundImage; } catch(e) {}
+    var m = bg && bg.match(/url\((['""]?)(.*?)\1\)/);
+    return (m && m[2]) ? abs(m[2]) : '';
+  }
+  function move(e){ if (last !== e.target) { outline(last, false); last = e.target; outline(last, true); } }
+  function click(e){ e.preventDefault(); e.stopPropagation(); var u = imageUrl(e.target); cleanup(); window.chrome.webview.postMessage(u || ''); }
+  function key(e){ if (e.key === 'Escape') { cleanup(); window.chrome.webview.postMessage(''); } }
+  function cleanup(){
+    outline(last, false);
+    document.removeEventListener('mousemove', move, true);
+    document.removeEventListener('click', click, true);
+    document.removeEventListener('keydown', key, true);
+    window.__ipActive = false;
+  }
+  document.addEventListener('mousemove', move, true);
+  document.addEventListener('click', click, true);
+  document.addEventListener('keydown', key, true);
+})();
+";
     #endregion
 
     #region Methods (private)
@@ -521,10 +593,12 @@ public sealed partial class WebViewControl : UserControl
             toggle.IsChecked = toggle.Tag is string tag && string.Equals(tag, code, StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>Habilita el botón de seleccionar el elemento del precio solo fuera de Amazon (en Amazon el precio se lee solo).</summary>
+    /// <summary>Habilita los botones de seleccionar imagen/precio solo fuera de Amazon (en Amazon se leen solos).</summary>
     private void UpdatePickPriceButtonState(Uri? uri)
     {
-        PickPriceButton.IsEnabled = uri is null || !Amazon.IsAmazon(uri);
+        bool enabled = uri is null || !Amazon.IsAmazon(uri);
+        PickPriceButton.IsEnabled = enabled;
+        PickImageButton.IsEnabled = enabled;
     }
 
     /// <summary>URL del producto actual en el marketplace <paramref name="host"/> (conserva la ruta si es Amazon).</summary>

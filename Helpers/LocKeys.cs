@@ -186,6 +186,7 @@ public static class LocKeys
     public const string WebView_Country_Tooltip = "WebView_Country_Tooltip";
     public const string WebView_AddProduct_Tooltip = "WebView_AddProduct_Tooltip";
     public const string WebView_PickPrice_Tooltip = "WebView_PickPrice_Tooltip";
+    public const string WebView_PickImage_Tooltip = "WebView_PickImage_Tooltip";
     public const string WebView_AddAltLink_Tooltip = "WebView_AddAltLink_Tooltip";
     public const string PriceChart_CurrentPrice_Label = "PriceChart_CurrentPrice_Label";
     public const string PriceChart_LowestPrice_Label = "PriceChart_LowestPrice_Label";

@@ -25,6 +25,22 @@ public enum PriceTrend
     Up,
 }
 
+/// <summary>Cómo se resalta el recuadro de precio en la lista de productos.</summary>
+public enum PriceHighlight
+{
+    /// <summary>Neutro (sin cambio reciente y no es el mínimo histórico).</summary>
+    None,
+
+    /// <summary>El precio ha bajado (verde).</summary>
+    Down,
+
+    /// <summary>El precio ha subido (rojo).</summary>
+    Up,
+
+    /// <summary>Sin subida/bajada reciente, pero el precio actual es el mínimo histórico (azul).</summary>
+    Low,
+}
+
 /// <summary>
 /// A tracked product whose price is monitored across one or more store URLs (mainly Amazon
 /// marketplaces in different countries). Exposes the current best price across its stores and a
@@ -35,6 +51,11 @@ public enum PriceTrend
 /// </summary>
 public partial class Product : ObservableObject
 {
+    #region Constants
+    /// <summary>Tiempo que se mantiene el indicador de subida/bajada de precio tras un cambio, aunque luego no varíe.</summary>
+    private static readonly TimeSpan TrendStickyWindow = TimeSpan.FromDays(3);
+    #endregion
+
     #region Identity
     /// <summary>Primary key in the local database. 0 until the product has been persisted.</summary>
     public long Id { get; set; }
@@ -190,8 +211,11 @@ public partial class Product : ObservableObject
     }
 
     /// <summary>
-    /// Tendencia del mejor precio respecto a la lectura anterior: compara el mínimo entre tiendas de la última ronda
-    /// con el de la penúltima. <see cref="PriceTrend.Unknown"/> si hay menos de dos rondas.
+    /// Tendencia del mejor precio: dirección del ÚLTIMO cambio de precio (la última ronda cuyo mínimo difiere de la
+    /// anterior). El indicador de subida/bajada se MANTIENE hasta <see cref="TrendStickyWindow"/> (3 días) desde ese
+    /// cambio aunque en rondas posteriores el precio no varíe; pasado ese tiempo sin cambios pasa a neutro
+    /// (<see cref="PriceTrend.Same"/>). Un cambio nuevo reinicia la dirección y la ventana.
+    /// <see cref="PriceTrend.Unknown"/> si hay menos de dos rondas.
     /// </summary>
     public PriceTrend Trend
     {
@@ -200,13 +224,55 @@ public partial class Product : ObservableObject
             if (PriceHistory.Count == 0)
                 return PriceTrend.Unknown;
 
-            var rounds = PriceHistory.GroupBy(point => point.Timestamp).OrderBy(group => group.Key).ToList();
+            var rounds = PriceHistory
+                .GroupBy(point => point.Timestamp)
+                .OrderBy(group => group.Key)
+                .Select(group => (Time: group.Key, Min: group.Min(point => point.Price)))
+                .ToList();
             if (rounds.Count < 2)
                 return PriceTrend.Unknown;
 
-            decimal latest = rounds[^1].Min(point => point.Price);
-            decimal previous = rounds[^2].Min(point => point.Price);
-            return latest < previous ? PriceTrend.Down : latest > previous ? PriceTrend.Up : PriceTrend.Same;
+            // Última ronda en la que el precio cambió respecto a la anterior (de atrás hacia delante).
+            for (int i = rounds.Count - 1; i > 0; i--)
+            {
+                if (rounds[i].Min == rounds[i - 1].Min)
+                    continue;
+
+                PriceTrend direction = rounds[i].Min < rounds[i - 1].Min ? PriceTrend.Down : PriceTrend.Up;
+                return DateTime.UtcNow - rounds[i].Time <= TrendStickyWindow ? direction : PriceTrend.Same;
+            }
+
+            return PriceTrend.Same;   // el precio nunca ha cambiado
+        }
+    }
+
+    /// <summary>El mejor precio actual iguala (o mejora) el mínimo de todo el histórico registrado.</summary>
+    public bool IsHistoricalLow
+    {
+        get
+        {
+            if (BestPrice is not decimal best || PriceHistory.Count == 0)
+                return false;
+
+            return best <= PriceHistory.Min(point => point.Price);
+        }
+    }
+
+    /// <summary>
+    /// Resaltado del recuadro de precio en la lista: bajada/subida tienen prioridad (verde/rojo); si no hay cambio
+    /// reciente pero el precio es el mínimo histórico, azul; en otro caso neutro.
+    /// </summary>
+    public PriceHighlight PriceHighlight
+    {
+        get
+        {
+            PriceTrend trend = Trend;
+            if (trend == PriceTrend.Down)
+                return PriceHighlight.Down;
+            if (trend == PriceTrend.Up)
+                return PriceHighlight.Up;
+
+            return IsHistoricalLow ? PriceHighlight.Low : PriceHighlight.None;
         }
     }
     #endregion
@@ -267,6 +333,8 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(LastChecked));
         OnPropertyChanged(nameof(BestPriceText));
         OnPropertyChanged(nameof(Trend));
+        OnPropertyChanged(nameof(IsHistoricalLow));
+        OnPropertyChanged(nameof(PriceHighlight));
         OnPropertyChanged(nameof(HasPromo));
         OnPropertyChanged(nameof(HasIssues));
         OnPropertyChanged(nameof(IsPreorder));

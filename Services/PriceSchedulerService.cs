@@ -60,19 +60,52 @@ public sealed class PriceSchedulerService
         if (_timer is not null)
             return;
 
+        // La primera pasada automática no se ancla al arranque, sino a la ÚLTIMA lectura de precios: si el último
+        // refresco fue hace 5 h, la siguiente toca en 7 h (no en 12). Si ya venció (o nunca se leyó), queda a un
+        // intervalo completo (el catch-up de abajo refresca ahora lo que esté caducado).
+        TimeSpan first = Interval;
+        if (LastGlobalUpdateUtc() is DateTime last)
+        {
+            TimeSpan remaining = last + Interval - DateTime.UtcNow;
+            if (remaining > TimeSpan.Zero)
+                first = remaining;
+        }
+
         // Catch-up: refresh anything whose last reading is missing or older than the interval, right after startup.
         _ = RunAsync(dueOnly: true);
 
         _timer = uiDispatcher.CreateTimer();
-        _timer.Interval = Interval;
-        _timer.Tick += (_, _) =>
-        {
-            // Al disparar, la siguiente pasada queda a un intervalo vista (para la cuenta atrás del footer).
-            NextRunUtc = DateTime.UtcNow + Interval;
-            _ = RunAsync(dueOnly: false);
-        };
-        NextRunUtc = DateTime.UtcNow + Interval;
+        _timer.Interval = first;
+        _timer.Tick += (_, _) => _ = RunAsync(dueOnly: false);
+        NextRunUtc = DateTime.UtcNow + first;
         _timer.Start();
+    }
+
+    /// <summary>Momento (UTC) de la lectura de precio más reciente entre todas las tiendas de todos los productos, o null si ninguna se ha leído.</summary>
+    private DateTime? LastGlobalUpdateUtc()
+    {
+        DateTime? max = null;
+        foreach (Product product in _sharedDataService.ProductSet.Products)
+            foreach (ProductStore store in product.Stores)
+                if (store.LastChecked is DateTime checkedAt && (max is null || checkedAt > max))
+                    max = checkedAt;
+        return max;
+    }
+
+    /// <summary>
+    /// Reinicia la cuenta atrás y el temporizador: la siguiente pasada automática queda a un <see cref="Interval"/>
+    /// completo desde AHORA. Se llama al lanzar un refresco de TODOS los productos (manual o periódico), para que el
+    /// reloj del footer arranque de nuevo desde 12 h.
+    /// </summary>
+    private void RearmSchedule()
+    {
+        NextRunUtc = DateTime.UtcNow + Interval;
+        if (_timer is not null)
+        {
+            _timer.Stop();
+            _timer.Interval = Interval;   // el primer intervalo pudo ser menor (anclado al último update); a partir de aquí, 12 h
+            _timer.Start();
+        }
     }
 
     /// <summary>Fuerza un refresco inmediato de TODOS los productos (lo mismo que la pasada periódica). Debe llamarse en el hilo de UI.</summary>
@@ -89,6 +122,11 @@ public sealed class PriceSchedulerService
     {
         if (_running)
             return;
+
+        // Una pasada COMPLETA (manual desde el botón o la periódica) reinicia el reloj/temporizador hacia la siguiente
+        // automática; la de arranque (catch-up, dueOnly) no lo toca (NextRunUtc ya se fija en Start).
+        if (!dueOnly)
+            RearmSchedule();
 
         _running = true;
         try

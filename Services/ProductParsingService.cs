@@ -59,9 +59,18 @@ public sealed class ProductParsingService
 (function () {
     var customSel = __PRICE_SELECTOR__;   // selector CSS de precio elegido por el usuario (o null)
     function txt(sel) { var e = document.querySelector(sel); return e ? e.textContent.trim() : null; }
-    var name = txt('#productTitle');
+    function meta(sel) { var e = document.querySelector(sel); return e ? (e.getAttribute('content') || '').trim() : null; }
+    // Meta de Open Graph / Twitter por propiedad (property o name); estándar de facto en tiendas no-Amazon.
+    function metaProp(p) { return meta('meta[property=""' + p + '""]') || meta('meta[name=""' + p + '""]'); }
+    function absUrl(u) { if (!u) return null; try { return new URL(u, document.baseURI).href; } catch (e) { return u; } }
+
+    // Título: el de Amazon y, si no, og:title / <title> (mismo criterio para páginas no-Amazon).
+    var name = txt('#productTitle') || metaProp('og:title') || (document.title ? document.title.trim() : null) || null;
+
+    // Imagen: la principal de Amazon y, si no, og:image / twitter:image (páginas no-Amazon), resuelta a URL absoluta.
     var img = document.querySelector('#landingImage') || document.querySelector('#imgTagWrapperId img');
-    var imageUrl = img ? (img.getAttribute('data-old-hires') || img.currentSrc || img.src) : null;
+    var imageUrl = img ? (img.getAttribute('data-old-hires') || img.currentSrc || img.src) : (metaProp('og:image') || metaProp('twitter:image'));
+    imageUrl = absUrl(imageUrl);
 
     // Precio SOLO del buy-box (la oferta principal comprable). Deliberadamente NO se cae a un '.a-price' cualquiera
     // de la página: eso capturaba el precio de 'otras opciones de compra'/otros vendedores cuando el producto no

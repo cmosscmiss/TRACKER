@@ -149,6 +149,9 @@
   <data name="WebView_PickPrice_Tooltip" xml:space="preserve">
     <value>Pick the price element on this page (for non-Amazon stores)</value>
   </data>
+  <data name="WebView_PickImage_Tooltip" xml:space="preserve">
+    <value>Pick the product image on this page (for non-Amazon stores)</value>
+  </data>
   <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
     <value>Add this page as an alternative link of the selected product</value>
   </data>

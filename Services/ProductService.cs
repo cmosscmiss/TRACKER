@@ -251,6 +251,16 @@ public sealed class ProductService
         _database.UpdateProductInfo(product);
     }
 
+    /// <summary>Fija la imagen de un producto (URL elegida por el usuario en una página no-Amazon) y la persiste.</summary>
+    public void SetProductImage(Product product, string imageUrl)
+    {
+        if (product is null || string.IsNullOrWhiteSpace(imageUrl))
+            return;
+
+        product.ImageUrl = imageUrl.Trim();
+        _database.UpdateProductInfo(product);
+    }
+
     /// <summary>Establece (o borra, con cadena vacía) el selector de precio elegido por el usuario para una tienda, y lo persiste.</summary>
     public void SetPriceSelector(ProductStore store, string? selector)
     {

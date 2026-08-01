@@ -196,13 +196,18 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         Recompute();
     }
 
-    /// <summary>Cambió una propiedad del producto mostrado (p. ej. el título al editarlo): refresca el header del widget.</summary>
+    /// <summary>Cambió una propiedad del producto mostrado (título o imagen al editarlos): refresca la cabecera del widget.</summary>
     private void OnProductPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Product.Name))
         {
             ProductName = _product?.Name ?? string.Empty;
             OnPropertyChanged(nameof(ProductName));
+        }
+        else if (e.PropertyName == nameof(Product.ImageUrl))
+        {
+            Image = BuildImage(_product?.ImageUrl);
+            OnPropertyChanged(nameof(Image));
         }
     }
 
