@@ -170,7 +170,9 @@ public sealed class ProductService
                     {
                         if (!string.IsNullOrWhiteSpace(result.Name))
                             product.Name = result.Name!;
-                        if (!string.IsNullOrWhiteSpace(result.ImageUrl))
+                        // Solo se rellena la imagen si el producto NO tiene ya una: así un refresco (p. ej. al fijar el
+                        // selector de precio en una web no-Amazon) no machaca la imagen existente (o la elegida a mano).
+                        if (string.IsNullOrWhiteSpace(product.ImageUrl) && !string.IsNullOrWhiteSpace(result.ImageUrl))
                             product.ImageUrl = result.ImageUrl;
                         _database.UpdateProductInfo(product);
                         infoUpdated = true;
@@ -345,7 +347,8 @@ public sealed class ProductService
                 product.Name = parsed.Name!;
                 changed = true;
             }
-            if (!string.IsNullOrWhiteSpace(parsed.ImageUrl))
+            // Solo se rellena la imagen si el producto NO tiene ya una (no machacar la existente / la elegida a mano).
+            if (string.IsNullOrWhiteSpace(product.ImageUrl) && !string.IsNullOrWhiteSpace(parsed.ImageUrl))
             {
                 product.ImageUrl = parsed.ImageUrl;
                 changed = true;
