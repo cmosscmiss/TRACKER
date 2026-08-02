@@ -201,6 +201,12 @@
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
     <value>Refrescar todos los precios ahora</value>
   </data>
+  <data name="Footer_RefreshAll_LastUpdate_Format" xml:space="preserve">
+    <value>Último refresco: {0}</value>
+  </data>
+  <data name="Footer_RefreshAll_LastUpdate_Never" xml:space="preserve">
+    <value>Último refresco: nunca</value>
+  </data>
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Mostrar/ocultar etiquetas del eje (fechas de actualización)</value>
   </data>

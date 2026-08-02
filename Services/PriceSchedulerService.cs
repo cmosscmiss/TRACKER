@@ -51,6 +51,12 @@ public sealed class PriceSchedulerService
     /// arrancado. Sirve para mostrar en el footer el tiempo que queda hasta la siguiente actualización de precios.
     /// </summary>
     public DateTime? NextRunUtc { get; private set; }
+
+    /// <summary>
+    /// Momento (UTC) de la ÚLTIMA pasada COMPLETA de precios (periódica o "refrescar todo" manual), o null si aún no se
+    /// ha hecho ninguna. Para mostrar la fecha del último refresco (p. ej. en el tooltip del botón de refrescar todo).
+    /// </summary>
+    public DateTime? LastFullRefreshUtc { get; private set; }
     #endregion
 
     #region Constructor
@@ -81,13 +87,25 @@ public sealed class PriceSchedulerService
         // reciente, que la mueven los refrescos sueltos y el catch-up), así sobrevive al cierre/reapertura. Para
         // bases antiguas sin ese dato aún, se cae a la última lectura global conocida (mejor aproximación disponible).
         DateTime now = DateTime.UtcNow;
-        DateTime? anchor = _database.GetLastFullRefreshUtc() ?? LastGlobalUpdateUtc();
+        LastFullRefreshUtc = _database.GetLastFullRefreshUtc();
+        DateTime? anchor = LastFullRefreshUtc ?? LastGlobalUpdateUtc();
         TimeSpan remaining = anchor is DateTime a ? a + Interval - now : TimeSpan.Zero;
 
         if (remaining > TimeSpan.Zero)
         {
             // Aún no toca: se reanuda la cuenta atrás con el tiempo restante. El catch-up recarga solo las tiendas
             // caducadas/nunca leídas y NO cuenta como pasada completa, así que no reancla la cuenta atrás.
+
+            // SIEMBRA del ancla: si aún no había una pasada completa persistida (BD nueva o versión previa), se guarda
+            // ahora la mejor aproximación (última lectura conocida). Es CLAVE: sin esto seguiríamos cayendo en cada
+            // arranque al fallback (última lectura por tienda), que el catch-up sube a "ahora" en cada ejecución, con
+            // lo que el reloj se reiniciaría siempre. Persistida una vez, ya no depende de ese valor contaminable.
+            if (LastFullRefreshUtc is null && anchor is DateTime seed)
+            {
+                _database.SetLastFullRefreshUtc(seed);
+                LastFullRefreshUtc = seed;
+            }
+
             _timer.Interval = remaining;
             NextRunUtc = now + remaining;
             _timer.Start();
@@ -123,6 +141,7 @@ public sealed class PriceSchedulerService
     {
         DateTime now = DateTime.UtcNow;
         _database.SetLastFullRefreshUtc(now);   // ancla persistida (escritura inmediata y atómica en BD)
+        LastFullRefreshUtc = now;
         NextRunUtc = now + Interval;
         if (_timer is not null)
         {

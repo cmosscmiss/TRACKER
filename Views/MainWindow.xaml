@@ -164,7 +164,8 @@
                             </Button>
                             <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
                             <!-- Acciones (no toggles): icono en color normal. -->
-                            <Button x:Name="RefreshAllButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnRefreshAllClick" help:Help.Key="Footer_RefreshAll_Tooltip">
+                            <!-- El tooltip (base + fecha del último refresco) lo gestiona el code-behind, gateado por el toggle de tooltips. -->
+                            <Button x:Name="RefreshAllButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnRefreshAllClick">
                                 <FontIcon FontSize="18" Glyph="&#xE72C;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>
                             <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>

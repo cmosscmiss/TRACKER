@@ -277,6 +277,41 @@ public sealed partial class MainWindow : Window
         NextUpdateClock.Visibility = Visibility.Visible;
         TimeSpan remaining = nextUtc - DateTime.UtcNow;
         NextUpdateClock.Value = remaining < TimeSpan.Zero ? TimeSpan.Zero : remaining;
+
+        UpdateRefreshTooltip();
+    }
+
+    /// <summary>Última cadena fijada como tooltip del botón de refrescar todo (para no reasignarla en cada tick).</summary>
+    private string? _refreshTooltipCache;
+
+    /// <summary>
+    /// Fija el tooltip del botón de refrescar todo: etiqueta base + fecha/hora del último refresco (automático o
+    /// manual), en hora local. Gateado por el toggle global de tooltips (si están desactivados, se quita). Se llama en
+    /// el tick de la cuenta atrás, así que recoge en caliente los cambios de idioma, del toggle y del último refresco.
+    /// </summary>
+    private void UpdateRefreshTooltip()
+    {
+        if (!_viewModel.SharedDataService.HelpTooltipsEnabled)
+        {
+            if (_refreshTooltipCache is not null)
+            {
+                Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(RefreshAllButton, null);
+                _refreshTooltipCache = null;
+            }
+            return;
+        }
+
+        string baseLabel = L(MM4LB.Helpers.LocKeys.Footer_RefreshAll_Tooltip);
+        string lastLine = App.GetService<PriceSchedulerService>().LastFullRefreshUtc is DateTime lastUtc
+            ? string.Format(L(MM4LB.Helpers.LocKeys.Footer_RefreshAll_LastUpdate_Format), lastUtc.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture))
+            : L(MM4LB.Helpers.LocKeys.Footer_RefreshAll_LastUpdate_Never);
+        string tooltip = $"{baseLabel}\n{lastLine}";
+
+        if (tooltip == _refreshTooltipCache)
+            return;
+
+        Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(RefreshAllButton, tooltip);
+        _refreshTooltipCache = tooltip;
     }
 
     private void OnClosed(object sender, WindowEventArgs e)

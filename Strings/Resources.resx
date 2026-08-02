@@ -206,6 +206,12 @@
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
     <value>Refresh all prices now</value>
   </data>
+  <data name="Footer_RefreshAll_LastUpdate_Format" xml:space="preserve">
+    <value>Last refresh: {0}</value>
+  </data>
+  <data name="Footer_RefreshAll_LastUpdate_Never" xml:space="preserve">
+    <value>Last refresh: never</value>
+  </data>
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Show/hide chart axis labels (update dates)</value>
   </data>
