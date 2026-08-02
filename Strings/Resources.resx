@@ -125,6 +125,12 @@
   <data name="AddProduct_Url_Placeholder" xml:space="preserve">
     <value>https://www.amazon.es/...</value>
   </data>
+  <data name="AddProduct_Duplicate_Title" xml:space="preserve">
+    <value>Product already tracked</value>
+  </data>
+  <data name="AddProduct_Duplicate_Message" xml:space="preserve">
+    <value>This product is already being tracked, so it will not be added again.</value>
+  </data>
   <data name="Common_Add_Label" xml:space="preserve">
     <value>Add</value>
   </data>
@@ -209,6 +215,9 @@
   <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
     <value>Include shipping cost in the price</value>
   </data>
+  <data name="Footer_ShowPurchased_Tooltip" xml:space="preserve">
+    <value>Show/hide purchased products</value>
+  </data>
   <data name="Notify_Summary_Title" xml:space="preserve">
     <value>Tracker: price update</value>
   </data>
@@ -238,6 +247,9 @@
   </data>
   <data name="PriceChart_Purchased_Tooltip" xml:space="preserve">
     <value>Mark as purchased</value>
+  </data>
+  <data name="PriceChart_Purchased_Label" xml:space="preserve">
+    <value>Purchased</value>
   </data>
   <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
     <value>Refresh this product now</value>
@@ -290,6 +302,9 @@
   <data name="ProductList_FilterAlert_Label" xml:space="preserve">
     <value>With price alert</value>
   </data>
+  <data name="ProductList_FilterPurchased_Label" xml:space="preserve">
+    <value>Purchased</value>
+  </data>
   <data name="ProductList_Count_Format" xml:space="preserve">
     <value>Showing {0} of {1} products</value>
   </data>
@@ -340,6 +355,9 @@
   </data>
   <data name="ProductLog_Purchased_Progress" xml:space="preserve">
     <value>Product marked as purchased: {0}</value>
+  </data>
+  <data name="ProductLog_Unpurchased_Progress" xml:space="preserve">
+    <value>{0} is no longer purchased</value>
   </data>
   <data name="ProductLog_Removed_Progress" xml:space="preserve">
     <value>Product removed: {0}</value>

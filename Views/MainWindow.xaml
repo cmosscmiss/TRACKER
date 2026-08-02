@@ -148,6 +148,14 @@
                                     <FontIcon FontSize="18" Glyph="&#xE7B8;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.IncludeShippingInPrice, Converter={StaticResource HiddenIfTrueConverter}}"/>
                                 </Grid>
                             </Button>
+                            <!-- Mostrar/ocultar productos comprados (acento = mostrando). -->
+                            <Button x:Name="ShowPurchasedToggle" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
+                                    Click="OnTogglePurchasedClick" help:Help.Key="Footer_ShowPurchased_Tooltip">
+                                <Grid>
+                                    <FontIcon FontSize="18" Glyph="&#xE7BF;" Foreground="{ThemeResource AccentBrush}" Visibility="{Binding SharedDataService.ShowPurchased, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                    <FontIcon FontSize="18" Glyph="&#xE7BF;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.ShowPurchased, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                                </Grid>
+                            </Button>
                             <!-- Login/logout (no es toggle-control, pero el icono va en acento si hay sesión; lo fija el code-behind). -->
                             <Button x:Name="AmazonAuthButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAmazonAuthClick">
                                 <FontIcon x:Name="AmazonAuthIcon" FontSize="18" Glyph="&#xE77B;" Foreground="{ThemeResource TextSecondaryBrush}"/>

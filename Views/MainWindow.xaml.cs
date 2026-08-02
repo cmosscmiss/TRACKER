@@ -324,10 +324,23 @@ public sealed partial class MainWindow : Window
         if (string.IsNullOrWhiteSpace(url))
             return;
 
-        var product = App.GetService<ProductService>().AddProductFromUrl(url);
+        ProductService productService = App.GetService<ProductService>();
+
+        // Si ya se rastrea un producto que cubre esta URL (mismo ASIN de Amazon o misma URL), se avisa y no se importa.
+        if (productService.ContainsProductForUrl(url))
+        {
+            await dialogs.AlertAsync(
+                root.XamlRoot,
+                L(MM4LB.Helpers.LocKeys.AddProduct_Duplicate_Title),
+                L(MM4LB.Helpers.LocKeys.AddProduct_Duplicate_Message),
+                L(MM4LB.Helpers.LocKeys.Common_OK_Label));
+            return;
+        }
+
+        var product = productService.AddProductFromUrl(url);
         if (product is not null)
         {
-            await App.GetService<ProductService>().RefreshProductAsync(product, addedProduct: true);
+            await productService.RefreshProductAsync(product, addedProduct: true);
 
             // Al terminar la carga de precios, navega a la tienda con el precio más bajo (en el widget navegador).
             string? bestUrl = product.BestStore?.Url;
@@ -445,6 +458,10 @@ public sealed partial class MainWindow : Window
     /// <summary>Alterna si el precio de los productos incluye los gastos de envío (afecta a toda la app).</summary>
     private void OnToggleIncludeShippingClick(object sender, RoutedEventArgs e)
         => _viewModel.SharedDataService.IncludeShippingInPrice = !_viewModel.SharedDataService.IncludeShippingInPrice;
+
+    /// <summary>Alterna si los productos comprados se muestran en la lista.</summary>
+    private void OnTogglePurchasedClick(object sender, RoutedEventArgs e)
+        => _viewModel.SharedDataService.ShowPurchased = !_viewModel.SharedDataService.ShowPurchased;
 
     /// <summary>Muestra la notificación de Windows del resumen del refresco (líneas + imagen ya compuestas por el scheduler).</summary>
     private void OnSchedulerNotification(string title, System.Collections.Generic.IReadOnlyList<string> lines, string? imageUri)

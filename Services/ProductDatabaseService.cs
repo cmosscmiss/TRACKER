@@ -85,6 +85,11 @@ public sealed class ProductDatabaseService
                 FOREIGN KEY (ProductStoreId) REFERENCES ProductStores(Id) ON DELETE CASCADE
             );
 
+            CREATE TABLE IF NOT EXISTS AppMeta (
+                Key   TEXT PRIMARY KEY,
+                Value TEXT NOT NULL
+            );
+
             CREATE INDEX IF NOT EXISTS IX_ProductStores_ProductId ON ProductStores(ProductId);
             CREATE INDEX IF NOT EXISTS IX_PriceHistory_ProductStoreId ON PriceHistory(ProductStoreId);
         ";
@@ -136,7 +141,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice FROM Products WHERE Purchased = 0 ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased FROM Products ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -146,7 +151,8 @@ public sealed class ProductDatabaseService
                     Name = reader.GetString(1),
                     ImageUrl = reader.IsDBNull(2) ? null : reader.GetString(2),
                     IsFavorite = !reader.IsDBNull(3) && reader.GetInt64(3) != 0,
-                    AlertPrice = reader.IsDBNull(4) ? null : ParsePrice(reader.GetString(4))
+                    AlertPrice = reader.IsDBNull(4) ? null : ParsePrice(reader.GetString(4)),
+                    IsPurchased = !reader.IsDBNull(5) && reader.GetInt64(5) != 0
                 };
                 productsById[product.Id] = product;
                 target.Products.Add(product);
@@ -355,15 +361,16 @@ public sealed class ProductDatabaseService
     }
 
     /// <summary>
-    /// Marks a product as purchased (kept in the database for the record, but hidden from the list), storing the
-    /// purchase price if given.
+    /// Establece (o quita) el flag de comprado de un producto, guardando el precio de compra al marcarlo (y borrándolo
+    /// al revertir). El producto sigue en la lista; solo cambia su tratamiento (título tachado, sin refrescar precios).
     /// </summary>
-    public void MarkPurchased(Product product, decimal? purchasePrice)
+    public void SetPurchased(Product product, bool purchased, decimal? purchasePrice)
     {
         using SqliteConnection connection = OpenConnection();
         using SqliteCommand command = connection.CreateCommand();
-        command.CommandText = "UPDATE Products SET Purchased = 1, PurchasePrice = $price WHERE Id = $id;";
-        command.Parameters.AddWithValue("$price", purchasePrice is decimal p ? FormatPrice(p) : (object)DBNull.Value);
+        command.CommandText = "UPDATE Products SET Purchased = $purchased, PurchasePrice = $price WHERE Id = $id;";
+        command.Parameters.AddWithValue("$purchased", purchased ? 1 : 0);
+        command.Parameters.AddWithValue("$price", purchased && purchasePrice is decimal p ? FormatPrice(p) : (object)DBNull.Value);
         command.Parameters.AddWithValue("$id", product.Id);
         command.ExecuteNonQuery();
     }
@@ -375,6 +382,35 @@ public sealed class ProductDatabaseService
         using SqliteCommand command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Products WHERE Id = $id;";
         command.Parameters.AddWithValue("$id", product.Id);
+        command.ExecuteNonQuery();
+    }
+
+    /// <summary>Clave en <c>AppMeta</c> del momento de la última actualización COMPLETA de precios.</summary>
+    private const string MetaLastFullRefresh = "LastFullRefreshUtc";
+
+    /// <summary>
+    /// Momento (UTC) de la última pasada COMPLETA de precios (periódica o "refrescar todo" manual), persistido en
+    /// <c>AppMeta</c>, o null si aún no se ha hecho ninguna. Ancla la cuenta atrás del footer para que sobreviva al
+    /// cierre de la app (a diferencia de las lecturas por tienda, no lo mueven los refrescos sueltos ni el catch-up).
+    /// </summary>
+    public DateTime? GetLastFullRefreshUtc()
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "SELECT Value FROM AppMeta WHERE Key = $key;";
+        command.Parameters.AddWithValue("$key", MetaLastFullRefresh);
+        object? value = command.ExecuteScalar();
+        return value is string raw && !string.IsNullOrWhiteSpace(raw) ? ParseTimestamp(raw) : null;
+    }
+
+    /// <summary>Persiste (upsert) el momento (UTC) de la última pasada COMPLETA de precios en <c>AppMeta</c>.</summary>
+    public void SetLastFullRefreshUtc(DateTime timestampUtc)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "INSERT INTO AppMeta (Key, Value) VALUES ($key, $value) ON CONFLICT(Key) DO UPDATE SET Value = excluded.Value;";
+        command.Parameters.AddWithValue("$key", MetaLastFullRefresh);
+        command.Parameters.AddWithValue("$value", FormatTimestamp(timestampUtc));
         command.ExecuteNonQuery();
     }
     #endregion

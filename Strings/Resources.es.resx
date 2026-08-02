@@ -120,6 +120,12 @@
   <data name="AddProduct_Url_Placeholder" xml:space="preserve">
     <value>https://www.amazon.es/...</value>
   </data>
+  <data name="AddProduct_Duplicate_Title" xml:space="preserve">
+    <value>Producto ya rastreado</value>
+  </data>
+  <data name="AddProduct_Duplicate_Message" xml:space="preserve">
+    <value>Este producto ya se está rastreando, así que no se añadirá de nuevo.</value>
+  </data>
   <data name="Common_Add_Label" xml:space="preserve">
     <value>Añadir</value>
   </data>
@@ -204,6 +210,9 @@
   <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
     <value>Incluir los gastos de envío en el precio</value>
   </data>
+  <data name="Footer_ShowPurchased_Tooltip" xml:space="preserve">
+    <value>Mostrar/ocultar productos comprados</value>
+  </data>
   <data name="Notify_Summary_Title" xml:space="preserve">
     <value>Tracker: actualización de precios</value>
   </data>
@@ -233,6 +242,9 @@
   </data>
   <data name="PriceChart_Purchased_Tooltip" xml:space="preserve">
     <value>Marcar como comprado</value>
+  </data>
+  <data name="PriceChart_Purchased_Label" xml:space="preserve">
+    <value>Comprado</value>
   </data>
   <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
     <value>Refrescar este producto ahora</value>
@@ -285,6 +297,9 @@
   <data name="ProductList_FilterAlert_Label" xml:space="preserve">
     <value>Con alerta de precio</value>
   </data>
+  <data name="ProductList_FilterPurchased_Label" xml:space="preserve">
+    <value>Comprados</value>
+  </data>
   <data name="ProductList_Count_Format" xml:space="preserve">
     <value>Mostrando {0} de {1} productos</value>
   </data>
@@ -335,6 +350,9 @@
   </data>
   <data name="ProductLog_Purchased_Progress" xml:space="preserve">
     <value>Producto marcado como comprado: {0}</value>
+  </data>
+  <data name="ProductLog_Unpurchased_Progress" xml:space="preserve">
+    <value>{0} ya no está comprado</value>
   </data>
   <data name="ProductLog_Removed_Progress" xml:space="preserve">
     <value>Producto borrado: {0}</value>

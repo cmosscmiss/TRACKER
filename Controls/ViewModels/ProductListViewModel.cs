@@ -34,7 +34,7 @@ public partial class ProductListViewModel : WidgetViewModelBase
     private static readonly HashSet<string> FilterAffectingProperties = new()
     {
         nameof(Product.Name), nameof(Product.IsFavorite), nameof(Product.HasIssues),
-        nameof(Product.Trend), nameof(Product.HasAlert), nameof(Product.BestPrice),
+        nameof(Product.Trend), nameof(Product.HasAlert), nameof(Product.BestPrice), nameof(Product.IsPurchased),
     };
     #endregion
 
@@ -98,6 +98,10 @@ public partial class ProductListViewModel : WidgetViewModelBase
         foreach (Product product in products)
             product.PropertyChanged += OnProductPropertyChanged;
 
+        // Mostrar/ocultar comprados es un ajuste global del footer: al cambiar, se refiltra (y se limpia el filtro
+        // "Comprados" cuando se dejan de mostrar).
+        SharedDataService.PropertyChanged += OnSharedDataChanged;
+
         ApplyFilters();
     }
     #endregion
@@ -125,6 +129,10 @@ public partial class ProductListViewModel : WidgetViewModelBase
     {
         IEnumerable<Product> source = SharedDataService.ProductSet.Products;
 
+        // Los comprados solo se muestran si el toggle del footer está activo.
+        if (!SharedDataService.ShowPurchased)
+            source = source.Where(product => !product.IsPurchased);
+
         if (FiltersEnabled)
             source = ActiveFilters.Apply(source);
 
@@ -137,7 +145,23 @@ public partial class ProductListViewModel : WidgetViewModelBase
                 ? source.OrderByDescending(product => product.BestPrice ?? decimal.MinValue)
                 : source.OrderBy(product => product.BestPrice ?? decimal.MaxValue);
 
-        Reconcile(source.ToList());
+        List<Product> desired = source.ToList();
+
+        // Si el producto seleccionado desaparece de la lista por haberse marcado como comprado (y el toggle oculta los
+        // comprados), la selección quedaría huérfana: se adelanta al siguiente elemento visible (o el último si era el
+        // final; null si la lista queda vacía) antes de reconciliar.
+        Product? selected = SharedDataService.SelectedProduct;
+        int oldIndex = selected is null ? -1 : FilteredProducts.IndexOf(selected);
+        bool selectionDropped = selected is not null && oldIndex >= 0 && !desired.Contains(selected)
+            && selected.IsPurchased && !SharedDataService.ShowPurchased;
+
+        Reconcile(desired);
+
+        if (selectionDropped)
+            SharedDataService.SelectedProduct = desired.Count == 0
+                ? null
+                : desired[Math.Min(oldIndex, desired.Count - 1)];
+
         OnPropertyChanged(nameof(CountText));
     }
 
@@ -178,11 +202,28 @@ public partial class ProductListViewModel : WidgetViewModelBase
         ApplyFilters();
     }
 
-    /// <summary>Cambió una propiedad de un producto: si afecta a los filtros (nombre, favorito, avisos, tendencia, alerta), refiltra.</summary>
+    /// <summary>Cambió una propiedad de un producto: si afecta a los filtros (nombre, favorito, avisos, tendencia, alerta, comprado), refiltra.</summary>
     private void OnProductPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is null || FilterAffectingProperties.Contains(e.PropertyName))
             ApplyFilters();
+    }
+
+    /// <summary>Cambió el ajuste global de mostrar comprados: si se ocultan, quita el filtro "Comprados"; siempre refiltra.</summary>
+    private void OnSharedDataChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(SharedDataService.ShowPurchased))
+            return;
+
+        if (!SharedDataService.ShowPurchased && ActiveFilters.WithPurchased)
+        {
+            ActiveFilters.WithPurchased = false;
+            OnFiltersChanged();   // reajusta el interruptor maestro y refiltra
+        }
+        else
+        {
+            ApplyFilters();
+        }
     }
     #endregion
 
@@ -194,6 +235,7 @@ public partial class ProductListViewModel : WidgetViewModelBase
         products.CollectionChanged -= OnProductsCollectionChanged;
         foreach (Product product in products)
             product.PropertyChanged -= OnProductPropertyChanged;
+        SharedDataService.PropertyChanged -= OnSharedDataChanged;
     }
 
     /// <summary>Carga desde la configuración el estado visual guardado del control.</summary>

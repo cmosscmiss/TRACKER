@@ -213,6 +213,7 @@ public class MainWindowViewModel : WidgetViewModelBase
         _sharedDataService.ShowChartAxisLabels = _appSettings.General.ShowChartAxisLabels;
         _sharedDataService.HelpTooltipsEnabled = _appSettings.General.HelpTooltipsEnabled;
         _sharedDataService.IncludeShippingInPrice = _appSettings.General.IncludeShippingInPrice;
+        _sharedDataService.ShowPurchased = _appSettings.General.ShowPurchased;
     }
 
     public override void SaveConfig()
@@ -221,6 +222,7 @@ public class MainWindowViewModel : WidgetViewModelBase
         _appSettings.General.ShowChartAxisLabels = _sharedDataService.ShowChartAxisLabels;
         _appSettings.General.HelpTooltipsEnabled = _sharedDataService.HelpTooltipsEnabled;
         _appSettings.General.IncludeShippingInPrice = _sharedDataService.IncludeShippingInPrice;
+        _appSettings.General.ShowPurchased = _sharedDataService.ShowPurchased;
     }
 
     public override void Dispose()

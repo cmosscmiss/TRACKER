@@ -111,7 +111,10 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>El producto mostrado está marcado como favorito.</summary>
     public bool IsFavorite { get; private set; }
 
-    /// <summary>Se puede alternar el favorito: hay producto y, o ya es favorito, o no se alcanzó el máximo.</summary>
+    /// <summary>El producto mostrado está marcado como comprado (pill + estado del botón de comprado).</summary>
+    public bool IsPurchased { get; private set; }
+
+    /// <summary>Se puede alternar el favorito: hay producto, NO está comprado, y o ya es favorito o no se alcanzó el máximo.</summary>
     public bool CanToggleFavorite { get; private set; }
 
     /// <summary>Tipo de gráfica (enlazado TwoWay al <c>ChartTypeSelectorControl</c>); se persiste por widget/favorito.</summary>
@@ -222,6 +225,10 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         {
             Image = BuildImage(_product?.ImageUrl);
             OnPropertyChanged(nameof(Image));
+        }
+        else if (e.PropertyName == nameof(Product.IsPurchased))
+        {
+            UpdateFavoriteState();   // refresca IsPurchased (pill), y CanToggleFavorite
         }
     }
 
@@ -344,9 +351,12 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     private void UpdateFavoriteState()
     {
         IsFavorite = _product?.IsFavorite ?? false;
+        IsPurchased = _product?.IsPurchased ?? false;
         int favoriteCount = SharedDataService.ProductSet.Products.Count(product => product.IsFavorite);
-        CanToggleFavorite = _product is not null && (_product.IsFavorite || favoriteCount < ProductService.MaxFavorites);
+        // Un producto comprado no puede ser favorito: el botón se deshabilita.
+        CanToggleFavorite = _product is not null && !_product.IsPurchased && (_product.IsFavorite || favoriteCount < ProductService.MaxFavorites);
         OnPropertyChanged(nameof(IsFavorite));
+        OnPropertyChanged(nameof(IsPurchased));
         OnPropertyChanged(nameof(CanToggleFavorite));
     }
 

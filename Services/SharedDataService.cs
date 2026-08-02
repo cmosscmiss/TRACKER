@@ -28,6 +28,7 @@ public class SharedDataService : ObservableObject
     private bool _showChartAxisLabels;
     private bool _helpTooltipsEnabled = true;
     private bool _includeShippingInPrice;
+    private bool _showPurchased;
     #endregion
 
     #region Properties
@@ -76,6 +77,16 @@ public class SharedDataService : ObservableObject
                 foreach (Product product in ProductSet.Products)
                     product.NotifyPricingChanged();
         }
+    }
+
+    /// <summary>
+    /// Ajuste global (persistido) de si los productos comprados se muestran en la lista. Observable: el toggle del
+    /// footer lo cambia y la lista lo aplica (y muestra/oculta el filtro "Comprados"). Por defecto false.
+    /// </summary>
+    public bool ShowPurchased
+    {
+        get => _showPurchased;
+        set => SetProperty(ref _showPurchased, value);
     }
 
     /// <summary>

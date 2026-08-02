@@ -182,14 +182,21 @@ public sealed partial class PriceChartControl : UserControl
     }
 
     /// <summary>
-    /// Marca el producto seleccionado como comprado: pide el precio de compra (prerrelleno con el mejor precio
-    /// actual), lo almacena y el producto deja de aparecer en la lista. Cancelar no hace nada.
+    /// Alterna el estado "comprado" del producto mostrado. Si ya está comprado, lo revierte (vuelve a comportarse como
+    /// el resto). Si no, pide el precio de compra (prerrelleno con el mejor precio actual) y lo marca; cancelar no hace nada.
     /// </summary>
     private async void OnMarkPurchasedClick(object sender, RoutedEventArgs e)
     {
         Product? product = ViewModel?.Product;
         if (product is null || XamlRoot is null)
             return;
+
+        // Revertir: si ya está comprado, se desmarca directamente.
+        if (product.IsPurchased)
+        {
+            App.GetService<ProductService>().SetPurchased(product, false, null);
+            return;
+        }
 
         string initial = product.BestPrice is decimal best ? best.ToString("0.00", CultureInfo.CurrentCulture) : string.Empty;
 
@@ -205,7 +212,7 @@ public sealed partial class PriceChartControl : UserControl
         if (entered is null)
             return;
 
-        App.GetService<ProductService>().MarkPurchased(product, ParsePrice(entered));
+        App.GetService<ProductService>().SetPurchased(product, true, ParsePrice(entered));
     }
 
     /// <summary>Parsea un precio introducido a mano (cultura actual o invariante), o null si no es válido.</summary>

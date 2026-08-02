@@ -364,6 +364,18 @@ public sealed partial class WebViewControl : UserControl
         // Alta multi-tienda: si es un producto de Amazon se rastrea en todos los marketplaces (mismo ASIN); luego
         // se leen los precios de cada tienda navegando en segundo plano.
         ProductService products = App.GetService<ProductService>();
+
+        // Si ya se rastrea un producto que cubre esta URL (mismo ASIN de Amazon o misma URL), se avisa y no se importa.
+        if (products.ContainsProductForUrl(url))
+        {
+            await App.GetService<DialogsService>().AlertAsync(
+                XamlRoot,
+                L(Helpers.LocKeys.AddProduct_Duplicate_Title),
+                L(Helpers.LocKeys.AddProduct_Duplicate_Message),
+                L(Helpers.LocKeys.Common_OK_Label));
+            return;
+        }
+
         Models.Product? product = products.AddProductFromUrl(url);
         if (product is not null)
         {
@@ -472,6 +484,9 @@ public sealed partial class WebViewControl : UserControl
 
         return null;
     }
+
+    /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
+    private static string L(string key) => LocalizationService.Instance?[key] ?? key;
     #endregion
 
     #region Price picker script

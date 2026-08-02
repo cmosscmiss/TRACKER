@@ -105,11 +105,17 @@ public sealed partial class ProductListControl : UserControl
 
     /// <summary>
     /// Tras reconciliar la lista filtrada (mover al reordenar, o insertar/quitar al cambiar el filtro), re-selecciona
-    /// el producto en el ListView (que pudo perder la selección). El reset es cuando cambia todo el ItemsSource.
+    /// el producto en el ListView (que pudo perder la selección) y lo trae a la vista: al cargar el título de un
+    /// producto recién añadido, la lista se reordena alfabéticamente y el seleccionado puede quedar fuera de pantalla.
+    /// El reset es cuando cambia todo el ItemsSource.
     /// </summary>
     private void OnProductsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        DispatcherQueue.TryEnqueue(SyncListViewToSelection);
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            SyncListViewToSelection();
+            ScrollSelectedIntoView();
+        });
     }
     #endregion
 

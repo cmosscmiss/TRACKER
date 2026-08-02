@@ -27,8 +27,12 @@ public partial class ProductFilters : ObservableObject
     [ObservableProperty]
     private bool _withAlert;
 
+    /// <summary>Solo productos comprados (solo disponible cuando el footer muestra los comprados).</summary>
+    [ObservableProperty]
+    private bool _withPurchased;
+
     /// <summary>True si hay al menos un filtro por variable activo.</summary>
-    public bool HasAny => Favorites || WithIssues || WithPriceChange || WithAlert;
+    public bool HasAny => Favorites || WithIssues || WithPriceChange || WithAlert || WithPurchased;
 
     /// <summary>
     /// Aplica los filtros por variable activos (combinados con OR) a la secuencia dada. Si no hay ninguno activo,
@@ -43,6 +47,7 @@ public partial class ProductFilters : ObservableObject
             (Favorites && product.IsFavorite) ||
             (WithIssues && product.HasIssues) ||
             (WithPriceChange && (product.Trend == PriceTrend.Up || product.Trend == PriceTrend.Down)) ||
-            (WithAlert && product.HasAlert));
+            (WithAlert && product.HasAlert) ||
+            (WithPurchased && product.IsPurchased));
     }
 }

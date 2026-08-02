@@ -25,6 +25,7 @@ public sealed class PriceSchedulerService
     private readonly ProductService _productService;
     private readonly ProgressService _progressService;
     private readonly IOptions<AppSettings> _appSettings;
+    private readonly ProductDatabaseService _database;
 
     private DispatcherQueueTimer? _timer;
     private bool _running;
@@ -53,12 +54,13 @@ public sealed class PriceSchedulerService
     #endregion
 
     #region Constructor
-    public PriceSchedulerService(SharedDataService sharedDataService, ProductService productService, ProgressService progressService, IOptions<AppSettings> appSettings)
+    public PriceSchedulerService(SharedDataService sharedDataService, ProductService productService, ProgressService progressService, IOptions<AppSettings> appSettings, ProductDatabaseService database)
     {
         _sharedDataService = sharedDataService;
         _productService = productService;
         _progressService = progressService;
         _appSettings = appSettings;
+        _database = database;
     }
     #endregion
 
@@ -72,25 +74,33 @@ public sealed class PriceSchedulerService
         if (_timer is not null)
             return;
 
-        // La primera pasada automática no se ancla al arranque, sino a la ÚLTIMA lectura de precios: si el último
-        // refresco fue hace 5 h, la siguiente toca en 7 h (no en 12). Si ya venció (o nunca se leyó), queda a un
-        // intervalo completo (el catch-up de abajo refresca ahora lo que esté caducado).
-        TimeSpan first = Interval;
-        if (LastGlobalUpdateUtc() is DateTime last)
-        {
-            TimeSpan remaining = last + Interval - DateTime.UtcNow;
-            if (remaining > TimeSpan.Zero)
-                first = remaining;
-        }
-
-        // Catch-up: refresh anything whose last reading is missing or older than the interval, right after startup.
-        _ = RunAsync(dueOnly: true);
-
         _timer = uiDispatcher.CreateTimer();
-        _timer.Interval = first;
         _timer.Tick += (_, _) => _ = RunAsync(dueOnly: false);
-        NextRunUtc = DateTime.UtcNow + first;
-        _timer.Start();
+
+        // La cuenta atrás se ancla a la ÚLTIMA pasada COMPLETA persistida en BD (no a la lectura por tienda más
+        // reciente, que la mueven los refrescos sueltos y el catch-up), así sobrevive al cierre/reapertura. Para
+        // bases antiguas sin ese dato aún, se cae a la última lectura global conocida (mejor aproximación disponible).
+        DateTime now = DateTime.UtcNow;
+        DateTime? anchor = _database.GetLastFullRefreshUtc() ?? LastGlobalUpdateUtc();
+        TimeSpan remaining = anchor is DateTime a ? a + Interval - now : TimeSpan.Zero;
+
+        if (remaining > TimeSpan.Zero)
+        {
+            // Aún no toca: se reanuda la cuenta atrás con el tiempo restante. El catch-up recarga solo las tiendas
+            // caducadas/nunca leídas y NO cuenta como pasada completa, así que no reancla la cuenta atrás.
+            _timer.Interval = remaining;
+            NextRunUtc = now + remaining;
+            _timer.Start();
+            _ = RunAsync(dueOnly: true);
+        }
+        else
+        {
+            // Nunca se hizo una pasada completa, o quedó vencida mientras la app estaba cerrada: se lanza una pasada
+            // completa ahora (RearmSchedule fija y PERSISTE la nueva ancla y reprograma el temporizador a un intervalo).
+            _timer.Interval = Interval;
+            _timer.Start();
+            _ = RunAsync(dueOnly: false);
+        }
     }
 
     /// <summary>Momento (UTC) de la lectura de precio más reciente entre todas las tiendas de todos los productos, o null si ninguna se ha leído.</summary>
@@ -106,16 +116,18 @@ public sealed class PriceSchedulerService
 
     /// <summary>
     /// Reinicia la cuenta atrás y el temporizador: la siguiente pasada automática queda a un <see cref="Interval"/>
-    /// completo desde AHORA. Se llama al lanzar un refresco de TODOS los productos (manual o periódico), para que el
-    /// reloj del footer arranque de nuevo desde 12 h.
+    /// completo desde AHORA. Se llama al lanzar un refresco de TODOS los productos (manual o periódico). PERSISTE el
+    /// momento de esta pasada completa en BD (ancla de la cuenta atrás), para que sobreviva al cierre de la app.
     /// </summary>
     private void RearmSchedule()
     {
-        NextRunUtc = DateTime.UtcNow + Interval;
+        DateTime now = DateTime.UtcNow;
+        _database.SetLastFullRefreshUtc(now);   // ancla persistida (escritura inmediata y atómica en BD)
+        NextRunUtc = now + Interval;
         if (_timer is not null)
         {
             _timer.Stop();
-            _timer.Interval = Interval;   // el primer intervalo pudo ser menor (anclado al último update); a partir de aquí, 12 h
+            _timer.Interval = Interval;   // el primer intervalo pudo ser menor (anclado a la última pasada); a partir de aquí, un intervalo completo
             _timer.Start();
         }
     }
@@ -133,9 +145,9 @@ public sealed class PriceSchedulerService
         if (_timer is null)
             return;
 
-        TimeSpan remaining = Interval;
-        if (LastGlobalUpdateUtc() is DateTime last)
-            remaining = last + Interval - DateTime.UtcNow;
+        DateTime now = DateTime.UtcNow;
+        DateTime? anchor = _database.GetLastFullRefreshUtc() ?? LastGlobalUpdateUtc();
+        TimeSpan remaining = anchor is DateTime a ? a + Interval - now : Interval;
 
         if (remaining <= TimeSpan.Zero)
         {
@@ -147,7 +159,7 @@ public sealed class PriceSchedulerService
         // Aún no toca: la cuenta atrás muestra el tiempo restante hasta la próxima actualización.
         _timer.Stop();
         _timer.Interval = remaining;
-        NextRunUtc = DateTime.UtcNow + remaining;
+        NextRunUtc = now + remaining;
         _timer.Start();
     }
     #endregion
@@ -171,7 +183,8 @@ public sealed class PriceSchedulerService
         _running = true;
         try
         {
-            List<Product> toRefresh = _sharedDataService.ProductSet.Products.ToList();
+            // Los productos comprados no se refrescan nunca.
+            List<Product> toRefresh = _sharedDataService.ProductSet.Products.Where(p => !p.IsPurchased).ToList();
             if (dueOnly)
                 toRefresh = toRefresh.Where(IsDue).ToList();
 

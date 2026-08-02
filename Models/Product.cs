@@ -78,6 +78,10 @@ public partial class Product : ObservableObject
     /// <summary>Optional alert price: when the best price drops to/below it, the product is flagged as a good deal. Null = no alert.</summary>
     [ObservableProperty]
     private decimal? _alertPrice;
+
+    /// <summary>Marcado como comprado: se muestra en la lista (con el título tachado) pero sus precios no se actualizan.</summary>
+    [ObservableProperty]
+    private bool _isPurchased;
     #endregion
 
     #region Properties

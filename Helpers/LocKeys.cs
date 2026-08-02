@@ -115,6 +115,8 @@ public static class LocKeys
     public const string AddProduct_Dialog_Title = "AddProduct_Dialog_Title";
     public const string AddProduct_Dialog_Message = "AddProduct_Dialog_Message";
     public const string AddProduct_Url_Placeholder = "AddProduct_Url_Placeholder";
+    public const string AddProduct_Duplicate_Title = "AddProduct_Duplicate_Title";
+    public const string AddProduct_Duplicate_Message = "AddProduct_Duplicate_Message";
     public const string Common_Add_Label = "Common_Add_Label";
     public const string Common_Cancel_Label = "Common_Cancel_Label";
     public const string Common_Save_Label = "Common_Save_Label";
@@ -206,6 +208,7 @@ public static class LocKeys
     public const string Footer_AxisLabels_Tooltip = "Footer_AxisLabels_Tooltip";
     public const string Footer_Tooltips_Tooltip = "Footer_Tooltips_Tooltip";
     public const string Footer_IncludeShipping_Tooltip = "Footer_IncludeShipping_Tooltip";
+    public const string Footer_ShowPurchased_Tooltip = "Footer_ShowPurchased_Tooltip";
     public const string Notify_Summary_Title = "Notify_Summary_Title";
     public const string Notify_Summary_Line = "Notify_Summary_Line";
     public const string Notify_AlertReached_Line = "Notify_AlertReached_Line";
@@ -218,6 +221,7 @@ public static class LocKeys
     // Acciones del widget de producto
     public const string PriceChart_Delete_Tooltip = "PriceChart_Delete_Tooltip";
     public const string PriceChart_Purchased_Tooltip = "PriceChart_Purchased_Tooltip";
+    public const string PriceChart_Purchased_Label = "PriceChart_Purchased_Label";
     public const string PriceChart_Refresh_Tooltip = "PriceChart_Refresh_Tooltip";
     public const string PriceChart_Edit_Tooltip = "PriceChart_Edit_Tooltip";
     public const string PriceChart_Search_Tooltip = "PriceChart_Search_Tooltip";
@@ -235,6 +239,7 @@ public static class LocKeys
     public const string ProductList_FilterIssues_Label = "ProductList_FilterIssues_Label";
     public const string ProductList_FilterPriceChange_Label = "ProductList_FilterPriceChange_Label";
     public const string ProductList_FilterAlert_Label = "ProductList_FilterAlert_Label";
+    public const string ProductList_FilterPurchased_Label = "ProductList_FilterPurchased_Label";
     public const string ProductList_Count_Format = "ProductList_Count_Format";
     public const string ProductList_Sort_Tooltip = "ProductList_Sort_Tooltip";
     public const string ProductList_SortPriceAsc_Label = "ProductList_SortPriceAsc_Label";
@@ -252,5 +257,6 @@ public static class LocKeys
     public const string PriceChart_Purchased_Confirm_Label = "PriceChart_Purchased_Confirm_Label";
     public const string Common_Delete_Label = "Common_Delete_Label";
     public const string ProductLog_Purchased_Progress = "ProductLog_Purchased_Progress";
+    public const string ProductLog_Unpurchased_Progress = "ProductLog_Unpurchased_Progress";
     public const string ProductLog_Removed_Progress = "ProductLog_Removed_Progress";
 }

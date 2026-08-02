@@ -45,6 +45,31 @@ public sealed class ProductService
     /// to the shared list and selects it. Prices are read afterwards via <see cref="RefreshProductAsync"/>. Returns
     /// the created product, or <c>null</c> if the URL is blank or not a valid http(s) URL.
     /// </summary>
+    /// <summary>
+    /// Comprueba si ya se rastrea un producto que cubra la URL dada: para Amazon, por ASIN (el mismo artículo en
+    /// cualquier marketplace cuenta como duplicado); para otras tiendas, por la URL exacta (sin distinguir
+    /// mayúsculas). Las URLs no válidas devuelven false (el alta ya las rechaza aparte).
+    /// </summary>
+    public bool ContainsProductForUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            return false;
+
+        string normalized = url.Trim();
+        if (!Uri.TryCreate(normalized, UriKind.Absolute, out _))
+            return false;
+
+        var products = _sharedDataService.ProductSet.Products;
+        string? asin = Amazon.ExtractAsin(normalized);
+
+        if (asin is not null)
+            return products.Any(product => product.Stores.Any(store =>
+                string.Equals(Amazon.ExtractAsin(store.Url), asin, StringComparison.OrdinalIgnoreCase)));
+
+        return products.Any(product => product.Stores.Any(store =>
+            string.Equals(store.Url, normalized, StringComparison.OrdinalIgnoreCase)));
+    }
+
     public Product? AddProductFromUrl(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
@@ -114,6 +139,10 @@ public sealed class ProductService
     /// </summary>
     public async Task RefreshProductAsync(Product product, bool reportGlobalProgress = true, bool addedProduct = false)
     {
+        // Los productos comprados no actualizan precios.
+        if (product.IsPurchased)
+            return;
+
         // Operación con barra del footer (StartOperation) para los refrescos sueltos (alta, refresco por favorito); la
         // pasada global (PriceSchedulerService) ya lleva la barra, así que sus productos usan solo la entrada de log.
         ProgressNotifier operation = reportGlobalProgress
@@ -235,6 +264,10 @@ public sealed class ProductService
         if (product is null)
             return false;
 
+        // Un producto comprado no puede ser favorito.
+        if (product.IsPurchased)
+            return false;
+
         if (!product.IsFavorite && FavoriteCount >= MaxFavorites)
             return false;
 
@@ -294,15 +327,32 @@ public sealed class ProductService
     }
 
     /// <summary>
-    /// Marks a product as purchased (storing the purchase price if given): it is kept in the database for the record
-    /// but removed from the shared list so it no longer appears among the tracked products.
+    /// Marca o desmarca un producto como comprado (toggle). El producto SIGUE en la lista (con el título tachado) pero
+    /// sus precios no se actualizan. Al marcarlo se le quita el favorito (un comprado no puede ser favorito); al
+    /// revertirlo vuelve a comportarse como el resto. Guarda el precio de compra al marcarlo.
     /// </summary>
-    public void MarkPurchased(Product product, decimal? purchasePrice)
+    public void SetPurchased(Product product, bool purchased, decimal? purchasePrice)
     {
-        _database.MarkPurchased(product, purchasePrice);
-        RemoveFromListSelectingNext(product);
+        if (product is null)
+            return;
 
-        _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Purchased_Progress), product.Name));
+        bool favoriteCleared = false;
+        if (purchased && product.IsFavorite)
+        {
+            product.IsFavorite = false;
+            _database.SetFavorite(product, false);
+            favoriteCleared = true;
+        }
+
+        product.IsPurchased = purchased;
+        _database.SetPurchased(product, purchased, purchasePrice);
+
+        if (favoriteCleared)
+            _sharedDataService.NotifyFavoritesChanged();
+
+        _progressService.LogEvent(string.Format(
+            L(purchased ? Helpers.LocKeys.ProductLog_Purchased_Progress : Helpers.LocKeys.ProductLog_Unpurchased_Progress),
+            product.Name));
     }
     #endregion
 

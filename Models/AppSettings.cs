@@ -105,6 +105,9 @@ public class AppSettings
         /// </summary>
         public int AutoRefreshHours { get; set; } = 24;
 
+        /// <summary>Si es true, los productos comprados se muestran en la lista (con el título tachado). Lo alterna un toggle del footer. Por defecto false.</summary>
+        public bool ShowPurchased { get; set; } = false;
+
         /// <summary>
         /// Si es true, las gráficas del widget de productos (producto seleccionado y favoritos) muestran las etiquetas
         /// del eje X (las fechas de actualización). Por defecto false (leyenda oculta). Lo controla un toggle del pie y

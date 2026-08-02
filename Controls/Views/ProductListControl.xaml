@@ -24,7 +24,8 @@
                 <Border Grid.Column="0" Background="{x:Bind PriceHighlight, Converter={StaticResource PriceHighlightToBrushConverter}, Mode=OneWay}" CornerRadius="6" Padding="6 2" VerticalAlignment="Center">
                     <TextBlock Text="{x:Bind BestPriceText, Mode=OneWay}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
                 </Border>
-                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}" />
+                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"
+                           TextDecorations="{x:Bind IsPurchased, Converter={StaticResource StrikethroughIfTrueConverter}, Mode=OneWay}" />
                 <!-- Iconos tras el título: pre-order + precio bajo la alerta + aviso de problema + estrella de favorito.
                      Cada tipo en su propia columna de ancho fijo, de modo que aunque alguno esté oculto los demás
                      conservan su posición y quedan verticalmente alineados entre filas. -->
@@ -93,6 +94,11 @@
                             <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterAlert_Label}"
                                 IsChecked="{x:Bind ViewModel.ActiveFilters.WithAlert, Mode=TwoWay}"
                                 Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                            <!-- Solo disponible cuando el footer muestra los comprados. -->
+                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPurchased_Label}"
+                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithPurchased, Mode=TwoWay}"
+                                Command="{x:Bind ViewModel.FiltersChangedCommand}"
+                                Visibility="{x:Bind ViewModel.SharedDataService.ShowPurchased, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}"/>
                         </MenuFlyout>
                     </ToggleSplitButton.Flyout>
                 </ToggleSplitButton>
