@@ -141,7 +141,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased FROM Products ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice FROM Products ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -152,7 +152,8 @@ public sealed class ProductDatabaseService
                     ImageUrl = reader.IsDBNull(2) ? null : reader.GetString(2),
                     IsFavorite = !reader.IsDBNull(3) && reader.GetInt64(3) != 0,
                     AlertPrice = reader.IsDBNull(4) ? null : ParsePrice(reader.GetString(4)),
-                    IsPurchased = !reader.IsDBNull(5) && reader.GetInt64(5) != 0
+                    IsPurchased = !reader.IsDBNull(5) && reader.GetInt64(5) != 0,
+                    PurchasePrice = reader.IsDBNull(6) ? null : ParsePrice(reader.GetString(6))
                 };
                 productsById[product.Id] = product;
                 target.Products.Add(product);

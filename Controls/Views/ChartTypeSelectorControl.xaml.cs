@@ -310,6 +310,20 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         get => (bool)GetValue(ShowCategoryLabelsProperty);
         set => SetValue(ShowCategoryLabelsProperty, value);
     }
+
+    /// <summary>
+    /// Si es true (por defecto), se muestra el separador horizontal entre la cabecera (título) y la toolbar. Se pone
+    /// a false en widgets sin título (p. ej. el resumen de precios), donde ese separador queda suelto arriba.
+    /// </summary>
+    public static readonly DependencyProperty ShowHeaderSeparatorProperty = DependencyProperty.Register(
+        nameof(ShowHeaderSeparator), typeof(bool), typeof(ChartTypeSelectorControl),
+        new PropertyMetadata(true, OnHeaderSeparatorChanged));
+
+    public bool ShowHeaderSeparator
+    {
+        get => (bool)GetValue(ShowHeaderSeparatorProperty);
+        set => SetValue(ShowHeaderSeparatorProperty, value);
+    }
     #endregion
 
     #region Lifecycle / events
@@ -317,6 +331,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     {
         // Al (re)cargarse en el árbol, reconstruye por si el tema cambió mientras estaba descargado/virtualizado.
         UpdateTitle();
+        UpdateHeaderSeparator();
         UpdateButtons();
         UpdateSortButtons();
         Rebuild();
@@ -363,6 +378,16 @@ public sealed partial class ChartTypeSelectorControl : UserControl
 
     private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         => ((ChartTypeSelectorControl)d).UpdateTitle();
+
+    private static void OnHeaderSeparatorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        => ((ChartTypeSelectorControl)d).UpdateHeaderSeparator();
+
+    /// <summary>Muestra u oculta el separador horizontal de la cabecera según <see cref="ShowHeaderSeparator"/>.</summary>
+    private void UpdateHeaderSeparator()
+    {
+        if (HeaderSeparator != null)
+            HeaderSeparator.Visibility = ShowHeaderSeparator ? Visibility.Visible : Visibility.Collapsed;
+    }
 
     /// <summary>Pone el título (en el control y en el TeachingTip) y lo oculta si está vacío.</summary>
     private void UpdateTitle()

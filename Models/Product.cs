@@ -82,6 +82,10 @@ public partial class Product : ObservableObject
     /// <summary>Marcado como comprado: se muestra en la lista (con el título tachado) pero sus precios no se actualizan.</summary>
     [ObservableProperty]
     private bool _isPurchased;
+
+    /// <summary>Precio al que se compró el producto (el que se muestra en la lista mientras está comprado). Null si no está comprado.</summary>
+    [ObservableProperty]
+    private decimal? _purchasePrice;
     #endregion
 
     #region Properties
@@ -221,10 +225,31 @@ public partial class Product : ObservableObject
             if (BestPrice is not decimal value)
                 return "—";
 
-            string currency = BestStore?.Currency ?? (Stores.Count > 0 ? Stores[0].Currency : null) ?? string.Empty;
-            string text = value.ToString("0.00", CultureInfo.CurrentCulture);
-            return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
+            return FormatWithCurrency(value);
         }
+    }
+
+    /// <summary>Precio de compra formateado con su moneda (o "—" si no está comprado / sin precio).</summary>
+    public string PurchasePriceText => PurchasePrice is decimal value ? FormatWithCurrency(value) : "—";
+
+    /// <summary>
+    /// Precio a mostrar en el recuadro de la lista: el de COMPRA si el producto está comprado; si no, el mejor precio
+    /// actual.
+    /// </summary>
+    public string ListPriceText => IsPurchased ? PurchasePriceText : BestPriceText;
+
+    /// <summary>
+    /// Resaltado del recuadro de precio en la lista: NEUTRO si el producto está comprado (muestra el precio de compra,
+    /// sin verde/rojo/azul); si no, el resaltado normal por tendencia/mínimo histórico.
+    /// </summary>
+    public PriceHighlight ListPriceHighlight => IsPurchased ? PriceHighlight.None : PriceHighlight;
+
+    /// <summary>Formatea un importe con la moneda de la tienda de referencia ("39,99 €").</summary>
+    private string FormatWithCurrency(decimal value)
+    {
+        string currency = BestStore?.Currency ?? (Stores.Count > 0 ? Stores[0].Currency : null) ?? string.Empty;
+        string text = value.ToString("0.00", CultureInfo.CurrentCulture);
+        return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
     }
 
     /// <summary>
@@ -365,9 +390,11 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(BestStore));
         OnPropertyChanged(nameof(LastChecked));
         OnPropertyChanged(nameof(BestPriceText));
+        OnPropertyChanged(nameof(ListPriceText));
         OnPropertyChanged(nameof(Trend));
         OnPropertyChanged(nameof(IsHistoricalLow));
         OnPropertyChanged(nameof(PriceHighlight));
+        OnPropertyChanged(nameof(ListPriceHighlight));
         OnPropertyChanged(nameof(HasPromo));
         OnPropertyChanged(nameof(HasIssues));
         OnPropertyChanged(nameof(IsPreorder));
@@ -382,6 +409,20 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(HasAlert));
         OnPropertyChanged(nameof(IsBelowAlert));
         OnPropertyChanged(nameof(AlertPriceText));
+    }
+
+    /// <summary>Al marcar/desmarcar comprado, refresca el precio y el resaltado que muestra la lista.</summary>
+    partial void OnIsPurchasedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ListPriceText));
+        OnPropertyChanged(nameof(ListPriceHighlight));
+    }
+
+    /// <summary>Al cambiar el precio de compra, refresca el texto de precio de la lista.</summary>
+    partial void OnPurchasePriceChanged(decimal? value)
+    {
+        OnPropertyChanged(nameof(PurchasePriceText));
+        OnPropertyChanged(nameof(ListPriceText));
     }
     #endregion
 }

@@ -32,7 +32,7 @@
             <TextBlock x:Name="TitleText" Grid.Column="0" Margin="0 8" Style="{StaticResource TitleStyle}" Visibility="Collapsed"/>
         </Grid>
 
-        <template:SeparatorEx Grid.Row="1" Margin="0 8 0 16" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+        <template:SeparatorEx x:Name="HeaderSeparator" Grid.Row="1" Margin="0 8 0 16" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
 
         <!-- Toolbar: cada barra es un ToggleSplitButton (cara = selecciÃ³n actual, desplegable = opciones 1-de-N) -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 0 8">

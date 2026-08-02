@@ -133,6 +133,7 @@
                                     <FontIcon FontSize="18" Glyph="&#xE897;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.HelpTooltipsEnabled, Converter={StaticResource HiddenIfTrueConverter}}"/>
                                 </Grid>
                             </Button>
+                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
                             <Button x:Name="AxisLabelsToggle" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
                                     Click="OnToggleAxisLabelsClick" help:Help.Key="Footer_AxisLabels_Tooltip">
                                 <Grid>
@@ -156,14 +157,17 @@
                                     <FontIcon FontSize="18" Glyph="&#xE7BF;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.ShowPurchased, Converter={StaticResource HiddenIfTrueConverter}}"/>
                                 </Grid>
                             </Button>
+                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
                             <!-- Login/logout (no es toggle-control, pero el icono va en acento si hay sesión; lo fija el code-behind). -->
                             <Button x:Name="AmazonAuthButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAmazonAuthClick">
                                 <FontIcon x:Name="AmazonAuthIcon" FontSize="18" Glyph="&#xE77B;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>
+                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
                             <!-- Acciones (no toggles): icono en color normal. -->
                             <Button x:Name="RefreshAllButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnRefreshAllClick" help:Help.Key="Footer_RefreshAll_Tooltip">
                                 <FontIcon FontSize="18" Glyph="&#xE72C;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>
+                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
                             <Button x:Name="AddProductButton" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch" Click="OnAddProductClick" help:Help.Key="Footer_AddProduct_Tooltip">
                                 <FontIcon FontSize="18" Glyph="&#xE710;" Foreground="{ThemeResource TextSecondaryBrush}"/>
                             </Button>

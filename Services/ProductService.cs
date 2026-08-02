@@ -344,6 +344,7 @@ public sealed class ProductService
             favoriteCleared = true;
         }
 
+        product.PurchasePrice = purchased ? purchasePrice : null;
         product.IsPurchased = purchased;
         _database.SetPurchased(product, purchased, purchasePrice);
 

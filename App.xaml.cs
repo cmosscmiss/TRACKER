@@ -93,6 +93,7 @@ public partial class App : Application
 
             // Converters
             services.AddSingleton<LogEntrySeverityToBrushConverter>();
+            services.AddSingleton<PurchasedToTextBrushConverter>();
 
             // Services
             services.AddSingleton<WindowService>();
@@ -291,6 +292,10 @@ public partial class App : Application
         var logEntrySeverityToBrushConverter = Host.Services.GetRequiredService<LogEntrySeverityToBrushConverter>();
         logEntrySeverityToBrushConverter.ThemeService = themeService;
         Application.Current.Resources["LogEntrySeverityConverter"] = logEntrySeverityToBrushConverter;
+
+        var purchasedToTextBrushConverter = Host.Services.GetRequiredService<PurchasedToTextBrushConverter>();
+        purchasedToTextBrushConverter.ThemeService = themeService;
+        Application.Current.Resources["PurchasedTextBrushConverter"] = purchasedToTextBrushConverter;
 
         // Resolve application settings configured in DI and store them in a property
         _appSettings = Host.Services.GetRequiredService<IOptions<AppSettings>>().Value;
