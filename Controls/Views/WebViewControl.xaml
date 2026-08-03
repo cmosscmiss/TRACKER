@@ -19,7 +19,7 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Padding="8">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -36,7 +36,7 @@
                     <ToggleButton Content="BE" Tag="be" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
                     <ToggleButton Content="NL" Tag="nl" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
                 </StackPanel>
-                <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0 8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
+                <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                 <AppBarButton x:Name="abNavigateBack" LabelPosition="Collapsed" Width="40" Click="AbNavigateBack_Click">
                     <AppBarButton.Content>
                         <FontIcon Glyph="&#xE0A6;" />
@@ -67,10 +67,9 @@
                     <FontIcon Glyph="&#xE719;" FontSize="16"/>
                 </Button>
             </StackPanel>
-
         </Grid>
 
-        <template:SeparatorEx Grid.Row="1" Margin="0 4 0 12" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+        <template:SeparatorEx Grid.Row="1" Margin="0 0 0 8" Thickness="1" UseGradient="True"/>
 
         <Grid Grid.Row="2">
             <controls:WebView2 x:Name="MyWebView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CoreWebView2Initialized="MyWebView_CoreWebView2Initialized" NavigationCompleted="MyWebView_NavigationCompleted"/>

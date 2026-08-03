@@ -69,11 +69,17 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Hay un producto seleccionado (para mostrar/ocultar la cabecera).</summary>
     public bool HasProduct { get; private set; }
 
-    /// <summary>Precio actual (mejor precio) con su tienda, o "—".</summary>
+    /// <summary>Precio actual (mejor precio) formateado, o "—".</summary>
     public string CurrentPriceText { get; private set; } = "—";
 
-    /// <summary>Precio más bajo del histórico con la tienda donde se dio, o "—".</summary>
+    /// <summary>Tienda del mejor precio actual (para la descripción de la tarjeta), o vacío.</summary>
+    public string CurrentPriceStore { get; private set; } = string.Empty;
+
+    /// <summary>Precio más bajo del histórico formateado, o "—".</summary>
     public string LowestPriceText { get; private set; } = "—";
+
+    /// <summary>Tienda donde se dio el precio más bajo del histórico (para la descripción de la tarjeta), o vacío.</summary>
+    public string LowestPriceStore { get; private set; } = string.Empty;
 
     /// <summary>Se muestra el pill de Prime (solo si el mejor precio es de una tienda Amazon).</summary>
     public bool ShowPrime { get; private set; }
@@ -274,7 +280,8 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         Image = BuildImage(product?.ImageUrl);
 
         ProductStore? bestStore = product?.BestStore;
-        CurrentPriceText = FormatPriceWithStore(product?.BestPrice, bestStore?.Label);
+        CurrentPriceText = FormatPrice(product?.BestPrice);
+        CurrentPriceStore = bestStore?.Label ?? string.Empty;
 
         // Precio más bajo del histórico, por precio EFECTIVO (suma el envío actual de la tienda si el ajuste lo incluye).
         if (product is not null && history is { Count: > 0 })
@@ -282,11 +289,13 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             bool includeShippingLow = SharedDataService.IncludeShippingInPrice;
             decimal EffectiveOf(PricePoint p) => p.Price + (includeShippingLow && product.Stores.FirstOrDefault(s => s.Label == p.StoreLabel)?.ShippingCost is decimal c ? c : 0);
             PricePoint lowest = history.OrderBy(EffectiveOf).First();
-            LowestPriceText = FormatPriceWithStore(EffectiveOf(lowest), lowest.StoreLabel);
+            LowestPriceText = FormatPrice(EffectiveOf(lowest));
+            LowestPriceStore = lowest.StoreLabel;
         }
         else
         {
             LowestPriceText = "—";
+            LowestPriceStore = string.Empty;
         }
 
         // Promoción / oferta / cupón / voucher en alguna tienda del producto.
@@ -324,7 +333,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(ProductName));
         OnPropertyChanged(nameof(Image));
         OnPropertyChanged(nameof(CurrentPriceText));
+        OnPropertyChanged(nameof(CurrentPriceStore));
         OnPropertyChanged(nameof(LowestPriceText));
+        OnPropertyChanged(nameof(LowestPriceStore));
         OnPropertyChanged(nameof(ShowPrime));
         OnPropertyChanged(nameof(ShowPromo));
         OnPropertyChanged(nameof(ShowIssues));
@@ -401,18 +412,14 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         return series;
     }
 
-    /// <summary>Formatea un precio con la moneda y la tienda ("39,99 € (Amazon.es)"), o "—" si es null.</summary>
-    private string FormatPriceWithStore(decimal? price, string? storeLabel)
+    /// <summary>Formatea un precio con la moneda ("39,99 €"), o "—" si es null. La tienda va aparte (descripción).</summary>
+    private string FormatPrice(decimal? price)
     {
         if (price is not decimal value)
             return "—";
 
         string text = value.ToString("0.00", CultureInfo.CurrentCulture);
-        if (!string.IsNullOrEmpty(ValueSuffix))
-            text += " " + ValueSuffix;
-        if (!string.IsNullOrWhiteSpace(storeLabel))
-            text += $" ({storeLabel})";
-        return text;
+        return string.IsNullOrEmpty(ValueSuffix) ? text : text + " " + ValueSuffix;
     }
 
     /// <summary>Crea un <see cref="ImageSource"/> desde la URL de imagen, o null si no es válida.</summary>

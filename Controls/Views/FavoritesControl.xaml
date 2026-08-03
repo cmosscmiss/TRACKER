@@ -29,7 +29,7 @@
         <!-- Selector de vista (puntitos): solo si hay más de una página (seleccionado + algún favorito). -->
         <PipsPager Grid.Row="1" HorizontalAlignment="Center" Margin="0 4 0 8"
                    NumberOfPages="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}"
-                   SelectedPageIndex="{x:Bind Flip.SelectedIndex, Mode=TwoWay}"
+                   SelectedPageIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                    Visibility="{x:Bind ViewModel.ShowPager, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
     </Grid>
 </UserControl>

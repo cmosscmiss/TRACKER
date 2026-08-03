@@ -38,6 +38,9 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// <summary>Hay un <see cref="Rebuild"/> ya encolado para el final del batch de cambios de DP (ver <see cref="ScheduleRebuild"/>).</summary>
     private bool _rebuildScheduled;
 
+    /// <summary>Último ancho con el que se renderizó; sirve para reconstruir al pasar de tamaño 0 a tamaño real.</summary>
+    private double _lastRenderWidth;
+
     /// <summary>Máximo de los valores mostrados, para acotar el eje (línea de referencia o ajuste ±10%).</summary>
     private double _valueAxisDataMax;
 
@@ -54,6 +57,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        SizeChanged += OnSizeChanged;
         Cartesian.DataPointerDown += OnCartesianPointerDown;
 
         // Suscripción PERMANENTE al cambio de tema (no atada a Loaded/Unloaded): dentro de un FlipView / del panel de
@@ -338,6 +342,19 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     }
 
     private void OnThemeChanged(object? sender, EventArgs e) => Rebuild();
+
+    /// <summary>
+    /// Al pasar de tamaño 0 a un tamaño real, reconstruye: un <c>CartesianChart</c> de LiveCharts creado/alimentado
+    /// mientras su contenedor medía 0 (p. ej. una página aún no visible del FlipView de favoritos) puede no dibujarse;
+    /// al recibir tamaño por primera vez se fuerza el redibujado (antes solo se veía tras tocar el tipo de gráfica).
+    /// </summary>
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        bool wasZero = _lastRenderWidth <= 0;
+        _lastRenderWidth = e.NewSize.Width;
+        if (wasZero && e.NewSize.Width > 0 && e.NewSize.Height > 0)
+            ScheduleRebuild();
+    }
 
     /// <summary>
     /// Difiere un único <see cref="Rebuild"/> al final del batch actual de cambios de DP. Un refresco de
