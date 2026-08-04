@@ -18,10 +18,23 @@ namespace MM4LB.Controls.ViewModels;
 public sealed class StoreChip
 {
     public string Label { get; init; } = string.Empty;
+
+    /// <summary>URL del producto en esta tienda: para abrirla en el navegador y casar la selección con la abierta.</summary>
+    public string Url { get; init; } = string.Empty;
+
     public string PriceText { get; init; } = string.Empty;
 
-    /// <summary>Muestra el badge verde de Prime (solo si la tienda es Amazon y es Prime).</summary>
-    public bool ShowPrimeBadge { get; init; }
+    /// <summary>La tienda es Amazon: se muestra el indicador Prime (sí/no).</summary>
+    public bool ShowPrime { get; init; }
+
+    /// <summary>La tienda es Prime (solo relevante cuando <see cref="ShowPrime"/> es true).</summary>
+    public bool IsPrime { get; init; }
+
+    /// <summary>Mostrar la pastilla verde "Prime" (Amazon y Prime).</summary>
+    public bool ShowPrimeYes => ShowPrime && IsPrime;
+
+    /// <summary>Mostrar la pastilla gris "No Prime" (Amazon y no Prime).</summary>
+    public bool ShowPrimeNo => ShowPrime && !IsPrime;
 
     /// <summary>Coste de envío formateado ("+3,99 €"), o vacío si no hay coste.</summary>
     public string ShippingText { get; init; } = string.Empty;
@@ -318,8 +331,10 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             : product.Stores.Select(store => new StoreChip
             {
                 Label = store.Label,
+                Url = store.Url,
                 PriceText = store.EffectivePrice is decimal price ? FormatStorePrice(price, store.Currency) : "—",
-                ShowPrimeBadge = store.IsPrime && store.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase),
+                ShowPrime = store.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase),
+                IsPrime = store.IsPrime,
                 ShippingText = store.ShippingCost is decimal shipping ? "+" + FormatStorePrice(shipping, store.Currency) : string.Empty,
                 // Si el envío ya va incluido en el precio, no se muestra aparte.
                 ShowShipping = !SharedDataService.IncludeShippingInPrice && store.ShippingCost is decimal shippingCost && shippingCost > 0

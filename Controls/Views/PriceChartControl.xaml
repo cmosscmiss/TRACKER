@@ -94,35 +94,39 @@
                 <Image Grid.Row="0" Width="106" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top"
                        Source="{x:Bind ViewModel.Image, Mode=OneWay}"/>
 
-                <!-- Chips por tienda, apilados bajo la imagen; scroll vertical si no caben. -->
-                <ScrollViewer Grid.Row="1" Margin="0 8 0 0" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.Stores, Mode=OneWay}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" Spacing="6"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="vm:StoreChip">
-                                <Border Background="{ThemeResource CardBackgroundLightBrush}" CornerRadius="10" Padding="8 3" HorizontalAlignment="Left">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="{x:Bind Label}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{x:Bind PriceText}" Foreground="{ThemeResource AccentLightBrush}" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center"/>
-                                        <Border Background="#FF2E7D32" CornerRadius="6" Padding="5 1" VerticalAlignment="Center"
-                                                Visibility="{x:Bind ShowPrimeBadge, Converter={StaticResource VisibleIfTrueConverter}}">
-                                            <TextBlock Text="Prime" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
-                                        </Border>
-                                        <!-- Coste de envío (Amazon), aparte del precio. Solo si se detectó (> 0). -->
-                                        <TextBlock Text="{x:Bind ShippingText}" Foreground="{ThemeResource WarningBrush}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"
-                                                   help:Help.Key="PriceChart_Shipping_Tooltip"
-                                                   Visibility="{x:Bind ShowShipping, Converter={StaticResource VisibleIfTrueConverter}}"/>
-                                    </StackPanel>
+                <!-- Lista de tiendas: un ítem VERTICAL por tienda (tienda / Prime sí-no / precio). La selección se
+                     sincroniza con la tienda abierta en el navegador y, al pulsar un ítem, se abre en él. -->
+                <ListView Grid.Row="1" x:Name="StoresList" Margin="0 8 0 0" Padding="0" HorizontalAlignment="Stretch"
+                          ItemsSource="{x:Bind ViewModel.Stores, Mode=OneWay}"
+                          SelectionMode="Single" SelectionChanged="OnStoreSelectionChanged"
+                          ItemContainerStyle="{StaticResource GameImagesListViewItemStyle}"
+                          ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:StoreChip">
+                            <StackPanel Orientation="Vertical" Spacing="3" Padding="0 4">
+                                <!-- Tienda -->
+                                <TextBlock Text="{x:Bind Label}" Foreground="{ThemeResource TextBrush}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                           HorizontalAlignment="Center" TextAlignment="Center"/>
+                                <!-- Prime sí / no (solo tiendas Amazon) -->
+                                <Border Background="#FF2E7D32" CornerRadius="6" Padding="6 1" HorizontalAlignment="Center"
+                                        Visibility="{x:Bind ShowPrimeYes, Converter={StaticResource VisibleIfTrueConverter}}">
+                                    <TextBlock Text="{loc:Str Key=PriceChart_Prime_Label}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
                                 </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                                <Border Background="{ThemeResource CardBackgroundLightBrush}" CornerRadius="6" Padding="6 1" HorizontalAlignment="Center"
+                                        Visibility="{x:Bind ShowPrimeNo, Converter={StaticResource VisibleIfTrueConverter}}">
+                                    <TextBlock Text="{loc:Str Key=PriceChart_NoPrime_Label}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="10" FontWeight="SemiBold"/>
+                                </Border>
+                                <!-- Precio (+ envío aparte, si se detectó) -->
+                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                    <TextBlock Text="{x:Bind PriceText}" Foreground="{ThemeResource AccentLightBrush}" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Bind ShippingText}" Foreground="{ThemeResource WarningBrush}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"
+                                               help:Help.Key="PriceChart_Shipping_Tooltip"
+                                               Visibility="{x:Bind ShowShipping, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </Grid>
 
             <Grid Grid.Column="1">

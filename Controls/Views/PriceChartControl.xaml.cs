@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -28,10 +30,88 @@ public sealed partial class PriceChartControl : UserControl
     public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel), typeof(PriceChartViewModel), typeof(PriceChartControl), new PropertyMetadata(null));
     #endregion
 
+    #region Attributes
+    /// <summary>Instancia (singleton) del navegador, para navegar al pulsar una tienda y seguir su URL actual.</summary>
+    private MM4LB.Controls.ViewModels.WebViewViewModel? _webView;
+
+    /// <summary>ViewModel al que estamos suscritos (para refrescar la selección de tienda al cambiar <c>Stores</c>).</summary>
+    private PriceChartViewModel? _subscribedViewModel;
+
+    /// <summary>Evita la reentrada al sincronizar la selección de la lista de tiendas con la URL del navegador.</summary>
+    private bool _syncingStoreSelection;
+    #endregion
+
     #region Constructor
     public PriceChartControl()
     {
         InitializeComponent();
+
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+    }
+    #endregion
+
+    #region Store list <-> browser sync
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        _webView = App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>();
+        _webView.PropertyChanged += OnWebViewPropertyChanged;
+
+        _subscribedViewModel = ViewModel;
+        if (_subscribedViewModel is not null)
+            _subscribedViewModel.PropertyChanged += OnViewModelPropertyChanged;
+
+        // Selección inicial: la tienda cuya URL corresponde a la ya abierta en el navegador.
+        SyncStoreSelectionToBrowser();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        if (_webView is not null)
+            _webView.PropertyChanged -= OnWebViewPropertyChanged;
+        if (_subscribedViewModel is not null)
+            _subscribedViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        _subscribedViewModel = null;
+    }
+
+    /// <summary>Cambió la URL abierta en el navegador: refleja en la lista la tienda correspondiente.</summary>
+    private void OnWebViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MM4LB.Controls.ViewModels.WebViewViewModel.CurrentUrl))
+            SyncStoreSelectionToBrowser();
+    }
+
+    /// <summary>Cambió la lista de tiendas (otro producto / refresco): re-sincroniza la selección tras rehacerse la lista.</summary>
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(PriceChartViewModel.Stores))
+            DispatcherQueue.TryEnqueue(SyncStoreSelectionToBrowser);
+    }
+
+    /// <summary>
+    /// Selecciona en la lista la tienda cuya URL apunta al mismo host que la abierta en el navegador (o ninguna si no
+    /// coincide). No propaga de vuelta una navegación (guard).
+    /// </summary>
+    private void SyncStoreSelectionToBrowser()
+    {
+        if (ViewModel is null || _webView is null)
+            return;
+
+        StoreChip? match = ViewModel.Stores.FirstOrDefault(chip => SameHost(chip.Url, _webView.CurrentUrl));
+
+        _syncingStoreSelection = true;
+        StoresList.SelectedItem = match;
+        _syncingStoreSelection = false;
+    }
+
+    /// <summary>El usuario seleccionó una tienda de la lista: abre ESA tienda en el navegador (si no está ya abierta).</summary>
+    private void OnStoreSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_syncingStoreSelection || _webView is null)
+            return;
+
+        if (StoresList.SelectedItem is StoreChip chip && !string.IsNullOrWhiteSpace(chip.Url) && !SameHost(chip.Url, _webView.CurrentUrl))
+            _webView.RequestNavigation(chip.Url);
     }
     #endregion
 
