@@ -122,7 +122,7 @@
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
                             <uc:SplitFlapClock x:Name="NextUpdateClock" VerticalAlignment="Center" Margin="8 0"
                                                help:Help.Key="Footer_NextUpdate_Tooltip"/>
-                            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+                            
                             <!-- Toggles con estilo de botón normal (Button_Icon): el estado se indica por color del icono
                                  (acento = activo / atenuado = inactivo), con dos iconos superpuestos. El tooltip de este
                                  botón usa loc directo (no gateado) para seguir siendo descubrible con los tooltips apagados. -->

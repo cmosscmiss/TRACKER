@@ -345,8 +345,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
 
     /// <summary>
     /// Al pasar de tamaño 0 a un tamaño real, reconstruye: un <c>CartesianChart</c> de LiveCharts creado/alimentado
-    /// mientras su contenedor medía 0 (p. ej. una página aún no visible del FlipView de favoritos) puede no dibujarse;
-    /// al recibir tamaño por primera vez se fuerza el redibujado (antes solo se veía tras tocar el tipo de gráfica).
+    /// mientras su contenedor medía 0 puede no dibujarse; al recibir tamaño por primera vez se reprograma un rebuild.
     /// </summary>
     private void OnSizeChanged(object sender, SizeChangedEventArgs e)
     {
