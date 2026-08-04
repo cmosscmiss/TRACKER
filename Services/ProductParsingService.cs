@@ -32,6 +32,9 @@ public sealed class ProductParseResult
 
     /// <summary>Coste de envío detectado (Amazon), o <c>null</c> si es gratis/desconocido. Best-effort (depende de dirección/idioma).</summary>
     public decimal? ShippingCost { get; init; }
+
+    /// <summary>Texto CRUDO capturado del elemento del precio (para diagnóstico del selector personalizado).</summary>
+    public string? RawPriceText { get; init; }
 }
 
 /// <summary>
@@ -148,6 +151,8 @@ public sealed class ProductParsingService
     if (customSel) {
         var ce = document.querySelector(customSel);
         if (ce) {
+            // textContent (fiable en el navegador oculto del pool, que mide 1x1: innerText podría venir vacío). Si el
+            // elemento contuviera varios precios, el lado C# (TryParsePriceText) coge el PRIMER número, no la mezcla.
             offscreen = ce.textContent.trim();
             whole = null; frac = null; symbol = null;
             available = true;
@@ -325,7 +330,8 @@ public sealed class ProductParsingService
                 IsAvailable = available,
                 HasPromo = hasPromo,
                 IsPreorder = isPreorder,
-                ShippingCost = shippingCost
+                ShippingCost = shippingCost,
+                RawPriceText = offscreen
             };
         }
         catch
@@ -385,7 +391,11 @@ public sealed class ProductParsingService
         if (symbol.Length > 0)
             currency = symbol;
 
-        string number = new string(text.Where(ch => char.IsDigit(ch) || ch == '.' || ch == ',').ToArray());
+        // PRIMERA línea no vacía: cuando el elemento contiene varios precios en bloques (p. ej. el de oferta + el
+        // 'regular' oculto), suelen ir en líneas distintas; quedarnos con la primera evita mezclarlos. Dentro de la
+        // línea se conserva el tratamiento clásico, que admite separador de miles con punto, coma o espacio.
+        string line = text.Replace("\r", "\n").Split('\n').Select(l => l.Trim()).FirstOrDefault(l => l.Length > 0) ?? text;
+        string number = new string(line.Where(ch => char.IsDigit(ch) || ch == '.' || ch == ',').ToArray());
         if (number.Length == 0)
             return null;
 

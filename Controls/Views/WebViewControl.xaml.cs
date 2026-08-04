@@ -468,6 +468,10 @@ public sealed partial class WebViewControl : UserControl
 
         ProductService products = App.GetService<ProductService>();
         products.SetPriceSelector(store, message);
+
+        // Diagnóstico (al log, gateado por el toggle de logging): el selector CSS generado para el elemento pulsado.
+        ExceptionService.LogToFile(null, $"[Selector] elegido en {store.Label}: {message}");
+
         await products.RefreshProductAsync(product);
     }
 
@@ -501,19 +505,41 @@ public sealed partial class WebViewControl : UserControl
   var last = null;
   function outline(el, on){ if (el && el.style) el.style.outline = on ? '3px solid #ff3ea5' : ''; }
   function esc(s){ return (window.CSS && CSS.escape) ? CSS.escape(s) : s; }
+  function unique(sel){ try { return sel && document.querySelectorAll(sel).length === 1; } catch(e){ return false; } }
+  // Clases estables del elemento (descarta las de estado/framework, que cambian entre cargas).
+  function classes(el){
+    var out = '';
+    if (el.classList) {
+      for (var i = 0; i < el.classList.length; i++) {
+        var c = el.classList[i];
+        if (!c || /^(is-|has-|js-|active|selected|open|hover|focus|ng-|css-|sc-)/i.test(c)) continue;
+        out += '.' + esc(c);
+      }
+    }
+    return out;
+  }
+  // Fragmento de un elemento: etiqueta + sus clases estables (+ :nth-of-type si hay hermanos del mismo tipo).
+  function part(el){
+    var p = el.tagName.toLowerCase() + classes(el);
+    var parent = el.parentElement;
+    if (parent) {
+      var same = Array.prototype.filter.call(parent.children, function(c){ return c.tagName === el.tagName; });
+      if (same.length > 1) { p += ':nth-of-type(' + (Array.prototype.indexOf.call(same, el) + 1) + ')'; }
+    }
+    return p;
+  }
+  // Selector del elemento: preferir id único; si no, subir por ancestros añadiendo etiqueta+clases y PARAR en cuanto
+  // el selector acumulado identifica un único elemento (evita rutas :nth-of-type frágiles que casan con otro al recargar).
   function selectorFor(el){
     if (!el || el.nodeType !== 1) return '';
-    if (el.id) return '#' + esc(el.id);
-    var parts = [];
-    while (el && el.nodeType === 1 && parts.length < 6) {
-      if (el.id) { parts.unshift('#' + esc(el.id)); break; }
-      var parent = el.parentElement, part = el.tagName.toLowerCase();
-      if (parent) {
-        var same = Array.prototype.filter.call(parent.children, function(c){ return c.tagName === el.tagName; });
-        if (same.length > 1) { part += ':nth-of-type(' + (Array.prototype.indexOf.call(same, el) + 1) + ')'; }
-      }
-      parts.unshift(part);
-      el = parent;
+    if (el.id && unique('#' + esc(el.id))) return '#' + esc(el.id);
+    var parts = [], cur = el;
+    while (cur && cur.nodeType === 1 && parts.length < 8) {
+      if (cur.id && unique('#' + esc(cur.id))) { parts.unshift('#' + esc(cur.id)); break; }
+      parts.unshift(part(cur));
+      var cand = parts.join(' > ');
+      if (unique(cand)) return cand;
+      cur = cur.parentElement;
     }
     return parts.join(' > ');
   }

@@ -166,6 +166,12 @@ public sealed class ProductService
         {
             ProductParseResult? result = await _parsing.ParseAsync(store.Url, store.PriceSelector);
 
+            // Diagnóstico del selector de precio personalizado (al log, gateado por el toggle de logging): qué selector
+            // se usó, si el parser encontró el elemento, el texto crudo capturado y el precio. Solo tiendas con selector.
+            if (!string.IsNullOrEmpty(store.PriceSelector))
+                ExceptionService.LogToFile(null,
+                    $"[Selector] {store.Label}: '{store.PriceSelector}' -> encontrado={(result?.IsAvailable == true)}, texto='{result?.RawPriceText}', precio={(result?.Price is decimal pr ? pr.ToString(System.Globalization.CultureInfo.InvariantCulture) : "—")}");
+
             int completed = Interlocked.Increment(ref done);
             operation.Progress = total == 0 ? 100 : (int)(completed * 100.0 / total);
             operation.Message = string.Format(L(Helpers.LocKeys.ProductLog_ReadingStore_Progress), product.Name, store.Label);
