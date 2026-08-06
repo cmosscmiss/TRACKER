@@ -328,6 +328,36 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         get => (bool)GetValue(ShowHeaderSeparatorProperty);
         set => SetValue(ShowHeaderSeparatorProperty, value);
     }
+
+    /// <summary>
+    /// Si es true (por defecto), la toolbar muestra los botones de ORDEN y TOP N además del tipo de gráfica. Se pone a
+    /// false donde no aplican (p. ej. el histórico de precios del widget de favoritos: es una serie temporal, no un
+    /// ranking), dejando solo el selector de tipo.
+    /// </summary>
+    public static readonly DependencyProperty ShowSortAndTopNProperty = DependencyProperty.Register(
+        nameof(ShowSortAndTopN), typeof(bool), typeof(ChartTypeSelectorControl),
+        new PropertyMetadata(true, OnSortAndTopNChanged));
+
+    public bool ShowSortAndTopN
+    {
+        get => (bool)GetValue(ShowSortAndTopNProperty);
+        set => SetValue(ShowSortAndTopNProperty, value);
+    }
+
+    /// <summary>
+    /// Si es true (por defecto), se muestra la toolbar (tipo de gráfica / orden / Top N). Se pone a false donde no
+    /// aporta —p. ej. el histórico de precios del widget de favoritos, que siempre es una línea temporal—, dejando
+    /// solo la gráfica.
+    /// </summary>
+    public static readonly DependencyProperty ShowToolbarProperty = DependencyProperty.Register(
+        nameof(ShowToolbar), typeof(bool), typeof(ChartTypeSelectorControl),
+        new PropertyMetadata(true, OnShowToolbarChanged));
+
+    public bool ShowToolbar
+    {
+        get => (bool)GetValue(ShowToolbarProperty);
+        set => SetValue(ShowToolbarProperty, value);
+    }
     #endregion
 
     #region Lifecycle / events
@@ -338,6 +368,8 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         UpdateHeaderSeparator();
         UpdateButtons();
         UpdateSortButtons();
+        UpdateSortAndTopNVisibility();
+        UpdateToolbarVisibility();
         Rebuild();
     }
 
@@ -397,6 +429,36 @@ public sealed partial class ChartTypeSelectorControl : UserControl
 
     private static void OnHeaderSeparatorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         => ((ChartTypeSelectorControl)d).UpdateHeaderSeparator();
+
+    private static void OnSortAndTopNChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        => ((ChartTypeSelectorControl)d).UpdateSortAndTopNVisibility();
+
+    private static void OnShowToolbarChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        => ((ChartTypeSelectorControl)d).UpdateToolbarVisibility();
+
+    /// <summary>Muestra u oculta la toolbar completa (tipo/orden/Top N) según <see cref="ShowToolbar"/>.</summary>
+    private void UpdateToolbarVisibility()
+    {
+        if (Toolbar != null)
+            Toolbar.Visibility = ShowToolbar ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Muestra u oculta los botones de orden y Top N (y sus separadores) según <see cref="ShowSortAndTopN"/>. El
+    /// botón de Top N puede ocultarse además por sí solo si no hay bastantes elementos (ver <see cref="UpdateTopNButtons"/>).
+    /// </summary>
+    private void UpdateSortAndTopNVisibility()
+    {
+        if (SortButton == null)
+            return;
+
+        Visibility show = ShowSortAndTopN ? Visibility.Visible : Visibility.Collapsed;
+        SortButton.Visibility = show;
+        if (ChartTypeSeparator != null)
+            ChartTypeSeparator.Visibility = show;   // separa el tipo de gráfica del resto; si no hay resto, sobra
+
+        UpdateTopNButtons();   // reevalúa Top N (respeta ShowSortAndTopN y el nº de elementos)
+    }
 
     /// <summary>Muestra u oculta el separador horizontal de la cabecera según <see cref="ShowHeaderSeparator"/>.</summary>
     private void UpdateHeaderSeparator()
@@ -494,8 +556,9 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         Top50Item.Visibility = count > 50 ? Visibility.Visible : Visibility.Collapsed;
         Top100Item.Visibility = count > 100 ? Visibility.Visible : Visibility.Collapsed;
 
-        // El botón (y su separador) solo tienen sentido si califica al menos el menor umbral.
-        Visibility topNVisibility = count > TopThresholds[0] ? Visibility.Visible : Visibility.Collapsed;
+        // El botón (y su separador) solo tienen sentido si el control los permite (ShowSortAndTopN) y califica al menos
+        // el menor umbral de elementos.
+        Visibility topNVisibility = ShowSortAndTopN && count > TopThresholds[0] ? Visibility.Visible : Visibility.Collapsed;
         TopNButton.Visibility = topNVisibility;
         if (TopNSeparator != null)
             TopNSeparator.Visibility = topNVisibility;

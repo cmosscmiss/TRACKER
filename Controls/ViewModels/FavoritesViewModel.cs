@@ -81,12 +81,21 @@ public partial class FavoritesViewModel : WidgetViewModelBase
 
     private void OnFavoritesChanged(object? sender, EventArgs e) => Rebuild();
 
-    /// <summary>Cambió el producto seleccionado (lista, alta, gráfico): posiciona el FlipView en su página.</summary>
+    /// <summary>
+    /// Cambió el producto seleccionado (lista, alta, gráfico): si cambia si debe existir la página del seleccionado
+    /// (aparece para no favoritos, se omite para favoritos), reconstruye el conjunto de páginas; si no, solo reposiciona.
+    /// </summary>
     private void OnSelectedProductChanged(object? sender, SharedDataService.ProductChangedEventArgs e)
     {
         if (_syncingSelection)
             return;
-        SyncIndexToSelection();
+
+        bool shouldHaveSelectedPage = !(SharedDataService.SelectedProduct?.IsFavorite ?? false);
+        bool hasSelectedPage = FavoriteViews.Contains(_selectedView);
+        if (shouldHaveSelectedPage != hasSelectedPage)
+            Rebuild();   // añade o quita la página del seleccionado; Rebuild reposiciona el FlipView al final
+        else
+            SyncIndexToSelection();
     }
     #endregion
 
@@ -124,17 +133,21 @@ public partial class FavoritesViewModel : WidgetViewModelBase
         _syncingSelection = false;
     }
 
-    /// <summary>Índice de la página del FlipView para un producto: la de su favorito si lo es; si no, la 0 (seleccionado).</summary>
+    /// <summary>
+    /// Índice de la página del FlipView para un producto: la de su favorito si lo tiene; si no (no favorito o sin
+    /// selección), la página del producto seleccionado (que puede no existir si el seleccionado es favorito → 0).
+    /// </summary>
     private int IndexForProduct(Product? product)
     {
-        if (product is null || !product.IsFavorite)
-            return 0;
+        int selectedIndex = FavoriteViews.IndexOf(_selectedView);
 
-        for (int i = 1; i < FavoriteViews.Count; i++)
-            if (ReferenceEquals(FavoriteViews[i].Product, product))
-                return i;
+        // Página PROPIA del producto (favorito): se busca en todas las páginas salvo la del seleccionado.
+        if (product is not null)
+            for (int i = 0; i < FavoriteViews.Count; i++)
+                if (!ReferenceEquals(FavoriteViews[i], _selectedView) && ReferenceEquals(FavoriteViews[i].Product, product))
+                    return i;
 
-        return 0;   // favorito sin página (no debería pasar): cae a la del seleccionado
+        return selectedIndex >= 0 ? selectedIndex : 0;
     }
     #endregion
 
@@ -157,8 +170,10 @@ public partial class FavoritesViewModel : WidgetViewModelBase
                     view.Dispose();
             FavoriteViews.Clear();
 
-            // Página 0: el producto seleccionado (sigue la selección global).
-            FavoriteViews.Add(_selectedView);
+            // Página 0: el producto seleccionado (sigue la selección global), PERO solo si NO es favorito. Si el
+            // seleccionado es favorito, su propia página de favorito ya lo muestra, así que se omite para no duplicarlo.
+            if (!(SharedDataService.SelectedProduct?.IsFavorite ?? false))
+                FavoriteViews.Add(_selectedView);
 
             foreach (Product product in SharedDataService.ProductSet.Products.Where(product => product.IsFavorite))
             {

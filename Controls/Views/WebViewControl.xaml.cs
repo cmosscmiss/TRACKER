@@ -621,7 +621,11 @@ public sealed partial class WebViewControl : UserControl
     {
         string? code = Amazon.CountryForHost(uri);
         if (code is null)
+        {
+            // La página no es un marketplace de Amazon conocido: no hay país activo, se deseleccionan todos los toggles.
+            SelectCountryVisual(string.Empty);
             return;
+        }
 
         SelectCountryVisual(code);
         App.GetService<IOptions<AppSettings>>().Value.WebViewControl.Country = code;

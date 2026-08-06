@@ -35,7 +35,7 @@
         <template:SeparatorEx x:Name="HeaderSeparator" Grid.Row="1" Margin="0 8 0 16" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
 
         <!-- Toolbar: cada barra es un ToggleSplitButton (cara = selecciÃ³n actual, desplegable = opciones 1-de-N) -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 0 8">
+        <StackPanel x:Name="Toolbar" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 0 8">
             <!-- Tipo de grÃ¡fica -->
             <ToggleSplitButton x:Name="ChartTypeButton" IsCheckedChanged="OnSplitToggle">
                 <ToggleSplitButton.Flyout>
@@ -50,7 +50,7 @@
                 </ToggleSplitButton.Flyout>
             </ToggleSplitButton>
 
-            <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+            <template:SeparatorEx x:Name="ChartTypeSeparator" VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
 
             <!-- Top N: los N elementos de mayor valor. Cada opciÃ³n "Top X" solo aparece si hay mÃ¡s de X elementos;
                  el botÃ³n entero (y su separador) se ocultan si no califica ninguno. -->
