@@ -34,6 +34,9 @@ public class ThemeService : ObservableObject
     private ThemeDefinition _currentTheme = null!;   // lo fija InitializeAsync al arranque, antes de cualquier acceso
     private string _currentThemeName = string.Empty; // nombre del tema activo (puede diferir de Theme.Name si RandomTheme)
 
+    /// <summary>Color ORIGINAL de cada nombre base sobrescrito en caliente (capturado en el primer override), para revertir.</summary>
+    private readonly Dictionary<string, Color> _originalColors = new();
+
     public event EventHandler? ThemeChanged;
     #endregion
 
@@ -215,6 +218,64 @@ public class ThemeService : ObservableObject
 
         return GetThemeAssetUri($"Icons/{iconName}.png");
     }
+
+    /// <summary>
+    /// Sobrescribe EN CALIENTE un color del tema por su nombre base (p. ej. "Accent", "CardBackgroundLight",
+    /// "Danger"): regenera su brush base y las variantes de opacidad (mutados in situ), refresca los brushes con
+    /// nombre de los controles y avisa vía <see cref="ThemeChanged"/>, de modo que todo lo que use ese color se
+    /// recolorea EN VIVO sin reconstruir el árbol. El cambio se refleja también en la definición del tema en memoria
+    /// (NO se persiste en disco). Pensado para probar/afinar colores del tema al vuelo.
+    /// </summary>
+    public void OverrideColor(string baseName, Color color)
+    {
+        if (string.IsNullOrWhiteSpace(baseName))
+            return;
+
+        // Guarda el color ORIGINAL la primera vez que se sobrescribe este nombre base (antes de tocarlo), para revertir.
+        if (!_originalColors.ContainsKey(baseName))
+            _originalColors[baseName] = GetThemeColor(baseName);
+
+        ApplyColorInternal(baseName, color);
+    }
+
+    /// <summary>
+    /// Revierte un color del tema a su valor ORIGINAL (el que tenía antes del primer override en caliente), si se había
+    /// sobrescrito. No hace nada si el color no se había tocado.
+    /// </summary>
+    public void RevertColor(string baseName)
+    {
+        if (string.IsNullOrWhiteSpace(baseName))
+            return;
+
+        if (_originalColors.TryGetValue(baseName, out Color original))
+        {
+            ApplyColorInternal(baseName, original);
+            _originalColors.Remove(baseName);
+        }
+    }
+
+    /// <summary>Aplica EN CALIENTE un color a un nombre base (regenera brush + opacidades in situ y avisa), sin tocar el registro de originales.</summary>
+    private void ApplyColorInternal(string baseName, Color color)
+    {
+        if (_currentDictionary is null)
+            ApplyThemeResources();   // asegura el diccionario persistente en Application.Resources
+
+        // Refleja el color en la definición del tema activo (coherencia con la propiedad reactiva y un re-apply).
+        _currentTheme.GetType().GetProperty(baseName + "Color")?.SetValue(_currentTheme, ToHex(color));
+
+        AddThemeColorResources(_currentDictionary!, baseName, color);   // Color/Brush base + opacidades (brushes in situ)
+        RefreshNamedControlBrushes();
+
+        OnPropertyChanged(baseName + "Color");
+        ThemeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Color actual del tema para un nombre base (p. ej. "Accent"); negro si el nombre no corresponde a ninguno.</summary>
+    public Color GetThemeColor(string baseName)
+        => GetType().GetProperty(baseName + "Color")?.GetValue(this) is Color c ? c : Color.FromArgb(255, 0, 0, 0);
+
+    /// <summary>Formatea un color como <c>#RRGGBB</c> (el formato que espera la definición del tema).</summary>
+    private static string ToHex(Color color) => $"#{color.R:X2}{color.G:X2}{color.B:X2}";
     #endregion
 
     #region Methods (private)

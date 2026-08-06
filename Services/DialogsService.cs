@@ -31,6 +31,14 @@ public class DialogsService
         await dialog.ShowAsync(xamlRoot, title, BuildText(message), null, null, closeText);
     }
 
+    /// <summary>Editor (de prueba) de colores del tema EN CALIENTE, en un diálogo estándar de la app.</summary>
+    public async Task ShowThemeColorsAsync(XamlRoot xamlRoot)
+    {
+        MM4LB.Controls.Views.ThemeColorEditorControl content = new();
+        AppDialog dialog = new();
+        await dialog.ShowAsync(xamlRoot, "Colores del tema", content, null, null, "Cerrar");
+    }
+
     /// <summary>
     /// Muestra un diálogo con un cuadro de texto y devuelve lo introducido (recortado), o <c>null</c> si el usuario
     /// canceló. Útil para pedir una URL, un nombre, etc.

@@ -28,6 +28,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="60" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- Content area -->
@@ -176,6 +177,9 @@
                     </Grid>
                 </Border>
             </Grid>
+
+            <!-- Botón de PRUEBA (al pie) que abre el editor de colores del tema EN CALIENTE en un diálogo estándar. -->
+            <Button Grid.Row="3" Content="Colores del tema (test)" HorizontalAlignment="Center" Margin="8 4" Click="OnThemeColorsClick"/>
         </Grid>
 
         <!-- Toolbar -->
