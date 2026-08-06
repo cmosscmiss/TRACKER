@@ -179,7 +179,7 @@
             </Grid>
 
             <!-- Botón de PRUEBA (al pie) que abre el editor de colores del tema EN CALIENTE en un diálogo estándar. -->
-            <Button Grid.Row="3" Content="Colores del tema (test)" HorizontalAlignment="Center" Margin="8 4" Click="OnThemeColorsClick"/>
+            <Button Grid.Row="3" Content="{loc:Str Key=ThemeColors_Open}" HorizontalAlignment="Center" Margin="8 4" Click="OnThemeColorsClick"/>
         </Grid>
 
         <!-- Toolbar -->

@@ -159,8 +159,12 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     #endregion
 
     #region Constants
-    private static readonly Brush PrimeGreen = new SolidColorBrush(Color.FromArgb(0xFF, 0x2E, 0x7D, 0x32));
+    /// <summary>Fallback del pill Prime si el brush del tema no estuviera disponible (gris genérico).</summary>
     private static readonly Brush PrimeGray = new SolidColorBrush(Color.FromArgb(0xFF, 0x75, 0x75, 0x75));
+
+    /// <summary>Brush VIVO del recurso del tema (mutado in situ, se actualiza en caliente), o el gris de fallback.</summary>
+    private static Brush ResolveBrush(string key)
+        => Microsoft.UI.Xaml.Application.Current.Resources.TryGetValue(key, out object? b) && b is Brush brush ? brush : PrimeGray;
     #endregion
 
     #region Constructor
@@ -324,7 +328,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         ShowPrime = bestStore is not null && bestStore.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase);
         bool prime = bestStore?.IsPrime ?? false;
         PrimeText = prime ? L(LocKeys.PriceChart_Prime_Label) : L(LocKeys.PriceChart_NoPrime_Label);
-        PrimeBrush = prime ? PrimeGreen : PrimeGray;
+        PrimeBrush = ResolveBrush(prime ? "ExtraColor4Brush" : "ExtraColor5Brush");
 
         Stores = product is null
             ? Array.Empty<StoreChip>()

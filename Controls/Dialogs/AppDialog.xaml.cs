@@ -1,9 +1,12 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.System;
 
 namespace MM4LB.Controls.Dialogs;
@@ -30,6 +33,15 @@ public sealed partial class AppDialog : UserControl
     private TaskCompletionSource<AppDialogResult>? _tcs;
     private bool _completed;
     private System.Action? _onApply;
+
+    /// <summary>Si el diálogo se puede mover arrastrando desde la cabecera.</summary>
+    private bool _draggable;
+
+    /// <summary>Arrastre en curso + posición del puntero y traslación de la tarjeta al empezar.</summary>
+    private bool _dragging;
+    private Point _dragStartPointer;
+    private double _dragStartX;
+    private double _dragStartY;
     #endregion
 
     #region Constructor
@@ -44,12 +56,18 @@ public sealed partial class AppDialog : UserControl
     /// <summary>
     /// Muestra el diálogo y devuelve el resultado. Los botones con texto vacío/null se ocultan.
     /// </summary>
-    public Task<AppDialogResult> ShowAsync(XamlRoot xamlRoot, string title, object content, string? primaryText, string? secondaryText, string closeText, string? applyText = null, System.Action? onApply = null)
+    public Task<AppDialogResult> ShowAsync(XamlRoot xamlRoot, string title, object content, string? primaryText, string? secondaryText, string closeText, string? applyText = null, System.Action? onApply = null, bool showOverlay = true, bool draggable = false)
     {
         _xamlRoot = xamlRoot;
         _completed = false;
         _onApply = onApply;
+        _draggable = draggable;
         _tcs = new TaskCompletionSource<AppDialogResult>();
+
+        // Sin overlay: el fondo atenuado se hace transparente, de modo que la ventana se ve sin atenuar (aunque el
+        // overlay sigue captando el puntero para que el clic fuera cierre y el diálogo sea modal).
+        if (!showOverlay)
+            Overlay.Background = new SolidColorBrush(Colors.Transparent);
 
         TitleText.Text = title ?? string.Empty;
         ContentHost.Content = content;
@@ -131,6 +149,38 @@ public sealed partial class AppDialog : UserControl
 
     // El clic dentro de la tarjeta no debe cerrar el diálogo.
     private void OnCardTapped(object sender, TappedRoutedEventArgs e) => e.Handled = true;
+
+    // Arrastre del diálogo desde la cabecera (solo si draggable): traslada la tarjeta con el puntero.
+    private void OnHeaderPointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_draggable)
+            return;
+
+        _dragging = true;
+        _dragStartPointer = e.GetCurrentPoint(this).Position;
+        _dragStartX = CardTranslate.X;
+        _dragStartY = CardTranslate.Y;
+        ((UIElement)sender).CapturePointer(e.Pointer);
+    }
+
+    private void OnHeaderPointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_dragging)
+            return;
+
+        Point p = e.GetCurrentPoint(this).Position;
+        CardTranslate.X = _dragStartX + (p.X - _dragStartPointer.X);
+        CardTranslate.Y = _dragStartY + (p.Y - _dragStartPointer.Y);
+    }
+
+    private void OnHeaderPointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_dragging)
+            return;
+
+        _dragging = false;
+        ((UIElement)sender).ReleasePointerCapture(e.Pointer);
+    }
 
     private void OnPrimaryClick(object sender, RoutedEventArgs e) => Complete(AppDialogResult.Primary);
 

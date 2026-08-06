@@ -43,7 +43,11 @@
         <!-- Caja del diálogo, centrada. -->
         <Border x:Name="Card" HorizontalAlignment="Center" VerticalAlignment="Center" Tapped="OnCardTapped" Background="{ThemeResource BackgroundBrush}" BorderBrush="{ThemeResource CardBackgroundLightBrush}" BorderThickness="1" CornerRadius="8" MaxWidth="860" MinWidth="420" RenderTransformOrigin="0.5,0.5">
             <Border.RenderTransform>
-                <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1"/>
+                <TransformGroup>
+                    <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1"/>
+                    <!-- Desplazamiento al arrastrar el diálogo por la cabecera (si draggable). -->
+                    <TranslateTransform x:Name="CardTranslate"/>
+                </TransformGroup>
             </Border.RenderTransform>
 
             <Grid>
@@ -53,8 +57,10 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Cabecera: logo + título en accent. -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" Padding="12">
+                <!-- Cabecera: logo + título en accent. Sirve de asa para arrastrar el diálogo (si draggable). El
+                     Background transparente hace que capte el puntero en toda su superficie. -->
+                <StackPanel x:Name="HeaderBar" Grid.Row="0" Orientation="Horizontal" Spacing="12" Padding="12" Background="Transparent"
+                            PointerPressed="OnHeaderPointerPressed" PointerMoved="OnHeaderPointerMoved" PointerReleased="OnHeaderPointerReleased">
                     <Image Source="ms-appx:///Assets/TRACKER-Logo.png" VerticalAlignment="Center" Height="24"/>
                     <TextBlock x:Name="TitleText" Style="{StaticResource SubTitleStyle}"/>
                 </StackPanel>

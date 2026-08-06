@@ -119,6 +119,35 @@ public static class LocKeys
     public const string AddProduct_Duplicate_Message = "AddProduct_Duplicate_Message";
     public const string Common_Add_Label = "Common_Add_Label";
     public const string Common_Cancel_Label = "Common_Cancel_Label";
+
+    // Editor de colores del tema (control de prueba).
+    public const string ThemeColors_Open = "ThemeColors_Open";
+    public const string ThemeColors_Title = "ThemeColors_Title";
+    public const string ThemeColors_ColorHeader = "ThemeColors_ColorHeader";
+    public const string ThemeColors_Revert = "ThemeColors_Revert";
+    public const string ThemeColors_Swatches = "ThemeColors_Swatches";
+    public const string ThemeColors_Close = "ThemeColors_Close";
+    // Nombres (genéricos) de cada color; el control resuelve la clave como "ThemeColors_Name_" + nombre base.
+    public const string ThemeColors_Name_Accent = "ThemeColors_Name_Accent";
+    public const string ThemeColors_Name_AccentLight = "ThemeColors_Name_AccentLight";
+    public const string ThemeColors_Name_AccentDark = "ThemeColors_Name_AccentDark";
+    public const string ThemeColors_Name_Background = "ThemeColors_Name_Background";
+    public const string ThemeColors_Name_BackgroundLight = "ThemeColors_Name_BackgroundLight";
+    public const string ThemeColors_Name_CardBackground = "ThemeColors_Name_CardBackground";
+    public const string ThemeColors_Name_CardBackgroundLight = "ThemeColors_Name_CardBackgroundLight";
+    public const string ThemeColors_Name_Text = "ThemeColors_Name_Text";
+    public const string ThemeColors_Name_TextSecondary = "ThemeColors_Name_TextSecondary";
+    public const string ThemeColors_Name_Danger = "ThemeColors_Name_Danger";
+    public const string ThemeColors_Name_Success = "ThemeColors_Name_Success";
+    public const string ThemeColors_Name_Warning = "ThemeColors_Name_Warning";
+    public const string ThemeColors_Name_BadgeNoImage = "ThemeColors_Name_BadgeNoImage";
+    public const string ThemeColors_Name_BadgeOneImage = "ThemeColors_Name_BadgeOneImage";
+    public const string ThemeColors_Name_BadgeMoreThanOneImage = "ThemeColors_Name_BadgeMoreThanOneImage";
+    public const string ThemeColors_Name_ExtraColor1 = "ThemeColors_Name_ExtraColor1";
+    public const string ThemeColors_Name_ExtraColor2 = "ThemeColors_Name_ExtraColor2";
+    public const string ThemeColors_Name_ExtraColor3 = "ThemeColors_Name_ExtraColor3";
+    public const string ThemeColors_Name_ExtraColor4 = "ThemeColors_Name_ExtraColor4";
+    public const string ThemeColors_Name_ExtraColor5 = "ThemeColors_Name_ExtraColor5";
     public const string Common_Save_Label = "Common_Save_Label";
     public const string Common_OK_Label = "Common_OK_Label";
     public const string Common_Apply_Label = "Common_Apply_Label";

@@ -132,6 +132,84 @@
   <data name="Common_Cancel_Label" xml:space="preserve">
     <value>Cancelar</value>
   </data>
+  <data name="ThemeColors_Open" xml:space="preserve">
+    <value>Colores del tema (test)</value>
+  </data>
+  <data name="ThemeColors_Title" xml:space="preserve">
+    <value>Colores del tema</value>
+  </data>
+  <data name="ThemeColors_ColorHeader" xml:space="preserve">
+    <value>Color del tema</value>
+  </data>
+  <data name="ThemeColors_Revert" xml:space="preserve">
+    <value>Revertir</value>
+  </data>
+  <data name="ThemeColors_Swatches" xml:space="preserve">
+    <value>Muestras (base + opacidades)</value>
+  </data>
+  <data name="ThemeColors_Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="ThemeColors_Name_Accent" xml:space="preserve">
+    <value>Acento</value>
+  </data>
+  <data name="ThemeColors_Name_AccentLight" xml:space="preserve">
+    <value>Acento claro</value>
+  </data>
+  <data name="ThemeColors_Name_AccentDark" xml:space="preserve">
+    <value>Acento oscuro</value>
+  </data>
+  <data name="ThemeColors_Name_Background" xml:space="preserve">
+    <value>Fondo</value>
+  </data>
+  <data name="ThemeColors_Name_BackgroundLight" xml:space="preserve">
+    <value>Fondo claro</value>
+  </data>
+  <data name="ThemeColors_Name_CardBackground" xml:space="preserve">
+    <value>Tarjeta</value>
+  </data>
+  <data name="ThemeColors_Name_CardBackgroundLight" xml:space="preserve">
+    <value>Tarjeta clara</value>
+  </data>
+  <data name="ThemeColors_Name_Text" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="ThemeColors_Name_TextSecondary" xml:space="preserve">
+    <value>Texto secundario</value>
+  </data>
+  <data name="ThemeColors_Name_Danger" xml:space="preserve">
+    <value>Peligro</value>
+  </data>
+  <data name="ThemeColors_Name_Success" xml:space="preserve">
+    <value>Éxito</value>
+  </data>
+  <data name="ThemeColors_Name_Warning" xml:space="preserve">
+    <value>Aviso</value>
+  </data>
+  <data name="ThemeColors_Name_BadgeNoImage" xml:space="preserve">
+    <value>Badge sin imagen</value>
+  </data>
+  <data name="ThemeColors_Name_BadgeOneImage" xml:space="preserve">
+    <value>Badge una imagen</value>
+  </data>
+  <data name="ThemeColors_Name_BadgeMoreThanOneImage" xml:space="preserve">
+    <value>Badge varias imágenes</value>
+  </data>
+  <data name="ThemeColors_Name_ExtraColor1" xml:space="preserve">
+    <value>Extra 1</value>
+  </data>
+  <data name="ThemeColors_Name_ExtraColor2" xml:space="preserve">
+    <value>Extra 2</value>
+  </data>
+  <data name="ThemeColors_Name_ExtraColor3" xml:space="preserve">
+    <value>Extra 3</value>
+  </data>
+  <data name="ThemeColors_Name_ExtraColor4" xml:space="preserve">
+    <value>Extra 4</value>
+  </data>
+  <data name="ThemeColors_Name_ExtraColor5" xml:space="preserve">
+    <value>Extra 5</value>
+  </data>
   <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
     <value>RESUMEN DE PRECIOS</value>
   </data>

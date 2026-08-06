@@ -56,6 +56,11 @@ public class ThemeService : ObservableObject
     public Color BadgeNoImageColor => Parse(_currentTheme.BadgeNoImageColor);
     public Color BadgeOneImageColor => Parse(_currentTheme.BadgeOneImageColor);
     public Color BadgeMoreThanOneImageColor => Parse(_currentTheme.BadgeMoreThanOneImageColor);
+    public Color ExtraColor1 => Parse(_currentTheme.ExtraColor1);
+    public Color ExtraColor2 => Parse(_currentTheme.ExtraColor2);
+    public Color ExtraColor3 => Parse(_currentTheme.ExtraColor3);
+    public Color ExtraColor4 => Parse(_currentTheme.ExtraColor4);
+    public Color ExtraColor5 => Parse(_currentTheme.ExtraColor5);
     public Uri? BackgroundImageUri => string.IsNullOrWhiteSpace(_currentTheme.BackgroundImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.BackgroundImage}");
     public Uri? LogoImageUri => string.IsNullOrWhiteSpace(_currentTheme.LogoImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.LogoImage}");
     public Uri? OverlayImageUri => string.IsNullOrWhiteSpace(_currentTheme.OverlayImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.OverlayImage}");
@@ -403,6 +408,13 @@ public class ThemeService : ObservableObject
         AddThemeColorResources(dict, "BadgeNoImage", BadgeNoImageColor);
         AddThemeColorResources(dict, "BadgeOneImage", BadgeOneImageColor);
         AddThemeColorResources(dict, "BadgeMoreThanOneImage", BadgeMoreThanOneImageColor);
+
+        // Colores genéricos extra (pills que antes eran fijos): mismo tratamiento (brush + opacidades).
+        AddThemeColorResources(dict, "ExtraColor1", ExtraColor1);
+        AddThemeColorResources(dict, "ExtraColor2", ExtraColor2);
+        AddThemeColorResources(dict, "ExtraColor3", ExtraColor3);
+        AddThemeColorResources(dict, "ExtraColor4", ExtraColor4);
+        AddThemeColorResources(dict, "ExtraColor5", ExtraColor5);
 
         dict["BackgroundImage"] = BackgroundImageUri;
         dict["LogoImage"] = LogoImageUri;

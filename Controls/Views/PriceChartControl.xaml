@@ -108,7 +108,7 @@
                                 <TextBlock Text="{x:Bind Label}" Foreground="{ThemeResource TextBrush}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
                                            HorizontalAlignment="Center" TextAlignment="Center"/>
                                 <!-- Prime sí / no (solo tiendas Amazon) -->
-                                <Border Background="#FF2E7D32" CornerRadius="6" Padding="6 1" HorizontalAlignment="Center"
+                                <Border Background="{ThemeResource ExtraColor4Brush}" CornerRadius="6" Padding="6 1" HorizontalAlignment="Center"
                                         Visibility="{x:Bind ShowPrimeYes, Converter={StaticResource VisibleIfTrueConverter}}">
                                     <TextBlock Text="{loc:Str Key=PriceChart_Prime_Label}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
                                 </Border>
@@ -140,14 +140,14 @@
                        MaxLines="3" TextTrimming="CharacterEllipsis" Style="{StaticResource TitleStyle}"/>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0 8 0 0">
-                <Border Background="#FF546E7A" CornerRadius="12" Padding="10 4"
+                <Border Background="{ThemeResource ExtraColor1Brush}" CornerRadius="12" Padding="10 4"
                         Visibility="{x:Bind ViewModel.IsPurchased, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
                         <TextBlock Text="{loc:Str Key=PriceChart_Purchased_Label}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
-                <Border Background="#FF2F6FED" CornerRadius="12" Padding="10 4"
+                <Border Background="{ThemeResource ExtraColor2Brush}" CornerRadius="12" Padding="10 4"
                         help:Help.Key="Product_Preorder_Tooltip"
                         Visibility="{x:Bind ViewModel.ShowPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
@@ -171,7 +171,7 @@
                         <TextBlock Text="{loc:Str Key=PriceChart_Issues_Label}" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
-                <Border Background="#FFCC5500" CornerRadius="12" Padding="10 4"
+                <Border Background="{ThemeResource ExtraColor3Brush}" CornerRadius="12" Padding="10 4"
                         Visibility="{x:Bind ViewModel.ShowPromo, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                         <FontIcon Glyph="&#xE719;" FontSize="12" Foreground="White" VerticalAlignment="Center"/>
