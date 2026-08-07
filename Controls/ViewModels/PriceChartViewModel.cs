@@ -118,8 +118,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Texto del pill de Prime ("Prime" / "No Prime") de la tienda del mejor precio.</summary>
     public string PrimeText { get; private set; } = string.Empty;
 
-    /// <summary>Color del pill de Prime: verde si es Prime, gris si no.</summary>
+    /// <summary>Color del BORDE del pill de Prime (color completo): verde si es Prime, gris si no.</summary>
     public Brush PrimeBrush { get; private set; } = PrimeGray;
+
+    /// <summary>Color de FONDO del pill de Prime (el mismo color al 60% de opacidad).</summary>
+    public Brush PrimeBackgroundBrush { get; private set; } = PrimeGray;
 
     /// <summary>Una entrada por tienda del producto (etiqueta + precio actual + Prime) para el strip de la cabecera.</summary>
     public IReadOnlyList<StoreChip> Stores { get; private set; } = Array.Empty<StoreChip>();
@@ -329,6 +332,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         bool prime = bestStore?.IsPrime ?? false;
         PrimeText = prime ? L(LocKeys.PriceChart_Prime_Label) : L(LocKeys.PriceChart_NoPrime_Label);
         PrimeBrush = ResolveBrush(prime ? "ExtraColor4Brush" : "ExtraColor5Brush");
+        PrimeBackgroundBrush = ResolveBrush(prime ? "ExtraColor4BrushOpacity60" : "ExtraColor5BrushOpacity60");
 
         Stores = product is null
             ? Array.Empty<StoreChip>()
@@ -361,6 +365,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(ShowPreorder));
         OnPropertyChanged(nameof(PrimeText));
         OnPropertyChanged(nameof(PrimeBrush));
+        OnPropertyChanged(nameof(PrimeBackgroundBrush));
         OnPropertyChanged(nameof(Stores));
 
         UpdateFavoriteState();
