@@ -140,9 +140,6 @@ public static class LocKeys
     public const string ThemeColors_Name_Danger = "ThemeColors_Name_Danger";
     public const string ThemeColors_Name_Success = "ThemeColors_Name_Success";
     public const string ThemeColors_Name_Warning = "ThemeColors_Name_Warning";
-    public const string ThemeColors_Name_BadgeNoImage = "ThemeColors_Name_BadgeNoImage";
-    public const string ThemeColors_Name_BadgeOneImage = "ThemeColors_Name_BadgeOneImage";
-    public const string ThemeColors_Name_BadgeMoreThanOneImage = "ThemeColors_Name_BadgeMoreThanOneImage";
     public const string ThemeColors_Name_ExtraColor1 = "ThemeColors_Name_ExtraColor1";
     public const string ThemeColors_Name_ExtraColor2 = "ThemeColors_Name_ExtraColor2";
     public const string ThemeColors_Name_ExtraColor3 = "ThemeColors_Name_ExtraColor3";

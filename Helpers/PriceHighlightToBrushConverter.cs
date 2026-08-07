@@ -11,7 +11,7 @@ namespace MM4LB.Helpers;
 /// Convierte un <see cref="PriceHighlight"/> en el brush de fondo del recuadro del precio en la lista de productos:
 /// <see cref="PriceHighlight.Down"/> (bajó) usa el verde del tema (<c>SuccessBrush</c>), <see cref="PriceHighlight.Up"/>
 /// (subió) el rojo (<c>DangerBrush</c>), <see cref="PriceHighlight.Low"/> (mínimo histórico, sin subida/bajada reciente)
-/// el azul del tema (<c>BadgeMoreThanOneImageBrush</c>) y el resto un fondo neutro (<c>CardBackgroundLightBrush</c>). Se
+/// el azul del tema (<c>ExtraColor2Brush</c>) y el resto un fondo neutro (<c>CardBackgroundLightBrush</c>). Se
 /// resuelven las instancias VIVAS de los brushes del tema (el <see cref="Services.ThemeService"/> muta su color in situ
 /// al cambiar de tema), de modo que el recuadro se recolorea en caliente. Si algún recurso no existe, cae a un color
 /// fijo equivalente.
@@ -30,7 +30,7 @@ public sealed class PriceHighlightToBrushConverter : IValueConverter
             {
                 PriceHighlight.Down => ("SuccessBrush", DownFallback),
                 PriceHighlight.Up => ("DangerBrush", UpFallback),
-                PriceHighlight.Low => ("BadgeMoreThanOneImageBrush", LowFallback),
+                PriceHighlight.Low => ("ExtraColor2Brush", LowFallback),
                 _ => ("CardBackgroundLightBrush", NeutralFallback),
             }
             : ("CardBackgroundLightBrush", NeutralFallback);

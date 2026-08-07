@@ -53,9 +53,6 @@ public class ThemeService : ObservableObject
     public Color DangerColor => Parse(_currentTheme.DangerColor);
     public Color SuccessColor => Parse(_currentTheme.SuccessColor);
     public Color WarningColor => Parse(_currentTheme.WarningColor);
-    public Color BadgeNoImageColor => Parse(_currentTheme.BadgeNoImageColor);
-    public Color BadgeOneImageColor => Parse(_currentTheme.BadgeOneImageColor);
-    public Color BadgeMoreThanOneImageColor => Parse(_currentTheme.BadgeMoreThanOneImageColor);
     public Color ExtraColor1 => Parse(_currentTheme.ExtraColor1);
     public Color ExtraColor2 => Parse(_currentTheme.ExtraColor2);
     public Color ExtraColor3 => Parse(_currentTheme.ExtraColor3);
@@ -404,10 +401,6 @@ public class ThemeService : ObservableObject
         AddThemeColorResources(dict, "Danger", DangerColor);
         AddThemeColorResources(dict, "Success", SuccessColor);
         AddThemeColorResources(dict, "Warning", WarningColor);
-
-        AddThemeColorResources(dict, "BadgeNoImage", BadgeNoImageColor);
-        AddThemeColorResources(dict, "BadgeOneImage", BadgeOneImageColor);
-        AddThemeColorResources(dict, "BadgeMoreThanOneImage", BadgeMoreThanOneImageColor);
 
         // Colores genéricos extra (pills que antes eran fijos): mismo tratamiento (brush + opacidades).
         AddThemeColorResources(dict, "ExtraColor1", ExtraColor1);

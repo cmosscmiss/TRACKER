@@ -191,15 +191,6 @@
   <data name="ThemeColors_Name_Warning" xml:space="preserve">
     <value>Warning</value>
   </data>
-  <data name="ThemeColors_Name_BadgeNoImage" xml:space="preserve">
-    <value>Badge (no image)</value>
-  </data>
-  <data name="ThemeColors_Name_BadgeOneImage" xml:space="preserve">
-    <value>Badge (one image)</value>
-  </data>
-  <data name="ThemeColors_Name_BadgeMoreThanOneImage" xml:space="preserve">
-    <value>Badge (multiple)</value>
-  </data>
   <data name="ThemeColors_Name_ExtraColor1" xml:space="preserve">
     <value>Extra 1</value>
   </data>

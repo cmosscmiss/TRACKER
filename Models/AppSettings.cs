@@ -328,9 +328,6 @@ public class AppSettings
                 DangerColor = "#FF0000",
                 SuccessColor = "#2E7D32",
                 WarningColor = "#fff000",
-                BadgeNoImageColor = "#FF0000",
-                BadgeOneImageColor = "#33AA33",
-                BadgeMoreThanOneImageColor = "#3870c4",
                 ExtraColor1 = "#546E7A",
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
@@ -355,9 +352,6 @@ public class AppSettings
                 DangerColor = "#FF0000",
                 SuccessColor = "#2E7D32",
                 WarningColor = "#fff000",
-                BadgeNoImageColor = "#FF0000",
-                BadgeOneImageColor = "#33AA33",
-                BadgeMoreThanOneImageColor = "#3870c4",
                 ExtraColor1 = "#546E7A",
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
@@ -382,9 +376,6 @@ public class AppSettings
                 DangerColor = "#CC3300",
                 SuccessColor = "#2E7D32",
                 WarningColor = "#fff000",
-                BadgeNoImageColor = "#FF0000",
-                BadgeOneImageColor = "#33AA33",
-                BadgeMoreThanOneImageColor = "#3870c4",
                 ExtraColor1 = "#546E7A",
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
@@ -409,9 +400,6 @@ public class AppSettings
                 DangerColor = "#CC3300",
                 SuccessColor = "#2E7D32",
                 WarningColor = "#fff000",
-                BadgeNoImageColor = "#FF0000",
-                BadgeOneImageColor = "#33AA33",
-                BadgeMoreThanOneImageColor = "#3870c4",
                 ExtraColor1 = "#546E7A",
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
@@ -476,18 +464,6 @@ public class AppSettings
             get; set;
         } = string.Empty;
         public string WarningColor
-        {
-            get; set;
-        } = string.Empty;
-        public string BadgeNoImageColor
-        {
-            get; set;
-        } = string.Empty;
-        public string BadgeOneImageColor
-        {
-            get; set;
-        } = string.Empty;
-        public string BadgeMoreThanOneImageColor
         {
             get; set;
         } = string.Empty;

@@ -56,7 +56,7 @@ public sealed partial class AppDialog : UserControl
     /// <summary>
     /// Muestra el diálogo y devuelve el resultado. Los botones con texto vacío/null se ocultan.
     /// </summary>
-    public Task<AppDialogResult> ShowAsync(XamlRoot xamlRoot, string title, object content, string? primaryText, string? secondaryText, string closeText, string? applyText = null, System.Action? onApply = null, bool showOverlay = true, bool draggable = false)
+    public Task<AppDialogResult> ShowAsync(XamlRoot xamlRoot, string title, object content, string? primaryText, string? secondaryText, string closeText, string? applyText = null, System.Action? onApply = null, bool dimOverlay = true, bool draggable = false)
     {
         _xamlRoot = xamlRoot;
         _completed = false;
@@ -64,9 +64,10 @@ public sealed partial class AppDialog : UserControl
         _draggable = draggable;
         _tcs = new TaskCompletionSource<AppDialogResult>();
 
-        // Sin overlay: el fondo atenuado se hace transparente, de modo que la ventana se ve sin atenuar (aunque el
-        // overlay sigue captando el puntero para que el clic fuera cierre y el diálogo sea modal).
-        if (!showOverlay)
+        // El overlay a pantalla completa SIEMPRE está y capta el puntero (el diálogo es modal: no se puede interactuar
+        // con la app detrás). 'dimOverlay' solo decide si atenúa (fondo semitransparente) o es totalmente transparente
+        // —pero igualmente hit-testable— para ver la ventana sin atenuar (p. ej. el editor de colores).
+        if (!dimOverlay)
             Overlay.Background = new SolidColorBrush(Colors.Transparent);
 
         TitleText.Text = title ?? string.Empty;

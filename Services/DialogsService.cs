@@ -36,7 +36,7 @@ public class DialogsService
     {
         MM4LB.Controls.Views.ThemeColorEditorControl content = new();
         AppDialog dialog = new();
-        await dialog.ShowAsync(xamlRoot, L(LocKeys.ThemeColors_Title), content, null, null, L(LocKeys.ThemeColors_Close), showOverlay: false, draggable: true);
+        await dialog.ShowAsync(xamlRoot, L(LocKeys.ThemeColors_Title), content, null, null, L(LocKeys.ThemeColors_Close), dimOverlay: false, draggable: true);
     }
 
     /// <summary>
