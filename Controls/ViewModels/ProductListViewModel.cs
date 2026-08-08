@@ -80,10 +80,16 @@ public partial class ProductListViewModel : WidgetViewModelBase
         set { if (SetProperty(ref _sortDescending, value)) ApplyFilters(); }
     }
 
-    /// <summary>Texto "N / Total" del pie de la lista (productos mostrados frente al total rastreado).</summary>
+    /// <summary>
+    /// Texto "N / Total" del pie de la lista (productos mostrados frente al total). El total EXCLUYE los comprados si
+    /// el toggle de mostrar comprados está desactivado (no se cuentan los que no se muestran).
+    /// </summary>
     public string CountText => string.Format(
         LocalizationService.Instance?[LocKeys.ProductList_Count_Format] ?? "{0} / {1}",
-        FilteredProducts.Count, SharedDataService.ProductSet.Products.Count);
+        FilteredProducts.Count,
+        SharedDataService.ShowPurchased
+            ? SharedDataService.ProductSet.Products.Count
+            : SharedDataService.ProductSet.Products.Count(product => !product.IsPurchased));
     #endregion
 
     #region Constructor
