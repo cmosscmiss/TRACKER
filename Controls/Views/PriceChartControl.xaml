@@ -112,9 +112,9 @@
                                         Visibility="{x:Bind ShowPrimeYes, Converter={StaticResource VisibleIfTrueConverter}}">
                                     <TextBlock Text="{loc:Str Key=PriceChart_Prime_Label}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
                                 </Border>
-                                <Border Background="{ThemeResource CardBackgroundLightBrushOpacity60}" BorderBrush="{ThemeResource CardBackgroundLightBrush}" BorderThickness="1" CornerRadius="6" Padding="6 1" HorizontalAlignment="Center"
+                                <Border Background="{ThemeResource DangerBrushOpacity60}" BorderBrush="{ThemeResource DangerBrush}" BorderThickness="1" CornerRadius="6" Padding="6 1" HorizontalAlignment="Center"
                                         Visibility="{x:Bind ShowPrimeNo, Converter={StaticResource VisibleIfTrueConverter}}">
-                                    <TextBlock Text="{loc:Str Key=PriceChart_NoPrime_Label}" Foreground="{ThemeResource TextSecondaryBrush}" FontSize="10" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{loc:Str Key=PriceChart_NoPrime_Label}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
                                 </Border>
                                 <!-- Precio (+ envío aparte, si se detectó) -->
                                 <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">

@@ -71,7 +71,7 @@ public sealed partial class ThemeColorEditorControl : UserControl
             "CardBackground", "CardBackgroundLight",
             "Text", "TextSecondary",
             "Danger", "Success", "Warning",
-            "ExtraColor1", "ExtraColor2", "ExtraColor3", "ExtraColor4", "ExtraColor5",
+            "ExtraColor1", "ExtraColor2", "ExtraColor3", "ExtraColor4",
         };
         _options = bases.Select(b => new ThemeColorOption(L("ThemeColors_Name_" + b), b)).ToList();
 

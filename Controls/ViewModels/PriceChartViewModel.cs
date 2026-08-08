@@ -331,8 +331,8 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         ShowPrime = bestStore is not null && bestStore.Label.StartsWith("Amazon", StringComparison.OrdinalIgnoreCase);
         bool prime = bestStore?.IsPrime ?? false;
         PrimeText = prime ? L(LocKeys.PriceChart_Prime_Label) : L(LocKeys.PriceChart_NoPrime_Label);
-        PrimeBrush = ResolveBrush(prime ? "ExtraColor4Brush" : "ExtraColor5Brush");
-        PrimeBackgroundBrush = ResolveBrush(prime ? "ExtraColor4BrushOpacity60" : "ExtraColor5BrushOpacity60");
+        PrimeBrush = ResolveBrush(prime ? "ExtraColor4Brush" : "DangerBrush");
+        PrimeBackgroundBrush = ResolveBrush(prime ? "ExtraColor4BrushOpacity60" : "DangerBrushOpacity60");
 
         Stores = product is null
             ? Array.Empty<StoreChip>()

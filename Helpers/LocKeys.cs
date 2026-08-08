@@ -144,7 +144,6 @@ public static class LocKeys
     public const string ThemeColors_Name_ExtraColor2 = "ThemeColors_Name_ExtraColor2";
     public const string ThemeColors_Name_ExtraColor3 = "ThemeColors_Name_ExtraColor3";
     public const string ThemeColors_Name_ExtraColor4 = "ThemeColors_Name_ExtraColor4";
-    public const string ThemeColors_Name_ExtraColor5 = "ThemeColors_Name_ExtraColor5";
     public const string Common_Save_Label = "Common_Save_Label";
     public const string Common_OK_Label = "Common_OK_Label";
     public const string Common_Apply_Label = "Common_Apply_Label";

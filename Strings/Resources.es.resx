@@ -198,9 +198,6 @@
   <data name="ThemeColors_Name_ExtraColor4" xml:space="preserve">
     <value>Extra 4</value>
   </data>
-  <data name="ThemeColors_Name_ExtraColor5" xml:space="preserve">
-    <value>Extra 5</value>
-  </data>
   <data name="MainWindow_ProductsOverviewWidget_Title" xml:space="preserve">
     <value>RESUMEN DE PRECIOS</value>
   </data>
