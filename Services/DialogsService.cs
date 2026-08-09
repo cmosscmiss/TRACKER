@@ -36,7 +36,8 @@ public class DialogsService
 
     /// <summary>
     /// Editor de colores del tema EN CALIENTE, en un diálogo estándar de la app (overlay transparente + arrastrable).
-    /// Pie: "Apply" (persiste los overrides sin cerrar) y "OK" (persiste y cierra). Devuelve true si se pulsó OK.
+    /// Los colores se cambian en caliente; "OK" persiste los overrides y cierra, "Cancelar" (o Esc/clic fuera) deshace
+    /// los cambios de la sesión. Devuelve true si se pulsó OK.
     /// </summary>
     public async Task<bool> ShowThemeColorsAsync(XamlRoot xamlRoot)
     {
@@ -49,7 +50,6 @@ public class DialogsService
         AppDialogResult result = await dialog.ShowAsync(
             xamlRoot, L(LocKeys.ThemeColors_Title), content,
             L(LocKeys.Common_OK_Label), null, L(LocKeys.Common_Cancel_Label),
-            applyText: L(LocKeys.Common_Apply_Label), onApply: PersistThemeOverrides,
             dimOverlay: false, draggable: true);
 
         if (result == AppDialogResult.Primary)
@@ -128,6 +128,8 @@ public class DialogsService
 
         if (result == AppDialogResult.Primary)
             content.Apply();
+        else
+            content.Cancel();   // deshace la vista previa en caliente (p. ej. "Usar colores personalizados")
     }
 
     /// <summary>

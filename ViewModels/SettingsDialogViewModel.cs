@@ -234,6 +234,23 @@ public partial class SettingsDialogViewModel : ObservableObject
     #endregion
 
     #region Methods (public)
+    /// <summary>
+    /// Descarta el staging (lo llama Cancelar del diálogo). Como "Usar colores personalizados" se previsualiza en
+    /// caliente, aquí se deshace esa vista previa reaplicando el estado CONFIRMADO (el de settings, que solo cambia en
+    /// <see cref="Apply"/>) y se resincroniza el staging del flag con ese valor.
+    /// </summary>
+    public void Cancel()
+    {
+        if (_appSettings.General.UseCustomColors)
+            _themeService.ApplyStoredOverrides();
+        else
+            _themeService.ClearOverrides();
+
+        _loadingSettings = true;
+        UseCustomColors = _appSettings.General.UseCustomColors;
+        _loadingSettings = false;
+    }
+
     /// <summary>Vuelca el staging en AppSettings (aplicándolo en caliente donde aplica) y persiste al ini. Lo llama OK/Apply.</summary>
     public void Apply()
     {
@@ -310,21 +327,19 @@ public partial class SettingsDialogViewModel : ObservableObject
 
     #region Methods (private)
     /// <summary>
-    /// El ajuste "Usar colores personalizados" se aplica EN CALIENTE (no espera a OK/Apply): al desactivarse revierte al
-    /// instante a los colores del tema puro; al activarse reaplica los colores personalizados guardados. Se persiste en
-    /// el acto para que el flag y la vista queden coherentes aunque después se cancele el diálogo.
+    /// "Usar colores personalizados" se previsualiza EN CALIENTE mientras el diálogo está abierto (al desactivarse se ve
+    /// al instante el tema puro; al activarse se reaplican los colores guardados), pero NO se confirma aquí: el cambio se
+    /// vuelca a settings en <see cref="Apply"/> (OK/Apply) y se revierte al valor confirmado en <see cref="Cancel"/>.
     /// </summary>
     partial void OnUseCustomColorsChanged(bool value)
     {
         if (_loadingSettings)
             return;
 
-        _appSettings.General.UseCustomColors = value;
         if (value)
             _themeService.ApplyStoredOverrides();
         else
             _themeService.ClearOverrides();
-        _persistAndRestoreService.PersistData();
     }
 
     private void LoadGeneralFromSettings()

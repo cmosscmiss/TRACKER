@@ -24,4 +24,7 @@ public sealed partial class SettingsControl : UserControl
 
     /// <summary>Aplica los cambios (staging → AppSettings, en caliente) y persiste. Lo llama el diálogo al aceptar/Apply.</summary>
     public void Apply() => _viewModel.Apply();
+
+    /// <summary>Descarta el staging (deshace la vista previa en caliente). Lo llama el diálogo al cancelar/cerrar.</summary>
+    public void Cancel() => _viewModel.Cancel();
 }
