@@ -13,6 +13,9 @@ public sealed partial class SettingsControl : UserControl
 {
     private readonly SettingsDialogViewModel _viewModel = App.GetService<SettingsDialogViewModel>();
 
+    /// <summary>ViewModel (staging) de este contenido. Lo usa <see cref="Services.DialogsService"/> para orquestar el editor de colores.</summary>
+    public SettingsDialogViewModel ViewModel => _viewModel;
+
     public SettingsControl()
     {
         InitializeComponent();

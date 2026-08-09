@@ -390,13 +390,6 @@ public sealed partial class MainWindow : Window
         _ = App.GetService<PriceSchedulerService>().RefreshAllAsync();
     }
 
-    /// <summary>Botón de prueba: abre el editor de colores del tema en caliente en un diálogo estándar de la app.</summary>
-    private async void OnThemeColorsClick(object sender, RoutedEventArgs e)
-    {
-        if (Content is FrameworkElement root)
-            await App.GetService<DialogsService>().ShowThemeColorsAsync(root.XamlRoot);
-    }
-
     /// <summary>
     /// Botón de sesión de Amazon del footer: si hay sesión iniciada, cierra sesión (previa confirmación); si no,
     /// abre el diálogo de login (email + contraseña) e intenta iniciar sesión en el navegador visible.

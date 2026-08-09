@@ -524,6 +524,12 @@
   <data name="ThemeSettings_OverlayOpacity_Label" xml:space="preserve">
     <value>Overlay opacity</value>
   </data>
+  <data name="ThemeSettings_UseCustomColors_Label" xml:space="preserve">
+    <value>Use custom colors</value>
+  </data>
+  <data name="ThemeSettings_EditColors_Label" xml:space="preserve">
+    <value>Edit colors…</value>
+  </data>
   <data name="AboutSettings_Tagline_Text" xml:space="preserve">
     <value>Amazon price tracker</value>
   </data>

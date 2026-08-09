@@ -108,6 +108,12 @@ public class AppSettings
         /// <summary>Si es true, los productos comprados se muestran en la lista (con el título tachado). Lo alterna un toggle del footer. Por defecto false.</summary>
         public bool ShowPurchased { get; set; } = false;
 
+        /// <summary>Si es true (por defecto), se aplican los colores personalizados (<see cref="CustomColors"/>) sobre el tema. Si es false, se usa el tema puro.</summary>
+        public bool UseCustomColors { get; set; } = true;
+
+        /// <summary>Overrides de color del tema (nombre base -> hex #RRGGBB) editados en el diálogo de colores. Se aplican al arrancar si <see cref="UseCustomColors"/>. Vacío = tema puro.</summary>
+        public Dictionary<string, string> CustomColors { get; set; } = new();
+
         /// <summary>
         /// Si es true, las gráficas del widget de productos (producto seleccionado y favoritos) muestran las etiquetas
         /// del eje X (las fechas de actualización). Por defecto false (leyenda oculta). Lo controla un toggle del pie y

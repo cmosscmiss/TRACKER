@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Options;
 using MM4LB.Enums;
 using MM4LB.Helpers;
@@ -46,6 +47,9 @@ public partial class SettingsDialogViewModel : ObservableObject
     private readonly ThemeService _themeService;
     private readonly LocalizationService _localizationService;
     private readonly Controls.ViewModels.ConsoleViewModel _consoleViewModel;
+
+    /// <summary>True mientras se carga el staging desde settings, para inhibir los efectos en caliente de los setters.</summary>
+    private bool _loadingSettings;
     #endregion
 
     #region Properties
@@ -96,6 +100,17 @@ public partial class SettingsDialogViewModel : ObservableObject
     [ObservableProperty] private double tintBrightness;
     [ObservableProperty] private double overlayImageBlur;
     [ObservableProperty] private double overlayImageOpacity;
+
+    /// <summary>Si es true, se aplican los colores personalizados sobre el tema. Habilita el botón de editar colores.</summary>
+    [ObservableProperty] private bool useCustomColors;
+
+    /// <summary>Lo dispara el botón "Editar colores…": la vista oculta el diálogo de ajustes y abre el editor de colores.</summary>
+    public event Action? EditColorsRequested;
+
+    private RelayCommand? _editColorsCommand;
+
+    /// <summary>Comando del botón "Editar colores…": pide abrir el editor de colores (ver <see cref="EditColorsRequested"/>).</summary>
+    public RelayCommand EditColorsCommand => _editColorsCommand ??= new RelayCommand(() => EditColorsRequested?.Invoke());
     #endregion
 
     #region Theme preview (staging, no aplicado)
@@ -195,6 +210,9 @@ public partial class SettingsDialogViewModel : ObservableObject
         _localizationService = localizationService;
         _consoleViewModel = consoleViewModel;
 
+        // Inhibe los efectos en caliente de los setters mientras se inicializa el staging (sección, tema, flags).
+        _loadingSettings = true;
+
         LanguageOptions = _localizationService.AvailableLanguages;
 
         Sections = new List<SettingsSection>
@@ -269,17 +287,49 @@ public partial class SettingsDialogViewModel : ObservableObject
         t.OverlayImageOpacity = OverlayImageOpacity;
 
         // Re-aplica el tema si cambió el nombre o cualquier parámetro: regenera los recursos (colores + tinte del
-        // overlay) y dispara ThemeChanged (la ventana principal refresca su TintedImage).
+        // overlay) y dispara ThemeChanged (la ventana principal refresca su TintedImage). Nota: ApplyTheme ya reaplica
+        // por su cuenta los colores personalizados guardados sobre el nuevo tema.
         if (themeNameChanged || themeParamsChanged)
             _themeService.ApplyTheme(themeNameChanged ? SelectedThemeName! : _themeService.CurrentThemeName);
+
+        // Colores personalizados: al activarse se reaplican los guardados; al desactivarse se revierte al tema puro.
+        // (Si además cambió el tema, ApplyTheme ya reaplicó los overrides; solo hace falta revertir al desactivar.)
+        bool useCustomColorsChanged = g.UseCustomColors != UseCustomColors;
+        g.UseCustomColors = UseCustomColors;
+        if (useCustomColorsChanged)
+        {
+            if (UseCustomColors)
+                _themeService.ApplyStoredOverrides();
+            else
+                _themeService.ClearOverrides();
+        }
 
         _persistAndRestoreService.PersistData();
     }
     #endregion
 
     #region Methods (private)
+    /// <summary>
+    /// El ajuste "Usar colores personalizados" se aplica EN CALIENTE (no espera a OK/Apply): al desactivarse revierte al
+    /// instante a los colores del tema puro; al activarse reaplica los colores personalizados guardados. Se persiste en
+    /// el acto para que el flag y la vista queden coherentes aunque después se cancele el diálogo.
+    /// </summary>
+    partial void OnUseCustomColorsChanged(bool value)
+    {
+        if (_loadingSettings)
+            return;
+
+        _appSettings.General.UseCustomColors = value;
+        if (value)
+            _themeService.ApplyStoredOverrides();
+        else
+            _themeService.ClearOverrides();
+        _persistAndRestoreService.PersistData();
+    }
+
     private void LoadGeneralFromSettings()
     {
+        _loadingSettings = true;
         AppSettings.GeneralSettings g = _appSettings.General;
         ShowWidgetHeader = g.ShowWidgetHeader;
         FooterEventViewerAlwaysVisible = g.FooterEventViewerAlwaysVisible;
@@ -294,6 +344,9 @@ public partial class SettingsDialogViewModel : ObservableObject
         TintBrightness = t.TintBrightness;
         OverlayImageBlur = t.OverlayImageBlur;
         OverlayImageOpacity = t.OverlayImageOpacity;
+
+        UseCustomColors = g.UseCustomColors;
+        _loadingSettings = false;
     }
 
     partial void OnSelectedSectionChanged(SettingsSection? value)
@@ -302,6 +355,14 @@ public partial class SettingsDialogViewModel : ObservableObject
         OnPropertyChanged(nameof(IsTheme));
         OnPropertyChanged(nameof(IsAbout));
         OnPropertyChanged(nameof(IsPlaceholder));
+
+        // La categoría abierta se recuerda EN CALIENTE (no espera a OK/Apply): así el diálogo reabre siempre en la última
+        // sección vista, aunque se cerrara con Cancelar, y se conserva entre reinicios.
+        if (_loadingSettings || value is null)
+            return;
+
+        _appSettings.General.SettingsLastSection = value.Kind.ToString();
+        _persistAndRestoreService.PersistData();
     }
     #endregion
 }

@@ -24,6 +24,15 @@
         <CheckBox Content="{loc:Str Key=ThemeSettings_RandomTheme_Label}" Foreground="{ThemeResource TextBrush}"
                   IsChecked="{Binding RandomTheme, Mode=TwoWay}"/>
 
+        <!-- Colores personalizados: el flag habilita el botón que abre el editor de colores del tema (que oculta este
+             diálogo de ajustes y vuelve a él al aceptar). -->
+        <Grid ColumnDefinitions="240,*">
+            <CheckBox Content="{loc:Str Key=ThemeSettings_UseCustomColors_Label}" Foreground="{ThemeResource TextBrush}"
+                      VerticalAlignment="Center" IsChecked="{Binding UseCustomColors, Mode=TwoWay}"/>
+            <Button Grid.Column="1" HorizontalAlignment="Left" Content="{loc:Str Key=ThemeSettings_EditColors_Label}"
+                    Command="{Binding EditColorsCommand}" IsEnabled="{Binding UseCustomColors}"/>
+        </Grid>
+
         <!-- Preview en vivo del fondo del tema seleccionado (staging, no aplicado). -->
         <Border CornerRadius="6" BorderThickness="1" BorderBrush="{ThemeResource CardBackgroundLightBrush}">
             <template:TintedImage Height="160" HorizontalAlignment="Stretch"

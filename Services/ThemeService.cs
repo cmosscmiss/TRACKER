@@ -37,6 +37,17 @@ public class ThemeService : ObservableObject
     /// <summary>Color ORIGINAL de cada nombre base sobrescrito en caliente (capturado en el primer override), para revertir.</summary>
     private readonly Dictionary<string, Color> _originalColors = new();
 
+    /// <summary>Overrides ACTIVOS (nombre base -> hex #RRGGBB) aplicados en caliente. Es lo que persiste en settings.</summary>
+    private readonly Dictionary<string, string> _overrides = new();
+
+    /// <summary>
+    /// Diccionarios "satélite" que deben mantenerse sincronizados con los colores del tema. Los usan los diálogos
+    /// (<see cref="Controls.Dialogs.AppDialog"/>): al mostrarse en un Popup, sus <c>{ThemeResource}</c> NO alcanzan los
+    /// diccionarios mergeados de la app, así que cada diálogo mergea su propia copia de Theme.xaml; se registra aquí para
+    /// que los cambios de color (tema u overrides) se reflejen también en esa copia y el diálogo se recolorea en vivo.
+    /// </summary>
+    private readonly List<ResourceDictionary> _externalDictionaries = new();
+
     public event EventHandler? ThemeChanged;
     #endregion
 
@@ -112,6 +123,8 @@ public class ThemeService : ObservableObject
             _currentThemeName = first.Key ?? string.Empty;
         }
         ApplyThemeResources();
+        // Reaplica los colores personalizados guardados (si el ajuste está activo) sobre el tema recién cargado.
+        ApplyStoredOverrides();
     }
 
     /// <summary>
@@ -149,6 +162,13 @@ public class ThemeService : ObservableObject
             OnPropertyChanged(nameof(OverlayImageOpacity));
 
             ApplyThemeResources();
+
+            // Un cambio de tema regenera todos los brushes desde el tema puro: los overrides previos (y sus originales
+            // capturados) ya no aplican. Se descarta el registro y se reaplican los colores personalizados guardados
+            // sobre el nuevo tema (recapturando sus originales), de modo que revertir siga funcionando.
+            _overrides.Clear();
+            _originalColors.Clear();
+            ApplyStoredOverrides();
 
             ThemeChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -236,6 +256,7 @@ public class ThemeService : ObservableObject
         if (!_originalColors.ContainsKey(baseName))
             _originalColors[baseName] = GetThemeColor(baseName);
 
+        _overrides[baseName] = ToHex(color);
         ApplyColorInternal(baseName, color);
     }
 
@@ -252,6 +273,55 @@ public class ThemeService : ObservableObject
         {
             ApplyColorInternal(baseName, original);
             _originalColors.Remove(baseName);
+            _overrides.Remove(baseName);
+        }
+    }
+
+    /// <summary>Overrides de color activos (nombre base -> hex #RRGGBB). Es la instantánea que se persiste en settings al aceptar.</summary>
+    public IReadOnlyDictionary<string, string> CurrentOverrides => _overrides;
+
+    /// <summary>
+    /// Aplica los overrides de color guardados en settings (<see cref="AppSettings.GeneralSettings.CustomColors"/>) sobre
+    /// el tema actual, EN CALIENTE. No hace nada si <see cref="AppSettings.GeneralSettings.UseCustomColors"/> está desactivado
+    /// o no hay overrides. Se llama al arrancar (tras cargar el tema) y al reactivar los colores personalizados.
+    /// </summary>
+    public void ApplyStoredOverrides()
+    {
+        if (!_appSettings.General.UseCustomColors)
+            return;
+
+        foreach (KeyValuePair<string, string> entry in _appSettings.General.CustomColors)
+        {
+            if (!string.IsNullOrWhiteSpace(entry.Value) && entry.Value.Length >= 7)
+                OverrideColor(entry.Key, Parse(entry.Value));
+        }
+    }
+
+    /// <summary>
+    /// Revierte TODOS los overrides activos a su color original (tema puro) y limpia el registro. Lo usa el ajuste
+    /// "Usar colores personalizados" al desactivarse.
+    /// </summary>
+    public void ClearOverrides()
+    {
+        // Copia de claves porque RevertColor muta _overrides/_originalColors.
+        foreach (string baseName in _overrides.Keys.ToList())
+            RevertColor(baseName);
+    }
+
+    /// <summary>
+    /// Restaura los overrides a una instantánea previa de <see cref="CurrentOverrides"/>: revierte todo al tema puro y
+    /// reaplica la instantánea. Lo usa "Cancelar" del editor de colores para deshacer los cambios de la sesión de edición.
+    /// </summary>
+    public void RestoreOverrides(IReadOnlyDictionary<string, string> snapshot)
+    {
+        ClearOverrides();
+        if (snapshot is null)
+            return;
+
+        foreach (KeyValuePair<string, string> entry in snapshot)
+        {
+            if (!string.IsNullOrWhiteSpace(entry.Value) && entry.Value.Length >= 7)
+                OverrideColor(entry.Key, Parse(entry.Value));
         }
     }
 
@@ -265,10 +335,32 @@ public class ThemeService : ObservableObject
         _currentTheme.GetType().GetProperty(baseName + "Color")?.SetValue(_currentTheme, ToHex(color));
 
         AddThemeColorResources(_currentDictionary!, baseName, color);   // Color/Brush base + opacidades (brushes in situ)
-        RefreshNamedControlBrushes();
+        RefreshNamedControlBrushes(Application.Current.Resources);
+        SyncExternalDictionaries();
 
         OnPropertyChanged(baseName + "Color");
         ThemeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Registra un diccionario de recursos externo (p. ej. el de un <see cref="Controls.Dialogs.AppDialog"/> mostrado en
+    /// un Popup) para mantener sus brushes de color sincronizados con el tema. Al registrarlo se sincroniza de inmediato
+    /// con el estado actual (tema + overrides), de modo que el diálogo abre ya con los colores correctos.
+    /// </summary>
+    public void RegisterExternalResources(ResourceDictionary dictionary)
+    {
+        if (dictionary is null || _externalDictionaries.Contains(dictionary))
+            return;
+
+        _externalDictionaries.Add(dictionary);
+        ApplyColorsToDictionary(dictionary);
+    }
+
+    /// <summary>Deja de sincronizar un diccionario externo (al cerrarse el diálogo que lo registró).</summary>
+    public void UnregisterExternalResources(ResourceDictionary dictionary)
+    {
+        if (dictionary is not null)
+            _externalDictionaries.Remove(dictionary);
     }
 
     /// <summary>Color actual del tema para un nombre base (p. ej. "Accent"); negro si el nombre no corresponde a ninguno.</summary>
@@ -384,6 +476,25 @@ public class ThemeService : ObservableObject
     /// </summary>
     private void PopulateResourceDictionary(ResourceDictionary dict)
     {
+        AddAllThemeColors(dict);
+
+        dict["BackgroundImage"] = BackgroundImageUri;
+        dict["LogoImage"] = LogoImageUri;
+        dict["OverlayImageUri"] = OverlayImageUri;
+
+        dict["TintOpacity"] = TintOpacity;
+        dict["TintSaturation"] = TintSaturation;
+        dict["TintBrightness"] = TintBrightness;
+        dict["OverlayImageBlur"] = OverlayImageBlur;
+        dict["OverlayImageOpacity"] = OverlayImageOpacity;
+
+        RefreshNamedControlBrushes(Application.Current.Resources);
+        SyncExternalDictionaries();
+    }
+
+    /// <summary>Vuelca todos los colores del tema (brush base + variantes de opacidad) en <paramref name="dict"/>.</summary>
+    private void AddAllThemeColors(ResourceDictionary dict)
+    {
         AddThemeColorResources(dict, "Accent", AccentColor);
         AddThemeColorResources(dict, "AccentLight", AccentLightColor);
         AddThemeColorResources(dict, "AccentDark", AccentDarkColor);
@@ -406,18 +517,24 @@ public class ThemeService : ObservableObject
         AddThemeColorResources(dict, "ExtraColor2", ExtraColor2);
         AddThemeColorResources(dict, "ExtraColor3", ExtraColor3);
         AddThemeColorResources(dict, "ExtraColor4", ExtraColor4);
+    }
 
-        dict["BackgroundImage"] = BackgroundImageUri;
-        dict["LogoImage"] = LogoImageUri;
-        dict["OverlayImageUri"] = OverlayImageUri;
+    /// <summary>
+    /// Sincroniza un diccionario externo (copia de Theme.xaml de un diálogo) con los colores actuales del tema: vuelca
+    /// los brushes de color (mutando in situ los existentes) y refresca los brushes con nombre de los controles. Así el
+    /// contenido del diálogo, que resuelve contra su propia copia, se recolorea en vivo igual que la ventana principal.
+    /// </summary>
+    private void ApplyColorsToDictionary(ResourceDictionary dict)
+    {
+        AddAllThemeColors(dict);
+        RefreshNamedControlBrushes(dict);
+    }
 
-        dict["TintOpacity"] = TintOpacity;
-        dict["TintSaturation"] = TintSaturation;
-        dict["TintBrightness"] = TintBrightness;
-        dict["OverlayImageBlur"] = OverlayImageBlur;
-        dict["OverlayImageOpacity"] = OverlayImageOpacity;
-
-        RefreshNamedControlBrushes();
+    /// <summary>Reaplica los colores actuales a todos los diccionarios externos registrados (diálogos abiertos).</summary>
+    private void SyncExternalDictionaries()
+    {
+        foreach (ResourceDictionary dict in _externalDictionaries)
+            ApplyColorsToDictionary(dict);
     }
 
     /// <summary>
@@ -430,7 +547,7 @@ public class ThemeService : ObservableObject
     /// El mapeo clave -> color reproduce el de esos XAML. Los estados deshabilitados llevan su propia
     /// <see cref="Brush.Opacity"/> en el XAML: aquí solo se toca el color (la opacidad del brush se conserva).
     /// </summary>
-    private void RefreshNamedControlBrushes()
+    private void RefreshNamedControlBrushes(ResourceDictionary target)
     {
         // (clave del brush en Buttons.xaml / GenericControls.xaml, color del tema con el que debe pintarse)
         (string Key, Color Color)[] map =
@@ -488,10 +605,9 @@ public class ThemeService : ObservableObject
             ("SliderInlineTickBarFill", TextColor),
         };
 
-        ResourceDictionary appResources = Application.Current.Resources;
         foreach ((string key, Color color) in map)
         {
-            if (appResources.TryGetValue(key, out object? value) && value is SolidColorBrush brush)
+            if (target.TryGetValue(key, out object? value) && value is SolidColorBrush brush)
             {
                 brush.Color = color;
             }

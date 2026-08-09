@@ -1,7 +1,10 @@
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using MM4LB.Controls.Dialogs;
 using MM4LB.Helpers;
+using MM4LB.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MM4LB.Services;
@@ -31,12 +34,42 @@ public class DialogsService
         await dialog.ShowAsync(xamlRoot, title, BuildText(message), null, null, closeText);
     }
 
-    /// <summary>Editor (de prueba) de colores del tema EN CALIENTE, en un diálogo estándar de la app.</summary>
-    public async Task ShowThemeColorsAsync(XamlRoot xamlRoot)
+    /// <summary>
+    /// Editor de colores del tema EN CALIENTE, en un diálogo estándar de la app (overlay transparente + arrastrable).
+    /// Pie: "Apply" (persiste los overrides sin cerrar) y "OK" (persiste y cierra). Devuelve true si se pulsó OK.
+    /// </summary>
+    public async Task<bool> ShowThemeColorsAsync(XamlRoot xamlRoot)
     {
+        ThemeService theme = App.GetService<ThemeService>();
+        // Instantánea del estado al abrir, para poder deshacerlo con "Cancelar".
+        Dictionary<string, string> snapshot = new(theme.CurrentOverrides);
+
         MM4LB.Controls.Views.ThemeColorEditorControl content = new();
         AppDialog dialog = new();
-        await dialog.ShowAsync(xamlRoot, L(LocKeys.ThemeColors_Title), content, null, null, L(LocKeys.ThemeColors_Close), dimOverlay: false, draggable: true);
+        AppDialogResult result = await dialog.ShowAsync(
+            xamlRoot, L(LocKeys.ThemeColors_Title), content,
+            L(LocKeys.Common_OK_Label), null, L(LocKeys.Common_Cancel_Label),
+            applyText: L(LocKeys.Common_Apply_Label), onApply: PersistThemeOverrides,
+            dimOverlay: false, draggable: true);
+
+        if (result == AppDialogResult.Primary)
+        {
+            PersistThemeOverrides();
+            return true;
+        }
+
+        // Cancelar / Esc / clic fuera: deshace en caliente los cambios de esta sesión de edición (vuelve a la instantánea).
+        theme.RestoreOverrides(snapshot);
+        return false;
+    }
+
+    /// <summary>Vuelca los overrides de color activos del <see cref="ThemeService"/> en settings y persiste al ini.</summary>
+    private static void PersistThemeOverrides()
+    {
+        ThemeService theme = App.GetService<ThemeService>();
+        AppSettings settings = App.GetService<IOptions<AppSettings>>().Value;
+        settings.General.CustomColors = new Dictionary<string, string>(theme.CurrentOverrides);
+        App.GetService<PersistAndRestoreService>().PersistData();
     }
 
     /// <summary>
@@ -76,10 +109,22 @@ public class DialogsService
     {
         SettingsControl content = new();
         AppDialog dialog = new();
+
+        // Botón "Editar colores…" (sección Theme): oculta este diálogo, abre el editor de colores y, al cerrarse, vuelve.
+        async void OnEditColorsRequested()
+        {
+            dialog.Hide();
+            await ShowThemeColorsAsync(xamlRoot);
+            dialog.Reopen();
+        }
+        content.ViewModel.EditColorsRequested += OnEditColorsRequested;
+
         AppDialogResult result = await dialog.ShowAsync(
             xamlRoot, L(LocKeys.DialogsService_Settings_Title), content,
             L(LocKeys.Common_OK_Label), null, L(LocKeys.Common_Cancel_Label),
             applyText: L(LocKeys.Common_Apply_Label), onApply: content.Apply);
+
+        content.ViewModel.EditColorsRequested -= OnEditColorsRequested;
 
         if (result == AppDialogResult.Primary)
             content.Apply();

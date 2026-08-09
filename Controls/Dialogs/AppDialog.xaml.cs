@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using MM4LB.Services;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System;
@@ -86,6 +87,10 @@ public sealed partial class AppDialog : UserControl
             gate.PrimaryEnabledChanged += (_, _) => PrimaryButton.IsEnabled = gate.IsPrimaryEnabled;
         }
 
+        // El contenido del diálogo resuelve sus {ThemeResource} contra la copia local de Theme.xaml (ver Resources): se
+        // registra en el ThemeService para que los cambios de color del tema (u overrides en caliente) se reflejen aquí.
+        App.GetService<ThemeService>().RegisterExternalResources(Resources);
+
         _popup = new Popup { XamlRoot = xamlRoot, Child = this };
 
         SizeToWindow();
@@ -107,6 +112,27 @@ public sealed partial class AppDialog : UserControl
         defaultButton.Focus(FocusState.Programmatic);
 
         return _tcs.Task;
+    }
+
+    /// <summary>Oculta temporalmente el diálogo SIN completarlo (la Task de <see cref="ShowAsync"/> sigue pendiente). Reversible con <see cref="Reopen"/>.</summary>
+    public void Hide()
+    {
+        if (_popup is not null)
+            _popup.IsOpen = false;
+    }
+
+    /// <summary>Vuelve a mostrar un diálogo previamente ocultado con <see cref="Hide"/>, reponiendo el tamaño y el foco.</summary>
+    public void Reopen()
+    {
+        if (_popup is null || _completed)
+            return;
+
+        SizeToWindow();
+        _popup.IsOpen = true;
+        Overlay.Opacity = 1;
+
+        Button defaultButton = PrimaryButton.Visibility == Visibility.Visible ? PrimaryButton : CloseButton;
+        defaultButton.Focus(FocusState.Programmatic);
     }
     #endregion
 
@@ -199,6 +225,8 @@ public sealed partial class AppDialog : UserControl
             return;
         }
         _completed = true;
+
+        App.GetService<ThemeService>().UnregisterExternalResources(Resources);
 
         if (_xamlRoot is not null)
         {

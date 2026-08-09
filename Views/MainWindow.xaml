@@ -121,7 +121,7 @@
                         <!-- Barra de herramientas del footer (a la derecha): tiempo hasta la próxima actualización
                              automática (justo antes de la toolbar), leyenda del eje, login, refrescar, añadir. -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Right" Margin="8 0 0 0">
-                            <uc:SplitFlapClock x:Name="NextUpdateClock" VerticalAlignment="Center" Margin="8 0"
+                            <uc:SplitFlapClock x:Name="NextUpdateClock" VerticalAlignment="Center" Margin="8 0 12 0"
                                                help:Help.Key="Footer_NextUpdate_Tooltip"/>
                             
                             <!-- Toggles con estilo de botón normal (Button_Icon): el estado se indica por color del icono
@@ -177,9 +177,6 @@
                     </Grid>
                 </Border>
             </Grid>
-
-            <!-- Botón de PRUEBA (al pie) que abre el editor de colores del tema EN CALIENTE en un diálogo estándar. -->
-            <Button Grid.Row="3" Content="{loc:Str Key=ThemeColors_Open}" HorizontalAlignment="Center" Margin="8 4" Click="OnThemeColorsClick"/>
         </Grid>
 
         <!-- Toolbar -->

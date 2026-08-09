@@ -20,14 +20,25 @@
         </Grid.ColumnDefinitions>
 
         <!-- Editor -->
-        <StackPanel Grid.Column="0" Spacing="12" Width="280">
-            <ComboBox x:Name="ColorCombo" Header="{loc:Str Key=ThemeColors_ColorHeader}" HorizontalAlignment="Stretch"
-                      DisplayMemberPath="Display" SelectionChanged="OnColorSelectionChanged"/>
+        <StackPanel x:Name="EditorColumn" Grid.Column="0" Spacing="12" Width="280">
+            <!-- Selector de color + botón de revertir (icono) a su derecha, en la misma fila. -->
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="ColorCombo" Grid.Column="0" HorizontalAlignment="Stretch"
+                          DisplayMemberPath="Display" SelectionChanged="OnColorSelectionChanged"/>
+                <!-- Revierte el color seleccionado a su valor original (antes de los cambios en caliente). -->
+                <Button x:Name="RevertButton" Grid.Column="1" Style="{StaticResource Button_Icon}" BorderThickness="0"
+                        Padding="8 0" VerticalAlignment="Stretch" Click="OnRevertClick"
+                        ToolTipService.ToolTip="{loc:Str Key=ThemeColors_Revert}">
+                    <FontIcon Glyph="&#xE7A7;" FontSize="16"/>
+                </Button>
+            </Grid>
             <ColorPicker x:Name="Picker" IsAlphaEnabled="False"
-                         IsHexInputVisible="False" IsColorChannelTextInputVisible="False"
+                         IsHexInputVisible="False" IsColorChannelTextInputVisible="True"
                          ColorChanged="OnPickerColorChanged"/>
-            <!-- Devuelve el color seleccionado a su valor original (antes de los cambios en caliente). -->
-            <Button Content="{loc:Str Key=ThemeColors_Revert}" HorizontalAlignment="Stretch" Click="OnRevertClick"/>
         </StackPanel>
 
         <!-- Separador vertical entre las dos secciones. -->
@@ -36,9 +47,13 @@
 
         <!-- Lista de colores: muestra base + variantes de opacidad (80/60/40/20) + nombre. Cada muestra enlaza al
              brush VIVO del recurso (mutado in situ), así se actualiza en caliente. -->
-        <StackPanel Grid.Column="2" Spacing="6" Width="470">
-            <TextBlock Text="{loc:Str Key=ThemeColors_Swatches}" FontWeight="SemiBold"/>
-            <ScrollViewer MaxHeight="360" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
+        <Grid Grid.Column="2" Width="470" RowSpacing="6" Height="{Binding ActualHeight, ElementName=EditorColumn}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="{loc:Str Key=ThemeColors_Swatches}" FontWeight="SemiBold"/>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl x:Name="ColorList">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -63,6 +78,6 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-        </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
