@@ -161,6 +161,23 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         set => SetValue(ValuesProperty, value);
     }
 
+    /// <summary>
+    /// Valor "base" opcional por categoría (mismo orden/longitud que <see cref="Values"/>). Cuando está fijado y el tipo
+    /// es de BARRAS (<see cref="ChartType.Column"/>/<see cref="ChartType.Row"/>), cada barra se pinta en DOS colores: de 0
+    /// al valor base con un color (p. ej. el precio mínimo histórico) y del base al valor total (<see cref="Values"/>) con
+    /// otro. Conserva el resaltado, el clic-para-seleccionar, el orden y el Top N (es una sola serie partida, no multi-serie).
+    /// No aplica a línea/área/pie (se ignora). Null = barra de un solo color, como siempre.
+    /// </summary>
+    public static readonly DependencyProperty BaseValuesProperty = DependencyProperty.Register(
+        nameof(BaseValues), typeof(IReadOnlyList<double>), typeof(ChartTypeSelectorControl),
+        new PropertyMetadata(null, OnChartChanged));
+
+    public IReadOnlyList<double> BaseValues
+    {
+        get => (IReadOnlyList<double>)GetValue(BaseValuesProperty);
+        set => SetValue(BaseValuesProperty, value);
+    }
+
     /// <summary>One label per point/slice (category name shown on the axis / pie legend / tooltip).</summary>
     public static readonly DependencyProperty LabelsProperty = DependencyProperty.Register(
         nameof(Labels), typeof(IReadOnlyList<string>), typeof(ChartTypeSelectorControl),
@@ -702,7 +719,18 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         {
             _valueAxisDataMax = values.Length > 0 ? values.Max() : 0;   // para acotar el eje (referencia / ajuste ±10%)
             _valueAxisDataMin = values.Length > 0 ? values.Min() : 0;
-            Cartesian.Series = BuildCartesianSeries(values, labels, highlightIndex);
+
+            // Valores base por categoría (p. ej. mínimo histórico), reordenados al orden de visualización vía los índices
+            // originales; null si no se aportan. Solo lo usan las barras (Column/Row) para pintar la barra en dos colores.
+            double[]? baseValues = null;
+            if (BaseValues is { Count: > 0 })
+            {
+                baseValues = new double[indices.Length];
+                for (int k = 0; k < indices.Length; k++)
+                    baseValues[k] = indices[k] >= 0 && indices[k] < BaseValues.Count ? BaseValues[indices[k]] : 0;
+            }
+
+            Cartesian.Series = BuildCartesianSeries(values, labels, highlightIndex, baseValues);
             (Cartesian.XAxes, Cartesian.YAxes) = BuildAxes(labels);
             Cartesian.Sections = BuildReferenceSections();
         }
@@ -810,8 +838,12 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     private static SKColor ToSk(Windows.UI.Color c) => new(c.R, c.G, c.B, c.A);
 
     /// <summary>Serie base (+ resaltado si <paramref name="hi"/> &gt;= 0) del tipo cartesiano actual.</summary>
-    private ISeries[] BuildCartesianSeries(double[] values, string[] labels, int hi)
+    private ISeries[] BuildCartesianSeries(double[] values, string[] labels, int hi, double[]? baseValues = null)
     {
+        // Barras en dos colores (de 0 al base con un color, del base al total con otro): solo Column/Row.
+        if (baseValues is not null && (SelectedChartType == ChartType.Column || SelectedChartType == ChartType.Row))
+            return BuildSplitBarSeries(values, baseValues, labels, hi);
+
         (SKColor accent, SKColor accentDark, SKColor accentLight, SKColor _) = ResolveColors();
         string[] snap = labels;
         string Tip(int i, double v) => $"{(i >= 0 && i < snap.Length ? snap[i] : string.Empty)}: {Format(v)}";
@@ -910,6 +942,89 @@ public sealed partial class ChartTypeSelectorControl : UserControl
                     DataLabelsFormatter = point => Format(point.Coordinate.PrimaryValue),
                 };
         }
+    }
+
+    /// <summary>
+    /// Barra en DOS colores por categoría: de 0 a <paramref name="baseValues"/> (p. ej. precio mínimo histórico) con
+    /// <c>accentDark</c>, y del base al total (<paramref name="values"/>, p. ej. precio actual) con <c>accent</c>.
+    /// Se logra superponiendo (mismo ancho, <c>IgnoresBarPosition</c>) la barra completa y encima la del suelo. El
+    /// resaltado del seleccionado es un velo <c>accentLight</c> translúcido con borde, que deja ver ambos colores. La
+    /// serie completa es la única "hoverable", así el clic-para-seleccionar sigue mapeando a la categoría. Column y Row.
+    /// </summary>
+    private ISeries[] BuildSplitBarSeries(double[] values, double[] baseValues, string[] labels, int hi)
+    {
+        (SKColor accent, SKColor accentDark, SKColor accentLight, SKColor _) = ResolveColors();
+        bool row = SelectedChartType == ChartType.Row;
+
+        string[] snapLabels = labels;
+        double[] snapBase = baseValues;
+        string Tip(int i, double v)
+        {
+            string name = i >= 0 && i < snapLabels.Length ? snapLabels[i] : string.Empty;
+            double min = i >= 0 && i < snapBase.Length ? snapBase[i] : 0;
+            return $"{name}: {Format(v)} (min {Format(min)})";
+        }
+
+        var full = new double?[values.Length];
+        var floor = new double?[values.Length];
+        var highlight = new double?[values.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+            full[i] = values[i];
+            floor[i] = Math.Min(baseValues[i], values[i]);   // el suelo nunca supera el total
+            if (i == hi)
+                highlight[i] = values[i];
+        }
+
+        // Barra completa (del 0 al total) en 'accent': es la única hoverable (dispara el clic-para-seleccionar).
+        ISeries fullSeries = row
+            ? new RowSeries<double?>
+            {
+                Values = full, Name = "", Rx = 2, Ry = 2, MaxBarWidth = double.PositiveInfinity, IgnoresBarPosition = true,
+                Fill = new SolidColorPaint(accent),
+                XToolTipLabelFormatter = point => Tip(point.Index, point.Coordinate.PrimaryValue),
+            }
+            : new ColumnSeries<double?>
+            {
+                Values = full, Name = "", Rx = 2, Ry = 2, MaxBarWidth = double.PositiveInfinity, IgnoresBarPosition = true,
+                Fill = new SolidColorPaint(accent),
+                YToolTipLabelFormatter = point => Tip(point.Index, point.Coordinate.PrimaryValue),
+            };
+
+        // Suelo (del 0 al base) en 'accentDark', superpuesto encima: deja ver 'accent' solo en el tramo base->total.
+        ISeries floorSeries = row
+            ? new RowSeries<double?>
+            {
+                Values = floor, Name = "", Rx = 2, Ry = 2, MaxBarWidth = double.PositiveInfinity, IgnoresBarPosition = true,
+                IsHoverable = false, Fill = new SolidColorPaint(accentDark),
+            }
+            : new ColumnSeries<double?>
+            {
+                Values = floor, Name = "", Rx = 2, Ry = 2, MaxBarWidth = double.PositiveInfinity, IgnoresBarPosition = true,
+                IsHoverable = false, Fill = new SolidColorPaint(accentDark),
+            };
+
+        if (hi < 0 || hi >= values.Length)
+            return new[] { fullSeries, floorSeries };
+
+        // Resaltado del seleccionado: velo 'accentLight' translúcido + borde + etiqueta, sin tapar los dos colores.
+        ISeries highlightSeries = row
+            ? new RowSeries<double?>
+            {
+                Values = highlight, Name = "", Rx = 2, Ry = 2, MaxBarWidth = double.PositiveInfinity, IgnoresBarPosition = true,
+                IsHoverable = false, Fill = new SolidColorPaint(accentLight.WithAlpha(0x55)), Stroke = new SolidColorPaint(accentLight, 2),
+                DataLabelsPaint = new SolidColorPaint(accentLight), DataLabelsPosition = DataLabelsPosition.End,
+                DataLabelsFormatter = point => Format(point.Coordinate.PrimaryValue),
+            }
+            : new ColumnSeries<double?>
+            {
+                Values = highlight, Name = "", Rx = 2, Ry = 2, MaxBarWidth = double.PositiveInfinity, IgnoresBarPosition = true,
+                IsHoverable = false, Fill = new SolidColorPaint(accentLight.WithAlpha(0x55)), Stroke = new SolidColorPaint(accentLight, 2),
+                DataLabelsPaint = new SolidColorPaint(accentLight), DataLabelsPosition = DataLabelsPosition.Top,
+                DataLabelsFormatter = point => Format(point.Coordinate.PrimaryValue),
+            };
+
+        return new[] { fullSeries, floorSeries, highlightSeries };
     }
 
     /// <summary>Ejes: las categorías van en X (verticales) salvo en barras horizontales (Row), donde van en Y.</summary>

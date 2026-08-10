@@ -15,6 +15,7 @@
             SortOrder="{x:Bind ViewModel.SortOrder, Mode=TwoWay}"
             TopN="{x:Bind ViewModel.TopN, Mode=TwoWay}"
             Values="{x:Bind ViewModel.Values, Mode=OneWay}"
+            BaseValues="{x:Bind ViewModel.EffectiveBaseValues, Mode=OneWay}"
             Labels="{x:Bind ViewModel.Labels, Mode=OneWay}"
             HighlightIndex="{x:Bind ViewModel.HighlightIndex, Mode=OneWay}"
             ValueSuffix="{x:Bind ViewModel.ValueSuffix, Mode=OneWay}"

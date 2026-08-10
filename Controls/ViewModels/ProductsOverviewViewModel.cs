@@ -30,6 +30,20 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     /// <summary>Mejor precio actual de cada producto (eje Y), en el orden de la lista.</summary>
     public IReadOnlyList<double> Values { get; private set; } = Array.Empty<double>();
 
+    /// <summary>
+    /// Precio MÍNIMO histórico (efectivo) de cada producto, en el mismo orden que <see cref="Values"/>. Es la parte baja
+    /// de cada barra: se pinta de 0 a este valor con un color y de aquí al precio actual con otro (ver <c>BaseValues</c>
+    /// del <c>ChartTypeSelectorControl</c>).
+    /// </summary>
+    public IReadOnlyList<double> BaseValues { get; private set; } = Array.Empty<double>();
+
+    /// <summary>
+    /// Base efectiva que recibe la gráfica: el mínimo histórico (<see cref="BaseValues"/>) solo si el toggle global
+    /// <see cref="SharedDataService.ShowMinPriceChart"/> está activo; si no, vacío (barra de un solo color, precio actual).
+    /// </summary>
+    public IReadOnlyList<double> EffectiveBaseValues
+        => SharedDataService.ShowMinPriceChart ? BaseValues : Array.Empty<double>();
+
     /// <summary>Nombre de cada producto (eje X), en el orden de la lista.</summary>
     public IReadOnlyList<string> Labels { get; private set; } = Array.Empty<string>();
 
@@ -94,11 +108,16 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
 
     private void OnProductPriceRecorded(object? sender, EventArgs e) => Recompute();
 
-    /// <summary>Al cambiar el ajuste de incluir envío en el precio, recalcula los valores (precio efectivo).</summary>
+    /// <summary>
+    /// Reacciona a ajustes globales: al incluir/excluir envío recalcula los valores (precio efectivo); al alternar el
+    /// precio mínimo re-notifica solo la base efectiva (los datos no cambian) para mostrar/ocultar el tramo del mínimo.
+    /// </summary>
     private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(SharedDataService.IncludeShippingInPrice))
             Recompute();
+        else if (e.PropertyName == nameof(SharedDataService.ShowMinPriceChart))
+            OnPropertyChanged(nameof(EffectiveBaseValues));
     }
     #endregion
 
@@ -130,7 +149,9 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     {
         var products = SharedDataService.ProductSet.Products;
 
+        bool includeShipping = SharedDataService.IncludeShippingInPrice;
         Values = products.Select(product => (double)(product.BestPrice ?? 0m)).ToList();
+        BaseValues = products.Select(product => (double)HistoricalMin(product, includeShipping)).ToList();
         Labels = products.Select(product => product.Name).ToList();
         ValueSuffix = products
             .Select(product => product.BestStore?.Currency)
@@ -139,6 +160,8 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
         UpdateHighlight();
 
         OnPropertyChanged(nameof(Values));
+        OnPropertyChanged(nameof(BaseValues));
+        OnPropertyChanged(nameof(EffectiveBaseValues));
         OnPropertyChanged(nameof(Labels));
         OnPropertyChanged(nameof(ValueSuffix));
         OnPropertyChanged(nameof(HighlightIndex));
@@ -148,6 +171,21 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     {
         Product? selected = SharedDataService.SelectedProduct;
         HighlightIndex = selected is null ? -1 : SharedDataService.ProductSet.Products.IndexOf(selected);
+    }
+
+    /// <summary>
+    /// Precio mínimo histórico EFECTIVO de un producto (con envío de la tienda si el ajuste global lo incluye), sobre
+    /// todo su histórico de precios. Si no hay histórico, cae al mejor precio actual (o 0).
+    /// </summary>
+    private static decimal HistoricalMin(Product product, bool includeShipping)
+    {
+        if (product.PriceHistory.Count == 0)
+            return product.BestPrice ?? 0m;
+
+        decimal EffectiveOf(PricePoint point) => point.Price
+            + (includeShipping && product.Stores.FirstOrDefault(store => store.Label == point.StoreLabel)?.ShippingCost is decimal cost ? cost : 0m);
+
+        return product.PriceHistory.Min(EffectiveOf);
     }
     #endregion
 

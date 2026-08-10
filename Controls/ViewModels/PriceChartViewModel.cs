@@ -156,7 +156,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     public ChartType SelectedChartType
     {
         get => _selectedChartType;
-        set => SetProperty(ref _selectedChartType, value);
+        set { if (SetProperty(ref _selectedChartType, value)) OnPropertyChanged(nameof(EffectiveChartType)); }
     }
 
     /// <summary>Orden de los elementos de la gráfica (enlazado TwoWay); se persiste.</summary>
@@ -172,6 +172,28 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         get => _topN;
         set => SetProperty(ref _topN, value);
     }
+
+    // --- Entradas EFECTIVAS de la ÚNICA gráfica de la vista, según el toggle global ShowMinPriceChart. ---
+    // Con el toggle activo se muestra la evolución del precio MÍNIMO (serie única, área, eje Y compartido); si no, la
+    // de precios POR TIENDA (multi-serie, con auto-ajuste de eje). Al cambiar el toggle solo se re-notifican estas
+    // propiedades (sin recalcular datos) y la gráfica se reconstruye una vez.
+
+    /// <summary>Tipo de gráfica efectivo: área en modo precio mínimo; si no, el tipo seleccionado (persistido).</summary>
+    public ChartType EffectiveChartType => SharedDataService.ShowMinPriceChart ? ChartType.Area : SelectedChartType;
+
+    /// <summary>Series multi (por tienda) que recibe la gráfica: vacío en modo precio mínimo (pasa a serie única).</summary>
+    public IReadOnlyList<IReadOnlyList<double>> EffectiveSeriesValues
+        => SharedDataService.ShowMinPriceChart ? Array.Empty<IReadOnlyList<double>>() : SeriesValues;
+
+    /// <summary>Serie única que recibe la gráfica: la del precio mínimo en modo precio mínimo; vacía en modo por tienda.</summary>
+    public IReadOnlyList<double> EffectiveValues
+        => SharedDataService.ShowMinPriceChart ? MinPriceValues : Array.Empty<double>();
+
+    /// <summary>Límite inferior del eje Y: el dominio compartido en modo precio mínimo; NaN (auto-ajuste) en modo por tienda.</summary>
+    public double EffectiveValueMin => SharedDataService.ShowMinPriceChart ? MinChartAxisMin : double.NaN;
+
+    /// <summary>Límite superior del eje Y: el dominio compartido en modo precio mínimo; NaN (auto-ajuste) en modo por tienda.</summary>
+    public double EffectiveValueMax => SharedDataService.ShowMinPriceChart ? MinChartAxisMax : double.NaN;
 
     #endregion
 
@@ -208,11 +230,25 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
     private void OnFavoritesChanged(object? sender, EventArgs e) => UpdateFavoriteState();
 
-    /// <summary>Al cambiar el ajuste de incluir envío en el precio, recalcula la gráfica y las pastillas (precio efectivo).</summary>
+    /// <summary>
+    /// Reacciona a ajustes globales: al incluir/excluir envío recalcula la gráfica y las pastillas (precio efectivo); al
+    /// alternar la gráfica de precio mínimo re-notifica solo las entradas EFECTIVAS (los datos no cambian) para que la
+    /// única gráfica se reconstruya en el modo correcto.
+    /// </summary>
     private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(SharedDataService.IncludeShippingInPrice))
+        {
             Recompute();
+        }
+        else if (e.PropertyName == nameof(SharedDataService.ShowMinPriceChart))
+        {
+            OnPropertyChanged(nameof(EffectiveChartType));
+            OnPropertyChanged(nameof(EffectiveSeriesValues));
+            OnPropertyChanged(nameof(EffectiveValues));
+            OnPropertyChanged(nameof(EffectiveValueMin));
+            OnPropertyChanged(nameof(EffectiveValueMax));
+        }
     }
     #endregion
 
@@ -377,6 +413,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(MinPriceValues));
         OnPropertyChanged(nameof(MinChartAxisMin));
         OnPropertyChanged(nameof(MinChartAxisMax));
+        // Entradas efectivas de la gráfica (dependen de los datos recién calculados).
+        OnPropertyChanged(nameof(EffectiveSeriesValues));
+        OnPropertyChanged(nameof(EffectiveValues));
+        OnPropertyChanged(nameof(EffectiveValueMin));
+        OnPropertyChanged(nameof(EffectiveValueMax));
         OnPropertyChanged(nameof(Labels));
         OnPropertyChanged(nameof(ValueSuffix));
         OnPropertyChanged(nameof(HasProduct));
