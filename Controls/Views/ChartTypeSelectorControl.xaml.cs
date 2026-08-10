@@ -217,6 +217,21 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     }
 
     /// <summary>
+    /// Lower limit of the value axis (NaN = automatic). Default NaN. Cuando <see cref="ValueMin"/> y <see cref="ValueMax"/>
+    /// están ambos fijados, el eje de valores usa ESOS límites exactos (con prioridad sobre <see cref="FitValueAxis"/>),
+    /// útil para que una gráfica comparta el mismo eje Y que otra.
+    /// </summary>
+    public static readonly DependencyProperty ValueMinProperty = DependencyProperty.Register(
+        nameof(ValueMin), typeof(double), typeof(ChartTypeSelectorControl),
+        new PropertyMetadata(double.NaN, OnChartChanged));
+
+    public double ValueMin
+    {
+        get => (double)GetValue(ValueMinProperty);
+        set => SetValue(ValueMinProperty, value);
+    }
+
+    /// <summary>
     /// Si es true, el eje de valores se ajusta al rango de datos con un margen del ±10% (en vez de empezar en 0),
     /// para que se vea bien la variación (p. ej. precios). Ignora la línea de referencia para el límite.
     /// </summary>
@@ -966,6 +981,10 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// </summary>
     private (double? Min, double? Max) ResolveValueAxisLimits()
     {
+        // Override explícito de ambos límites (p. ej. compartir el eje Y de otra gráfica): tiene prioridad sobre FitValueAxis.
+        if (!double.IsNaN(ValueMin) && !double.IsNaN(ValueMax))
+            return (ValueMin, ValueMax);
+
         if (FitValueAxis && _valueAxisDataMax > 0 && _valueAxisDataMax >= _valueAxisDataMin)
         {
             double min = Math.Max(0, _valueAxisDataMin * 0.9);

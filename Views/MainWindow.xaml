@@ -135,6 +135,14 @@
                                 </Grid>
                             </Button>
                             <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="4 10" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+                            <!-- Alterna la gráfica de evolución del precio MÍNIMO (área) en toda la vista de productos (acento = activa). -->
+                            <Button x:Name="MinChartToggle" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
+                                    Click="OnToggleMinChartClick" help:Help.Key="Footer_MinChart_Tooltip">
+                                <Grid>
+                                    <FontIcon FontSize="18" Glyph="&#xE9D2;" Foreground="{ThemeResource AccentBrush}" Visibility="{Binding SharedDataService.ShowMinPriceChart, Converter={StaticResource VisibleIfTrueConverter}}"/>
+                                    <FontIcon FontSize="18" Glyph="&#xE9D2;" Foreground="{ThemeResource TextSecondaryBrush}" Visibility="{Binding SharedDataService.ShowMinPriceChart, Converter={StaticResource HiddenIfTrueConverter}}"/>
+                                </Grid>
+                            </Button>
                             <Button x:Name="AxisLabelsToggle" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="10 0" VerticalAlignment="Stretch"
                                     Click="OnToggleAxisLabelsClick" help:Help.Key="Footer_AxisLabels_Tooltip">
                                 <Grid>

@@ -184,7 +184,13 @@
                 </Border>
             </StackPanel>
 
-                <uc:ChartTypeSelectorControl Grid.Row="2" ShowToolbar="False" ShowHeaderSeparator="False" SelectedChartType="{x:Bind ViewModel.SelectedChartType, Mode=TwoWay}" SortOrder="{x:Bind ViewModel.SortOrder, Mode=TwoWay}" TopN="{x:Bind ViewModel.TopN, Mode=TwoWay}" ShowCategoryLabels="{x:Bind ViewModel.SharedDataService.ShowChartAxisLabels, Mode=OneWay}" FitValueAxis="True" SeriesValues="{x:Bind ViewModel.SeriesValues, Mode=OneWay}" SeriesNames="{x:Bind ViewModel.SeriesNames, Mode=OneWay}" Labels="{x:Bind ViewModel.Labels, Mode=OneWay}" ValueSuffix="{x:Bind ViewModel.ValueSuffix, Mode=OneWay}" ValueFormat="0.00" LabelsRotation="45"/>
+                <!-- Gráfica de precios por tienda (multi-serie). Visible salvo cuando se activa la del precio mínimo. -->
+                <uc:ChartTypeSelectorControl Grid.Row="2" ShowToolbar="False" ShowHeaderSeparator="False" SelectedChartType="{x:Bind ViewModel.SelectedChartType, Mode=TwoWay}" SortOrder="{x:Bind ViewModel.SortOrder, Mode=TwoWay}" TopN="{x:Bind ViewModel.TopN, Mode=TwoWay}" ShowCategoryLabels="{x:Bind ViewModel.SharedDataService.ShowChartAxisLabels, Mode=OneWay}" FitValueAxis="True" SeriesValues="{x:Bind ViewModel.SeriesValues, Mode=OneWay}" SeriesNames="{x:Bind ViewModel.SeriesNames, Mode=OneWay}" Labels="{x:Bind ViewModel.Labels, Mode=OneWay}" ValueSuffix="{x:Bind ViewModel.ValueSuffix, Mode=OneWay}" ValueFormat="0.00" LabelsRotation="45"
+                                             Visibility="{x:Bind ViewModel.SharedDataService.ShowMinPriceChart, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
+
+                <!-- Gráfica de evolución del precio MÍNIMO (serie única, área). Sin toolbar/orden/Top N, como la de por tienda. -->
+                <uc:ChartTypeSelectorControl Grid.Row="2" ShowToolbar="False" ShowHeaderSeparator="False" SelectedChartType="Area" ShowCategoryLabels="{x:Bind ViewModel.SharedDataService.ShowChartAxisLabels, Mode=OneWay}" FitValueAxis="True" ValueMin="{x:Bind ViewModel.MinChartAxisMin, Mode=OneWay}" ValueMax="{x:Bind ViewModel.MinChartAxisMax, Mode=OneWay}" Values="{x:Bind ViewModel.MinPriceValues, Mode=OneWay}" Labels="{x:Bind ViewModel.Labels, Mode=OneWay}" ValueSuffix="{x:Bind ViewModel.ValueSuffix, Mode=OneWay}" ValueFormat="0.00" LabelsRotation="45"
+                                             Visibility="{x:Bind ViewModel.SharedDataService.ShowMinPriceChart, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
             </Grid>
         </Grid>
 

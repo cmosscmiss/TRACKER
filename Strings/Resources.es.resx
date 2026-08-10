@@ -276,6 +276,9 @@
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Mostrar/ocultar etiquetas del eje (fechas de actualización)</value>
   </data>
+  <data name="Footer_MinChart_Tooltip" xml:space="preserve">
+    <value>Mostrar la gráfica de evolución del precio mínimo en todos los productos</value>
+  </data>
   <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
     <value>Mostrar/ocultar los tooltips de los botones</value>
   </data>

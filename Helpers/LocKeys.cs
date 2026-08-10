@@ -235,6 +235,7 @@ public static class LocKeys
     public const string Footer_RefreshAll_LastUpdate_Format = "Footer_RefreshAll_LastUpdate_Format";
     public const string Footer_RefreshAll_LastUpdate_Never = "Footer_RefreshAll_LastUpdate_Never";
     public const string Footer_AxisLabels_Tooltip = "Footer_AxisLabels_Tooltip";
+    public const string Footer_MinChart_Tooltip = "Footer_MinChart_Tooltip";
     public const string Footer_Tooltips_Tooltip = "Footer_Tooltips_Tooltip";
     public const string Footer_IncludeShipping_Tooltip = "Footer_IncludeShipping_Tooltip";
     public const string Footer_ShowPurchased_Tooltip = "Footer_ShowPurchased_Tooltip";

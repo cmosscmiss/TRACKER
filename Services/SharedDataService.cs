@@ -26,6 +26,7 @@ public class SharedDataService : ObservableObject
     private bool _isUiEnabled;
     private Product? _selectedProduct;
     private bool _showChartAxisLabels;
+    private bool _showMinPriceChart;
     private bool _helpTooltipsEnabled = true;
     private bool _includeShippingInPrice;
     private bool _showPurchased;
@@ -50,6 +51,17 @@ public class SharedDataService : ObservableObject
     {
         get => _showChartAxisLabels;
         set => SetProperty(ref _showChartAxisLabels, value);
+    }
+
+    /// <summary>
+    /// Ajuste global (persistido en el .ini) de si la vista de producto (seleccionado y favoritos) muestra la gráfica de
+    /// evolución del precio MÍNIMO (área) en vez de la de precios por tienda. Observable: el toggle del pie lo cambia y
+    /// todas las vistas lo aplican en caliente. Por defecto false.
+    /// </summary>
+    public bool ShowMinPriceChart
+    {
+        get => _showMinPriceChart;
+        set => SetProperty(ref _showMinPriceChart, value);
     }
 
     /// <summary>

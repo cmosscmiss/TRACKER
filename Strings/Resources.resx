@@ -281,6 +281,9 @@
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
     <value>Show/hide chart axis labels (update dates)</value>
   </data>
+  <data name="Footer_MinChart_Tooltip" xml:space="preserve">
+    <value>Show the lowest-price evolution chart for all products</value>
+  </data>
   <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
     <value>Show/hide button tooltips</value>
   </data>

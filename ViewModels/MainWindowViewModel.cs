@@ -211,6 +211,7 @@ public class MainWindowViewModel : WidgetViewModelBase
     {
         // Ajustes globales del .ini a los observables compartidos (en caliente): leyenda del eje y tooltips.
         _sharedDataService.ShowChartAxisLabels = _appSettings.General.ShowChartAxisLabels;
+        _sharedDataService.ShowMinPriceChart = _appSettings.General.ShowMinPriceChart;
         _sharedDataService.HelpTooltipsEnabled = _appSettings.General.HelpTooltipsEnabled;
         _sharedDataService.IncludeShippingInPrice = _appSettings.General.IncludeShippingInPrice;
         _sharedDataService.ShowPurchased = _appSettings.General.ShowPurchased;
@@ -220,6 +221,7 @@ public class MainWindowViewModel : WidgetViewModelBase
     {
         SaveWidgetSlots();
         _appSettings.General.ShowChartAxisLabels = _sharedDataService.ShowChartAxisLabels;
+        _appSettings.General.ShowMinPriceChart = _sharedDataService.ShowMinPriceChart;
         _appSettings.General.HelpTooltipsEnabled = _sharedDataService.HelpTooltipsEnabled;
         _appSettings.General.IncludeShippingInPrice = _sharedDataService.IncludeShippingInPrice;
         _appSettings.General.ShowPurchased = _sharedDataService.ShowPurchased;

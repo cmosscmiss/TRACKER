@@ -122,6 +122,13 @@ public class AppSettings
         public bool ShowChartAxisLabels { get; set; } = false;
 
         /// <summary>
+        /// Si es true, la vista de producto (seleccionado y favoritos) muestra la gráfica de evolución del precio MÍNIMO
+        /// (área) en vez de la de precios por tienda. Ajuste global; lo controla un toggle del pie y se aplica en caliente
+        /// a todas las vistas vía <see cref="MM4LB.Services.SharedDataService.ShowMinPriceChart"/>. Por defecto false.
+        /// </summary>
+        public bool ShowMinPriceChart { get; set; } = false;
+
+        /// <summary>
         /// Volumen (0–100) de la reproducción de vídeo en toda la aplicación (preview del dashboard y vídeo de la
         /// ficha de plataforma). 0 = silencio; cualquier valor mayor reproduce con sonido a ese nivel. Por defecto 0
         /// para mantener el comportamiento silencioso histórico.

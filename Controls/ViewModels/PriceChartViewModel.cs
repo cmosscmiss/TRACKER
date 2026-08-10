@@ -67,6 +67,19 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Nombre de cada serie (etiqueta de tienda), en el mismo orden que <see cref="SeriesValues"/>.</summary>
     public IReadOnlyList<string> SeriesNames { get; private set; } = Array.Empty<string>();
 
+    /// <summary>
+    /// Evolución del precio MÍNIMO por ronda de lectura: el menor precio (efectivo) entre todas las tiendas en cada
+    /// ronda. Serie ÚNICA alineada a <see cref="Labels"/>, para la gráfica de área del precio mínimo (ver <see cref="ShowMinPriceChart"/>).
+    /// </summary>
+    public IReadOnlyList<double> MinPriceValues { get; private set; } = Array.Empty<double>();
+
+    /// <summary>Límite inferior del eje Y de la gráfica por tienda (mismo ±10% que su auto-ajuste), o NaN si no hay datos.
+    /// La gráfica de precio mínimo lo usa para compartir EXACTAMENTE el mismo eje Y que la de precios por tienda.</summary>
+    public double MinChartAxisMin { get; private set; } = double.NaN;
+
+    /// <summary>Límite superior del eje Y de la gráfica por tienda (mismo ±10% que su auto-ajuste), o NaN si no hay datos.</summary>
+    public double MinChartAxisMax { get; private set; } = double.NaN;
+
     /// <summary>Fechas de las rondas de lectura formateadas (eje X de la gráfica).</summary>
     public IReadOnlyList<string> Labels { get; private set; } = Array.Empty<string>();
 
@@ -159,6 +172,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         get => _topN;
         set => SetProperty(ref _topN, value);
     }
+
     #endregion
 
     #region Constants
@@ -269,6 +283,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             SeriesValues = Array.Empty<IReadOnlyList<double>>();
             SeriesNames = Array.Empty<string>();
             Labels = Array.Empty<string>();
+            MinPriceValues = Array.Empty<double>();
+            MinChartAxisMin = double.NaN;
+            MinChartAxisMax = double.NaN;
         }
         else
         {
@@ -293,6 +310,13 @@ public partial class PriceChartViewModel : WidgetViewModelBase
                     return (IReadOnlyList<double>)BuildStoreSeries(label, rounds, history, shipping);
                 })
                 .ToList();
+
+            // Evolución del precio mínimo: por ronda, el menor precio (efectivo) entre las series de tienda.
+            MinPriceValues = BuildMinSeries(SeriesValues, rounds.Count);
+
+            // Dominio del eje Y de la gráfica POR TIENDA (mismo ±10% que su FitValueAxis), para que la gráfica de mínimo
+            // comparta EXACTAMENTE el mismo eje Y (misma referencia visual de precios).
+            (MinChartAxisMin, MinChartAxisMax) = ComputeSharedAxis(SeriesValues);
         }
 
         HasProduct = product is not null;
@@ -350,6 +374,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
         OnPropertyChanged(nameof(SeriesValues));
         OnPropertyChanged(nameof(SeriesNames));
+        OnPropertyChanged(nameof(MinPriceValues));
+        OnPropertyChanged(nameof(MinChartAxisMin));
+        OnPropertyChanged(nameof(MinChartAxisMax));
         OnPropertyChanged(nameof(Labels));
         OnPropertyChanged(nameof(ValueSuffix));
         OnPropertyChanged(nameof(HasProduct));
@@ -434,6 +461,49 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             series[i] = last + shippingOffset;   // + envío si el ajuste lo incluye (offset constante por tienda)
         }
         return series;
+    }
+
+    /// <summary>
+    /// Serie del precio MÍNIMO por ronda: en cada índice, el menor valor entre todas las series de tienda (que ya vienen
+    /// alineadas a las rondas y con huecos rellenados). Si en una ronda no hay ningún valor, arrastra 0.
+    /// </summary>
+    private static double[] BuildMinSeries(IReadOnlyList<IReadOnlyList<double>> series, int roundCount)
+    {
+        var min = new double[roundCount];
+        for (int i = 0; i < roundCount; i++)
+        {
+            double best = double.MaxValue;
+            foreach (IReadOnlyList<double> serie in series)
+                if (i < serie.Count && serie[i] < best)
+                    best = serie[i];
+            min[i] = best == double.MaxValue ? 0 : best;
+        }
+        return min;
+    }
+
+    /// <summary>
+    /// Dominio (min, max) del eje Y que usaría la gráfica por tienda con FitValueAxis: [max(0, dataMin*0.9), dataMax*1.1]
+    /// sobre TODOS los valores de todas las series. (NaN, NaN) si no hay datos. Debe replicar el cálculo de
+    /// <c>ChartTypeSelectorControl.ResolveValueAxisLimits</c> para que ambas gráficas compartan el mismo eje.
+    /// </summary>
+    private static (double Min, double Max) ComputeSharedAxis(IReadOnlyList<IReadOnlyList<double>> series)
+    {
+        double dataMin = double.MaxValue, dataMax = double.MinValue;
+        foreach (IReadOnlyList<double> serie in series)
+            foreach (double v in serie)
+            {
+                if (v < dataMin) dataMin = v;
+                if (v > dataMax) dataMax = v;
+            }
+
+        if (dataMax < dataMin)
+            return (double.NaN, double.NaN);
+
+        double min = Math.Max(0, dataMin * 0.9);
+        double max = dataMax * 1.1;
+        if (max <= min)
+            max = min + 1;
+        return (min, max);
     }
 
     /// <summary>Formatea un precio con la moneda ("39,99 €"), o "—" si es null. La tienda va aparte (descripción).</summary>

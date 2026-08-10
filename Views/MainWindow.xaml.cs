@@ -490,6 +490,10 @@ public sealed partial class MainWindow : Window
     private void OnToggleAxisLabelsClick(object sender, RoutedEventArgs e)
         => _viewModel.SharedDataService.ShowChartAxisLabels = !_viewModel.SharedDataService.ShowChartAxisLabels;
 
+    /// <summary>Alterna, para toda la vista de productos, la gráfica de evolución del precio mínimo (área) frente a la de precios por tienda.</summary>
+    private void OnToggleMinChartClick(object sender, RoutedEventArgs e)
+        => _viewModel.SharedDataService.ShowMinPriceChart = !_viewModel.SharedDataService.ShowMinPriceChart;
+
     /// <summary>Alterna si el precio de los productos incluye los gastos de envío (afecta a toda la app).</summary>
     private void OnToggleIncludeShippingClick(object sender, RoutedEventArgs e)
         => _viewModel.SharedDataService.IncludeShippingInPrice = !_viewModel.SharedDataService.IncludeShippingInPrice;
