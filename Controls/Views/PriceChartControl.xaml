@@ -55,6 +55,11 @@
                               Visibility="{x:Bind ViewModel.IsPurchased, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
                 </Grid>
             </Button>
+            <!-- Elimina del producto el enlace ACTUAL (tienda seleccionada). Deshabilitado si solo queda un enlace. Reversible desde el log. -->
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnRemoveLinkClick"
+                    IsEnabled="{x:Bind ViewModel.CanRemoveStore, Mode=OneWay}" help:Help.Key="PriceChart_RemoveLink_Tooltip">
+                <FontIcon Glyph="&#xE738;" FontSize="16"/>
+            </Button>
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnDeleteProductClick" help:Help.Key="PriceChart_Delete_Tooltip">
                 <FontIcon Glyph="&#xE74D;" FontSize="16"/>
             </Button>
@@ -98,6 +103,7 @@
                      sincroniza con la tienda abierta en el navegador y, al pulsar un ítem, se abre en él. -->
                 <ListView Grid.Row="1" x:Name="StoresList" Margin="0 8 0 0" Padding="0" HorizontalAlignment="Stretch"
                           ItemsSource="{x:Bind ViewModel.Stores, Mode=OneWay}"
+                          PointerWheelChanged="OnStoresListPointerWheel"
                           SelectionMode="Single" SelectionChanged="OnStoreSelectionChanged"
                           ItemContainerStyle="{StaticResource GameImagesListViewItemStyle}"
                           ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">

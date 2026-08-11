@@ -20,14 +20,41 @@
          OK/Apply/Cancel). 2 columnas: categorías (izq) + opciones de la categoría (der). -->
     <Grid Width="806" Height="460" ColumnDefinitions="190, *">
 
-        <!-- Columna izquierda: lista de categorías. -->
+        <!-- Columna izquierda: lista de categorías. Los ítems reproducen el aspecto de las OPCIONES de un ComboBox
+             (hover = AccentLight, seleccionado = Accent, texto = Text), reusando los mismos colores que ComboBoxItem*
+             mediante override de los brushes de ListViewItem en el ámbito de este ListView. Se oculta el "pill" de
+             selección para que el seleccionado sea un relleno completo, como en el desplegable. -->
         <Border Grid.Column="0" CornerRadius="4" Background="{ThemeResource CardBackgroundBrush}">
             <ListView ItemsSource="{Binding Sections}"
                       SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
                       Background="Transparent" SelectionMode="Single">
+                <ListView.Resources>
+                    <SolidColorBrush x:Key="ListViewItemBackground" Color="Transparent"/>
+                    <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver" Color="{ThemeResource AccentLightColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemBackgroundPressed" Color="{ThemeResource AccentLightColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="{ThemeResource AccentColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="{ThemeResource AccentLightColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPressed" Color="{ThemeResource AccentLightColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemForeground" Color="{ThemeResource TextColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemForegroundPointerOver" Color="{ThemeResource TextColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemForegroundPressed" Color="{ThemeResource TextColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemForegroundSelected" Color="{ThemeResource TextColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemForegroundSelectedPointerOver" Color="{ThemeResource TextColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemForegroundSelectedPressed" Color="{ThemeResource TextColor}"/>
+                    <x:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">False</x:Boolean>
+                </ListView.Resources>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="2 1"/>
+                        <Setter Property="Padding" Value="10 6"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="CornerRadius" Value="4"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Title}" FontSize="15" Foreground="{ThemeResource TextBrush}" Padding="4 2"/>
+                        <TextBlock Text="{Binding Title}" FontSize="15"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

@@ -222,6 +222,9 @@ public static class LocKeys
     public const string ProductLog_Added_Progress = "ProductLog_Added_Progress";
     public const string ProductLog_AddedAndRead_Progress = "ProductLog_AddedAndRead_Progress";
     public const string ProductLog_AltLinkAdded_Progress = "ProductLog_AltLinkAdded_Progress";
+    public const string ProductLog_LinkDuplicate_Progress = "ProductLog_LinkDuplicate_Progress";
+    public const string ProductLog_LinkRemoved_Progress = "ProductLog_LinkRemoved_Progress";
+    public const string ProductLog_LinkRestored_Progress = "ProductLog_LinkRestored_Progress";
     public const string ProductLog_Refreshing_Progress = "ProductLog_Refreshing_Progress";
     public const string ProductLog_ReadingStore_Progress = "ProductLog_ReadingStore_Progress";
     public const string ProductLog_Refreshed_Progress = "ProductLog_Refreshed_Progress";
@@ -281,6 +284,9 @@ public static class LocKeys
     public const string PriceChart_AlertPrice_Placeholder = "PriceChart_AlertPrice_Placeholder";
     public const string PriceChart_DeleteDialog_Title = "PriceChart_DeleteDialog_Title";
     public const string PriceChart_DeleteDialog_Message = "PriceChart_DeleteDialog_Message";
+    public const string PriceChart_RemoveLink_Tooltip = "PriceChart_RemoveLink_Tooltip";
+    public const string PriceChart_RemoveLinkDialog_Title = "PriceChart_RemoveLinkDialog_Title";
+    public const string PriceChart_RemoveLinkDialog_Message = "PriceChart_RemoveLinkDialog_Message";
     public const string PriceChart_PurchasedDialog_Title = "PriceChart_PurchasedDialog_Title";
     public const string PriceChart_PurchasedDialog_Message = "PriceChart_PurchasedDialog_Message";
     public const string PriceChart_PurchasePrice_Placeholder = "PriceChart_PurchasePrice_Placeholder";

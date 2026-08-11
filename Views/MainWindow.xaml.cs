@@ -187,6 +187,10 @@ public sealed partial class MainWindow : Window
         await Task.Yield();
 
         await InitializeScraperAsync();
+
+        // TEMPORAL (pruebas de estilo del popup de settings): abre la ventana de ajustes al arrancar.
+        if (Content is FrameworkElement rootElement)
+            _ = App.GetService<DialogsService>().ShowSettingsAsync(rootElement.XamlRoot);
     }
 
     /// <summary>

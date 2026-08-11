@@ -5,6 +5,8 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using MM4LB.Controls.ViewModels;
 using MM4LB.Helpers;
 using MM4LB.Models;
@@ -102,6 +104,39 @@ public sealed partial class PriceChartControl : UserControl
         _syncingStoreSelection = true;
         StoresList.SelectedItem = match;
         _syncingStoreSelection = false;
+    }
+
+    /// <summary>
+    /// Captura la rueda del ratón sobre la lista de tiendas: la desplaza ella misma y marca el evento como tratado, para
+    /// que NO se propague y termine desplazando la lista de productos (o el contenedor que haya detrás).
+    /// </summary>
+    private void OnStoresListPointerWheel(object sender, PointerRoutedEventArgs e)
+    {
+        ScrollViewer? scroll = FindDescendantScrollViewer(StoresList);
+        if (scroll is not null)
+        {
+            int delta = e.GetCurrentPoint(StoresList).Properties.MouseWheelDelta;
+            scroll.ChangeView(null, scroll.VerticalOffset - delta, null);
+        }
+
+        e.Handled = true;
+    }
+
+    /// <summary>Primer <see cref="ScrollViewer"/> descendiente de <paramref name="root"/> (el interno de la lista), o null.</summary>
+    private static ScrollViewer? FindDescendantScrollViewer(DependencyObject root)
+    {
+        if (root is ScrollViewer scrollViewer)
+            return scrollViewer;
+
+        int count = VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < count; i++)
+        {
+            ScrollViewer? found = FindDescendantScrollViewer(VisualTreeHelper.GetChild(root, i));
+            if (found is not null)
+                return found;
+        }
+
+        return null;
     }
 
     /// <summary>El usuario seleccionó una tienda de la lista: abre ESA tienda en el navegador (si no está ya abierta).</summary>
@@ -233,6 +268,44 @@ public sealed partial class PriceChartControl : UserControl
 
         App.GetService<ProductService>().SetAlertPrice(product, newAlert);
         ViewModel?.RefreshAlertState();
+    }
+
+    /// <summary>
+    /// Elimina del producto el enlace ACTUAL (la tienda seleccionada en la lista, sincronizada con el navegador; si no
+    /// hay selección, la del mejor precio), previa confirmación. No aplica si solo queda un enlace.
+    /// </summary>
+    private async void OnRemoveLinkClick(object sender, RoutedEventArgs e)
+    {
+        Product? product = ViewModel?.Product;
+        if (product is null || XamlRoot is null || product.Stores.Count <= 1)
+            return;
+
+        ProductStore? store = ResolveCurrentStore(product);
+        if (store is null)
+            return;
+
+        bool confirmed = await App.GetService<DialogsService>().ConfirmAsync(
+            XamlRoot,
+            L(LocKeys.PriceChart_RemoveLinkDialog_Title),
+            string.Format(L(LocKeys.PriceChart_RemoveLinkDialog_Message), store.Label, product.Name),
+            L(LocKeys.Common_Delete_Label),
+            L(LocKeys.Common_Cancel_Label));
+
+        if (confirmed)
+            App.GetService<ProductService>().RemoveStore(product, store);
+    }
+
+    /// <summary>Enlace "actual": la tienda seleccionada en la lista (por URL); si no hay, la del mejor precio o la primera.</summary>
+    private ProductStore? ResolveCurrentStore(Product product)
+    {
+        if (StoresList.SelectedItem is StoreChip chip)
+        {
+            ProductStore? match = product.Stores.FirstOrDefault(store => string.Equals(store.Url, chip.Url, StringComparison.OrdinalIgnoreCase));
+            if (match is not null)
+                return match;
+        }
+
+        return product.BestStore ?? product.Stores.FirstOrDefault();
     }
 
     /// <summary>Alterna el favorito del producto mostrado (deshabilitado si ya hay el máximo de favoritos).</summary>

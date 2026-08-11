@@ -183,7 +183,7 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
             return product.BestPrice ?? 0m;
 
         decimal EffectiveOf(PricePoint point) => point.Price
-            + (includeShipping && product.Stores.FirstOrDefault(store => store.Label == point.StoreLabel)?.ShippingCost is decimal cost ? cost : 0m);
+            + (includeShipping && product.Stores.FirstOrDefault(store => store.Id == point.StoreId)?.ShippingCost is decimal cost ? cost : 0m);
 
         return product.PriceHistory.Min(EffectiveOf);
     }

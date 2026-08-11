@@ -342,7 +342,7 @@ public partial class Product : ObservableObject
 
         store.CurrentPrice = price;
         store.LastChecked = timestamp;
-        PriceHistory.Add(new PricePoint(timestamp, price, store.Label));
+        PriceHistory.Add(new PricePoint(timestamp, price, store.Label, store.Id));
         RaiseDerivedChanged();
         PriceRecorded?.Invoke(this, EventArgs.Empty);
     }
@@ -377,7 +377,7 @@ public partial class Product : ObservableObject
         if (!App.GetService<SharedDataService>().IncludeShippingInPrice)
             return point.Price;
 
-        decimal shipping = Stores.FirstOrDefault(store => store.Label == point.StoreLabel)?.ShippingCost ?? 0;
+        decimal shipping = Stores.FirstOrDefault(store => store.Id == point.StoreId)?.ShippingCost ?? 0;
         return point.Price + shipping;
     }
 
@@ -514,5 +514,8 @@ public partial class ProductStore : ObservableObject
 /// <summary>
 /// A single timestamped price observation for a product, tagged with the store it came from. The
 /// ordered list of these on <see cref="Product.PriceHistory"/> drives the price-evolution chart.
+/// <see cref="StoreId"/> es la IDENTIDAD de la tienda (clave de agrupación de series y de borrado): dos enlaces al
+/// mismo host comparten <see cref="StoreLabel"/> (etiqueta de display) pero tienen Id distinto, así que sus puntos NO
+/// se mezclan. <see cref="StoreLabel"/> se conserva solo para leyenda/tooltip.
 /// </summary>
-public record PricePoint(DateTime Timestamp, decimal Price, string StoreLabel);
+public record PricePoint(DateTime Timestamp, decimal Price, string StoreLabel, long StoreId = 0);

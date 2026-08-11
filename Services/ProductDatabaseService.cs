@@ -74,6 +74,7 @@ public sealed class ProductDatabaseService
                 IsPreorder   INTEGER NOT NULL DEFAULT 0,
                 PriceSelector TEXT   NULL,
                 ShippingCost TEXT    NULL,
+                Deleted      INTEGER NOT NULL DEFAULT 0,
                 FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
             );
 
@@ -102,6 +103,7 @@ public sealed class ProductDatabaseService
         EnsureColumn(connection, "ProductStores", "IsPreorder", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "ProductStores", "PriceSelector", "TEXT NULL");
         EnsureColumn(connection, "ProductStores", "ShippingCost", "TEXT NULL");
+        EnsureColumn(connection, "ProductStores", "Deleted", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "Purchased", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "PurchasePrice", "TEXT NULL");
         EnsureColumn(connection, "Products", "IsFavorite", "INTEGER NOT NULL DEFAULT 0");
@@ -163,7 +165,7 @@ public sealed class ProductDatabaseService
         // Stores
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo, PriceSelector, IsPreorder, ShippingCost FROM ProductStores ORDER BY Id;";
+            command.CommandText = "SELECT Id, ProductId, Url, Label, Currency, CurrentPrice, LastChecked, IsPrime, IsAvailable, HasPromo, PriceSelector, IsPreorder, ShippingCost FROM ProductStores WHERE Deleted = 0 ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -195,9 +197,10 @@ public sealed class ProductDatabaseService
         using (SqliteCommand command = connection.CreateCommand())
         {
             command.CommandText = @"
-                SELECT ps.ProductId, ps.Label, ph.Price, ph.Timestamp
+                SELECT ps.ProductId, ps.Label, ph.Price, ph.Timestamp, ph.ProductStoreId
                 FROM PriceHistory ph
                 JOIN ProductStores ps ON ps.Id = ph.ProductStoreId
+                WHERE ps.Deleted = 0
                 ORDER BY ph.Timestamp;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
@@ -209,7 +212,8 @@ public sealed class ProductDatabaseService
                 product.PriceHistory.Add(new PricePoint(
                     ParseTimestamp(reader.GetString(3)),
                     ParsePrice(reader.GetString(2)),
-                    reader.GetString(1)));
+                    reader.GetString(1),
+                    reader.GetInt64(4)));
             }
         }
     }
@@ -383,6 +387,23 @@ public sealed class ProductDatabaseService
         using SqliteCommand command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Products WHERE Id = $id;";
         command.Parameters.AddWithValue("$id", product.Id);
+        command.ExecuteNonQuery();
+    }
+
+    /// <summary>
+    /// Marca (o desmarca) una tienda como BORRADA sin eliminar la fila ni su histórico: así el borrado del enlace se
+    /// puede DESHACER desde el log. Las tiendas con <c>Deleted = 1</c> se excluyen de la carga (<see cref="LoadInto"/>).
+    /// </summary>
+    public void SetStoreDeleted(ProductStore store, bool deleted)
+    {
+        if (store is null || store.Id <= 0)
+            return;
+
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "UPDATE ProductStores SET Deleted = $deleted WHERE Id = $id;";
+        command.Parameters.AddWithValue("$deleted", deleted ? 1 : 0);
+        command.Parameters.AddWithValue("$id", store.Id);
         command.ExecuteNonQuery();
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.Options;
@@ -152,6 +153,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Se puede alternar el favorito: hay producto, NO está comprado, y o ya es favorito o no se alcanzó el máximo.</summary>
     public bool CanToggleFavorite { get; private set; }
 
+    /// <summary>Se puede eliminar el enlace actual: hay producto y tiene MÁS de una tienda (nunca se borra el último enlace).</summary>
+    public bool CanRemoveStore { get; private set; }
+
     /// <summary>Tipo de gráfica (enlazado TwoWay al <c>ChartTypeSelectorControl</c>); se persiste por widget/favorito.</summary>
     public ChartType SelectedChartType
     {
@@ -228,6 +232,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
     private void OnPriceRecorded(object? sender, EventArgs e) => Recompute();
 
+    /// <summary>Se añadió o eliminó una tienda del producto (p. ej. "eliminar enlace"): recalcula el strip de tiendas, la gráfica y los derivados.</summary>
+    private void OnStoresCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => Recompute();
+
     private void OnFavoritesChanged(object? sender, EventArgs e) => UpdateFavoriteState();
 
     /// <summary>
@@ -276,6 +283,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         {
             _product.PriceRecorded -= OnPriceRecorded;
             _product.PropertyChanged -= OnProductPropertyChanged;
+            _product.Stores.CollectionChanged -= OnStoresCollectionChanged;
         }
 
         _product = product;
@@ -284,6 +292,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         {
             _product.PriceRecorded += OnPriceRecorded;
             _product.PropertyChanged += OnProductPropertyChanged;
+            _product.Stores.CollectionChanged += OnStoresCollectionChanged;
         }
 
         Recompute();
@@ -328,22 +337,21 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             List<DateTime> rounds = history.Select(point => point.Timestamp).Distinct().OrderBy(t => t).ToList();
             Labels = rounds.Select(t => t.ToLocalTime().ToString("dd/MM HH:mm", CultureInfo.CurrentCulture)).ToList();
 
-            // Una serie por tienda que tenga al menos un precio, en el orden de las tiendas del producto.
-            List<string> storeLabels = product.Stores
-                .Select(store => store.Label)
-                .Where(label => history.Any(point => point.StoreLabel == label))
-                .Distinct()
+            // Una serie por TIENDA (identificada por Id, NO por etiqueta: dos enlaces al mismo host son series distintas)
+            // que tenga al menos un precio, en el orden de las tiendas del producto.
+            List<ProductStore> seriesStores = product.Stores
+                .Where(store => history.Any(point => point.StoreId == store.Id))
                 .ToList();
 
             // Si el ajuste incluye el envío, se suma el envío ACTUAL de cada tienda a toda su serie (aproximación del
             // histórico, que no guarda el envío de cada momento).
             bool includeShipping = SharedDataService.IncludeShippingInPrice;
-            SeriesNames = storeLabels;
-            SeriesValues = storeLabels
-                .Select(label =>
+            SeriesNames = seriesStores.Select(store => store.Label).ToList();
+            SeriesValues = seriesStores
+                .Select(store =>
                 {
-                    double shipping = includeShipping && product.Stores.FirstOrDefault(s => s.Label == label)?.ShippingCost is decimal cost ? (double)cost : 0;
-                    return (IReadOnlyList<double>)BuildStoreSeries(label, rounds, history, shipping);
+                    double shipping = includeShipping && store.ShippingCost is decimal cost ? (double)cost : 0;
+                    return (IReadOnlyList<double>)BuildStoreSeries(store.Id, rounds, history, shipping);
                 })
                 .ToList();
 
@@ -367,7 +375,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         if (product is not null && history is { Count: > 0 })
         {
             bool includeShippingLow = SharedDataService.IncludeShippingInPrice;
-            decimal EffectiveOf(PricePoint p) => p.Price + (includeShippingLow && product.Stores.FirstOrDefault(s => s.Label == p.StoreLabel)?.ShippingCost is decimal c ? c : 0);
+            decimal EffectiveOf(PricePoint p) => p.Price + (includeShippingLow && product.Stores.FirstOrDefault(s => s.Id == p.StoreId)?.ShippingCost is decimal c ? c : 0);
             PricePoint lowest = history.OrderBy(EffectiveOf).First();
             LowestPriceText = FormatPrice(EffectiveOf(lowest));
             LowestPriceStore = lowest.StoreLabel;
@@ -458,9 +466,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         int favoriteCount = SharedDataService.ProductSet.Products.Count(product => product.IsFavorite);
         // Un producto comprado no puede ser favorito: el botón se deshabilita.
         CanToggleFavorite = _product is not null && !_product.IsPurchased && (_product.IsFavorite || favoriteCount < ProductService.MaxFavorites);
+        CanRemoveStore = _product is not null && _product.Stores.Count > 1;
         OnPropertyChanged(nameof(IsFavorite));
         OnPropertyChanged(nameof(IsPurchased));
         OnPropertyChanged(nameof(CanToggleFavorite));
+        OnPropertyChanged(nameof(CanRemoveStore));
     }
 
     /// <summary>Formatea el precio de una tienda con su moneda ("39,99 €").</summary>
@@ -478,11 +488,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// y, si falta (fallo de lectura), arrastra el último conocido; las rondas anteriores a su primera lectura se
     /// rellenan con esa primera lectura (para no dibujar caídas a 0).
     /// </summary>
-    private static double[] BuildStoreSeries(string label, List<DateTime> rounds, List<PricePoint> history, double shippingOffset = 0)
+    private static double[] BuildStoreSeries(long storeId, List<DateTime> rounds, List<PricePoint> history, double shippingOffset = 0)
     {
         var byTimestamp = new Dictionary<DateTime, double>();
         foreach (PricePoint point in history)
-            if (point.StoreLabel == label)
+            if (point.StoreId == storeId)
                 byTimestamp[point.Timestamp] = (double)point.Price;
 
         double firstKnown = 0;
@@ -577,6 +587,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         {
             _product.PriceRecorded -= OnPriceRecorded;
             _product.PropertyChanged -= OnProductPropertyChanged;
+            _product.Stores.CollectionChanged -= OnStoresCollectionChanged;
         }
     }
 

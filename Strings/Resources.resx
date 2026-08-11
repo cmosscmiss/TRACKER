@@ -242,6 +242,15 @@
   <data name="ProductLog_AltLinkAdded_Progress" xml:space="preserve">
     <value>Alternative link added to: {0}</value>
   </data>
+  <data name="ProductLog_LinkDuplicate_Progress" xml:space="preserve">
+    <value>That link is already tracked for: {0}</value>
+  </data>
+  <data name="ProductLog_LinkRemoved_Progress" xml:space="preserve">
+    <value>Link "{0}" removed from: {1}</value>
+  </data>
+  <data name="ProductLog_LinkRestored_Progress" xml:space="preserve">
+    <value>Link "{0}" restored to: {1}</value>
+  </data>
   <data name="ProductLog_Refreshing_Progress" xml:space="preserve">
     <value>Reading prices for {0}…</value>
   </data>
@@ -412,6 +421,15 @@
   </data>
   <data name="PriceChart_DeleteDialog_Message" xml:space="preserve">
     <value>Delete "{0}" and its price history? This cannot be undone.</value>
+  </data>
+  <data name="PriceChart_RemoveLink_Tooltip" xml:space="preserve">
+    <value>Remove the current link (store) from this product</value>
+  </data>
+  <data name="PriceChart_RemoveLinkDialog_Title" xml:space="preserve">
+    <value>Remove link</value>
+  </data>
+  <data name="PriceChart_RemoveLinkDialog_Message" xml:space="preserve">
+    <value>Remove the "{0}" link from "{1}"? You can undo this from the activity log.</value>
   </data>
   <data name="PriceChart_PurchasedDialog_Title" xml:space="preserve">
     <value>Mark as purchased</value>

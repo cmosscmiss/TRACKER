@@ -36,8 +36,11 @@
         </FlipView>
 
         <!-- Selector de vista (puntitos): solo si hay más de una página (seleccionado + algún favorito). -->
+        <!-- MaxVisiblePips por defecto es 5: con 6+ páginas se limitaría a 5 pips (con desplazamiento). Se enlaza al
+             número de páginas para mostrarlas TODAS. -->
         <PipsPager Grid.Row="1" HorizontalAlignment="Center" Margin="0 4 0 8"
                    NumberOfPages="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}"
+                   MaxVisiblePips="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}"
                    SelectedPageIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                    Visibility="{x:Bind ViewModel.ShowPager, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
     </Grid>

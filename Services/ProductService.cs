@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -118,6 +119,13 @@ public sealed class ProductService
         if (!Uri.TryCreate(normalized, UriKind.Absolute, out Uri? uri) ||
             (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
             return null;
+
+        // Rechaza duplicados EXACTOS: ya existe un enlace con la misma URL en el producto (evita tiendas repetidas).
+        if (product.Stores.Any(existing => string.Equals(existing.Url, normalized, StringComparison.OrdinalIgnoreCase)))
+        {
+            _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_LinkDuplicate_Progress), product.Name));
+            return null;
+        }
 
         var store = new ProductStore(normalized, DeriveStoreLabel(uri));
         product.Stores.Add(store);
@@ -330,6 +338,50 @@ public sealed class ProductService
         RemoveFromListSelectingNext(product);
 
         _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Removed_Progress), product.Name));
+    }
+
+    /// <summary>
+    /// Elimina un enlace (tienda) del producto —de la BD (su histórico cascada), de memoria y del histórico en memoria—
+    /// y recalcula los derivados (mejor precio, etc.). No hace nada si es el ÚLTIMO enlace (un producto necesita al menos
+    /// uno) o si la tienda no pertenece al producto.
+    /// </summary>
+    public void RemoveStore(Product product, ProductStore store)
+    {
+        if (product is null || store is null || product.Stores.Count <= 1 || !product.Stores.Contains(store))
+            return;
+
+        // Captura para poder DESHACER desde el log: posición e histórico en memoria de esta tienda (por Id, no por
+        // etiqueta: dos enlaces al mismo host comparten etiqueta y no deben mezclarse).
+        int index = product.Stores.IndexOf(store);
+        List<PricePoint> removedHistory = product.PriceHistory.Where(point => point.StoreId == store.Id).ToList();
+
+        // Soft-delete: se marca en BD (no se borra la fila ni su histórico), así el borrado es reversible. Se limpia
+        // primero el histórico en memoria y luego se quita la tienda (dispara los recálculos con datos ya limpios).
+        _database.SetStoreDeleted(store, true);
+        product.PriceHistory.RemoveAll(point => point.StoreId == store.Id);
+        product.Stores.Remove(store);
+        product.NotifyPricingChanged();
+
+        ProgressNotifier entry = _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_LinkRemoved_Progress), store.Label, product.Name));
+        entry.UndoAction = () =>
+        {
+            RestoreStore(product, store, index, removedHistory);
+            return Task.CompletedTask;
+        };
+    }
+
+    /// <summary>Deshace la eliminación de un enlace (desde el log): lo desmarca en BD y lo restaura en memoria (posición e histórico).</summary>
+    private void RestoreStore(Product product, ProductStore store, int index, List<PricePoint> history)
+    {
+        if (product is null || store is null || product.Stores.Contains(store))
+            return;
+
+        _database.SetStoreDeleted(store, false);
+        product.PriceHistory.AddRange(history);
+        product.Stores.Insert(Math.Clamp(index, 0, product.Stores.Count), store);
+        product.NotifyPricingChanged();
+
+        _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_LinkRestored_Progress), store.Label, product.Name));
     }
 
     /// <summary>
