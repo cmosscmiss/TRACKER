@@ -65,6 +65,10 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        // Identidad de taskbar ESTABLE para una app unpackaged: agrupa la ventana con su pin de la barra de tareas y da
+        // atribución consistente a las notificaciones. Debe fijarse lo antes posible, antes de crear cualquier ventana.
+        TrySetAppUserModelId();
+
         // Instancia única: si ya hay otra copia de Tracker abierta, en vez de avisar y salir, se le pide que se traiga
         // al frente (como pulsar el icono de la bandeja) y esta segunda instancia termina. El mutex se crea con nombre
         // global-por-sesión ("Local\..."); createdNew es false si otra instancia ya lo tiene. Se comprueba antes de
@@ -388,4 +392,23 @@ public partial class App : Application
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool AllowSetForegroundWindow(int dwProcessId);
+
+    /// <summary>Identidad de taskbar/notificaciones de la app (estable y única entre versiones).</summary>
+    private const string AppUserModelId = "MM4LB.Tracker";
+
+    /// <summary>Fija el AppUserModelID del proceso (identidad de taskbar). No crítico: si falla, solo se pierde el agrupado/atribución consistentes.</summary>
+    private static void TrySetAppUserModelId()
+    {
+        try
+        {
+            SetCurrentProcessExplicitAppUserModelID(AppUserModelId);
+        }
+        catch
+        {
+            // Best-effort: no debe impedir el arranque.
+        }
+    }
+
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+    private static extern void SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string appID);
 }

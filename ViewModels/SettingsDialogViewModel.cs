@@ -80,6 +80,22 @@ public partial class SettingsDialogViewModel : ObservableObject
     /// <summary>Horas entre actualizaciones automáticas de precios (mínimo 1). Se aplica al planificador al aceptar.</summary>
     [ObservableProperty] private double autoRefreshHours;
 
+    /// <summary>
+    /// Horas como TEXTO, para poder usar un <c>TextBox</c> normal (mismo estilo que el resto de campos de texto) en vez de
+    /// un NumberBox. El getter formatea el valor actual; el setter parsea (ignora entradas no numéricas). El mínimo (1) lo
+    /// acota <see cref="Apply"/> al aceptar, así que aquí no se fuerza durante la edición (no molesta al teclear).
+    /// </summary>
+    public string AutoRefreshHoursText
+    {
+        get => ((int)Math.Round(AutoRefreshHours)).ToString(CultureInfo.CurrentCulture);
+        set
+        {
+            if (int.TryParse(value, NumberStyles.Integer, CultureInfo.CurrentCulture, out int hours) ||
+                int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out hours))
+                AutoRefreshHours = hours;
+        }
+    }
+
     /// <summary>Idiomas disponibles para el combo (código + nombre). Vienen del <see cref="LocalizationService"/>.</summary>
     public IReadOnlyList<LocalizationService.LanguageOption> LanguageOptions { get; }
 

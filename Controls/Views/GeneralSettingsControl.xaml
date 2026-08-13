@@ -27,9 +27,8 @@
         <!-- Intervalo de actualización automática de precios (horas). -->
         <Grid ColumnDefinitions="240,*">
             <TextBlock Text="{loc:Str Key=GeneralSettings_AutoRefreshHours_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <NumberBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left"
-                       SpinButtonPlacementMode="Hidden"
-                       Value="{Binding AutoRefreshHours, Mode=TwoWay}"/>
+            <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number"
+                     Text="{Binding AutoRefreshHoursText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
         <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
