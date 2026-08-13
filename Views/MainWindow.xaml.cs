@@ -320,6 +320,10 @@ public sealed partial class MainWindow : Window
 
     private void OnClosed(object sender, WindowEventArgs e)
     {
+        // PRIMERO se quita el icono de la bandeja (NIM_DELETE): así se ejecuta SIEMPRE, aunque el guardado de abajo
+        // lance al cerrar. Si no, el icono quedaría huérfano en la bandeja hasta que el shell lo revalide (al pasar el ratón).
+        _trayIcon.Dispose();
+
         var placement = _windowService.GetWindowPlacement(this);
 
         _viewModel.SaveWindowPlacement(placement);
@@ -334,7 +338,6 @@ public sealed partial class MainWindow : Window
         _nextUpdateTimer?.Stop();
 
         DisposeToolbarBehavior();
-        _trayIcon.Dispose();
 
         _viewModel.Dispose();
     }

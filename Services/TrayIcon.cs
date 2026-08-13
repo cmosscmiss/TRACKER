@@ -59,7 +59,13 @@ public sealed class TrayIcon : IDisposable
         _subclassProc = SubclassProc;
         SetWindowSubclass(_hwnd, _subclassProc, IntPtr.Zero, IntPtr.Zero);
         AddIcon(tooltip);
+
+        // Backstop: si el proceso termina sin pasar por Dispose (cierre abrupto), se quita igualmente el icono para que
+        // no quede huérfano en la bandeja.
+        AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
     }
+
+    private void OnProcessExit(object? sender, EventArgs e) => Dispose();
 
     /// <summary>Restaura y trae al frente la ventana (equivale a pulsar el icono de la bandeja). Para activarla desde otra instancia.</summary>
     public void Restore() => RestoreFromTray();
@@ -88,6 +94,8 @@ public sealed class TrayIcon : IDisposable
         if (_disposed)
             return;
         _disposed = true;
+
+        AppDomain.CurrentDomain.ProcessExit -= OnProcessExit;
 
         if (_iconAdded)
         {
