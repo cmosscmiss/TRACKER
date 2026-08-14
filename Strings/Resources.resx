@@ -59,10 +59,10 @@
     <value>No sort</value>
   </data>
   <data name="ChartType_SortAsc_Label" xml:space="preserve">
-    <value>Asc â†‘</value>
+    <value>Ascending</value>
   </data>
   <data name="ChartType_SortDesc_Label" xml:space="preserve">
-    <value>Desc â†“</value>
+    <value>Descending</value>
   </data>
   <!-- ImageAudit (MEDIA AUDIT) -->
   <!-- Common (mÃ¡s): campos y acciones genÃ©ricas -->
@@ -120,7 +120,7 @@
     <value>Track a product</value>
   </data>
   <data name="AddProduct_Dialog_Message" xml:space="preserve">
-    <value>Paste the product URL (Amazon or another store):</value>
+    <value>Paste the product URL</value>
   </data>
   <data name="AddProduct_Url_Placeholder" xml:space="preserve">
     <value>https://www.amazon.es/...</value>
@@ -137,23 +137,14 @@
   <data name="Common_Cancel_Label" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="ThemeColors_Open" xml:space="preserve">
-    <value>Theme colors (test)</value>
-  </data>
   <data name="ThemeColors_Title" xml:space="preserve">
-    <value>Theme colors</value>
-  </data>
-  <data name="ThemeColors_ColorHeader" xml:space="preserve">
-    <value>Theme color</value>
+    <value>Theme colours</value>
   </data>
   <data name="ThemeColors_Revert" xml:space="preserve">
     <value>Revert</value>
   </data>
   <data name="ThemeColors_Swatches" xml:space="preserve">
     <value>Swatches (base + opacity)</value>
-  </data>
-  <data name="ThemeColors_Close" xml:space="preserve">
-    <value>Close</value>
   </data>
   <data name="ThemeColors_Name_Accent" xml:space="preserve">
     <value>Accent</value>
@@ -216,16 +207,16 @@
     <value>Amazon marketplace</value>
   </data>
   <data name="WebView_AddProduct_Tooltip" xml:space="preserve">
-    <value>Add this page as a new tracked product</value>
+    <value>Add product</value>
   </data>
   <data name="WebView_PickPrice_Tooltip" xml:space="preserve">
-    <value>Pick the price element on this page (for non-Amazon stores)</value>
+    <value>Pick product price</value>
   </data>
   <data name="WebView_PickImage_Tooltip" xml:space="preserve">
-    <value>Pick the product image on this page (for non-Amazon stores)</value>
+    <value>Pick product image</value>
   </data>
   <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
-    <value>Add this page as an alternative link of the selected product</value>
+    <value>Add alternative link to selected product</value>
   </data>
   <data name="PriceChart_CurrentPrice_Label" xml:space="preserve">
     <value>Current</value>
@@ -279,7 +270,7 @@
     <value>Promo</value>
   </data>
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
-    <value>Refresh all prices now</value>
+    <value>Refresh all prices</value>
   </data>
   <data name="Footer_RefreshAll_LastUpdate_Format" xml:space="preserve">
     <value>Last refresh: {0}</value>
@@ -288,10 +279,10 @@
     <value>Last refresh: never</value>
   </data>
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
-    <value>Show/hide chart axis labels (update dates)</value>
+    <value>Toggle chart axis labels visibility</value>
   </data>
   <data name="Footer_MinChart_Tooltip" xml:space="preserve">
-    <value>Show the lowest-price evolution chart for all products</value>
+    <value>Toggle lowest price evolution chart</value>
   </data>
   <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
     <value>Show/hide button tooltips</value>
@@ -324,7 +315,7 @@
     <value>Open</value>
   </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
-    <value>Time until the next automatic price update</value>
+    <value>Next automatic price update</value>
   </data>
   <data name="PriceChart_Delete_Tooltip" xml:space="preserve">
     <value>Delete product</value>
@@ -336,16 +327,16 @@
     <value>Purchased</value>
   </data>
   <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
-    <value>Refresh this product now</value>
+    <value>Refresh product prices</value>
   </data>
   <data name="PriceChart_Edit_Tooltip" xml:space="preserve">
     <value>Edit product title</value>
   </data>
   <data name="PriceChart_Search_Tooltip" xml:space="preserve">
-    <value>Search this title on the selected Amazon store</value>
+    <value>Search on the selected Amazon store</value>
   </data>
   <data name="PriceChart_Shipping_Tooltip" xml:space="preserve">
-    <value>Estimated shipping cost (not included in the price)</value>
+    <value>Shipping costs</value>
   </data>
   <data name="PriceChart_EditDialog_Title" xml:space="preserve">
     <value>Edit title</value>
@@ -375,7 +366,7 @@
     <value>Filters</value>
   </data>
   <data name="ProductList_FilterFavorites_Label" xml:space="preserve">
-    <value>Favorites</value>
+    <value>Favourites</value>
   </data>
   <data name="ProductList_FilterIssues_Label" xml:space="preserve">
     <value>With warnings</value>
@@ -420,10 +411,10 @@
     <value>Delete product</value>
   </data>
   <data name="PriceChart_DeleteDialog_Message" xml:space="preserve">
-    <value>Delete "{0}" and its price history? This cannot be undone.</value>
+    <value>Delete "{0}" and its price history? This can be undone via the log entry.</value>
   </data>
   <data name="PriceChart_RemoveLink_Tooltip" xml:space="preserve">
-    <value>Remove the current link (store) from this product</value>
+    <value>Remove link</value>
   </data>
   <data name="PriceChart_RemoveLinkDialog_Title" xml:space="preserve">
     <value>Remove link</value>
@@ -435,13 +426,13 @@
     <value>Mark as purchased</value>
   </data>
   <data name="PriceChart_PurchasedDialog_Message" xml:space="preserve">
-    <value>Enter the purchase price for "{0}". It will no longer appear in the list.</value>
+    <value>Enter the purchase price for "{0}". The product will be marked as purchased.</value>
   </data>
   <data name="PriceChart_PurchasePrice_Placeholder" xml:space="preserve">
     <value>Purchase price</value>
   </data>
   <data name="PriceChart_Purchased_Confirm_Label" xml:space="preserve">
-    <value>Mark purchased</value>
+    <value>Mark as purchased</value>
   </data>
   <data name="Common_Delete_Label" xml:space="preserve">
     <value>Delete</value>
@@ -450,7 +441,7 @@
     <value>Product marked as purchased: {0}</value>
   </data>
   <data name="ProductLog_Unpurchased_Progress" xml:space="preserve">
-    <value>{0} is no longer purchased</value>
+    <value>{0} marked as not purchased</value>
   </data>
   <data name="ProductLog_Removed_Progress" xml:space="preserve">
     <value>Product removed: {0}</value>
@@ -462,7 +453,7 @@
     <value>Templates</value>
   </data>
   <data name="Toolbar_SaveTemplate_Tooltip" xml:space="preserve">
-    <value>Save current layout as a template</value>
+    <value>Save layout as template</value>
   </data>
   <data name="DialogsService_SaveTemplate_Title" xml:space="preserve">
     <value>Save template</value>
@@ -528,7 +519,7 @@
     <value>Pick a random theme on each launch</value>
   </data>
   <data name="ThemeSettings_BackgroundOverlay_Header" xml:space="preserve">
-    <value>BACKGROUND OVERLAY (MAIN WINDOW)</value>
+    <value>Background Overlay</value>
   </data>
   <data name="ThemeSettings_TintOpacity_Label" xml:space="preserve">
     <value>Tint opacity</value>
@@ -546,10 +537,10 @@
     <value>Overlay opacity</value>
   </data>
   <data name="ThemeSettings_UseCustomColors_Label" xml:space="preserve">
-    <value>Use custom colors</value>
+    <value>Use custom colours</value>
   </data>
   <data name="ThemeSettings_EditColors_Label" xml:space="preserve">
-    <value>Edit colors…</value>
+    <value>Custom colours...</value>
   </data>
   <data name="AboutSettings_Tagline_Text" xml:space="preserve">
     <value>Amazon price tracker</value>
@@ -558,7 +549,7 @@
     <value>Tracker monitors the prices of your Amazon products across marketplaces, charts their history and highlights the best deals.</value>
   </data>
   <data name="AboutSettings_Details_Header" xml:space="preserve">
-    <value>DETAILS</value>
+    <value>Details</value>
   </data>
   <data name="AboutSettings_Build_Label" xml:space="preserve">
     <value>Build</value>
@@ -570,10 +561,10 @@
     <value>Architecture</value>
   </data>
   <data name="AboutSettings_ThirdParty_Header" xml:space="preserve">
-    <value>THIRD-PARTY COMPONENTS</value>
+    <value>Third-party components</value>
   </data>
   <data name="AboutSettings_AccentNote_Text" xml:space="preserve">
-    <value>The accent color comes from the active theme.</value>
+    <value>The accent colour comes from the active theme.</value>
   </data>
   <data name="AboutSettings_Copyright_Text" xml:space="preserve">
     <value>Built with WinUI 3 and the Windows App SDK.</value>

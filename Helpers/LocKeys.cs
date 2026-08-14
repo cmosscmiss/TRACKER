@@ -120,13 +120,10 @@ public static class LocKeys
     public const string Common_Add_Label = "Common_Add_Label";
     public const string Common_Cancel_Label = "Common_Cancel_Label";
 
-    // Editor de colores del tema (control de prueba).
-    public const string ThemeColors_Open = "ThemeColors_Open";
+    // Editor de colores del tema.
     public const string ThemeColors_Title = "ThemeColors_Title";
-    public const string ThemeColors_ColorHeader = "ThemeColors_ColorHeader";
     public const string ThemeColors_Revert = "ThemeColors_Revert";
     public const string ThemeColors_Swatches = "ThemeColors_Swatches";
-    public const string ThemeColors_Close = "ThemeColors_Close";
     // Nombres (genéricos) de cada color; el control resuelve la clave como "ThemeColors_Name_" + nombre base.
     public const string ThemeColors_Name_Accent = "ThemeColors_Name_Accent";
     public const string ThemeColors_Name_AccentLight = "ThemeColors_Name_AccentLight";

@@ -36,10 +36,10 @@
     <value>Barras H</value>
   </data>
   <data name="ChartType_Line_Label" xml:space="preserve">
-    <value>LÃ­nea</value>
+    <value>Línea</value>
   </data>
   <data name="ChartType_Area_Label" xml:space="preserve">
-    <value>Ãrea</value>
+    <value>Área</value>
   </data>
   <data name="ChartType_Pie_Label" xml:space="preserve">
     <value>Circular</value>
@@ -54,10 +54,10 @@
     <value>Sin orden</value>
   </data>
   <data name="ChartType_SortAsc_Label" xml:space="preserve">
-    <value>Asc â†‘</value>
+    <value>Ascendente</value>
   </data>
   <data name="ChartType_SortDesc_Label" xml:space="preserve">
-    <value>Desc â†“</value>
+    <value>Descendente</value>
   </data>
   <!-- ImageAudit (MEDIA AUDIT) -->
   <!-- Common (mÃ¡s) -->
@@ -78,7 +78,7 @@
     <value>REGISTRO DE ACTIVIDAD</value>
   </data>
   <data name="MainWindow_WebSearchWidget_Title" xml:space="preserve">
-    <value>BÃšSQUEDA WEB</value>
+    <value>BÚSQUEDA WEB</value>
   </data>
   <!-- Common (mÃ¡s): botones de diÃ¡logo -->
   <!-- DialogsService -->
@@ -100,10 +100,10 @@
     <value>WIDGETS</value>
   </data>
   <data name="QuickSettings_CornerRadius_Label" xml:space="preserve">
-    <value>Radio de esquina</value>
+    <value>Redondeo de bordes</value>
   </data>
   <data name="QuickSettings_Gap_Label" xml:space="preserve">
-    <value>SeparaciÃ³n</value>
+    <value>Separación</value>
   </data>
   <data name="QuickSettings_PanelMargin_Label" xml:space="preserve">
     <value>Margen del panel</value>
@@ -115,7 +115,7 @@
     <value>Rastrear un producto</value>
   </data>
   <data name="AddProduct_Dialog_Message" xml:space="preserve">
-    <value>Pega la URL del producto (Amazon u otra tienda):</value>
+    <value>Pega la URL del producto</value>
   </data>
   <data name="AddProduct_Url_Placeholder" xml:space="preserve">
     <value>https://www.amazon.es/...</value>
@@ -132,23 +132,14 @@
   <data name="Common_Cancel_Label" xml:space="preserve">
     <value>Cancelar</value>
   </data>
-  <data name="ThemeColors_Open" xml:space="preserve">
-    <value>Colores del tema (test)</value>
-  </data>
   <data name="ThemeColors_Title" xml:space="preserve">
     <value>Colores del tema</value>
-  </data>
-  <data name="ThemeColors_ColorHeader" xml:space="preserve">
-    <value>Color del tema</value>
   </data>
   <data name="ThemeColors_Revert" xml:space="preserve">
     <value>Revertir</value>
   </data>
   <data name="ThemeColors_Swatches" xml:space="preserve">
     <value>Muestras (base + opacidades)</value>
-  </data>
-  <data name="ThemeColors_Close" xml:space="preserve">
-    <value>Cerrar</value>
   </data>
   <data name="ThemeColors_Name_Accent" xml:space="preserve">
     <value>Acento</value>
@@ -211,16 +202,16 @@
     <value>Marketplace de Amazon</value>
   </data>
   <data name="WebView_AddProduct_Tooltip" xml:space="preserve">
-    <value>Añadir esta página como nuevo producto rastreado</value>
+    <value>Añadir producto</value>
   </data>
   <data name="WebView_PickPrice_Tooltip" xml:space="preserve">
-    <value>Seleccionar el elemento del precio en esta página (para tiendas no-Amazon)</value>
+    <value>Seleccionar el precio del producto</value>
   </data>
   <data name="WebView_PickImage_Tooltip" xml:space="preserve">
-    <value>Seleccionar la imagen del producto en esta página (para tiendas no-Amazon)</value>
+    <value>Seleccionar la imagen del producto</value>
   </data>
   <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
-    <value>Añadir esta página como link alternativo del producto seleccionado</value>
+    <value>Añadir enlace alternativo al producto seleccionado</value>
   </data>
   <data name="PriceChart_CurrentPrice_Label" xml:space="preserve">
     <value>Actual</value>
@@ -274,7 +265,7 @@
     <value>Promo</value>
   </data>
   <data name="Footer_RefreshAll_Tooltip" xml:space="preserve">
-    <value>Refrescar todos los precios ahora</value>
+    <value>Refrescar todos los precios</value>
   </data>
   <data name="Footer_RefreshAll_LastUpdate_Format" xml:space="preserve">
     <value>Último refresco: {0}</value>
@@ -283,10 +274,10 @@
     <value>Último refresco: nunca</value>
   </data>
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
-    <value>Mostrar/ocultar etiquetas del eje (fechas de actualización)</value>
+    <value>Mostrar u ocultar las etiquetas de los ejes</value>
   </data>
   <data name="Footer_MinChart_Tooltip" xml:space="preserve">
-    <value>Mostrar la gráfica de evolución del precio mínimo en todos los productos</value>
+    <value>Mostrar u ocultar la gráfica de evolución del precio mínimo</value>
   </data>
   <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
     <value>Mostrar/ocultar los tooltips de los botones</value>
@@ -319,7 +310,7 @@
     <value>Abrir</value>
   </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
-    <value>Tiempo hasta la siguiente actualización automática de precios</value>
+    <value>Siguiente actualización automática de precios</value>
   </data>
   <data name="PriceChart_Delete_Tooltip" xml:space="preserve">
     <value>Borrar producto</value>
@@ -331,16 +322,16 @@
     <value>Comprado</value>
   </data>
   <data name="PriceChart_Refresh_Tooltip" xml:space="preserve">
-    <value>Refrescar este producto ahora</value>
+    <value>Refrescar los precios del producto</value>
   </data>
   <data name="PriceChart_Edit_Tooltip" xml:space="preserve">
     <value>Editar el título del producto</value>
   </data>
   <data name="PriceChart_Search_Tooltip" xml:space="preserve">
-    <value>Buscar este título en la tienda de Amazon seleccionada</value>
+    <value>Buscar en la tienda de Amazon seleccionada</value>
   </data>
   <data name="PriceChart_Shipping_Tooltip" xml:space="preserve">
-    <value>Gastos de envío estimados (no incluidos en el precio)</value>
+    <value>Gastos de envío</value>
   </data>
   <data name="PriceChart_EditDialog_Title" xml:space="preserve">
     <value>Editar título</value>
@@ -415,10 +406,10 @@
     <value>Borrar producto</value>
   </data>
   <data name="PriceChart_DeleteDialog_Message" xml:space="preserve">
-    <value>¿Borrar "{0}" y su histórico de precios? No se puede deshacer.</value>
+    <value>¿Borrar "{0}" y su histórico de precios? Puedes deshacerlo desde el registro de actividad.</value>
   </data>
   <data name="PriceChart_RemoveLink_Tooltip" xml:space="preserve">
-    <value>Eliminar el enlace actual (tienda) de este producto</value>
+    <value>Eliminar enlace</value>
   </data>
   <data name="PriceChart_RemoveLinkDialog_Title" xml:space="preserve">
     <value>Eliminar enlace</value>
@@ -430,13 +421,13 @@
     <value>Marcar como comprado</value>
   </data>
   <data name="PriceChart_PurchasedDialog_Message" xml:space="preserve">
-    <value>Introduce el precio de compra de "{0}". Dejará de aparecer en la lista.</value>
+    <value>Introduce el precio de compra de "{0}". El producto se marcará como comprado.</value>
   </data>
   <data name="PriceChart_PurchasePrice_Placeholder" xml:space="preserve">
     <value>Precio de compra</value>
   </data>
   <data name="PriceChart_Purchased_Confirm_Label" xml:space="preserve">
-    <value>Marcar comprado</value>
+    <value>Marcar como comprado</value>
   </data>
   <data name="Common_Delete_Label" xml:space="preserve">
     <value>Borrar</value>
@@ -445,7 +436,7 @@
     <value>Producto marcado como comprado: {0}</value>
   </data>
   <data name="ProductLog_Unpurchased_Progress" xml:space="preserve">
-    <value>{0} ya no está comprado</value>
+    <value>{0} marcado como no comprado</value>
   </data>
   <data name="ProductLog_Removed_Progress" xml:space="preserve">
     <value>Producto borrado: {0}</value>
@@ -457,7 +448,7 @@
     <value>Plantillas</value>
   </data>
   <data name="Toolbar_SaveTemplate_Tooltip" xml:space="preserve">
-    <value>Guardar la disposición actual como plantilla</value>
+    <value>Guardar la disposición como plantilla</value>
   </data>
   <data name="DialogsService_SaveTemplate_Title" xml:space="preserve">
     <value>Guardar plantilla</value>
@@ -523,7 +514,7 @@
     <value>Elegir un tema al azar en cada arranque</value>
   </data>
   <data name="ThemeSettings_BackgroundOverlay_Header" xml:space="preserve">
-    <value>OVERLAY DEL FONDO (VENTANA PRINCIPAL)</value>
+    <value>Overlay del fondo</value>
   </data>
   <data name="ThemeSettings_TintOpacity_Label" xml:space="preserve">
     <value>Opacidad del tinte</value>
@@ -544,7 +535,7 @@
     <value>Usar colores personalizados</value>
   </data>
   <data name="ThemeSettings_EditColors_Label" xml:space="preserve">
-    <value>Editar colores…</value>
+    <value>Colores personalizados...</value>
   </data>
   <data name="AboutSettings_Tagline_Text" xml:space="preserve">
     <value>Rastreador de precios de Amazon</value>
@@ -553,7 +544,7 @@
     <value>Tracker monitoriza los precios de tus productos de Amazon en varios marketplaces, dibuja su histórico y destaca las mejores ofertas.</value>
   </data>
   <data name="AboutSettings_Details_Header" xml:space="preserve">
-    <value>DETALLES</value>
+    <value>Detalles</value>
   </data>
   <data name="AboutSettings_Build_Label" xml:space="preserve">
     <value>Compilación</value>
@@ -565,7 +556,7 @@
     <value>Arquitectura</value>
   </data>
   <data name="AboutSettings_ThirdParty_Header" xml:space="preserve">
-    <value>COMPONENTES DE TERCEROS</value>
+    <value>Componentes de terceros</value>
   </data>
   <data name="AboutSettings_AccentNote_Text" xml:space="preserve">
     <value>El color de acento proviene del tema activo.</value>
