@@ -190,6 +190,10 @@ public partial class Product : ObservableObject
             decimal bestEffective = 0;
             foreach (ProductStore store in Stores)
             {
+                // Una tienda SIN STOCK no ofrece precio real: se ignora para el mejor precio (aunque conserve su último
+                // precio conocido), igual que se ignora en la tendencia y el mínimo histórico.
+                if (!store.IsAvailable)
+                    continue;
                 if (store.EffectivePrice is not decimal effective)
                     continue;
                 if ((store.Currency ?? string.Empty) != referenceCurrency)
@@ -266,7 +270,7 @@ public partial class Product : ObservableObject
             if (PriceHistory.Count == 0)
                 return PriceTrend.Unknown;
 
-            var rounds = PriceHistory
+            var rounds = AvailableHistory()
                 .GroupBy(point => point.Timestamp)
                 .OrderBy(group => group.Key)
                 .Select(group => (Time: group.Key, Min: group.Min(point => EffectiveHistoricalPrice(point))))
@@ -293,12 +297,21 @@ public partial class Product : ObservableObject
     {
         get
         {
-            if (BestPrice is not decimal best || PriceHistory.Count == 0)
+            var available = AvailableHistory().ToList();
+            if (BestPrice is not decimal best || available.Count == 0)
                 return false;
 
-            return best <= PriceHistory.Min(point => EffectiveHistoricalPrice(point));
+            return best <= available.Min(point => EffectiveHistoricalPrice(point));
         }
     }
+
+    /// <summary>
+    /// Puntos del histórico cuya tienda sigue DISPONIBLE ahora mismo. Excluye las tiendas sin stock para que su
+    /// desaparición (o reaparición) no distorsione la tendencia ni el mínimo histórico: que una tienda se agote no debe
+    /// contar como una subida de precio. (Los puntos cuya tienda ya no existe tampoco cuentan.)
+    /// </summary>
+    private IEnumerable<PricePoint> AvailableHistory()
+        => PriceHistory.Where(point => Stores.FirstOrDefault(store => store.Id == point.StoreId)?.IsAvailable == true);
 
     /// <summary>
     /// Resaltado del recuadro de precio en la lista: bajada/subida tienen prioridad (verde/rojo); si no hay cambio
