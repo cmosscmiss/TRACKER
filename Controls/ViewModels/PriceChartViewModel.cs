@@ -96,10 +96,16 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Hay un producto seleccionado (para mostrar/ocultar la cabecera).</summary>
     public bool HasProduct { get; private set; }
 
-    /// <summary>Precio actual (mejor precio) formateado, o "—".</summary>
+    /// <summary>
+    /// Etiqueta de la tarjeta de precio de la izquierda: "Precio actual" normalmente, o "Precio de compra" si el
+    /// producto está comprado (en cuyo caso la tarjeta muestra el precio de compra en vez del mejor precio actual).
+    /// </summary>
+    public string CurrentPriceLabel { get; private set; } = string.Empty;
+
+    /// <summary>Precio de la tarjeta izquierda: mejor precio actual, o el precio de COMPRA si el producto está comprado. "—" si no hay.</summary>
     public string CurrentPriceText { get; private set; } = "—";
 
-    /// <summary>Tienda del mejor precio actual (para la descripción de la tarjeta), o vacío.</summary>
+    /// <summary>Tienda del mejor precio actual (descripción de la tarjeta); vacío si el producto está comprado.</summary>
     public string CurrentPriceStore { get; private set; } = string.Empty;
 
     /// <summary>Precio más bajo del histórico formateado, o "—".</summary>
@@ -313,8 +319,30 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         }
         else if (e.PropertyName == nameof(Product.IsPurchased))
         {
-            UpdateFavoriteState();   // refresca IsPurchased (pill), y CanToggleFavorite
+            UpdateFavoriteState();     // refresca IsPurchased (pill), y CanToggleFavorite
+            UpdateCurrentPriceCard();  // "Precio actual" <-> "Precio de compra"
         }
+    }
+
+    /// <summary>
+    /// Actualiza la tarjeta de precio izquierda según el estado de compra: si el producto está COMPRADO muestra
+    /// "Precio de compra" + el precio de compra (sin tienda); si no, "Precio actual" + el mejor precio y su tienda.
+    /// </summary>
+    private void UpdateCurrentPriceCard()
+    {
+        Product? product = _product;
+        bool purchased = product?.IsPurchased ?? false;
+
+        CurrentPriceLabel = L(purchased ? LocKeys.PriceChart_PurchasedPrice_Label : LocKeys.PriceChart_CurrentPrice_Label);
+        CurrentPriceText = FormatPrice(purchased ? product?.PurchasePrice : product?.BestPrice);
+        // Descripción: si está comprado, la FECHA de compra (local, formato corto); si no, la tienda del mejor precio.
+        CurrentPriceStore = purchased
+            ? (product?.PurchasedAt is DateTime at ? at.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : string.Empty)
+            : (product?.BestStore?.Label ?? string.Empty);
+
+        OnPropertyChanged(nameof(CurrentPriceLabel));
+        OnPropertyChanged(nameof(CurrentPriceText));
+        OnPropertyChanged(nameof(CurrentPriceStore));
     }
 
     private void Recompute()
@@ -368,8 +396,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         Image = BuildImage(product?.ImageUrl);
 
         ProductStore? bestStore = product?.BestStore;
-        CurrentPriceText = FormatPrice(product?.BestPrice);
-        CurrentPriceStore = bestStore?.Label ?? string.Empty;
+        UpdateCurrentPriceCard();
 
         // Precio más bajo del histórico, por precio EFECTIVO (suma el envío actual de la tienda si el ajuste lo incluye).
         if (product is not null && history is { Count: > 0 })

@@ -215,7 +215,7 @@
             </Grid.ColumnDefinitions>
             <uc:WidgetStatCardControl Grid.Column="0" VisualStyle="IconBoxSoftNeon" ColorVariant="ThemeAccent"
                                       Glyph="&#xE8EC;"
-                                      Label="{loc:Str Key=PriceChart_CurrentPrice_Label}"
+                                      Label="{x:Bind ViewModel.CurrentPriceLabel, Mode=OneWay}"
                                       Value="{x:Bind ViewModel.CurrentPriceText, Mode=OneWay}"
                                       Description="{x:Bind ViewModel.CurrentPriceStore, Mode=OneWay}"/>
             <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="IconBoxSoftNeon" ColorVariant="AccentLight"

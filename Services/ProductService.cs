@@ -402,9 +402,13 @@ public sealed class ProductService
             favoriteCleared = true;
         }
 
+        // Fecha (UTC) de la compra: se sella al marcar y se borra al revertir. Se fija ANTES de IsPurchased para que los
+        // observadores (p. ej. la tarjeta del widget) ya la vean al reaccionar al cambio de estado.
+        DateTime? purchasedAt = purchased ? DateTime.UtcNow : null;
         product.PurchasePrice = purchased ? purchasePrice : null;
+        product.PurchasedAt = purchasedAt;
         product.IsPurchased = purchased;
-        _database.SetPurchased(product, purchased, purchasePrice);
+        _database.SetPurchased(product, purchased, purchasePrice, purchasedAt);
 
         if (favoriteCleared)
             _sharedDataService.NotifyFavoritesChanged();

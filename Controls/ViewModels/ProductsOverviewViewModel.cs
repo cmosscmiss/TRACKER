@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using MM4LB.Enums;
@@ -21,10 +23,19 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     #region Attributes
     private readonly List<Product> _subscribed = new();
 
+    /// <summary>Productos realmente representados en la gráfica (los de la lista filtrada CON precio &gt; 0), en su orden. Mapea el clic/resaltado.</summary>
+    private List<Product> _shownProducts = new();
+
+    /// <summary>Lista de productos FILTRADA de la lista principal: la gráfica muestra solo lo que se ve en la lista (respeta sus filtros/orden).</summary>
+    private readonly ProductListViewModel _productList;
+
     private ChartType _selectedChartType = ChartType.Column;
     private SortMode _sortOrder = SortMode.None;
     private int _topN;
     #endregion
+
+    /// <summary>Fuente de productos de la gráfica: la colección FILTRADA de la lista de productos (no todos los productos).</summary>
+    private ObservableCollection<Product> Source => _productList.FilteredProducts;
 
     #region Properties
     /// <summary>Mejor precio actual de cada producto (eje Y), en el orden de la lista.</summary>
@@ -76,15 +87,18 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     #endregion
 
     #region Constructor
-    public ProductsOverviewViewModel(SharedDataService sharedDataService, IOptions<AppSettings> appSettings)
+    public ProductsOverviewViewModel(SharedDataService sharedDataService, IOptions<AppSettings> appSettings, ProductListViewModel productListViewModel)
         : base(sharedDataService, appSettings)
     {
+        _productList = productListViewModel;
+
         // Config de gráfica persistida (el .ini ya está restaurado en este punto).
         _selectedChartType = _appSettings.ProductsOverviewControl.ChartType;
         _sortOrder = _appSettings.ProductsOverviewControl.SortOrder;
         _topN = _appSettings.ProductsOverviewControl.TopN;
 
-        SharedDataService.ProductSet.Products.CollectionChanged += OnProductsChanged;
+        // La gráfica sigue a la lista FILTRADA: al cambiar los filtros/orden (añadir, quitar, reordenar) se recalcula.
+        Source.CollectionChanged += OnProductsChanged;
         SharedDataService.SelectedProductChanged += OnSelectedProductChanged;
         SharedDataService.PropertyChanged += OnSharedDataChanged;
 
@@ -106,7 +120,12 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(HighlightIndex));
     }
 
-    private void OnProductPriceRecorded(object? sender, EventArgs e) => Recompute();
+    /// <summary>Cambió una propiedad de un producto mostrado: si afecta al valor de su barra (precio, comprado, precio de compra) o a su etiqueta, recalcula.</summary>
+    private void OnProductChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(Product.BestPrice) or nameof(Product.IsPurchased) or nameof(Product.PurchasePrice) or nameof(Product.Name))
+            Recompute();
+    }
 
     /// <summary>
     /// Reacciona a ajustes globales: al incluir/excluir envío recalcula los valores (precio efectivo); al alternar el
@@ -122,35 +141,38 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     #endregion
 
     #region Methods (public)
-    /// <summary>Producto en la posición <paramref name="index"/> de la lista (para el clic en columna), o null.</summary>
+    /// <summary>Producto en la posición <paramref name="index"/> de los MOSTRADOS en la gráfica (para el clic en columna), o null.</summary>
     public Product? ProductAt(int index)
-    {
-        var products = SharedDataService.ProductSet.Products;
-        return index >= 0 && index < products.Count ? products[index] : null;
-    }
+        => index >= 0 && index < _shownProducts.Count ? _shownProducts[index] : null;
     #endregion
 
     #region Methods (private)
-    /// <summary>Se (re)suscribe a los precios de los productos actuales.</summary>
+    /// <summary>Se (re)suscribe a los precios de los productos actualmente mostrados (lista filtrada).</summary>
     private void Subscribe()
     {
         foreach (Product product in _subscribed)
-            product.PriceRecorded -= OnProductPriceRecorded;
+            product.PropertyChanged -= OnProductChanged;
         _subscribed.Clear();
 
-        foreach (Product product in SharedDataService.ProductSet.Products)
+        foreach (Product product in Source)
         {
-            product.PriceRecorded += OnProductPriceRecorded;
+            product.PropertyChanged += OnProductChanged;
             _subscribed.Add(product);
         }
     }
 
+    /// <summary>Precio a representar en la barra: el de COMPRA si está comprado, o el mejor precio actual. Null si no hay.</summary>
+    private static decimal? DisplayPrice(Product product) => product.IsPurchased ? product.PurchasePrice : product.BestPrice;
+
     private void Recompute()
     {
-        var products = SharedDataService.ProductSet.Products;
+        // Solo los productos de la lista filtrada CON precio > 0 (se excluyen los sin precio o a 0).
+        _shownProducts = Source.Where(product => DisplayPrice(product) is decimal price && price > 0).ToList();
+        var products = _shownProducts;
 
         bool includeShipping = SharedDataService.IncludeShippingInPrice;
-        Values = products.Select(product => (double)(product.BestPrice ?? 0m)).ToList();
+        // Para los productos COMPRADOS, la barra usa el precio de COMPRA (no el mejor precio actual).
+        Values = products.Select(product => (double)(DisplayPrice(product) ?? 0m)).ToList();
         BaseValues = products.Select(product => (double)HistoricalMin(product, includeShipping)).ToList();
         Labels = products.Select(product => product.Name).ToList();
         ValueSuffix = products
@@ -170,7 +192,7 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     private void UpdateHighlight()
     {
         Product? selected = SharedDataService.SelectedProduct;
-        HighlightIndex = selected is null ? -1 : SharedDataService.ProductSet.Products.IndexOf(selected);
+        HighlightIndex = selected is null ? -1 : _shownProducts.IndexOf(selected);
     }
 
     /// <summary>
@@ -192,12 +214,12 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
     #region Methods (public)
     public override void Dispose()
     {
-        SharedDataService.ProductSet.Products.CollectionChanged -= OnProductsChanged;
+        Source.CollectionChanged -= OnProductsChanged;
         SharedDataService.SelectedProductChanged -= OnSelectedProductChanged;
         SharedDataService.PropertyChanged -= OnSharedDataChanged;
 
         foreach (Product product in _subscribed)
-            product.PriceRecorded -= OnProductPriceRecorded;
+            product.PropertyChanged -= OnProductChanged;
         _subscribed.Clear();
     }
 

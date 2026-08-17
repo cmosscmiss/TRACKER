@@ -213,6 +213,7 @@ public static class LocKeys
     public const string WebView_PickImage_Tooltip = "WebView_PickImage_Tooltip";
     public const string WebView_AddAltLink_Tooltip = "WebView_AddAltLink_Tooltip";
     public const string PriceChart_CurrentPrice_Label = "PriceChart_CurrentPrice_Label";
+    public const string PriceChart_PurchasedPrice_Label = "PriceChart_PurchasedPrice_Label";
     public const string PriceChart_LowestPrice_Label = "PriceChart_LowestPrice_Label";
 
     // Product activity log

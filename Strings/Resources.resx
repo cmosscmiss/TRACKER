@@ -221,6 +221,9 @@
   <data name="PriceChart_CurrentPrice_Label" xml:space="preserve">
     <value>Current</value>
   </data>
+  <data name="PriceChart_PurchasedPrice_Label" xml:space="preserve">
+    <value>Purchased price</value>
+  </data>
   <data name="PriceChart_LowestPrice_Label" xml:space="preserve">
     <value>Lowest</value>
   </data>

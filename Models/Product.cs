@@ -86,6 +86,10 @@ public partial class Product : ObservableObject
     /// <summary>Precio al que se compró el producto (el que se muestra en la lista mientras está comprado). Null si no está comprado.</summary>
     [ObservableProperty]
     private decimal? _purchasePrice;
+
+    /// <summary>Fecha (UTC) en la que se marcó el producto como comprado. Null si no está comprado.</summary>
+    [ObservableProperty]
+    private DateTime? _purchasedAt;
     #endregion
 
     #region Properties

@@ -56,6 +56,7 @@ public sealed class ProductDatabaseService
                 CreatedAt TEXT    NOT NULL,
                 Purchased INTEGER NOT NULL DEFAULT 0,
                 PurchasePrice TEXT NULL,
+                PurchasedAt TEXT NULL,
                 IsFavorite INTEGER NOT NULL DEFAULT 0,
                 AlertPrice TEXT NULL
             );
@@ -106,6 +107,7 @@ public sealed class ProductDatabaseService
         EnsureColumn(connection, "ProductStores", "Deleted", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "Purchased", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "PurchasePrice", "TEXT NULL");
+        EnsureColumn(connection, "Products", "PurchasedAt", "TEXT NULL");
         EnsureColumn(connection, "Products", "IsFavorite", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "AlertPrice", "TEXT NULL");
     }
@@ -143,7 +145,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice FROM Products ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice, PurchasedAt FROM Products ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -155,7 +157,8 @@ public sealed class ProductDatabaseService
                     IsFavorite = !reader.IsDBNull(3) && reader.GetInt64(3) != 0,
                     AlertPrice = reader.IsDBNull(4) ? null : ParsePrice(reader.GetString(4)),
                     IsPurchased = !reader.IsDBNull(5) && reader.GetInt64(5) != 0,
-                    PurchasePrice = reader.IsDBNull(6) ? null : ParsePrice(reader.GetString(6))
+                    PurchasePrice = reader.IsDBNull(6) ? null : ParsePrice(reader.GetString(6)),
+                    PurchasedAt = reader.IsDBNull(7) ? null : ParseTimestamp(reader.GetString(7))
                 };
                 productsById[product.Id] = product;
                 target.Products.Add(product);
@@ -369,13 +372,14 @@ public sealed class ProductDatabaseService
     /// Establece (o quita) el flag de comprado de un producto, guardando el precio de compra al marcarlo (y borrándolo
     /// al revertir). El producto sigue en la lista; solo cambia su tratamiento (título tachado, sin refrescar precios).
     /// </summary>
-    public void SetPurchased(Product product, bool purchased, decimal? purchasePrice)
+    public void SetPurchased(Product product, bool purchased, decimal? purchasePrice, DateTime? purchasedAtUtc)
     {
         using SqliteConnection connection = OpenConnection();
         using SqliteCommand command = connection.CreateCommand();
-        command.CommandText = "UPDATE Products SET Purchased = $purchased, PurchasePrice = $price WHERE Id = $id;";
+        command.CommandText = "UPDATE Products SET Purchased = $purchased, PurchasePrice = $price, PurchasedAt = $at WHERE Id = $id;";
         command.Parameters.AddWithValue("$purchased", purchased ? 1 : 0);
         command.Parameters.AddWithValue("$price", purchased && purchasePrice is decimal p ? FormatPrice(p) : (object)DBNull.Value);
+        command.Parameters.AddWithValue("$at", purchased && purchasedAtUtc is DateTime at ? FormatTimestamp(at) : (object)DBNull.Value);
         command.Parameters.AddWithValue("$id", product.Id);
         command.ExecuteNonQuery();
     }
