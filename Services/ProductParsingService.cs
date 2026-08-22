@@ -100,11 +100,24 @@ public sealed class ProductParsingService
                 || document.querySelector('#deliveryBlockMessage .a-icon-prime')
                 || document.querySelector('.a-icon-prime'));
 
-    // Disponibilidad: hay precio de buy-box y no está marcado como agotado (#outOfStock es el bloque de Amazon
-    // 'Actualmente no disponible'). Independiente del idioma del marketplace.
+    // Disponibilidad: hay precio de buy-box, no está marcado como agotado (#outOfStock es el bloque de Amazon
+    // 'Actualmente no disponible') y la oferta principal se puede COMPRAR. Independiente del idioma del marketplace.
     var outOfStock = !!(document.querySelector('#outOfStock')
                      || document.querySelector('#exports_desktop_outOfStock_buybox'));
-    var available = !!priceEl && !outOfStock;
+
+    // Sin oferta destacada (Amazon deja todo lo comprable detrás de 'Ver todas las opciones de compra': otros
+    // vendedores, segunda mano...) NO hay botón de compra, pero la página SIGUE dejando algún .a-price suelto en los
+    // contenedores amplios de arriba (#apex_desktop / #buybox); así se colaba el precio de un artículo USADO como si
+    // fuera el del producto nuevo, y se registraba día tras día. Por eso se exige además un control de compra real.
+    // Solo se comprueba en páginas de Amazon: las demás no tienen estos ids y van por el selector personalizado.
+    var isAmazonPage = !!(document.getElementById('productTitle')
+                       || document.getElementById('buybox')
+                       || document.getElementById('desktop_buybox'));
+    var canBuy = !!(document.getElementById('add-to-cart-button')
+                 || document.getElementById('buy-now-button')
+                 || document.getElementById('preorder_now_button')
+                 || document.getElementById('one-click-button'));
+    var available = !!priceEl && !outOfStock && (!isAmazonPage || canBuy);
 
     // Promoción / oferta / cupón / voucher aplicable al producto.
     var hasPromo = !!(document.querySelector('#promoPriceBlockMessage_feature_div')
