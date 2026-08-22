@@ -548,8 +548,6 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         RowItem.IsChecked = selected == ChartType.Row;
         LineItem.IsChecked = selected == ChartType.Line;
         AreaItem.IsChecked = selected == ChartType.Area;
-        PieItem.IsChecked = selected == ChartType.Pie;
-        DoughnutItem.IsChecked = selected == ChartType.Doughnut;
         ChartTypeButton.Content = ChartTypeLabel(selected);
     }
 

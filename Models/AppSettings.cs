@@ -242,7 +242,18 @@ public class AppSettings
     /// </summary>
     public class ChartConfig
     {
-        public ChartType ChartType { get; set; } = ChartType.Column;
+        private ChartType _chartType = ChartType.Column;
+
+        /// <summary>
+        /// Tipo de gráfica. Tarta y anillo ya no se ofrecen en el selector (no dicen nada sobre precios), así que un
+        /// valor de esos guardado por una versión anterior se sanea a columnas AL LEER el .ini: el chart nunca llega a
+        /// pedir un tipo que ya no se dibuja, y al guardar tampoco se reescribe.
+        /// </summary>
+        public ChartType ChartType
+        {
+            get => _chartType;
+            set => _chartType = value is ChartType.Pie or ChartType.Doughnut ? ChartType.Column : value;
+        }
         public SortMode SortOrder { get; set; } = SortMode.None;
         public int TopN { get; set; }
     }

@@ -44,8 +44,6 @@
                         <RadioMenuFlyoutItem x:Name="RowItem"      GroupName="ChartType" Tag="Row"      Text="{loc:Str Key=ChartType_HBars_Label}" Click="OnTypeClick"/>
                         <RadioMenuFlyoutItem x:Name="LineItem"     GroupName="ChartType" Tag="Line"     Text="{loc:Str Key=ChartType_Line_Label}"   Click="OnTypeClick"/>
                         <RadioMenuFlyoutItem x:Name="AreaItem"     GroupName="ChartType" Tag="Area"     Text="{loc:Str Key=ChartType_Area_Label}"   Click="OnTypeClick"/>
-                        <RadioMenuFlyoutItem x:Name="PieItem"      GroupName="ChartType" Tag="Pie"      Text="{loc:Str Key=ChartType_Pie_Label}"    Click="OnTypeClick"/>
-                        <RadioMenuFlyoutItem x:Name="DoughnutItem" GroupName="ChartType" Tag="Doughnut" Text="{loc:Str Key=ChartType_Ring_Label}"   Click="OnTypeClick"/>
                     </MenuFlyout>
                 </ToggleSplitButton.Flyout>
             </ToggleSplitButton>
