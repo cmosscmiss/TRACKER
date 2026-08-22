@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "MM4LB (Package)": {
+    "Tracker (Package)": {
       "commandName": "MsixPackage"
     },
-    "MM4LB (Unpackaged)": {
+    "Tracker (Unpackaged)": {
       "commandName": "Project"
     }
   }

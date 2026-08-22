@@ -81,7 +81,10 @@
             </ToggleSplitButton>
         </StackPanel>
 
-        <lvc:CartesianChart x:Name="Cartesian" Grid.Row="3" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LegendPosition="Hidden"/>
-        <lvc:PieChart x:Name="Pie" Grid.Row="3" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LegendPosition="Right" Visibility="Collapsed"/>
+        <!-- Las dos superficies de dibujo comparten celda y nacen VISIBLES pero transparentes (Opacity 0), nunca
+             Collapsed: LiveCharts crea su lienzo al cargarse en el árbol y un chart que recibe Loaded colapsado se
+             queda en blanco para siempre. El code-behind las muestra y oculta con SetSurfaceShown. -->
+        <lvc:CartesianChart x:Name="Cartesian" Grid.Row="3" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LegendPosition="Hidden" Opacity="0" IsHitTestVisible="False"/>
+        <lvc:PieChart x:Name="Pie" Grid.Row="3" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LegendPosition="Right" Opacity="0" IsHitTestVisible="False"/>
     </Grid>
 </UserControl>

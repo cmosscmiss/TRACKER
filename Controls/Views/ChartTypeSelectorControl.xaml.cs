@@ -38,9 +38,6 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// <summary>Hay un <see cref="Rebuild"/> ya encolado para el final del batch de cambios de DP (ver <see cref="ScheduleRebuild"/>).</summary>
     private bool _rebuildScheduled;
 
-    /// <summary>Último ancho con el que se renderizó; sirve para reconstruir al pasar de tamaño 0 a tamaño real.</summary>
-    private double _lastRenderWidth;
-
     /// <summary>Máximo de los valores mostrados, para acotar el eje (línea de referencia o ajuste ±10%).</summary>
     private double _valueAxisDataMax;
 
@@ -57,7 +54,10 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     {
         InitializeComponent();
         Loaded += OnLoaded;
-        SizeChanged += OnSizeChanged;
+        // Se vigila el tamaño de las SUPERFICIES de dibujo (no el del UserControl, que casi nunca mide 0 porque la
+        // toolbar le da alto): son ellas las que pasan por tamaño 0 y las que hay que realimentar. Ver OnSurfaceSizeChanged.
+        Cartesian.SizeChanged += OnSurfaceSizeChanged;
+        Pie.SizeChanged += OnSurfaceSizeChanged;
         Cartesian.DataPointerDown += OnCartesianPointerDown;
 
         // Suscripción PERMANENTE al cambio de tema (no atada a Loaded/Unloaded): dentro de un FlipView / del panel de
@@ -408,13 +408,17 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     private void OnThemeChanged(object? sender, EventArgs e) => Rebuild();
 
     /// <summary>
-    /// Al pasar de tamaño 0 a un tamaño real, reconstruye: un <c>CartesianChart</c> de LiveCharts creado/alimentado
-    /// mientras su contenedor medía 0 puede no dibujarse; al recibir tamaño por primera vez se reprograma un rebuild.
+    /// Una superficie de dibujo (<c>Cartesian</c> o <c>Pie</c>) pasa de tamaño 0 a un tamaño real: reconstruye. Un
+    /// chart de LiveCharts alimentado mientras medía 0 NO se dibuja, y se queda en blanco hasta el siguiente
+    /// redibujado. Pasa cada vez que el chart entra en el árbol con tamaño: el panel de widgets colapsa el widget
+    /// entero mientras coloca los slots en el arranque, y al revelarlo la superficie mide 0 hasta el siguiente pase
+    /// de layout. Por eso se comprueba SIEMPRE contra <see cref="SizeChangedEventArgs.PreviousSize"/> (no solo la
+    /// primera vez) y sobre las superficies, no sobre el UserControl, que rara vez mide 0 porque la toolbar ya le
+    /// da alto.
     /// </summary>
-    private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    private void OnSurfaceSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        bool wasZero = _lastRenderWidth <= 0;
-        _lastRenderWidth = e.NewSize.Width;
+        bool wasZero = e.PreviousSize.Width <= 0 || e.PreviousSize.Height <= 0;
         if (wasZero && e.NewSize.Width > 0 && e.NewSize.Height > 0)
             ScheduleRebuild();
     }
@@ -699,8 +703,8 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         bool hasData = values.Length > 0;
         bool pie = IsPieType;
 
-        Cartesian.Visibility = hasData && !pie ? Visibility.Visible : Visibility.Collapsed;
-        Pie.Visibility = hasData && pie ? Visibility.Visible : Visibility.Collapsed;
+        SetSurfaceShown(Cartesian, hasData && !pie);
+        SetSurfaceShown(Pie, hasData && pie);
 
         if (!hasData)
         {
@@ -714,6 +718,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         {
             Pie.Series = BuildPieSeries(values, labels, highlightIndex);
             Cartesian.Sections = Array.Empty<RectangularSection>();   // pie no usa ejes/secciones
+            Cartesian.Series = Array.Empty<ISeries>();   // la superficie oculta se vacía: ya no se colapsa y un chart con series seguiría dibujando
         }
         else
         {
@@ -733,6 +738,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
             Cartesian.Series = BuildCartesianSeries(values, labels, highlightIndex, baseValues);
             (Cartesian.XAxes, Cartesian.YAxes) = BuildAxes(labels);
             Cartesian.Sections = BuildReferenceSections();
+            Pie.Series = Array.Empty<ISeries>();   // la superficie oculta se vacía: ya no se colapsa y un chart con series seguiría dibujando
         }
     }
 
@@ -1203,8 +1209,8 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         bool hasData = order.Length > 0 && seriesCount > 0;
         bool pie = IsPieType;
 
-        Cartesian.Visibility = hasData && !pie ? Visibility.Visible : Visibility.Collapsed;
-        Pie.Visibility = hasData && pie ? Visibility.Visible : Visibility.Collapsed;
+        SetSurfaceShown(Cartesian, hasData && !pie);
+        SetSurfaceShown(Pie, hasData && pie);
 
         if (!hasData)
         {
@@ -1224,6 +1230,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
 
             Pie.Series = BuildMultiPieSeries(seriesTotals);
             Cartesian.Sections = Array.Empty<RectangularSection>();
+            Cartesian.Series = Array.Empty<ISeries>();   // la superficie oculta se vacía: ya no se colapsa y un chart con series seguiría dibujando
             return;
         }
 
@@ -1257,6 +1264,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         Cartesian.Series = BuildMultiCartesianSeries(orderedSeries);
         (Cartesian.XAxes, Cartesian.YAxes) = BuildAxes(orderedLabels);
         Cartesian.Sections = BuildReferenceSections();
+        Pie.Series = Array.Empty<ISeries>();   // la superficie oculta se vacía: ya no se colapsa y un chart con series seguiría dibujando
     }
 
     /// <summary>
@@ -1382,4 +1390,17 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         return new SKColor(Lerp(a.Red, b.Red), Lerp(a.Green, b.Green), Lerp(a.Blue, b.Blue), 255);
     }
     #endregion
+    /// <summary>
+    /// Muestra u oculta una superficie de dibujo SIN colapsarla. LiveCharts inicializa su lienzo cuando el chart se
+    /// carga en el árbol, y uno que recibe <c>Loaded</c> estando <c>Collapsed</c> se queda EN BLANCO para siempre
+    /// aunque después reciba tamaño y datos: es el caso del widget de resumen, cuyos datos llegan tras cargarse el
+    /// control (el primer <see cref="Rebuild"/> lo encuentra sin datos). Por eso se oculta con <c>Opacity</c> y se
+    /// saca del hit-testing en lugar de colapsarla; la que queda oculta se vacía de series para no dibujar de balde.
+    /// </summary>
+    private static void SetSurfaceShown(FrameworkElement surface, bool shown)
+    {
+        surface.Opacity = shown ? 1 : 0;
+        surface.IsHitTestVisible = shown;
+    }
+
 }
