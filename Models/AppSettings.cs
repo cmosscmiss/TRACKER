@@ -356,9 +356,9 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/MM4LB-SC-CYBER-CITY-NO-FRAME.png",
+                BackgroundImage = "Backgrounds/TRACKER-SC-CYBER-CITY-NO-FRAME.png",
                 LogoImage = "TRACKER-LOGO-CYBER-CITY.png",
-                OverlayImage = "Backgrounds/MM4LB-SC-CYBER-CITY-OVERLAY.jpg",
+                OverlayImage = "Backgrounds/TRACKER-SC-CYBER-CITY-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/CyberCity/"
             },
             ["Dead Space"] = new ThemeDefinition
@@ -379,9 +379,9 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/MM4LB-SC-DEAD-SPACE-NO-FRAME.png",
+                BackgroundImage = "Backgrounds/TRACKER-SC-DEAD-SPACE-NO-FRAME.png",
                 LogoImage = "TRACKER-LOGO-DEAD-SPACE.png",
-                OverlayImage = "Backgrounds/MM4LB-SC-DEAD-SPACE-OVERLAY.jpg",
+                OverlayImage = "Backgrounds/TRACKER-SC-DEAD-SPACE-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/DeadSpace/"
             },
             ["Doom"] = new ThemeDefinition
@@ -402,9 +402,9 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/MM4LB-SC-DOOM-NO-FRAME.png",
+                BackgroundImage = "Backgrounds/TRACKER-SC-DOOM-NO-FRAME.png",
                 LogoImage = "TRACKER-LOGO-DOOM.png",
-                OverlayImage = "Backgrounds/MM4LB-SC-DOOM-OVERLAY.jpg",
+                OverlayImage = "Backgrounds/TRACKER-SC-DOOM-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/Doom/"
             },
             ["LoL"] = new ThemeDefinition
@@ -425,9 +425,9 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/MM4LB-SC-LOL-NO-FRAME.png",
+                BackgroundImage = "Backgrounds/TRACKER-SC-LOL-NO-FRAME.png",
                 LogoImage = "TRACKER-LOGO-LOL.png",
-                OverlayImage = "Backgrounds/MM4LB-SC-LOL-OVERLAY.jpg",
+                OverlayImage = "Backgrounds/TRACKER-SC-LOL-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/LoL/"
             }
         };

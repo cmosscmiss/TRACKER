@@ -2,13 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Graphics;
-using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 
@@ -159,6 +156,7 @@ public class WindowService
         }
     }
     #endregion
+
 
     #region Active window tracking
     /// <summary>
@@ -437,50 +435,6 @@ public class WindowService
                 presenter.Maximize();
         }
     }
-    /// <summary>
-    /// Captura el contenido de la ventana activa a JPEG (para el pantallazo de un template), vía
-    /// <see cref="RenderTargetBitmap"/> del árbol visual. Devuelve <c>null</c> si no hay ventana activa o si la
-    /// captura falla. Nota: RenderTargetBitmap no captura contenido nativo (WebView2 o el chart de SkiaSharp salen en
-    /// negro); para una miniatura de previsualización del layout es suficiente. Debe llamarse en el hilo de UI.
-    /// </summary>
-    public async Task<byte[]?> CaptureActiveWindowJpegAsync()
-    {
-        if (ActiveWindow?.Content is not UIElement root)
-            return null;
-
-        try
-        {
-            var renderBitmap = new RenderTargetBitmap();
-            await renderBitmap.RenderAsync(root);
-
-            int width = renderBitmap.PixelWidth;
-            int height = renderBitmap.PixelHeight;
-            if (width <= 0 || height <= 0)
-                return null;
-
-            IBuffer pixelBuffer = await renderBitmap.GetPixelsAsync();
-            byte[] pixels = pixelBuffer.ToArray();
-
-            using var stream = new InMemoryRandomAccessStream();
-            BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
-            encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, (uint)width, (uint)height, 96, 96, pixels);
-            await encoder.FlushAsync();
-
-            var bytes = new byte[stream.Size];
-            using var reader = new DataReader(stream.GetInputStreamAt(0));
-            await reader.LoadAsync((uint)stream.Size);
-            reader.ReadBytes(bytes);
-            return bytes;
-        }
-        catch (Exception ex)
-        {
-            ExceptionService.LogToFile(ex, "Could not capture the window screenshot for the template.");
-            return null;
-        }
-    }
-    #endregion
-
-    #region Methods (private)
     /// <summary>
     /// Aplica el icono de la aplicación a la ventana nativa asociada a AppWindow.
     /// </summary>

@@ -43,7 +43,6 @@
                     <StackPanel Grid.Column="4" Orientation="Horizontal">
                         <StackPanel Orientation="Horizontal" Spacing="16">
                             <template:ToolbarButtonIcon x:Name="SplittersToggle" CheckedIconName="Icon-resize" UncheckedIconName="Icon-resize-off" Style="{StaticResource ToolbarButtonIconStyle}"/>
-                            <template:ToolbarButtonIcon x:Name="TemplateSaveButton" IconName="Icon-save-template" help:Help.Key="Toolbar_SaveTemplate_Tooltip" Style="{StaticResource ToolbarButtonIconStyle}"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -77,7 +76,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <template:SeparatorEx Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 0 8" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                    <uc:TemplateSlotsControl Grid.Row="1" x:Name="ucTemplateSlots" SelectionMode="False" Source="AllTemplates" HorizontalAlignment="Center"/>
+                    <uc:TemplateSlotsControl Grid.Row="1" x:Name="ucTemplateSlots" HorizontalAlignment="Center"/>
                 </Grid>
                 <Grid x:Name="ToolbarSettingsSelector" Grid.Row="1" Margin="0 24 0 0" Visibility="Collapsed">
                     <Grid.RowDefinitions>

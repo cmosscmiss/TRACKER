@@ -68,9 +68,6 @@ public sealed partial class ToolbarControl : UserControl
 
         SplittersToggle.Clicked += (_, __) => OnToggleClicked(SplittersToggle);
 
-        // Grabar template: captura pantallazo + elige slot + nombre + guarda. Vive en el grupo derecho.
-        TemplateSaveButton.Clicked += (_, __) => SaveTemplate();
-
         // Ventana de configuración (General / Theme / About), como diálogo sobre el overlay de la app.
         SettingsButton.Clicked += (_, __) => OpenSettings();
 
@@ -451,34 +448,6 @@ public sealed partial class ToolbarControl : UserControl
         return double.IsNaN(ToolbarBorder.Height) || ToolbarBorder.Height <= 0
             ? ToolbarBorder.ActualHeight
             : ToolbarBorder.Height;
-    }
-
-    #endregion
-
-    #region Methods (private) - Templates
-
-    /// <summary>
-    /// Graba un template: pide SLOT + nombre; luego cierra el panel expandido y captura un pantallazo (para que ni el
-    /// diálogo ni el panel salgan en la imagen) y guarda JSON + JPG en ese slot (sobreescribe si estaba ocupado).
-    /// </summary>
-    private async void SaveTemplate()
-    {
-        if (XamlRoot is null)
-            return;
-
-        // 1) Elegir slot + nombre. Si se cancela, no se captura nada.
-        (int Slot, string Name)? choice = await App.GetService<DialogsService>().ShowSaveTemplateAsync(XamlRoot);
-        if (choice is null)
-            return;
-
-        // 2) Cierra el panel expandido y captura DESPUÉS de cerrarse (unos frames), para que no salga en la imagen.
-        await CollapseExpandedSelectorAsync();
-        await Task.Delay(80);
-        byte[]? screenshot = await App.GetService<WindowService>().CaptureActiveWindowJpegAsync();
-
-        // 3) Guardar en el slot (sobreescribe json + jpg) y refrescar el selector.
-        await App.GetService<TemplateService>().SaveToSlotAsync(choice.Value.Slot, choice.Value.Name, screenshot);
-        await ucTemplateSlots.RefreshAsync();
     }
 
     #endregion

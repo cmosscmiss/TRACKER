@@ -201,12 +201,6 @@ public static class LocKeys
 
     // Templates (guardar/seleccionar)
     public const string Toolbar_Templates_Tooltip = "Toolbar_Templates_Tooltip";
-    public const string Toolbar_SaveTemplate_Tooltip = "Toolbar_SaveTemplate_Tooltip";
-    public const string DialogsService_SaveTemplate_Title = "DialogsService_SaveTemplate_Title";
-    public const string TemplateNameDialog_ChooseSlot_Text = "TemplateNameDialog_ChooseSlot_Text";
-    public const string TemplateNameDialog_Name_Label = "TemplateNameDialog_Name_Label";
-    public const string TemplateNameDialog_Name_Placeholder = "TemplateNameDialog_Name_Placeholder";
-    public const string TemplateSlots_BuiltIn_Tooltip = "TemplateSlots_BuiltIn_Tooltip";
     public const string WebView_Country_Tooltip = "WebView_Country_Tooltip";
     public const string WebView_AddProduct_Tooltip = "WebView_AddProduct_Tooltip";
     public const string WebView_PickPrice_Tooltip = "WebView_PickPrice_Tooltip";

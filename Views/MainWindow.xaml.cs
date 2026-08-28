@@ -43,34 +43,6 @@ public sealed partial class MainWindow : Window
     // Expuesto para los x:Bind del XAML (x:Bind resuelve contra el code-behind, no contra el DataContext).
     public MainWindowViewModel ViewModel => _viewModel;
 
-    /// <summary>
-    /// Marca de compilación que se muestra junto al título de la plataforma, para saber a simple vista si la versión
-    /// en ejecución es la recién compilada. Se deriva de la fecha de última escritura del ensamblado (cada
-    /// compilación reescribe el DLL), así que no hay que fijarla a mano.
-    /// </summary>
-    public string BuildTimestamp
-    {
-        get
-        {
-            try
-            {
-                // La ruta del .exe en ejecución es fiable en .NET 6+ (y se reescribe en cada compilación); si por lo
-                // que sea viene vacía, se cae al Location del ensamblado. El .exe/.dll se reescriben al compilar, así
-                // que su fecha de última escritura ES la hora de compilación.
-                string? path = System.Environment.ProcessPath;
-                if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path))
-                    path = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path))
-                    return "build ?";
-
-                return "build " + System.IO.File.GetLastWriteTime(path).ToString("yyyy-MM-dd HH:mm:ss");
-            }
-            catch
-            {
-                return "build ?";
-            }
-        }
-    }
     #endregion
 
     #region Constructor
@@ -81,10 +53,6 @@ public sealed partial class MainWindow : Window
         _windowService = windowService;
 
         InitializeComponent();
-
-        // Marca de compilación junto al título de la plataforma (para saber si la versión en ejecución es la recién
-        // compilada). Asignada por código, sin binding, para que no dependa de nada del árbol visual.
-        BuildTimestampText.Text = BuildTimestamp;
 
         // El logo, el fondo/borde del progreso de cache y el título de plataforma usan recursos de tipo Uri/Color que
         // no se propagan solos al cambiar de tema en caliente: se refrescan por código al recibir ThemeChanged.
@@ -166,12 +134,14 @@ public sealed partial class MainWindow : Window
 
     private async void OnWindowLoaded(object? sender, RoutedEventArgs e)
     {
+        // El orden de esta lista es el que sigue el selector de widgets de la toolbar (RenderWidgets la recorre tal
+        // cual). No influye en qué slot ocupa cada widget: eso se restaura por nombre de icono.
         var widgetEntries = new List<WidgetPanelControl.WidgetEntry>
         {
-            new(ucConsoleControl.ViewModel!, ucConsoleWidget),
             new(ucWebViewControl.ViewModel!, ucWebViewWidget),
-            new(ucProductsOverviewControl.ViewModel!, ucProductsOverviewWidget),
             new(ucFavoritesControl.ViewModel!, ucFavoritesWidget),
+            new(ucProductsOverviewControl.ViewModel!, ucProductsOverviewWidget),
+            new(ucConsoleControl.ViewModel!, ucConsoleWidget),
         };
 
         WidgetPanel.SetWidgets(widgetEntries);

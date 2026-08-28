@@ -197,14 +197,6 @@
             </uc:ToolbarControl>
         </Grid>
 
-        <!-- Marca de compilación (diagnóstico): overlay superpuesto arriba a la derecha, dibujado el ÚLTIMO para que
-             no lo tape ninguna capa (widgets, toolbar, etc.). El texto lo fija MainWindow.xaml.cs con la fecha del
-             ensamblado. IsHitTestVisible=False para no bloquear clics. -->
-        <Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 10 440 0" Padding="10 4"
-                Background="{ThemeResource CardBackgroundLightBrush}" CornerRadius="8" IsHitTestVisible="False">
-            <TextBlock x:Name="BuildTimestampText" Foreground="{ThemeResource TextColor}" FontSize="14" Opacity="0.85"/>
-        </Border>
-
         <!-- Navegador oculto para el scraping de precios (ProductParsingService): fuera de la vista (1x1, opacidad 0,
              sin hit-test). Se navega e inyecta JS por código; no participa en la UI. -->
         <wv:WebView2 x:Name="ScraperWebView" Width="1" Height="1" Opacity="0" IsHitTestVisible="False"

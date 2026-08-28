@@ -9,13 +9,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!-- Tarjetas de templates: imagen + nombre (o placeholder si el slot está vacío). Los built-in (de app) llevan un
-         candado. En modo selección (diálogo de grabar) se usa la selección del GridView; en modo carga (toolbar) se
-         usa ItemClick. Máximo 3 por fila; el resto envuelve. -->
+    <!-- Tarjetas de templates: imagen + nombre. Al pulsar una se carga ese template (ItemClick, sin selección
+         persistente). Máximo 3 por fila; el resto envuelve. -->
     <GridView x:Name="Items" HorizontalAlignment="Center" Background="Transparent"
               SelectionMode="None" IsItemClickEnabled="True"
               ItemContainerStyle="{StaticResource GameImagesGridViewItemStyle}"
-              SelectionChanged="OnSelectionChanged" ItemClick="OnItemClick"
+              ItemClick="OnItemClick"
               ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <GridView.ItemsPanel>
             <ItemsPanelTemplate>
@@ -24,7 +23,7 @@
         </GridView.ItemsPanel>
         <GridView.ItemTemplate>
             <DataTemplate>
-                <Grid Width="343" ToolTipService.ToolTip="{Binding DisplayName}">
+                <Grid Width="343" ToolTipService.ToolTip="{Binding Name}">
                     <StackPanel Spacing="8">
                         <Border CornerRadius="8" Height="206" BorderThickness="1"
                                 BorderBrush="{ThemeResource CardBackgroundLightBrush}" Background="{ThemeResource BackgroundLightBrush}">
@@ -32,17 +31,9 @@
                                 <FontIcon Glyph="&#xE8B9;" FontSize="47" Foreground="{ThemeResource TextSecondaryBrush}"
                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 <Image Source="{Binding Image}" Stretch="UniformToFill"/>
-
-                                <!-- Candado en los templates de aplicación (read-only). -->
-                                <Border Visibility="{Binding IsBuiltIn, Converter={StaticResource VisibleIfTrueConverter}}"
-                                        HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" CornerRadius="4"
-                                        Background="{ThemeResource BackgroundBrushOpacity80}" Padding="5 3"
-                                        help:Help.Key="TemplateSlots_BuiltIn_Tooltip">
-                                    <FontIcon Glyph="&#xE72E;" FontSize="12" Foreground="{ThemeResource AccentLightBrush}"/>
-                                </Border>
                             </Grid>
                         </Border>
-                        <TextBlock Text="{Binding DisplayName}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                        <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
                                    HorizontalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
                     </StackPanel>
                 </Grid>

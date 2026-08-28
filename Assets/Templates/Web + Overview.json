@@ -1,0 +1,114 @@
+﻿{
+  "General": {
+    "CacheSize": 4096.0,
+    "ExceptionLoggingEnabled": true,
+    "Language": "en",
+    "SettingsLastSection": "About",
+    "ShowWidgetHeader": true,
+    "FooterEventViewerAlwaysVisible": true,
+    "HelpTooltipsEnabled": true,
+    "IncludeShippingInPrice": true,
+    "AutoRefreshHours": 12,
+    "ShowPurchased": false,
+    "UseCustomColors": true,
+    "CustomColors": {},
+    "ShowChartAxisLabels": false,
+    "ShowMinPriceChart": true,
+    "VideoVolume": 0.0,
+    "IsMuted": false,
+    "PromptBeforeDeleteImage": true
+  },
+  "LayoutSelectorControl": {
+    "Gap": 16.0,
+    "CornerRadius": 18.0,
+    "PanelMargin": 8.0,
+    "SelectedLayout": 2,
+    "WidgetSlots": {
+      "ConsoleControl": -1,
+      "WebViewControl": 0,
+      "ProductsOverviewControl": 2,
+      "FavoritesControl": 1
+    },
+    "LayoutSizes": {}
+  },
+  "ProductListControl": {
+    "SelectedProductId": 74
+  },
+  "PriceChartControl": {
+    "ChartType": 2,
+    "SortOrder": 0,
+    "TopN": 0
+  },
+  "ProductsOverviewControl": {
+    "ChartType": 1,
+    "SortOrder": 0,
+    "TopN": 20
+  },
+  "FavoritesControl": {
+    "SelectedIndex": 0,
+    "Charts": {
+      "50": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "51": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "40": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "22": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "37": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "41": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "133": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "135": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "39": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      },
+      "11": {
+        "ChartType": 2,
+        "SortOrder": 0,
+        "TopN": 0
+      }
+    }
+  },
+  "WebViewControl": {
+    "Country": "nl"
+  },
+  "Theme": {
+    "Name": "Cyber City",
+    "OverlayImageBlur": 10,
+    "OverlayImageOpacity": 0.35,
+    "RandomTheme": false,
+    "TintBrightness": 1.0,
+    "TintOpacity": 0.5,
+    "TintSaturation": 1.0
+  }
+}

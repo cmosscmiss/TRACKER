@@ -450,24 +450,6 @@
   <data name="Toolbar_Templates_Tooltip" xml:space="preserve">
     <value>Plantillas</value>
   </data>
-  <data name="Toolbar_SaveTemplate_Tooltip" xml:space="preserve">
-    <value>Guardar la disposición como plantilla</value>
-  </data>
-  <data name="DialogsService_SaveTemplate_Title" xml:space="preserve">
-    <value>Guardar plantilla</value>
-  </data>
-  <data name="TemplateNameDialog_ChooseSlot_Text" xml:space="preserve">
-    <value>Elige un slot donde guardar (si está ocupado se sobrescribe):</value>
-  </data>
-  <data name="TemplateNameDialog_Name_Label" xml:space="preserve">
-    <value>Nombre</value>
-  </data>
-  <data name="TemplateNameDialog_Name_Placeholder" xml:space="preserve">
-    <value>Nombre de la plantilla</value>
-  </data>
-  <data name="TemplateSlots_BuiltIn_Tooltip" xml:space="preserve">
-    <value>Plantilla de la app (solo lectura)</value>
-  </data>
   <data name="Common_OK_Label" xml:space="preserve">
     <value>Aceptar</value>
   </data>
