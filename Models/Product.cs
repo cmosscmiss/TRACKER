@@ -313,8 +313,11 @@ public partial class Product : ObservableObject
     /// Puntos del histórico cuya tienda sigue DISPONIBLE ahora mismo. Excluye las tiendas sin stock para que su
     /// desaparición (o reaparición) no distorsione la tendencia ni el mínimo histórico: que una tienda se agote no debe
     /// contar como una subida de precio. (Los puntos cuya tienda ya no existe tampoco cuentan.)
+    ///
+    /// Es público porque la tarjeta del precio más bajo de la gráfica debe usar EXACTAMENTE el mismo criterio: si
+    /// calcula el mínimo sobre todo el histórico, acaba anunciando el precio de una tienda donde ya no se puede comprar.
     /// </summary>
-    private IEnumerable<PricePoint> AvailableHistory()
+    public IEnumerable<PricePoint> AvailableHistory()
         => PriceHistory.Where(point => Stores.FirstOrDefault(store => store.Id == point.StoreId)?.IsAvailable == true);
 
     /// <summary>

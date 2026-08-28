@@ -399,11 +399,16 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         UpdateCurrentPriceCard();
 
         // Precio más bajo del histórico, por precio EFECTIVO (suma el envío actual de la tienda si el ajuste lo incluye).
-        if (product is not null && history is { Count: > 0 })
+        // Solo cuentan las tiendas DISPONIBLES ahora mismo (mismo criterio que BestPrice y la tendencia): una tienda
+        // agotada conserva su último precio conocido, pero anunciarlo como "el más bajo" ofrece algo que no se puede
+        // comprar.
+        List<PricePoint> availableHistory = product?.AvailableHistory().ToList() ?? new List<PricePoint>();
+
+        if (product is not null && availableHistory.Count > 0)
         {
             bool includeShippingLow = SharedDataService.IncludeShippingInPrice;
             decimal EffectiveOf(PricePoint p) => p.Price + (includeShippingLow && product.Stores.FirstOrDefault(s => s.Id == p.StoreId)?.ShippingCost is decimal c ? c : 0);
-            PricePoint lowest = history.OrderBy(EffectiveOf).First();
+            PricePoint lowest = availableHistory.OrderBy(EffectiveOf).First();
             LowestPriceText = FormatPrice(EffectiveOf(lowest));
             LowestPriceStore = lowest.StoreLabel;
         }
