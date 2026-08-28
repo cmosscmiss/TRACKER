@@ -26,6 +26,9 @@
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Content Remove="Assets\TRACKER-Logo.ico" />
+	</ItemGroup>
+	<ItemGroup>
 	  <None Remove="Controls\Views\ConsoleControl.xaml" />
 	  <None Remove="Controls\Views\ChartTypeSelectorControl.xaml" />
 	  <None Remove="Controls\Views\ProductListControl.xaml" />

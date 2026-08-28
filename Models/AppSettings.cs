@@ -357,7 +357,7 @@ public class AppSettings
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
                 BackgroundImage = "Backgrounds/MM4LB-SC-CYBER-CITY-NO-FRAME.png",
-                LogoImage = "MM4LB-LOGO-CYBER-CITY.png",
+                LogoImage = "TRACKER-LOGO-CYBER-CITY.png",
                 OverlayImage = "Backgrounds/MM4LB-SC-CYBER-CITY-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/CyberCity/"
             },
@@ -380,7 +380,7 @@ public class AppSettings
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
                 BackgroundImage = "Backgrounds/MM4LB-SC-DEAD-SPACE-NO-FRAME.png",
-                LogoImage = "MM4LB-LOGO-DEAD-SPACE.png",
+                LogoImage = "TRACKER-LOGO-DEAD-SPACE.png",
                 OverlayImage = "Backgrounds/MM4LB-SC-DEAD-SPACE-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/DeadSpace/"
             },
@@ -403,7 +403,7 @@ public class AppSettings
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
                 BackgroundImage = "Backgrounds/MM4LB-SC-DOOM-NO-FRAME.png",
-                LogoImage = "MM4LB-LOGO-DOOM.png",
+                LogoImage = "TRACKER-LOGO-DOOM.png",
                 OverlayImage = "Backgrounds/MM4LB-SC-DOOM-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/Doom/"
             },
@@ -426,7 +426,7 @@ public class AppSettings
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
                 BackgroundImage = "Backgrounds/MM4LB-SC-LOL-NO-FRAME.png",
-                LogoImage = "MM4LB-LOGO-LOL.png",
+                LogoImage = "TRACKER-LOGO-LOL.png",
                 OverlayImage = "Backgrounds/MM4LB-SC-LOL-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/LoL/"
             }
