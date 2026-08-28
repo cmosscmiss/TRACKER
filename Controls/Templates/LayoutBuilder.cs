@@ -27,9 +27,6 @@ public static class LayoutBuilder
             [4] = BuildThreeColumnsEqualGrid,
             [5] = BuildGrid2x2,
             [6] = BuildWideLeftRightColumnSplit,
-            [7] = BuildWideLeftBothColumnsSplit,
-            [8] = BuildWideMiddleSidesSplit,
-            [9] = BuildTwoRowsThreeColumns
         };
 
     /// <summary>
@@ -275,23 +272,6 @@ public static class LayoutBuilder
     }
 
     /// <summary>
-    /// Builds a three-column layout with a full-height wide left slot (50%) and two narrow columns
-    /// (25% each) each split into two stacked slots.
-    /// </summary>
-    /// <param name="host">The target grid where the layout will be rendered.</param>
-    /// <param name="context">The build context containing the brushes to apply.</param>
-    private static void BuildWideLeftBothColumnsSplit(Grid host, LayoutBuildContext context)
-    {
-        AddStarRows(host, 1, 1);
-        AddStarColumns(host, 2, 1, 1);
-        AddCell(host, context, slotIndex: 0, row: 0, column: 0, rowSpan: 2, margin: new Thickness(0, 0, Gap / 2, 0), cornerRadius: new CornerRadius(Radius, 0, 0, Radius));
-        AddCell(host, context, slotIndex: 1, row: 0, column: 1, margin: new Thickness(Gap / 2, 0, Gap / 2, Gap / 2), cornerRadius: new CornerRadius(0));
-        AddCell(host, context, slotIndex: 2, row: 1, column: 1, margin: new Thickness(Gap / 2, Gap / 2, Gap / 2, 0), cornerRadius: new CornerRadius(0));
-        AddCell(host, context, slotIndex: 3, row: 0, column: 2, margin: new Thickness(Gap / 2, 0, 0, Gap / 2), cornerRadius: new CornerRadius(0, Radius, 0, 0));
-        AddCell(host, context, slotIndex: 4, row: 1, column: 2, margin: new Thickness(Gap / 2, Gap / 2, 0, 0), cornerRadius: new CornerRadius(0, 0, Radius, 0));
-    }
-
-    /// <summary>
     /// Builds a three-column layout with a full-height wide left slot (50%) and a full-height middle slot
     /// (25%); the right column (25%) is split into two stacked slots.
     /// </summary>
@@ -307,38 +287,5 @@ public static class LayoutBuilder
         AddCell(host, context, slotIndex: 3, row: 1, column: 2, margin: new Thickness(Gap / 2, Gap / 2, 0, 0), cornerRadius: new CornerRadius(0, 0, Radius, 0));
     }
 
-    /// <summary>
-    /// Builds a three-column layout with two narrow side columns (25% each) each split into two stacked
-    /// slots, and a full-height wide middle slot (50%).
-    /// </summary>
-    /// <param name="host">The target grid where the layout will be rendered.</param>
-    /// <param name="context">The build context containing the brushes to apply.</param>
-    private static void BuildWideMiddleSidesSplit(Grid host, LayoutBuildContext context)
-    {
-        AddStarRows(host, 1, 1);
-        AddStarColumns(host, 1, 2, 1);
-        AddCell(host, context, slotIndex: 0, row: 0, column: 0, margin: new Thickness(0, 0, Gap / 2, Gap / 2), cornerRadius: new CornerRadius(Radius, 0, 0, 0));
-        AddCell(host, context, slotIndex: 1, row: 1, column: 0, margin: new Thickness(0, Gap / 2, Gap / 2, 0), cornerRadius: new CornerRadius(0, 0, 0, Radius));
-        AddCell(host, context, slotIndex: 2, row: 0, column: 1, rowSpan: 2, margin: new Thickness(Gap / 2, 0, Gap / 2, 0), cornerRadius: new CornerRadius(0));
-        AddCell(host, context, slotIndex: 3, row: 0, column: 2, margin: new Thickness(Gap / 2, 0, 0, Gap / 2), cornerRadius: new CornerRadius(0, Radius, 0, 0));
-        AddCell(host, context, slotIndex: 4, row: 1, column: 2, margin: new Thickness(Gap / 2, Gap / 2, 0, 0), cornerRadius: new CornerRadius(0, 0, Radius, 0));
-    }
-
-    /// <summary>
-    /// Builds a two-row by three-column grid layout containing six equally sized slots.
-    /// </summary>
-    /// <param name="host">The target grid where the layout will be rendered.</param>
-    /// <param name="context">The build context containing the brushes to apply.</param>
-    private static void BuildTwoRowsThreeColumns(Grid host, LayoutBuildContext context)
-    {
-        AddStarRows(host, 1, 1);
-        AddStarColumns(host, 1, 1, 1);
-        AddCell(host, context, slotIndex: 0, row: 0, column: 0, margin: new Thickness(0, 0, Gap / 2, Gap / 2), cornerRadius: new CornerRadius(Radius, 0, 0, 0));
-        AddCell(host, context, slotIndex: 1, row: 0, column: 1, margin: new Thickness(Gap / 2, 0, Gap / 2, Gap / 2), cornerRadius: new CornerRadius(0));
-        AddCell(host, context, slotIndex: 2, row: 0, column: 2, margin: new Thickness(Gap / 2, 0, 0, Gap / 2), cornerRadius: new CornerRadius(0, Radius, 0, 0));
-        AddCell(host, context, slotIndex: 3, row: 1, column: 0, margin: new Thickness(0, Gap / 2, Gap / 2, 0), cornerRadius: new CornerRadius(0, 0, 0, Radius));
-        AddCell(host, context, slotIndex: 4, row: 1, column: 1, margin: new Thickness(Gap / 2, Gap / 2, Gap / 2, 0), cornerRadius: new CornerRadius(0));
-        AddCell(host, context, slotIndex: 5, row: 1, column: 2, margin: new Thickness(Gap / 2, Gap / 2, 0, 0), cornerRadius: new CornerRadius(0, 0, Radius, 0));
-    }
     #endregion
 }

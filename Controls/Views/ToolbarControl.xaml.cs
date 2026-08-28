@@ -93,10 +93,10 @@ public sealed partial class ToolbarControl : UserControl
         ApplySwitchesEnabledState(!TogglesDisabled);
 
         _panelDefinitions.Clear();
-        _panelDefinitions[LayoutSelectorButton.Name] = new ToolbarPanelDefinition(LayoutSelectorButton, ToolbarLayoutSelector, 1000, 414);
-        _panelDefinitions[WidgetSelectorButton.Name] = new ToolbarPanelDefinition(WidgetSelectorButton, ToolbarWidgetSelector, 1200, 600);
+        _panelDefinitions[LayoutSelectorButton.Name] = new ToolbarPanelDefinition(LayoutSelectorButton, ToolbarLayoutSelector, 830, 414);
+        _panelDefinitions[WidgetSelectorButton.Name] = new ToolbarPanelDefinition(WidgetSelectorButton, ToolbarWidgetSelector, 920, 460);
         _panelDefinitions[TemplateSelectorButton.Name] = new ToolbarPanelDefinition(TemplateSelectorButton, ToolbarTemplateSelector, 1100, 660);
-        _panelDefinitions[SettingsSelectorButton.Name] = new ToolbarPanelDefinition(SettingsSelectorButton, ToolbarSettingsSelector, 980, 630);
+        _panelDefinitions[SettingsSelectorButton.Name] = new ToolbarPanelDefinition(SettingsSelectorButton, ToolbarSettingsSelector, 980, 360);
 
         _initialized = true;
     }

@@ -153,42 +153,6 @@ public static class Layouts
     }
 
     /// <summary>
-    /// Layout de tres columnas: las laterales (25% cada una) divididas en dos filas y la central (50%) a
-    /// toda altura.
-    /// </summary>
-    private static LayoutInfo WideMiddleSidesSplitGrid(int index)
-    {
-        var slots = new[]
-        {
-            new SlotInfo(0, 0),
-            new SlotInfo(1, 0),
-            new SlotInfo(0, 1, 2, 1),
-            new SlotInfo(0, 2),
-            new SlotInfo(1, 2)
-        };
-        var cols = new[] { "*", "2*", "*" };
-        return Create(index, slots, cols);
-    }
-
-    /// <summary>
-    /// Layout de tres columnas: la izquierda al 50% a toda altura; la central y la derecha (25% cada una)
-    /// divididas en dos filas.
-    /// </summary>
-    private static LayoutInfo WideLeftBothColumnsSplitGrid(int index)
-    {
-        var slots = new[]
-        {
-            new SlotInfo(0, 0, 2, 1),
-            new SlotInfo(0, 1),
-            new SlotInfo(1, 1),
-            new SlotInfo(0, 2),
-            new SlotInfo(1, 2)
-        };
-        var cols = new[] { "2*", "*", "*" };
-        return Create(index, slots, cols);
-    }
-
-    /// <summary>
     /// Layout de tres columnas: la izquierda al 50% y la central al 25%, ambas a toda altura; la derecha
     /// al 25% dividida en dos filas.
     /// </summary>
@@ -202,24 +166,6 @@ public static class Layouts
             new SlotInfo(1, 2)
         };
         var cols = new[] { "2*", "*", "*" };
-        return Create(index, slots, cols);
-    }
-
-    /// <summary>
-    /// Layout en cuadrícula de dos filas por tres columnas con seis slots iguales.
-    /// </summary>
-    private static LayoutInfo TwoRowsThreeColumnsGrid(int index)
-    {
-        var slots = new[]
-        {
-            new SlotInfo(0, 0),
-            new SlotInfo(0, 1),
-            new SlotInfo(0, 2),
-            new SlotInfo(1, 0),
-            new SlotInfo(1, 1),
-            new SlotInfo(1, 2)
-        };
-        var cols = new[] { "*", "*", "*" };
         return Create(index, slots, cols);
     }
 
@@ -261,9 +207,6 @@ public static class Layouts
         _layouts.Add(4, ThreeColumnsEqualGrid(4));
         _layouts.Add(5, Grid2x2Grid(5));
         _layouts.Add(6, WideLeftRightColumnSplitGrid(6));
-        _layouts.Add(7, WideLeftBothColumnsSplitGrid(7));
-        _layouts.Add(8, WideMiddleSidesSplitGrid(8));
-        _layouts.Add(9, TwoRowsThreeColumnsGrid(9));
     }
 
     /// <summary>

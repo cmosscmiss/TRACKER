@@ -10,13 +10,13 @@
 
     <Grid x:Name="RootGrid" Padding="16">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="576"/>
+            <ColumnDefinition Width="288"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="536"/>
+            <ColumnDefinition Width="540"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-            <VariableSizedWrapGrid x:Name="RootPanel" Orientation="Horizontal" MaximumRowsOrColumns="4" ItemHeight="144" ItemWidth="144" />
+            <VariableSizedWrapGrid x:Name="RootPanel" Orientation="Horizontal" MaximumRowsOrColumns="2" ItemHeight="144" ItemWidth="144" />
         </Grid>
 
         <template:SeparatorEx Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="16 0 28 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />

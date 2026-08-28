@@ -8,9 +8,6 @@
             <local:LayoutItemControl x:Name="Item4" Index="4"/>
             <local:LayoutItemControl x:Name="Item5" Index="5"/>
             <local:LayoutItemControl x:Name="Item6" Index="6"/>
-            <local:LayoutItemControl x:Name="Item7" Index="7"/>
-            <local:LayoutItemControl x:Name="Item8" Index="8"/>
-            <local:LayoutItemControl x:Name="Item9" Index="9"/>
         </VariableSizedWrapGrid>
     </Grid>    
 </UserControl>

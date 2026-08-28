@@ -55,9 +55,6 @@ public sealed partial class LayoutSelectorControl : UserControl
         Item4.Index = 4;
         Item5.Index = 5;
         Item6.Index = 6;
-        Item7.Index = 7;
-        Item8.Index = 8;
-        Item9.Index = 9;
 
         // Eventos de ciclo de vida del control.
         Loaded += OnLoaded;
