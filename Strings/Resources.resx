@@ -609,16 +609,16 @@
     <value>Signed out of Amazon</value>
   </data>
   <data name="WidgetSelector_WebView_Tooltip" xml:space="preserve">
-    <value>Browse product stores</value>
+    <value>Web Search</value>
   </data>
   <data name="WidgetSelector_Favorites_Tooltip" xml:space="preserve">
-    <value>Favourite products carousel</value>
+    <value>Favourites</value>
   </data>
   <data name="WidgetSelector_ProductsOverview_Tooltip" xml:space="preserve">
-    <value>Best price chart</value>
+    <value>Price overview</value>
   </data>
   <data name="WidgetSelector_Console_Tooltip" xml:space="preserve">
-    <value>App activity log</value>
+    <value>Activity log</value>
   </data>
   <data name="WidgetSelector_Default_Tooltip" xml:space="preserve">
     <value>Empty widget</value>

@@ -604,13 +604,13 @@
     <value>Sesión de Amazon cerrada</value>
   </data>
   <data name="WidgetSelector_WebView_Tooltip" xml:space="preserve">
-    <value>Navegar por tiendas</value>
+    <value>Búsqueda web</value>
   </data>
   <data name="WidgetSelector_Favorites_Tooltip" xml:space="preserve">
-    <value>Carrusel de favoritos</value>
+    <value>Favoritos</value>
   </data>
   <data name="WidgetSelector_ProductsOverview_Tooltip" xml:space="preserve">
-    <value>Gráfica de mejores precios</value>
+    <value>Resumen de precios</value>
   </data>
   <data name="WidgetSelector_Console_Tooltip" xml:space="preserve">
     <value>Registro de actividad</value>
