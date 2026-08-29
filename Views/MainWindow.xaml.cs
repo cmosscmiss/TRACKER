@@ -156,6 +156,10 @@ public sealed partial class MainWindow : Window
         // Deja terminar los bindings y el primer layout pass.
         await Task.Yield();
 
+        // La toolbar arranca desplegada, sin esperar a que el puntero pase por la zona superior. A partir de ahí
+        // sigue su comportamiento normal: se auto-oculta a los 3 s si no se interactúa con ella.
+        ShowToolbar();
+
         await InitializeScraperAsync();
 
         // TEMPORAL (pruebas de estilo del popup de settings): abre la ventana de ajustes al arrancar.

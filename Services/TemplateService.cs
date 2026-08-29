@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MM4LB.Models;
+using Newtonsoft.Json.Linq;
 
 namespace MM4LB.Services;
 
@@ -22,6 +23,7 @@ public class TemplateService
     #endregion
 
     #region Attributes
+
     private readonly AppSettings _appSettings;
     private readonly PersistAndRestoreService _persistAndRestoreService;
     private readonly SharedDataService _sharedDataService;
@@ -43,24 +45,28 @@ public class TemplateService
 
     #region Methods (public)
     /// <summary>
-    /// Todos los templates disponibles para CARGAR (<c>Assets/Templates/*.json</c>, en orden alfabético). El nombre
-    /// visible es el del fichero; la miniatura es el <c>.jpg</c> con el mismo nombre base, si existe.
+    /// Todos los templates disponibles para CARGAR (<c>Assets/Templates/*.json</c>), ordenados por el número de slots
+    /// de su layout, de menos a más (los que empatan, por nombre). El nombre visible es el del fichero y la miniatura
+    /// es el <c>.jpg</c> con el mismo nombre, si existe.
     /// </summary>
     public IReadOnlyList<TemplateEntry> GetAllTemplates()
     {
-        var list = new List<TemplateEntry>();
-
         if (!Directory.Exists(AppTemplatesFolderPath))
-            return list;
+            return new List<TemplateEntry>();
 
-        foreach (string jsonPath in Directory.EnumerateFiles(AppTemplatesFolderPath, "*.json").OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
-        {
-            string name = Path.GetFileNameWithoutExtension(jsonPath);
-            string image = Path.Combine(AppTemplatesFolderPath, name + ".jpg");
-            list.Add(new TemplateEntry(name, jsonPath, File.Exists(image) ? image : string.Empty));
-        }
+        return Directory.EnumerateFiles(AppTemplatesFolderPath, "*.json")
+            .Select(jsonPath =>
+            {
+                string name = Path.GetFileNameWithoutExtension(jsonPath);
+                string image = Path.Combine(AppTemplatesFolderPath, name + ".jpg");
 
-        return list;
+                return (Slots: SlotCountOf(jsonPath),
+                        Entry: new TemplateEntry(name, jsonPath, File.Exists(image) ? image : string.Empty));
+            })
+            .OrderBy(item => item.Slots)
+            .ThenBy(item => item.Entry.Name, StringComparer.OrdinalIgnoreCase)
+            .Select(item => item.Entry)
+            .ToList();
     }
 
     /// <summary>
@@ -82,6 +88,27 @@ public class TemplateService
     #endregion
 
     #region Methods (private)
+    /// <summary>
+    /// Número de slots del layout que usa un template, leído de su JSON. Es lo que ordena el selector: primero los
+    /// layouts más simples. Si el fichero no se puede leer o no trae layout, va al final.
+    /// </summary>
+    private static int SlotCountOf(string jsonPath)
+    {
+        try
+        {
+            JObject root = JObject.Parse(File.ReadAllText(jsonPath, Encoding.UTF8));
+
+            if ((int?)root["LayoutSelectorControl"]?["SelectedLayout"] is int layoutIndex)
+                return Layouts.Get(layoutIndex).Slots.Count;
+        }
+        catch (Exception ex)
+        {
+            ExceptionService.LogToFile(ex, $"Could not read the layout of the template '{jsonPath}'.");
+        }
+
+        return int.MaxValue;
+    }
+
     /// <summary>
     /// Re-aplica en caliente la configuración recién cargada (un template cambia todo MENOS el tema, que se excluye):
     /// logging, cabecera de widgets, modo de grupos de toolbar y un evento global de "recarga" que reorganiza el

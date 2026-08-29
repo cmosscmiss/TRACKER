@@ -23,18 +23,18 @@
         </GridView.ItemsPanel>
         <GridView.ItemTemplate>
             <DataTemplate>
-                <Grid Width="343" ToolTipService.ToolTip="{Binding Name}">
-                    <StackPanel Spacing="8">
-                        <Border CornerRadius="8" Height="206" BorderThickness="1"
+                <Grid Width="333" ToolTipService.ToolTip="{Binding Name}">
+                    <StackPanel>
+                        <Border CornerRadius="8" Height="232" BorderThickness="1"
                                 BorderBrush="{ThemeResource CardBackgroundLightBrush}" Background="{ThemeResource BackgroundLightBrush}">
                             <Grid>
-                                <FontIcon Glyph="&#xE8B9;" FontSize="47" Foreground="{ThemeResource TextSecondaryBrush}"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <Image Source="{Binding Image}" Stretch="UniformToFill"/>
+                                <Image Source="{Binding Image}" Stretch="Fill"/>
                             </Grid>
                         </Border>
-                        <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                        <Border CornerRadius="0 0 8 8" Background="{ThemeResource AccentDarkBrushOpacity80}" Padding="0 4">
+                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
                                    HorizontalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+                        </Border>
                     </StackPanel>
                 </Grid>
             </DataTemplate>
