@@ -262,6 +262,7 @@ public static class LocKeys
     public const string ProductList_FilterFavorites_Label = "ProductList_FilterFavorites_Label";
     public const string ProductList_FilterIssues_Label = "ProductList_FilterIssues_Label";
     public const string ProductList_FilterPriceChange_Label = "ProductList_FilterPriceChange_Label";
+    public const string ProductList_FilterHistoricalLow_Label = "ProductList_FilterHistoricalLow_Label";
     public const string ProductList_FilterAlert_Label = "ProductList_FilterAlert_Label";
     public const string ProductList_FilterPurchased_Label = "ProductList_FilterPurchased_Label";
     public const string ProductList_Count_Format = "ProductList_Count_Format";

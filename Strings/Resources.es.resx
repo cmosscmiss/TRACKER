@@ -618,4 +618,7 @@
   <data name="WidgetSelector_Default_Tooltip" xml:space="preserve">
     <value>Widget vacío</value>
   </data>
+  <data name="ProductList_FilterHistoricalLow_Label" xml:space="preserve">
+    <value>En mínimo histórico</value>
+  </data>
 </root>

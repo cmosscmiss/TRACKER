@@ -100,6 +100,9 @@
                             <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPriceChange_Label}"
                                 IsChecked="{x:Bind ViewModel.ActiveFilters.WithPriceChange, Mode=TwoWay}"
                                 Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterHistoricalLow_Label}"
+                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithHistoricalLow, Mode=TwoWay}"
+                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
                             <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterAlert_Label}"
                                 IsChecked="{x:Bind ViewModel.ActiveFilters.WithAlert, Mode=TwoWay}"
                                 Command="{x:Bind ViewModel.FiltersChangedCommand}"/>

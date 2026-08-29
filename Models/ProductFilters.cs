@@ -23,6 +23,10 @@ public partial class ProductFilters : ObservableObject
     [ObservableProperty]
     private bool _withPriceChange;
 
+    /// <summary>Solo productos cuyo mejor precio actual iguala (o mejora) el mínimo de todo su histórico.</summary>
+    [ObservableProperty]
+    private bool _withHistoricalLow;
+
     /// <summary>Solo productos con un precio de alerta configurado.</summary>
     [ObservableProperty]
     private bool _withAlert;
@@ -32,7 +36,7 @@ public partial class ProductFilters : ObservableObject
     private bool _withPurchased;
 
     /// <summary>True si hay al menos un filtro por variable activo.</summary>
-    public bool HasAny => Favorites || WithIssues || WithPriceChange || WithAlert || WithPurchased;
+    public bool HasAny => Favorites || WithIssues || WithPriceChange || WithHistoricalLow || WithAlert || WithPurchased;
 
     /// <summary>
     /// Aplica los filtros por variable activos (combinados con OR) a la secuencia dada. Si no hay ninguno activo,
@@ -47,6 +51,7 @@ public partial class ProductFilters : ObservableObject
             (Favorites && product.IsFavorite) ||
             (WithIssues && product.HasIssues) ||
             (WithPriceChange && (product.Trend == PriceTrend.Up || product.Trend == PriceTrend.Down)) ||
+            (WithHistoricalLow && product.IsHistoricalLow) ||
             (WithAlert && product.HasAlert) ||
             (WithPurchased && product.IsPurchased));
     }

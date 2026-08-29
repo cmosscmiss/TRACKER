@@ -623,4 +623,7 @@
   <data name="WidgetSelector_Default_Tooltip" xml:space="preserve">
     <value>Empty widget</value>
   </data>
+  <data name="ProductList_FilterHistoricalLow_Label" xml:space="preserve">
+    <value>At historical low</value>
+  </data>
 </root>

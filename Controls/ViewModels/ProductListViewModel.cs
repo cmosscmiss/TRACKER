@@ -17,9 +17,9 @@ namespace MM4LB.Controls.ViewModels;
 ///
 /// Expone (vía <see cref="SharedDataService"/>) la colección de productos rastreados y el producto
 /// seleccionado. Sobre esa colección aplica un filtro por texto (nombre) y por variables (favoritos, con avisos,
-/// con cambio de precio, con alerta), publicando el resultado en <see cref="FilteredProducts"/>, que es lo que
-/// muestra el ListView. El estilo (texto + <c>ToggleSplitButton</c> con toggles) recupera el de la antigua lista
-/// de juegos.
+/// con cambio de precio, en mínimo histórico, con alerta), publicando el resultado en <see cref="FilteredProducts"/>,
+/// que es lo que muestra el ListView. El estilo (texto + <c>ToggleSplitButton</c> con toggles) recupera el de la
+/// antigua lista de juegos.
 /// </summary>
 public partial class ProductListViewModel : WidgetViewModelBase
 {
@@ -34,7 +34,8 @@ public partial class ProductListViewModel : WidgetViewModelBase
     private static readonly HashSet<string> FilterAffectingProperties = new()
     {
         nameof(Product.Name), nameof(Product.IsFavorite), nameof(Product.HasIssues),
-        nameof(Product.Trend), nameof(Product.HasAlert), nameof(Product.BestPrice), nameof(Product.IsPurchased),
+        nameof(Product.Trend), nameof(Product.IsHistoricalLow), nameof(Product.HasAlert), nameof(Product.BestPrice),
+        nameof(Product.IsPurchased),
     };
     #endregion
 
@@ -42,7 +43,7 @@ public partial class ProductListViewModel : WidgetViewModelBase
     /// <summary>Productos que pasan los filtros actuales, en el mismo orden (alfabético) que la fuente. Lo muestra el ListView.</summary>
     public ObservableCollection<Product> FilteredProducts { get; } = new();
 
-    /// <summary>Estado de los filtros por variable (favoritos, avisos, cambio de precio, alerta).</summary>
+    /// <summary>Estado de los filtros por variable (favoritos, avisos, cambio de precio, mínimo histórico, alerta).</summary>
     public ProductFilters ActiveFilters { get; } = new();
 
     /// <summary>Texto del filtro por nombre (subcadena, sin distinguir mayúsculas). Al cambiar, refiltra en el acto.</summary>
