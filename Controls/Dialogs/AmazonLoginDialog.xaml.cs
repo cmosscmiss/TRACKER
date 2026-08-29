@@ -2,7 +2,7 @@ using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace MM4LB.Controls.Dialogs;
+namespace Tracker.Controls.Dialogs;
 
 /// <summary>
 /// Contenido del diálogo de inicio de sesión de Amazon: email + contraseña. El botón primario (Iniciar sesión) se

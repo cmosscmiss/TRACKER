@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Minimal system-tray integration for the (unpackaged) main window, via Win32 interop (no extra NuGet). While the

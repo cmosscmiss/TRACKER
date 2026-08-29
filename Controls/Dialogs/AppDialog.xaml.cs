@@ -5,12 +5,12 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
-using MM4LB.Services;
+using Tracker.Services;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.System;
 
-namespace MM4LB.Controls.Dialogs;
+namespace Tracker.Controls.Dialogs;
 
 /// <summary>Resultado de un <see cref="AppDialog"/>.</summary>
 public enum AppDialogResult

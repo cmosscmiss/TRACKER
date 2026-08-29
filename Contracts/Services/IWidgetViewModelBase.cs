@@ -1,6 +1,6 @@
-﻿using MM4LB.Models;
+﻿using Tracker.Models;
 
-namespace MM4LB.Contracts.Services;
+namespace Tracker.Contracts.Services;
 
 /// <summary>
 /// Defines the contract for ViewModels that support loading and saving

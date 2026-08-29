@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using MM4LB.Models;
+using Tracker.Models;
 using Newtonsoft.Json.Linq;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Gestiona los "templates" de configuración: ficheros <c>*.json</c> (+ <c>*.jpg</c> opcional) en

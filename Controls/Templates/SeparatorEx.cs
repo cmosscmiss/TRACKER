@@ -2,9 +2,9 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Controls.Templates;
+namespace Tracker.Controls.Templates;
 
 /// <summary>
 /// Forma del <see cref="SeparatorEx"/>: línea (por defecto) o círculo.

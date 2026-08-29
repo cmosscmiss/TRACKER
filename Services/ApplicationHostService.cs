@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
-using MM4LB.Contracts.Services;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Models;
+using Tracker.Contracts.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Models;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Hosted service executed automatically by the .NET Generic Host
@@ -104,7 +104,7 @@ public sealed class ApplicationHostService : IHostedService
         await _themeService.InitializeAsync();
 
         // Primer evento del ACTIVITY LOG: la app se ha cargado.
-        _progressService.LogEvent(_localizationService[MM4LB.Helpers.LocKeys.AppLog_Loaded_Progress]);
+        _progressService.LogEvent(_localizationService[Tracker.Helpers.LocKeys.AppLog_Loaded_Progress]);
 
         _isInitialized = true;
     }

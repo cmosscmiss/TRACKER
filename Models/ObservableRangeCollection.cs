@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// An <see cref="ObservableCollection{T}"/> that can replace its whole content in a single

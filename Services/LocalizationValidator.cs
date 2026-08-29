@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Resources;
-using MM4LB.Helpers;
+using Tracker.Helpers;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Validador dev-time de la localización: comprueba que toda clave declarada en <see cref="LocKeys"/> exista en el
@@ -19,7 +19,7 @@ public static class LocalizationValidator
     [Conditional("DEBUG")]
     public static void Validate()
     {
-        var resourceManager = new ResourceManager("MM4LB.Strings.Resources", typeof(LocKeys).Assembly);
+        var resourceManager = new ResourceManager("Tracker.Strings.Resources", typeof(LocKeys).Assembly);
         CultureInfo neutral = CultureInfo.GetCultureInfo("en");
         var missing = new List<string>();
 

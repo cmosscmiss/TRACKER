@@ -4,13 +4,13 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Models;
+using Tracker.Services;
 using System;
 using System.ComponentModel;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Modo de presentación de un <see cref="WidgetBaseControl"/>.

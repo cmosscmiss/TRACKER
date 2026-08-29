@@ -1,6 +1,6 @@
-﻿using MM4LB.Controls.ViewModels;
+﻿using Tracker.Controls.ViewModels;
 
-namespace MM4LB.Controls.Templates;
+namespace Tracker.Controls.Templates;
 
 /// <summary>
 /// Representa la información lógica y visual mínima necesaria para identificar

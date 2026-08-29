@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MM4LB.Helpers;
-using MM4LB.Models;
+using Tracker.Helpers;
+using Tracker.Models;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Application-level operations on the tracked products: creating a product from a URL (fanning an Amazon product

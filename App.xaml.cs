@@ -2,14 +2,14 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
-using MM4LB.Contracts.Services;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Controls.Views;
-using MM4LB.Helpers;
-using MM4LB.Models;
-using MM4LB.Services;
-using MM4LB.ViewModels;
-using MM4LB.Views;
+using Tracker.Contracts.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Controls.Views;
+using Tracker.Helpers;
+using Tracker.Models;
+using Tracker.Services;
+using Tracker.ViewModels;
+using Tracker.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MM4LB;
+namespace Tracker;
 
 /// <summary>
 /// Provides application-specific behavior to supplement the default Application class.
@@ -33,7 +33,7 @@ public partial class App : Application
     private static Mutex? _singleInstanceMutex;
 
     /// <summary>Nombre del evento (por sesión) con el que una segunda instancia pide a la principal que se traiga al frente.</summary>
-    private const string ActivateEventName = @"Local\MM4LB.Tracker.Activate";
+    private const string ActivateEventName = @"Local\Tracker.Tracker.Activate";
 
     /// <summary>Evento de activación de la instancia principal (lo señala una segunda instancia al arrancar). Vivo todo el proceso.</summary>
     private static EventWaitHandle? _activateEvent;
@@ -73,7 +73,7 @@ public partial class App : Application
         // al frente (como pulsar el icono de la bandeja) y esta segunda instancia termina. El mutex se crea con nombre
         // global-por-sesión ("Local\..."); createdNew es false si otra instancia ya lo tiene. Se comprueba antes de
         // construir el host o mostrar UI para no inicializar nada de un proceso que va a terminar de inmediato.
-        _singleInstanceMutex = new Mutex(initiallyOwned: true, @"Local\MM4LB.Tracker.SingleInstance", out bool createdNew);
+        _singleInstanceMutex = new Mutex(initiallyOwned: true, @"Local\Tracker.Tracker.SingleInstance", out bool createdNew);
         if (!createdNew)
         {
             SignalExistingInstanceAndExit();
@@ -148,7 +148,7 @@ public partial class App : Application
 
         // Global exception logging to diagnose silent crashes. Background-thread and unobserved-task
         // exceptions are NOT surfaced by the WinUI UnhandledException event, so all three sinks are hooked
-        // and routed to the exception log file (%LocalAppData%\MM4LB\MM4LB.log).
+        // and routed to the exception log file (%LocalAppData%\Tracker\Tracker.log).
         UnhandledException += App_UnhandledException;
         AppDomain.CurrentDomain.UnhandledException += OnDomainUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
@@ -394,7 +394,7 @@ public partial class App : Application
     private static extern bool AllowSetForegroundWindow(int dwProcessId);
 
     /// <summary>Identidad de taskbar/notificaciones de la app (estable y única entre versiones).</summary>
-    private const string AppUserModelId = "MM4LB.Tracker";
+    private const string AppUserModelId = "Tracker.Tracker";
 
     /// <summary>Fija el AppUserModelID del proceso (identidad de taskbar). No crítico: si falla, solo se pierde el agrupado/atribución consistentes.</summary>
     private static void TrySetAppUserModelId()

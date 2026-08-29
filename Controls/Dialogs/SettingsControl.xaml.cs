@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.ViewModels;
+using Tracker.ViewModels;
 
-namespace MM4LB.Controls.Dialogs;
+namespace Tracker.Controls.Dialogs;
 
 /// <summary>
 /// Contenido de la ventana de configuración de la app, mostrado dentro de un <see cref="AppDialog"/> (que aporta la

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.Controls.Templates;
-using MM4LB.Services;
+using Tracker.Controls.Templates;
+using Tracker.Services;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 public sealed partial class ToolbarControl : UserControl
 {

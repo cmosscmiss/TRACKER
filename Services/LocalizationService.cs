@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Servicio central de localización (i18n). Fuente única del idioma activo y de la resolución de textos de UI desde
@@ -30,7 +30,7 @@ public sealed class LocalizationService : INotifyPropertyChanged
     public LocalizationService()
     {
         // El nombre base debe coincidir con el manifest resource del .resx (RootNamespace + carpeta + fichero).
-        _resourceManager = new ResourceManager("MM4LB.Strings.Resources", typeof(LocalizationService).Assembly);
+        _resourceManager = new ResourceManager("Tracker.Strings.Resources", typeof(LocalizationService).Assembly);
         Instance = this;
     }
     #endregion

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Microsoft.Data.Sqlite;
-using MM4LB.Models;
+using Tracker.Models;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Local persistence for tracked products, backed by a SQLite database (via Microsoft.Data.Sqlite).

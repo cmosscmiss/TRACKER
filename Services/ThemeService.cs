@@ -8,11 +8,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
-using MM4LB.Models;
+using Tracker.Models;
 using Windows.UI;
-using static MM4LB.Models.AppSettings;
+using static Tracker.Models.AppSettings;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Servicio responsable de gestionar el tema visual de la aplicación.

@@ -3,11 +3,11 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using Microsoft.Extensions.Options;
-using MM4LB.Enums;
-using MM4LB.Models;
+using Tracker.Enums;
+using Tracker.Models;
 using Newtonsoft.Json;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Servicio encargado de persistir y restaurar la configuración de la aplicación.
@@ -30,7 +30,7 @@ public class PersistAndRestoreService
     private readonly string _filePath;
 
     /// <summary>
-    /// Carpeta donde se almacena el fichero de configuración (<c>%LocalAppData%\MM4LB</c>). Es la fuente
+    /// Carpeta donde se almacena el fichero de configuración (<c>%LocalAppData%\Tracker</c>). Es la fuente
     /// única de esta ubicación; otros servicios (p. ej. el backup de imágenes) cuelgan sus carpetas de aquí.
     /// </summary>
     public static string SettingsFolderPath => Path.Combine(

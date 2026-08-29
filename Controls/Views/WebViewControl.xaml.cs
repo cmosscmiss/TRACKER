@@ -4,19 +4,19 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.Web.WebView2.Core;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Helpers;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Helpers;
+using Tracker.Models;
+using Tracker.Services;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using Windows.System;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
-/// Control visual encargado de mostrar un WebView2 dentro del sistema de widgets de MM4LB.
+/// Control visual encargado de mostrar un WebView2 dentro del sistema de widgets de Tracker.
 ///
 /// La navegación no depende de IsEnabled, sino del estado funcional del widget:
 /// si el ViewModel tiene SlotIndex == -1, el widget se considera inactivo y no debe navegar.
@@ -105,7 +105,7 @@ public sealed partial class WebViewControl : UserControl
         {
             // Fallo real y visible para el usuario final (p. ej. runtime WebView2 Evergreen no instalado): lo
             // enrutamos al ExceptionService (diálogo + log) en vez de un Debug.WriteLine invisible en Release.
-            App.GetService<ExceptionService>().Handle(ex, MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.WebView_Init_Error] ?? "The web browser (WebView2) could not be initialized.");
+            App.GetService<ExceptionService>().Handle(ex, Tracker.Services.LocalizationService.Instance?[Tracker.Helpers.LocKeys.WebView_Init_Error] ?? "The web browser (WebView2) could not be initialized.");
         }
     }
 

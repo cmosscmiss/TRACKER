@@ -2,7 +2,7 @@ using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Reloj split-flap que muestra un tiempo (HH:MM:SS) con dígitos que vuelcan (<see cref="SplitFlapDigit"/>). Se usa en

@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Converter from boolean to <see cref="Windows.UI.Text.TextDecorations"/>: true means strikethrough,

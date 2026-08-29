@@ -1,7 +1,7 @@
 using System;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Devuelve el pincel del título de un producto en la lista según si está comprado: texto SECUNDARIO cuando lo está

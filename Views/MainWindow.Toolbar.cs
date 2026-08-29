@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Views;
+namespace Tracker.Views;
 
 /// <summary>
 /// Contains the behavior that shows and hides the floating toolbar in the main window.

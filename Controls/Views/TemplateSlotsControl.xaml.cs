@@ -6,9 +6,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Componente visual de los templates disponibles, en tarjetas (imagen + nombre), para el selector de la toolbar.

@@ -8,9 +8,9 @@ using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Models;
+using Tracker.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +18,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Control principal que gestiona un panel de widgets con soporte para:

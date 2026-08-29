@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// Helper class for a selectable, labelled option with an optional numeric value and a checked state

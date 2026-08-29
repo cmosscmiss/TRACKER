@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Página de la categoría "Theme" de la ventana de configuración: selector del tema visual activo y parámetros del

@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Converter from boolean to the Visibility enum type (true means hidden).

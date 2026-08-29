@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using MM4LB.Enums;
+using Tracker.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// Contenedor principal de toda la configuración de la aplicación.
@@ -53,13 +53,13 @@ public class AppSettings
         public double CacheSize { get; set; } = 4096;
 
         /// <summary>
-        /// Activa el logging de excepciones a <c>MM4LB.log</c> (herramienta de depuración). Por defecto activado.
+        /// Activa el logging de excepciones a <c>Tracker.log</c> (herramienta de depuración). Por defecto activado.
         /// </summary>
         public bool ExceptionLoggingEnabled { get; set; } = true;
 
         /// <summary>
         /// Idioma de la interfaz (código ISO de dos letras, p. ej. "en", "es"). Por defecto inglés. Se aplica en
-        /// caliente vía <see cref="MM4LB.Services.LocalizationService"/>; ver docs/Plan-Localizacion-Ayuda.md.
+        /// caliente vía <see cref="Tracker.Services.LocalizationService"/>; ver docs/Plan-Localizacion-Ayuda.md.
         /// </summary>
         public string Language { get; set; } = "en";
 
@@ -71,7 +71,7 @@ public class AppSettings
         public string SettingsLastSection { get; set; } = "General";
 
         /// <summary>
-        /// Indica si los widgets del panel (modo <see cref="MM4LB.Controls.Views.WidgetDisplayMode.Default"/>) muestran
+        /// Indica si los widgets del panel (modo <see cref="Tracker.Controls.Views.WidgetDisplayMode.Default"/>) muestran
         /// su barra de cabecera completa (con título). Por defecto true. Si es false, la cabecera se reduce a una barra
         /// fina que conserva solo el asa de arrastre, para que se solape menos con el contenido SIN bloquear el
         /// drag&amp;drop. NO afecta a los widgets fijos (banda del panel), que nunca tienen cabecera. Se lee al arrancar
@@ -87,14 +87,14 @@ public class AppSettings
 
         /// <summary>
         /// Si es true (por defecto), se muestran los tooltips de los botones. Un toggle del footer lo alterna en
-        /// caliente (vía <see cref="MM4LB.Services.SharedDataService.HelpTooltipsEnabled"/> y la attached property
+        /// caliente (vía <see cref="Tracker.Services.SharedDataService.HelpTooltipsEnabled"/> y la attached property
         /// <c>Help.Key</c>).
         /// </summary>
         public bool HelpTooltipsEnabled { get; set; } = true;
 
         /// <summary>
         /// Si es true, el precio de los productos incluye los gastos de envío (precio + envío) en toda la app. Lo
-        /// alterna un toggle del footer (vía <see cref="MM4LB.Services.SharedDataService.IncludeShippingInPrice"/>).
+        /// alterna un toggle del footer (vía <see cref="Tracker.Services.SharedDataService.IncludeShippingInPrice"/>).
         /// Por defecto false.
         /// </summary>
         public bool IncludeShippingInPrice { get; set; } = false;
@@ -117,14 +117,14 @@ public class AppSettings
         /// <summary>
         /// Si es true, las gráficas del widget de productos (producto seleccionado y favoritos) muestran las etiquetas
         /// del eje X (las fechas de actualización). Por defecto false (leyenda oculta). Lo controla un toggle del pie y
-        /// se aplica en caliente a todas esas gráficas vía <see cref="MM4LB.Services.SharedDataService.ShowChartAxisLabels"/>.
+        /// se aplica en caliente a todas esas gráficas vía <see cref="Tracker.Services.SharedDataService.ShowChartAxisLabels"/>.
         /// </summary>
         public bool ShowChartAxisLabels { get; set; } = false;
 
         /// <summary>
         /// Si es true, la vista de producto (seleccionado y favoritos) muestra la gráfica de evolución del precio MÍNIMO
         /// (área) en vez de la de precios por tienda. Ajuste global; lo controla un toggle del pie y se aplica en caliente
-        /// a todas las vistas vía <see cref="MM4LB.Services.SharedDataService.ShowMinPriceChart"/>. Por defecto false.
+        /// a todas las vistas vía <see cref="Tracker.Services.SharedDataService.ShowMinPriceChart"/>. Por defecto false.
         /// </summary>
         public bool ShowMinPriceChart { get; set; } = false;
 
@@ -151,7 +151,7 @@ public class AppSettings
 
         /// <summary>
         /// Umbral de ancho (DIPs) por debajo del cual un grupo de pastillas oculta su icono para dejar sitio al
-        /// texto (ver <see cref="MM4LB.Controls.Views.WidgetStatCardControl"/>.IconCollapsePillCount). Hay un valor
+        /// texto (ver <see cref="Tracker.Controls.Views.WidgetStatCardControl"/>.IconCollapsePillCount). Hay un valor
         /// por nº de pastillas del grupo; se mide sobre el ancho del PROPIO grupo, así que sirve igual en fila
         /// completa o en fracción. Constantes internas (no se persisten): ajuste centralizado de "todas las
         /// pastillas" desde aquí. Sube el valor para que el icono desaparezca antes (a más ancho).
@@ -548,7 +548,7 @@ public class AppSettings
             }
             catch (Exception ex)
             {
-                MM4LB.Services.ExceptionService.LogToFile(ex, $"Error binding settings for section '{entry.Key}'");
+                Tracker.Services.ExceptionService.LogToFile(ex, $"Error binding settings for section '{entry.Key}'");
                 continue;
             }
         }

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Servicio encargado de mostrar diálogos de error de forma global en la aplicación.

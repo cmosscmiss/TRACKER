@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.UI.Xaml.Data;
 
-namespace MM4LB.Converters;
+namespace Tracker.Converters;
 
 public sealed class SlotIndexToIsCheckedConverter : IValueConverter
 {

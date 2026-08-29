@@ -1,8 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.ViewModels;
+using Tracker.ViewModels;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 public sealed partial class SettingsControl : UserControl
 {

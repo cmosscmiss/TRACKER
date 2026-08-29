@@ -11,12 +11,12 @@ using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using MM4LB.Enums;
-using MM4LB.Helpers;
-using MM4LB.Services;
+using Tracker.Enums;
+using Tracker.Helpers;
+using Tracker.Services;
 using SkiaSharp;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Self-contained chart component: a toolbar to pick the <see cref="ChartType"/> for THIS chart plus the chart it
@@ -124,7 +124,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     /// <summary>
     /// Orden de los elementos de la gráfica (sin orden / ascendente / descendente por valor). Expuesta como
     /// DependencyProperty para poder enlazarla TwoWay y persistirla; la tipa el enum
-    /// <see cref="MM4LB.Enums.SortMode"/>, de ahí el nombre <c>SortOrder</c> (evita el choque nombre-tipo).
+    /// <see cref="Tracker.Enums.SortMode"/>, de ahí el nombre <c>SortOrder</c> (evita el choque nombre-tipo).
     /// </summary>
     public static readonly DependencyProperty SortOrderProperty = DependencyProperty.Register(
         nameof(SortOrder), typeof(SortMode), typeof(ChartTypeSelectorControl),

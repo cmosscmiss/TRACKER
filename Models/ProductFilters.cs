@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// Estado de los filtros por variable de la lista de productos (equivalente al viejo <c>Filters</c> de la lista de

@@ -6,9 +6,9 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Controls.Templates;
+namespace Tracker.Controls.Templates;
 
 /// <summary>
 /// Carpeta del tema activo de la que se resuelve un icono indicado por nombre.

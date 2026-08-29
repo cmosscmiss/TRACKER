@@ -3,7 +3,7 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-		<RootNamespace>MM4LB</RootNamespace>
+		<RootNamespace>Tracker</RootNamespace>
 		<AssemblyName>Tracker</AssemblyName>
 		<!-- Icono embebido en el .exe: lo usan la barra de tareas y, vía ExtractIcon, el icono de la bandeja. Sin esto
 		     Windows muestra el icono genérico por defecto. -->
@@ -58,7 +58,7 @@
 		<PackageReference Include="YoutubeExplode" Version="6.6.0" />
 	</ItemGroup>
 	<!-- ffmpeg (para remuxear el HD de YouTube a MP4 progresivo) NO se distribuye con la app: lo descarga
-	     YoutubeDownloadService al directorio de settings (%LocalAppData%\MM4LB\Tools\ffmpeg) la primera vez que
+	     YoutubeDownloadService al directorio de settings (%LocalAppData%\Tracker\Tools\ffmpeg) la primera vez que
 	     se necesita. Por eso no se copia ningún binario al output. -->
 	<ItemGroup>
 	  <Page Update="Controls\Views\WidgetStatCardControl.xaml">

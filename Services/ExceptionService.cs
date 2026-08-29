@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Servicio centralizado para gestionar excepciones de la aplicación.
@@ -40,10 +40,10 @@ public class ExceptionService
     public static bool LoggingEnabled { get; set; } = true;
 
     /// <summary>
-    /// Ruta del fichero de log de excepciones (<c>MM4LB.log</c>), en la MISMA carpeta que el fichero de
+    /// Ruta del fichero de log de excepciones (<c>Tracker.log</c>), en la MISMA carpeta que el fichero de
     /// configuración y el backup (<see cref="PersistAndRestoreService.SettingsFolderPath"/>).
     /// </summary>
-    private static string LogFilePath => Path.Combine(PersistAndRestoreService.SettingsFolderPath, "MM4LB.log");
+    private static string LogFilePath => Path.Combine(PersistAndRestoreService.SettingsFolderPath, "Tracker.log");
     #endregion
 
     #region Methods (public)
@@ -80,7 +80,7 @@ public class ExceptionService
 
     /// <summary>
     /// Añade una entrada con marca de tiempo al fichero de log de excepciones
-    /// (<c>%LocalAppData%\MM4LB\MM4LB.log</c>).
+    /// (<c>%LocalAppData%\Tracker\Tracker.log</c>).
     ///
     /// Es estático y autocontenido (no depende de la inyección de dependencias) para poder usarse desde
     /// los manejadores globales de excepciones no controladas, incluso si la aplicación está cerrándose o

@@ -5,12 +5,12 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Options;
-using MM4LB.Enums;
-using MM4LB.Helpers;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Enums;
+using Tracker.Helpers;
+using Tracker.Models;
+using Tracker.Services;
 
-namespace MM4LB.ViewModels;
+namespace Tracker.ViewModels;
 
 /// <summary>
 /// ViewModel del contenido de configuración de la app (mostrado en un <see cref="Controls.Dialogs.AppDialog"/> sobre

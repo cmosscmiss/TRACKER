@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using CommunityToolkit.WinUI.UI.Controls;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.WinUI;
-using MM4LB.Contracts.Services;
+using Tracker.Contracts.Services;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Restaura la configuración persistida de un view model de widget UNA SOLA VEZ por instancia. Los controles de

@@ -1,8 +1,8 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MM4LB.Models;
+using Tracker.Models;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Service to keep a snapshot of the data structures and status being used by the different components.

@@ -14,7 +14,7 @@ using Windows.Graphics.Effects;
 using Windows.Storage.Streams;
 using Windows.UI;
 
-namespace MM4LB.Controls.Templates;
+namespace Tracker.Controls.Templates;
 
 /// <summary>
 /// Control personalizado que renderiza una imagen aplicando un tinte configurable

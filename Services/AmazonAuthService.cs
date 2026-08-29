@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
-using MM4LB.Helpers;
-using MM4LB.Models;
+using Tracker.Helpers;
+using Tracker.Models;
 using Windows.Foundation;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Gestiona la sesión de Amazon en el navegador embebido: detecta si hay sesión iniciada (por la cookie de auth),

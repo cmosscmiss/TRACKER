@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Options;
-using MM4LB.Contracts.Services;
-using MM4LB.Controls.Templates;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Controls.Views;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Contracts.Services;
+using Tracker.Controls.Templates;
+using Tracker.Controls.ViewModels;
+using Tracker.Controls.Views;
+using Tracker.Models;
+using Tracker.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static MM4LB.Services.WindowService;
+using static Tracker.Services.WindowService;
 
-namespace MM4LB.ViewModels;
+namespace Tracker.ViewModels;
 
 public class MainWindowViewModel : WidgetViewModelBase
 {

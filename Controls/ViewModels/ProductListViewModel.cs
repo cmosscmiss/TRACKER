@@ -6,11 +6,11 @@ using System.ComponentModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Options;
-using MM4LB.Helpers;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Helpers;
+using Tracker.Models;
+using Tracker.Services;
 
-namespace MM4LB.Controls.ViewModels;
+namespace Tracker.Controls.ViewModels;
 
 /// <summary>
 /// ViewModel asociado a <see cref="Views.ProductListControl"/>.

@@ -2,7 +2,7 @@
 using System.IO;
 using Windows.Storage;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// Helper abstract class for files in the file system.

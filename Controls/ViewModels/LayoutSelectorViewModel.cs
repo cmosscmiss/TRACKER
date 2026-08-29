@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Models;
+using Tracker.Services;
 
-namespace MM4LB.Controls.ViewModels;
+namespace Tracker.Controls.ViewModels;
 
 /// <summary>
 /// ViewModel para el selector de layouts.

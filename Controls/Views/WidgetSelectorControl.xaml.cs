@@ -4,19 +4,19 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using MM4LB.Controls.Templates;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Converters;
-using MM4LB.Helpers;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Controls.Templates;
+using Tracker.Controls.ViewModels;
+using Tracker.Converters;
+using Tracker.Helpers;
+using Tracker.Models;
+using Tracker.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Windows.Foundation;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Control visual que permite seleccionar qué widgets están activos y asignarlos

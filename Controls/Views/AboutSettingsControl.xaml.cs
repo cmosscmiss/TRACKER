@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Página de la categoría "About" de la ventana de configuración: identidad de la app, descripción, detalles del

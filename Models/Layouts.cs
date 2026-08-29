@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// Representa la información de una celda dentro de un layout en cuadrícula.

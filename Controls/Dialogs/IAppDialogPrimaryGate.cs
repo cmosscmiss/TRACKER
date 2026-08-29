@@ -1,6 +1,6 @@
 using System;
 
-namespace MM4LB.Controls.Dialogs;
+namespace Tracker.Controls.Dialogs;
 
 /// <summary>
 /// Implemented by <see cref="AppDialog"/> content that needs to gate the primary button: the dialog keeps

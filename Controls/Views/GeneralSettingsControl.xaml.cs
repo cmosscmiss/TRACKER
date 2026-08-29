@@ -1,9 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.Services;
-using MM4LB.ViewModels;
+using Tracker.Services;
+using Tracker.ViewModels;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Página de la categoría "General" de la ventana de configuración. Sus controles se enlazan al staging del

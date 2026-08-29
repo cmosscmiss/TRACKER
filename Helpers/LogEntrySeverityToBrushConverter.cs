@@ -1,9 +1,9 @@
 using System;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using MM4LB.Models;
+using Tracker.Models;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Devuelve el pincel de texto de una entrada del ACTIVITY LOG según su <see cref="LogEntrySeverity"/>: error

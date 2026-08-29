@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Options;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Models;
+using Tracker.Services;
 using System;
 using System.Linq;
-using static MM4LB.Services.SharedDataService;
+using static Tracker.Services.SharedDataService;
 
-namespace MM4LB.Controls.ViewModels;
+namespace Tracker.Controls.ViewModels;
 
 /// <summary>
 /// ViewModel del WebViewControl. Ya no es un buscador: es un navegador para inspeccionar la página del producto y

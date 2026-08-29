@@ -6,9 +6,9 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>Tendencia del precio de un producto respecto a la lectura anterior.</summary>
 public enum PriceTrend

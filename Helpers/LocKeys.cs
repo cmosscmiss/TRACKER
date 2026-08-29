@@ -1,9 +1,9 @@
-﻿namespace MM4LB.Helpers;
+﻿namespace Tracker.Helpers;
 
 /// <summary>
 /// Constantes de las claves de localizaciÃ³n (i18n). Fuente Ãºnica para usarlas desde cÃ³digo sin strings sueltos; el
 /// XAML usa las mismas cadenas literales vÃ­a <c>{loc:Str Key=...}</c> / <c>help:Help.Key</c>.
-/// <see cref="MM4LB.Services.LocalizationValidator"/> comprueba en DEBUG que toda clave aquÃ­ exista en
+/// <see cref="Tracker.Services.LocalizationValidator"/> comprueba en DEBUG que toda clave aquÃ­ exista en
 /// <c>Strings/Resources.resx</c> (evita claves rotas).
 ///
 /// ConvenciÃ³n: <c>{Scope}_{Element}_{Role}</c>, donde <b>Scope = el control/vista/servicio dueÃ±o</b> del texto

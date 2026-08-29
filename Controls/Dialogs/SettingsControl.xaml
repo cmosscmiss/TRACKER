@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="MM4LB.Controls.Dialogs.SettingsControl"
+    x:Class="Tracker.Controls.Dialogs.SettingsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:uc="using:MM4LB.Controls.Views"
-    xmlns:helpers="using:MM4LB.Helpers"
-    xmlns:loc="using:MM4LB.Markup"
+    xmlns:uc="using:Tracker.Controls.Views"
+    xmlns:helpers="using:Tracker.Helpers"
+    xmlns:loc="using:Tracker.Markup"
     mc:Ignorable="d">
 
     <!-- El diálogo se muestra en un Popup; los converters globales de App.xaml no siempre se alcanzan desde ahí, así

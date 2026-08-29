@@ -6,14 +6,14 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using MM4LB.Enums;
-using MM4LB.Helpers;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Enums;
+using Tracker.Helpers;
+using Tracker.Models;
+using Tracker.Services;
 using Windows.UI;
-using static MM4LB.Services.SharedDataService;
+using static Tracker.Services.SharedDataService;
 
-namespace MM4LB.Controls.ViewModels;
+namespace Tracker.Controls.ViewModels;
 
 /// <summary>Una tienda del producto para el "strip" de la cabecera: etiqueta, precio actual y badge de Prime.</summary>
 public sealed class StoreChip

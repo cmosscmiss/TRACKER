@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using MM4LB.Services;
+using Tracker.Services;
 using Windows.UI;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Base de los converters que devuelven un <see cref="SolidColorBrush"/> con un color del tema activo. Antes

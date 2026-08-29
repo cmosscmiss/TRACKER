@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Dispatching;
-using MM4LB.Helpers;
-using MM4LB.Models;
+using Tracker.Helpers;
+using Tracker.Models;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Periodically refreshes the price of every tracked product, so the price history keeps growing while the app is

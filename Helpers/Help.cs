@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Tooltips de UI gobernados por un único toggle global (<see cref="SharedDataService.HelpTooltipsEnabled"/>) y

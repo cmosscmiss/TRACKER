@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="MM4LB.Controls.Views.ThemeSettingsControl"
+    x:Class="Tracker.Controls.Views.ThemeSettingsControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:template="using:MM4LB.Controls.Templates"
-    xmlns:loc="using:MM4LB.Markup"
+    xmlns:template="using:Tracker.Controls.Templates"
+    xmlns:loc="using:Tracker.Markup"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">

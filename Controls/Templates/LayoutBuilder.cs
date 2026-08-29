@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 
-namespace MM4LB.Controls.Templates;
+namespace Tracker.Controls.Templates;
 
 /// <summary>
 /// Utility class responsible for rendering predefined layout previews into a target <see cref="Grid"/>.

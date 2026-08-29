@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Converter from boolean to an opacity value: true means dimmed (0.4), false means fully opaque (1.0).

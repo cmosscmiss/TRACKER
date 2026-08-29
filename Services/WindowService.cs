@@ -9,7 +9,7 @@ using Windows.Graphics;
 using Windows.Storage.Streams;
 using WinRT.Interop;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Servicio centralizado para configurar el comportamiento de las ventanas de la aplicación:

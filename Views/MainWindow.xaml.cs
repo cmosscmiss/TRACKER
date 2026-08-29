@@ -1,16 +1,16 @@
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using MM4LB.Controls.Templates;
-using MM4LB.Controls.Views;
-using MM4LB.Helpers;
-using MM4LB.Services;
-using MM4LB.ViewModels;
+using Tracker.Controls.Templates;
+using Tracker.Controls.Views;
+using Tracker.Helpers;
+using Tracker.Services;
+using Tracker.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MM4LB.Views;
+namespace Tracker.Views;
 
 public sealed partial class MainWindow : Window
 {
@@ -275,10 +275,10 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        string baseLabel = L(MM4LB.Helpers.LocKeys.Footer_RefreshAll_Tooltip);
+        string baseLabel = L(Tracker.Helpers.LocKeys.Footer_RefreshAll_Tooltip);
         string lastLine = App.GetService<PriceSchedulerService>().LastFullRefreshUtc is DateTime lastUtc
-            ? string.Format(L(MM4LB.Helpers.LocKeys.Footer_RefreshAll_LastUpdate_Format), lastUtc.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture))
-            : L(MM4LB.Helpers.LocKeys.Footer_RefreshAll_LastUpdate_Never);
+            ? string.Format(L(Tracker.Helpers.LocKeys.Footer_RefreshAll_LastUpdate_Format), lastUtc.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture))
+            : L(Tracker.Helpers.LocKeys.Footer_RefreshAll_LastUpdate_Never);
         string tooltip = $"{baseLabel}\n{lastLine}";
 
         if (tooltip == _refreshTooltipCache)
@@ -327,11 +327,11 @@ public sealed partial class MainWindow : Window
         DialogsService dialogs = App.GetService<DialogsService>();
         string? url = await dialogs.PromptAsync(
             root.XamlRoot,
-            L(MM4LB.Helpers.LocKeys.AddProduct_Dialog_Title),
-            L(MM4LB.Helpers.LocKeys.AddProduct_Dialog_Message),
-            L(MM4LB.Helpers.LocKeys.AddProduct_Url_Placeholder),
-            L(MM4LB.Helpers.LocKeys.Common_Add_Label),
-            L(MM4LB.Helpers.LocKeys.Common_Cancel_Label));
+            L(Tracker.Helpers.LocKeys.AddProduct_Dialog_Title),
+            L(Tracker.Helpers.LocKeys.AddProduct_Dialog_Message),
+            L(Tracker.Helpers.LocKeys.AddProduct_Url_Placeholder),
+            L(Tracker.Helpers.LocKeys.Common_Add_Label),
+            L(Tracker.Helpers.LocKeys.Common_Cancel_Label));
 
         if (string.IsNullOrWhiteSpace(url))
             return;
@@ -343,9 +343,9 @@ public sealed partial class MainWindow : Window
         {
             await dialogs.AlertAsync(
                 root.XamlRoot,
-                L(MM4LB.Helpers.LocKeys.AddProduct_Duplicate_Title),
-                L(MM4LB.Helpers.LocKeys.AddProduct_Duplicate_Message),
-                L(MM4LB.Helpers.LocKeys.Common_OK_Label));
+                L(Tracker.Helpers.LocKeys.AddProduct_Duplicate_Title),
+                L(Tracker.Helpers.LocKeys.AddProduct_Duplicate_Message),
+                L(Tracker.Helpers.LocKeys.Common_OK_Label));
             return;
         }
 
@@ -357,7 +357,7 @@ public sealed partial class MainWindow : Window
             // Al terminar la carga de precios, navega a la tienda con el precio más bajo (en el widget navegador).
             string? bestUrl = product.BestStore?.Url;
             if (!string.IsNullOrWhiteSpace(bestUrl))
-                App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>().RequestNavigation(bestUrl);
+                App.GetService<Tracker.Controls.ViewModels.WebViewViewModel>().RequestNavigation(bestUrl);
         }
     }
 
@@ -380,10 +380,10 @@ public sealed partial class MainWindow : Window
         {
             bool confirmed = await App.GetService<DialogsService>().ConfirmAsync(
                 root.XamlRoot,
-                L(MM4LB.Helpers.LocKeys.AmazonLogout_ConfirmTitle),
-                L(MM4LB.Helpers.LocKeys.AmazonLogout_ConfirmMessage),
-                L(MM4LB.Helpers.LocKeys.AmazonLogout_Confirm_Label),
-                L(MM4LB.Helpers.LocKeys.Common_Cancel_Label));
+                L(Tracker.Helpers.LocKeys.AmazonLogout_ConfirmTitle),
+                L(Tracker.Helpers.LocKeys.AmazonLogout_ConfirmMessage),
+                L(Tracker.Helpers.LocKeys.AmazonLogout_Confirm_Label),
+                L(Tracker.Helpers.LocKeys.Common_Cancel_Label));
 
             if (confirmed)
                 await _amazonAuth.LogoutAsync();
@@ -404,9 +404,9 @@ public sealed partial class MainWindow : Window
         {
             await App.GetService<DialogsService>().AlertAsync(
                 xamlRoot,
-                L(MM4LB.Helpers.LocKeys.AmazonLogin_NoBrowser_Title),
-                L(MM4LB.Helpers.LocKeys.AmazonLogin_NoBrowser_Message),
-                L(MM4LB.Helpers.LocKeys.Common_OK_Label));
+                L(Tracker.Helpers.LocKeys.AmazonLogin_NoBrowser_Title),
+                L(Tracker.Helpers.LocKeys.AmazonLogin_NoBrowser_Message),
+                L(Tracker.Helpers.LocKeys.Common_OK_Label));
             return;
         }
 
@@ -437,7 +437,7 @@ public sealed partial class MainWindow : Window
             // Deja constancia en la consola del estado de sesión de Amazon comprobado al arrancar.
             int loggedInStores = await _amazonAuth.CountLoggedInStoresAsync();
             App.GetService<ProgressService>().LogEvent(
-                string.Format(L(MM4LB.Helpers.LocKeys.AmazonSession_Startup_Log), loggedInStores, _amazonAuth.StoreCount));
+                string.Format(L(Tracker.Helpers.LocKeys.AmazonSession_Startup_Log), loggedInStores, _amazonAuth.StoreCount));
 
             if (Content is FrameworkElement root && !await _amazonAuth.IsLoggedInAsync())
             {
@@ -456,7 +456,7 @@ public sealed partial class MainWindow : Window
         // Tooltip gateado por el toggle global de tooltips (se fija por código, así que se aplica aquí a mano).
         bool tips = _viewModel.SharedDataService.HelpTooltipsEnabled;
         Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(AmazonAuthButton,
-            tips ? L(loggedIn ? MM4LB.Helpers.LocKeys.AmazonLogout_Tooltip : MM4LB.Helpers.LocKeys.AmazonLogin_Tooltip) : null);
+            tips ? L(loggedIn ? Tracker.Helpers.LocKeys.AmazonLogout_Tooltip : Tracker.Helpers.LocKeys.AmazonLogin_Tooltip) : null);
     }
 
     /// <summary>Alterna la visibilidad global de los tooltips de los botones.</summary>
@@ -482,12 +482,12 @@ public sealed partial class MainWindow : Window
     /// <summary>Muestra la notificación de Windows del resumen del refresco (líneas + imagen ya compuestas por el scheduler).</summary>
     private void OnSchedulerNotification(string title, System.Collections.Generic.IReadOnlyList<string> lines, string? imageUri)
         => DispatcherQueue.TryEnqueue(() =>
-            _ = App.GetService<NotificationService>().ShowAsync(title, lines, L(MM4LB.Helpers.LocKeys.Notify_Open_Label), imageUri));
+            _ = App.GetService<NotificationService>().ShowAsync(title, lines, L(Tracker.Helpers.LocKeys.Notify_Open_Label), imageUri));
 
     /// <summary>Cambió un ajuste compartido: si se alternaron los tooltips, refresca el del botón de Amazon (fijado por código).</summary>
     private void OnSharedDataChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MM4LB.Services.SharedDataService.HelpTooltipsEnabled))
+        if (e.PropertyName == nameof(Tracker.Services.SharedDataService.HelpTooltipsEnabled))
             DispatcherQueue.TryEnqueue(async () => await RefreshAmazonAuthButtonAsync());
     }
 
@@ -496,7 +496,7 @@ public sealed partial class MainWindow : Window
         => Application.Current.Resources.TryGetValue(key, out object? value) ? value as Microsoft.UI.Xaml.Media.Brush : null;
 
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
-    private static string L(string key) => MM4LB.Services.LocalizationService.Instance?[key] ?? key;
+    private static string L(string key) => Tracker.Services.LocalizationService.Instance?[key] ?? key;
     #endregion
 
 }

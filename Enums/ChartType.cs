@@ -1,4 +1,4 @@
-namespace MM4LB.Enums;
+namespace Tracker.Enums;
 
 /// <summary>
 /// Visual type used to render a chart, chosen per chart with its own chart-type toolbar (the toolbar lives inside

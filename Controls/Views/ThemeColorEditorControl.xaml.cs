@@ -5,9 +5,9 @@ using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using MM4LB.Services;
+using Tracker.Services;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Control de PRUEBA para cambiar EN CALIENTE los colores del tema: un combobox para elegir qué color editar y un

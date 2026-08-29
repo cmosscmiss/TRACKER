@@ -3,10 +3,10 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.Extensions.Options;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Models;
+using Tracker.Services;
 
-namespace MM4LB.Controls.ViewModels;
+namespace Tracker.Controls.ViewModels;
 
 /// <summary>
 /// ViewModel del FlipView de productos: su PRIMERA página es el producto SELECCIONADO (un
@@ -21,7 +21,7 @@ public partial class FavoritesViewModel : WidgetViewModelBase
     private readonly IOptions<AppSettings> _appSettingsOptions;
 
     /// <summary>Vista del producto seleccionado (primera página, sigue la selección). Es un singleton que NO poseemos
-    /// (lo construye/dispone la DI vía <see cref="MM4LB.ViewModels.MainWindowViewModel"/>), así que nunca se dispone aquí.</summary>
+    /// (lo construye/dispone la DI vía <see cref="Tracker.ViewModels.MainWindowViewModel"/>), así que nunca se dispone aquí.</summary>
     private readonly PriceChartViewModel _selectedView;
 
     private int _selectedIndex;

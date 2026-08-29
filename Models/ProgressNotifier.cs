@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// Severidad visual de una entrada del ACTIVITY LOG, que decide el color del mensaje y de la duración: en curso

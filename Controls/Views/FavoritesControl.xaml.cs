@@ -1,8 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.Controls.ViewModels;
+using Tracker.Controls.ViewModels;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Widget de favoritos: un FlipView que muestra, por cada producto favorito, la misma vista de producto que el

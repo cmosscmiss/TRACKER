@@ -3,9 +3,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
-using MM4LB.Models;
+using Tracker.Models;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Convierte un <see cref="PriceHighlight"/> en el brush de fondo del recuadro del precio en la lista de productos:

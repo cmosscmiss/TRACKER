@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Windows.AppNotifications;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Notificaciones de Windows mediante <see cref="AppNotificationManager"/> (Windows App SDK): toasts nativos que

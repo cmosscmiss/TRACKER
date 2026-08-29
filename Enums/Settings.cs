@@ -3,7 +3,7 @@
 // Enumerations for the different types of settings that the application supports.
 // ------------------------------------------------------------------------------------------------------------
 
-namespace MM4LB.Enums;
+namespace Tracker.Enums;
 
 public class ImageSettings : Enumeration
 {

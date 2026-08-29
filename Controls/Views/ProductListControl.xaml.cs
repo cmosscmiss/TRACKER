@@ -1,10 +1,10 @@
 using System.Collections.Specialized;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Services;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Control de usuario que muestra y gestiona la selección de productos rastreados como una lista

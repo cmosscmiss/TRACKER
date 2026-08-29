@@ -1,4 +1,4 @@
-namespace MM4LB.Enums;
+namespace Tracker.Enums;
 
 /// <summary>
 /// How a chart's items are ordered (chosen per chart with its sort toolbar). <see cref="None"/> keeps the data's

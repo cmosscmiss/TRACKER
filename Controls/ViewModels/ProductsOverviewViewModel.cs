@@ -5,12 +5,12 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.Extensions.Options;
-using MM4LB.Enums;
-using MM4LB.Models;
-using MM4LB.Services;
-using static MM4LB.Services.SharedDataService;
+using Tracker.Enums;
+using Tracker.Models;
+using Tracker.Services;
+using static Tracker.Services.SharedDataService;
 
-namespace MM4LB.Controls.ViewModels;
+namespace Tracker.Controls.ViewModels;
 
 /// <summary>
 /// ViewModel del widget de resumen de productos: una gráfica de columnas con un producto por columna (eje X) y su

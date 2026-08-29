@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MM4LB.Models;
+namespace Tracker.Models;
 
 /// <summary>
 /// Holds the collection of tracked <see cref="Product"/>s shown in the left-hand ListView of the main

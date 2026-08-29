@@ -1,11 +1,11 @@
 using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.Controls.Templates;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Models;
+using Tracker.Controls.Templates;
+using Tracker.Controls.ViewModels;
+using Tracker.Models;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Control que muestra una serie de layouts tipo “Snap Layouts” al estilo Windows 11.

@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using Windows.Foundation;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>Result of parsing a product page: the fields we could extract (any may be null).</summary>
 public sealed class ProductParseResult

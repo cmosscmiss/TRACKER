@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace MM4LB.Enums;
+namespace Tracker.Enums;
 
 public abstract class Enumeration
 {

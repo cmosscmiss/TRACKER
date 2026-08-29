@@ -3,12 +3,12 @@ using System.Collections.Specialized;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Models;
+using Tracker.Services;
 using Windows.Foundation;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Visor compacto del ACTIVITY LOG para el pie de la aplicación, como plan B cuando la consola no está como widget

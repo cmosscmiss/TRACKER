@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace MM4LB.Helpers;
+namespace Tracker.Helpers;
 
 /// <summary>
 /// Utilidades para los marketplaces de Amazon soportados. Un producto de Amazon se identifica por su ASIN (10

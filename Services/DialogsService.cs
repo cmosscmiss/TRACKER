@@ -1,13 +1,13 @@
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using MM4LB.Controls.Dialogs;
-using MM4LB.Helpers;
-using MM4LB.Models;
+using Tracker.Controls.Dialogs;
+using Tracker.Helpers;
+using Tracker.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 /// <summary>
 /// Service exposing the different dialogs of the application, con el estilo propio de la app
@@ -45,7 +45,7 @@ public class DialogsService
         // Instantánea del estado al abrir, para poder deshacerlo con "Cancelar".
         Dictionary<string, string> snapshot = new(theme.CurrentOverrides);
 
-        MM4LB.Controls.Views.ThemeColorEditorControl content = new();
+        Tracker.Controls.Views.ThemeColorEditorControl content = new();
         AppDialog dialog = new();
         AppDialogResult result = await dialog.ShowAsync(
             xamlRoot, L(LocKeys.ThemeColors_Title), content,

@@ -7,12 +7,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Helpers;
-using MM4LB.Models;
-using MM4LB.Services;
+using Tracker.Controls.ViewModels;
+using Tracker.Helpers;
+using Tracker.Models;
+using Tracker.Services;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Widget que muestra la evolución del precio del producto seleccionado, reutilizando
@@ -34,7 +34,7 @@ public sealed partial class PriceChartControl : UserControl
 
     #region Attributes
     /// <summary>Instancia (singleton) del navegador, para navegar al pulsar una tienda y seguir su URL actual.</summary>
-    private MM4LB.Controls.ViewModels.WebViewViewModel? _webView;
+    private Tracker.Controls.ViewModels.WebViewViewModel? _webView;
 
     /// <summary>ViewModel al que estamos suscritos (para refrescar la selección de tienda al cambiar <c>Stores</c>).</summary>
     private PriceChartViewModel? _subscribedViewModel;
@@ -56,7 +56,7 @@ public sealed partial class PriceChartControl : UserControl
     #region Store list <-> browser sync
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        _webView = App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>();
+        _webView = App.GetService<Tracker.Controls.ViewModels.WebViewViewModel>();
         _webView.PropertyChanged += OnWebViewPropertyChanged;
 
         _subscribedViewModel = ViewModel;
@@ -79,7 +79,7 @@ public sealed partial class PriceChartControl : UserControl
     /// <summary>Cambió la URL abierta en el navegador: refleja en la lista la tienda correspondiente.</summary>
     private void OnWebViewPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MM4LB.Controls.ViewModels.WebViewViewModel.CurrentUrl))
+        if (e.PropertyName == nameof(Tracker.Controls.ViewModels.WebViewViewModel.CurrentUrl))
             SyncStoreSelectionToBrowser();
     }
 
@@ -172,7 +172,7 @@ public sealed partial class PriceChartControl : UserControl
         if (string.IsNullOrWhiteSpace(bestUrl))
             return;
 
-        MM4LB.Controls.ViewModels.WebViewViewModel webView = App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>();
+        Tracker.Controls.ViewModels.WebViewViewModel webView = App.GetService<Tracker.Controls.ViewModels.WebViewViewModel>();
         if (!SameHost(bestUrl, webView.CurrentUrl))
             webView.RequestNavigation(bestUrl);
     }
@@ -202,7 +202,7 @@ public sealed partial class PriceChartControl : UserControl
         string host = Amazon.HostForCountry(country) ?? "www.amazon.es";
         string url = Amazon.SearchUrl(host, product.Name);
 
-        App.GetService<MM4LB.Controls.ViewModels.WebViewViewModel>().RequestNavigation(url);
+        App.GetService<Tracker.Controls.ViewModels.WebViewViewModel>().RequestNavigation(url);
     }
 
     /// <summary>Edita el título del producto mostrado mediante un diálogo (prerrelleno con el nombre actual).</summary>

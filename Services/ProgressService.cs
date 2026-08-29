@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
-using MM4LB.Controls.ViewModels;
-using MM4LB.Models;
+using Tracker.Controls.ViewModels;
+using Tracker.Models;
 
-namespace MM4LB.Services;
+namespace Tracker.Services;
 
 public class ProgressService : ObservableObject
 {
@@ -153,7 +153,7 @@ public class ProgressService : ObservableObject
 
         progressNotifier.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(MM4LB.Models.ProgressNotifier.IsOperationFinished))
+            if (e.PropertyName == nameof(Tracker.Models.ProgressNotifier.IsOperationFinished))
             {
                 OnPropertyChanged(nameof(ConsoleViewModel.IsOperationInExecution));
             }
@@ -197,7 +197,7 @@ public class ProgressService : ObservableObject
         }
 
         _lazyImageCount++;
-        _lazyImageNotifier.Message = string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.Progress_LazyLoading_Progress] ?? "{0}Loading {1} media files", LazyImagePrefix(), _lazyImageCount);
+        _lazyImageNotifier.Message = string.Format(Tracker.Services.LocalizationService.Instance?[Tracker.Helpers.LocKeys.Progress_LazyLoading_Progress] ?? "{0}Loading {1} media files", LazyImagePrefix(), _lazyImageCount);
         _lazyImageSettleTimer.Start();
     }
 
@@ -210,7 +210,7 @@ public class ProgressService : ObservableObject
             return;
         }
 
-        _lazyImageNotifier.Message = string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.Progress_LazyLoaded_Progress] ?? "{0}{1} media files loaded", LazyImagePrefix(), _lazyImageCount);
+        _lazyImageNotifier.Message = string.Format(Tracker.Services.LocalizationService.Instance?[Tracker.Helpers.LocKeys.Progress_LazyLoaded_Progress] ?? "{0}{1} media files loaded", LazyImagePrefix(), _lazyImageCount);
         _lazyImageNotifier.FinishOperation();
     }
 
@@ -223,7 +223,7 @@ public class ProgressService : ObservableObject
 
         if (!_lazyImageNotifier.IsOperationFinished)
         {
-            _lazyImageNotifier.Message = string.Format(MM4LB.Services.LocalizationService.Instance?[MM4LB.Helpers.LocKeys.Progress_LazyLoaded_Progress] ?? "{0}{1} media files loaded", LazyImagePrefix(), _lazyImageCount);
+            _lazyImageNotifier.Message = string.Format(Tracker.Services.LocalizationService.Instance?[Tracker.Helpers.LocKeys.Progress_LazyLoaded_Progress] ?? "{0}{1} media files loaded", LazyImagePrefix(), _lazyImageCount);
             _lazyImageNotifier.FinishOperation();
         }
 
@@ -258,7 +258,7 @@ public class ProgressService : ObservableObject
         // Sin ambigüedad: tipo totalmente calificado
         progressNotifier.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(MM4LB.Models.ProgressNotifier.IsOperationFinished))
+            if (e.PropertyName == nameof(Tracker.Models.ProgressNotifier.IsOperationFinished))
             {
                 OnPropertyChanged(nameof(ConsoleViewModel.IsOperationInExecution));
             }

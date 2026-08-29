@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Shapes;
 using Windows.Foundation;
 using Windows.UI;
 
-namespace MM4LB.Controls.Views;
+namespace Tracker.Controls.Views;
 
 /// <summary>
 /// Un único dígito de un panel split-flap (tipo Solari de aeropuerto): una tarjeta negra partida por el centro cuya
