@@ -9,13 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!-- Tarjetas de templates: imagen + nombre. Al pulsar una se carga ese template (ItemClick, sin selección
-         persistente). Máximo 3 por fila; el resto envuelve. -->
-    <GridView x:Name="Items" HorizontalAlignment="Center" Background="Transparent"
-              SelectionMode="None" IsItemClickEnabled="True"
-              ItemContainerStyle="{StaticResource GameImagesGridViewItemStyle}"
-              ItemClick="OnItemClick"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+    <GridView x:Name="Items" HorizontalAlignment="Center" Background="Transparent" Margin="-20 0 0 0" SelectionMode="None" IsItemClickEnabled="True" ItemContainerStyle="{StaticResource GameImagesGridViewItemStyle}" ItemClick="OnItemClick" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
         <GridView.ItemsPanel>
             <ItemsPanelTemplate>
                 <ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="3"/>
@@ -23,17 +17,15 @@
         </GridView.ItemsPanel>
         <GridView.ItemTemplate>
             <DataTemplate>
-                <Grid Width="333" ToolTipService.ToolTip="{Binding Name}">
+                <Grid Width="333" ToolTipService.ToolTip="{Binding Name}" Padding="4">
                     <StackPanel>
-                        <Border CornerRadius="8" Height="232" BorderThickness="1"
-                                BorderBrush="{ThemeResource CardBackgroundLightBrush}" Background="{ThemeResource BackgroundLightBrush}">
+                        <Border CornerRadius="8" Height="232" BorderThickness="1" BorderBrush="{ThemeResource CardBackgroundLightBrush}" Background="{ThemeResource BackgroundLightBrush}">
                             <Grid>
                                 <Image Source="{Binding Image}" Stretch="Fill"/>
                             </Grid>
                         </Border>
-                        <Border CornerRadius="0 0 8 8" Background="{ThemeResource AccentDarkBrushOpacity80}" Padding="0 4">
-                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
-                                   HorizontalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+                        <Border CornerRadius="0 0 8 8" Background="{ThemeResource AccentDarkBrushOpacity60}" Padding="0 4" Margin="0 -4 0 0">
+                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" HorizontalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
                         </Border>
                     </StackPanel>
                 </Grid>

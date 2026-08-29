@@ -96,14 +96,11 @@
   </data>
   <!-- ViewModels -->
   <!-- Toolbar principal -->
-  <data name="QuickSettings_Widgets_Header" xml:space="preserve">
-    <value>WIDGETS</value>
-  </data>
   <data name="QuickSettings_CornerRadius_Label" xml:space="preserve">
-    <value>Redondeo de bordes</value>
+    <value>Borde de widgets</value>
   </data>
   <data name="QuickSettings_Gap_Label" xml:space="preserve">
-    <value>Separación</value>
+    <value>Separación entre widgets</value>
   </data>
   <data name="QuickSettings_PanelMargin_Label" xml:space="preserve">
     <value>Margen del panel</value>
@@ -605,5 +602,20 @@
   </data>
   <data name="AmazonLogout_Progress_Done" xml:space="preserve">
     <value>Sesión de Amazon cerrada</value>
+  </data>
+  <data name="WidgetSelector_WebView_Tooltip" xml:space="preserve">
+    <value>Navegar por tiendas</value>
+  </data>
+  <data name="WidgetSelector_Favorites_Tooltip" xml:space="preserve">
+    <value>Carrusel de favoritos</value>
+  </data>
+  <data name="WidgetSelector_ProductsOverview_Tooltip" xml:space="preserve">
+    <value>Gráfica de mejores precios</value>
+  </data>
+  <data name="WidgetSelector_Console_Tooltip" xml:space="preserve">
+    <value>Registro de actividad</value>
+  </data>
+  <data name="WidgetSelector_Default_Tooltip" xml:space="preserve">
+    <value>Widget vacío</value>
   </data>
 </root>

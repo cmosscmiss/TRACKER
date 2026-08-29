@@ -105,7 +105,6 @@ public static class LocKeys
 
     // F4 â€” tooltips para los botones con label visible (explicativos, van mÃ¡s allÃ¡ del label).
     // Panel de ajustes rÃ¡pidos (icono equalizer de la toolbar).
-    public const string QuickSettings_Widgets_Header = "QuickSettings_Widgets_Header";
     public const string QuickSettings_CornerRadius_Label = "QuickSettings_CornerRadius_Label";
     public const string QuickSettings_Gap_Label = "QuickSettings_Gap_Label";
     public const string QuickSettings_PanelMargin_Label = "QuickSettings_PanelMargin_Label";
@@ -287,4 +286,11 @@ public static class LocKeys
     public const string ProductLog_Purchased_Progress = "ProductLog_Purchased_Progress";
     public const string ProductLog_Unpurchased_Progress = "ProductLog_Unpurchased_Progress";
     public const string ProductLog_Removed_Progress = "ProductLog_Removed_Progress";
+
+    // Selector de widgets (tooltips de los iconos)
+    public const string WidgetSelector_WebView_Tooltip = "WidgetSelector_WebView_Tooltip";
+    public const string WidgetSelector_Favorites_Tooltip = "WidgetSelector_Favorites_Tooltip";
+    public const string WidgetSelector_ProductsOverview_Tooltip = "WidgetSelector_ProductsOverview_Tooltip";
+    public const string WidgetSelector_Console_Tooltip = "WidgetSelector_Console_Tooltip";
+    public const string WidgetSelector_Default_Tooltip = "WidgetSelector_Default_Tooltip";
 }

@@ -76,7 +76,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <template:SeparatorEx Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0 0 0 8" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
-                    <uc:TemplateSlotsControl Grid.Row="1" x:Name="ucTemplateSlots" HorizontalAlignment="Center"/>
+                    <uc:TemplateSlotsControl Grid.Row="1" x:Name="ucTemplateSlots" HorizontalAlignment="Center" Margin="0 16 0 0"/>
                 </Grid>
                 <Grid x:Name="ToolbarSettingsSelector" Grid.Row="1" Margin="0 24 0 0" Visibility="Collapsed">
                     <Grid.RowDefinitions>

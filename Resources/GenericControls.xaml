@@ -251,7 +251,7 @@
     <!-- Estilo para los GridViewItem en grids de imágenes -->
     <Style x:Key="GameImagesGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="Padding" Value="4"/>
-        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Margin" Value="16 0 0 0"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="Background" Value="Transparent"/>

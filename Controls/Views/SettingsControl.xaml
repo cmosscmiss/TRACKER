@@ -11,18 +11,9 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <!-- Cabecera de cada grupo de ajustes: texto en acento, mayúsculas y espaciado, con un margen superior
-             que separa el grupo del anterior. El primer grupo sobreescribe el Margin a 0 (ya lo separa el padding). -->
-        <Style x:Key="SettingsSectionHeaderStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{ThemeResource AccentBrush}" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="CharacterSpacing" Value="120" />
-            <Setter Property="Margin" Value="0 24 0 0" />
-        </Style>
         <!-- Fila etiqueta + slider compartida por todos los ajustes. -->
         <Style x:Key="SettingsRowStyle" TargetType="Grid">
-            <Setter Property="Margin" Value="0 10 0 0" />
+            <Setter Property="Margin" Value="0 0 0 12" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="SettingsLabelStyle" TargetType="TextBlock">
@@ -34,9 +25,6 @@
 
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Padding="24 16">
-            <!-- ==================== WIDGETS ==================== -->
-            <TextBlock Text="{loc:Str Key=QuickSettings_Widgets_Header}" Style="{StaticResource SettingsSectionHeaderStyle}" />
-            <template:SeparatorEx Margin="0 4 0 0" HorizontalAlignment="Stretch" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
             <Grid Style="{StaticResource SettingsRowStyle}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200" />
@@ -61,7 +49,6 @@
                 <TextBlock Text="{loc:Str Key=QuickSettings_PanelMargin_Label}" Style="{StaticResource SettingsLabelStyle}" />
                 <Slider Grid.Column="1" Orientation="Horizontal" Maximum="32" Minimum="0" Value="{x:Bind ViewModel.LayoutSelectorViewModel.WidgetPanelOuterMargin, Mode=TwoWay}" />
             </Grid>
-
         </StackPanel>
     </Grid>
 </UserControl>

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using MM4LB.Controls.Templates;
 using MM4LB.Controls.ViewModels;
 using MM4LB.Converters;
+using MM4LB.Helpers;
 using MM4LB.Models;
 using MM4LB.Services;
 using System;
@@ -220,6 +221,9 @@ public sealed partial class WidgetSelectorControl : UserControl
                 Tag = widget
             };
 
+            // Tooltip descriptivo del widget, gobernado por el toggle global de tooltips (pie de página).
+            Help.SetKey(button, GetWidgetTooltipKey(widget.IconName));
+
             button.SetBinding(ToolbarButtonIcon.IsCheckedProperty, new Binding
                 {
                     Source = widget.ViewModel,
@@ -249,6 +253,21 @@ public sealed partial class WidgetSelectorControl : UserControl
 
         return new BitmapImage(_themeService.GetWidgetIconUri(resolvedIconName));
     }
+
+    /// <summary>
+    /// Resuelve la clave de recurso del tooltip de un widget a partir del nombre de su icono (que es el nombre del
+    /// tipo del control alojado). Los widgets sin tooltip propio caen en la clave genérica.
+    /// </summary>
+    /// <param name="iconName">Nombre base del icono del widget.</param>
+    /// <returns>Clave de recurso localizada, para <see cref="Help"/>.</returns>
+    private static string GetWidgetTooltipKey(string iconName) => iconName switch
+    {
+        nameof(WebViewControl) => LocKeys.WidgetSelector_WebView_Tooltip,
+        nameof(FavoritesControl) => LocKeys.WidgetSelector_Favorites_Tooltip,
+        nameof(ProductsOverviewControl) => LocKeys.WidgetSelector_ProductsOverview_Tooltip,
+        nameof(ConsoleControl) => LocKeys.WidgetSelector_Console_Tooltip,
+        _ => LocKeys.WidgetSelector_Default_Tooltip
+    };
     #endregion
 
     #region Rendering - selected layout

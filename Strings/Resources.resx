@@ -101,17 +101,14 @@
   </data>
   <!-- ViewModels (progreso/errores) -->
   <!-- Toolbar principal (tooltips de los botones-icono) -->
-  <data name="QuickSettings_Widgets_Header" xml:space="preserve">
-    <value>WIDGETS</value>
-  </data>
   <data name="QuickSettings_CornerRadius_Label" xml:space="preserve">
-    <value>Corner radius</value>
+    <value>Widget Corner</value>
   </data>
   <data name="QuickSettings_Gap_Label" xml:space="preserve">
-    <value>Gap</value>
+    <value>Widget Gap</value>
   </data>
   <data name="QuickSettings_PanelMargin_Label" xml:space="preserve">
-    <value>Panel margin</value>
+    <value>Widget Panel Margin</value>
   </data>
   <data name="Footer_AddProduct_Tooltip" xml:space="preserve">
     <value>Add product</value>
@@ -610,5 +607,20 @@
   </data>
   <data name="AmazonLogout_Progress_Done" xml:space="preserve">
     <value>Signed out of Amazon</value>
+  </data>
+  <data name="WidgetSelector_WebView_Tooltip" xml:space="preserve">
+    <value>Browse product stores</value>
+  </data>
+  <data name="WidgetSelector_Favorites_Tooltip" xml:space="preserve">
+    <value>Favourite products carousel</value>
+  </data>
+  <data name="WidgetSelector_ProductsOverview_Tooltip" xml:space="preserve">
+    <value>Best price chart</value>
+  </data>
+  <data name="WidgetSelector_Console_Tooltip" xml:space="preserve">
+    <value>App activity log</value>
+  </data>
+  <data name="WidgetSelector_Default_Tooltip" xml:space="preserve">
+    <value>Empty widget</value>
   </data>
 </root>
