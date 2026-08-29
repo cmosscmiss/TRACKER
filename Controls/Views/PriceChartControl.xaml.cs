@@ -368,18 +368,49 @@ public sealed partial class PriceChartControl : UserControl
         App.GetService<ProductService>().SetPurchased(product, true, ParsePrice(entered));
     }
 
-    /// <summary>Parsea un precio introducido a mano (cultura actual o invariante), o null si no es válido.</summary>
+    /// <summary>
+    /// Parsea un precio escrito a mano aceptando indistintamente el punto y la coma como separador decimal, sea cual
+    /// sea la cultura activa ("39.99" y "39,99" valen lo mismo). Ignora espacios, moneda y cualquier otro carácter.
+    /// Reglas: si aparecen los dos separadores, el ÚLTIMO es el decimal y el otro se descarta como separador de miles
+    /// ("1.234,50" y "1,234.50" son 1234,50); si uno aparece repetido, es separador de miles ("1.234.567"); si solo
+    /// aparece una vez, es el decimal, salvo en el único caso ambiguo (tres cifras detrás, como "1.234"), donde manda
+    /// la cultura activa. Devuelve null si no queda un número válido.
+    /// </summary>
     private static decimal? ParsePrice(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
             return null;
 
-        string value = text.Trim();
-        if (decimal.TryParse(value, NumberStyles.Number, CultureInfo.CurrentCulture, out decimal parsed))
-            return parsed;
-        if (decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out parsed))
-            return parsed;
-        return null;
+        // Se queda solo con cifras, signo y separadores: fuera espacios (incluido el duro de "39,99 EUR") y moneda.
+        string cleaned = new(text.Where(c => char.IsDigit(c) || c is '.' or ',' or '-' or '+').ToArray());
+        if (cleaned.Length == 0)
+            return null;
+
+        int dots = cleaned.Count(c => c == '.');
+        int commas = cleaned.Count(c => c == ',');
+        char? decimalSeparator;
+
+        if (dots > 0 && commas > 0)
+            decimalSeparator = cleaned.LastIndexOf('.') > cleaned.LastIndexOf(',') ? '.' : ',';
+        else if (dots + commas == 0 || dots > 1 || commas > 1)
+            decimalSeparator = null;   // entero, o un separador repetido: solo hay agrupación
+        else
+        {
+            char separator = dots == 1 ? '.' : ',';
+            int decimals = cleaned.Length - cleaned.IndexOf(separator) - 1;
+            bool ambiguous = decimals == 3
+                && separator.ToString() != CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            decimalSeparator = ambiguous ? null : separator;
+        }
+
+        string normalized = decimalSeparator is char separatorChar
+            ? cleaned.Replace(separatorChar == '.' ? "," : ".", string.Empty).Replace(separatorChar, '.')
+            : cleaned.Replace(".", string.Empty).Replace(",", string.Empty);
+
+        return decimal.TryParse(normalized, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+            CultureInfo.InvariantCulture, out decimal parsed)
+            ? parsed
+            : null;
     }
 
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
