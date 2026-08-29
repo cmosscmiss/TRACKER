@@ -169,6 +169,24 @@ public static class Layouts
         return Create(index, slots, cols);
     }
 
+
+    /// <summary>
+    /// Layout de tres columnas: la izquierda al 50% y la derecha al 25%, ambas a toda altura; la central
+    /// al 25% dividida en dos filas. Es el espejo de <see cref="WideLeftRightColumnSplitGrid"/>: mismas
+    /// proporciones, con las columnas 2 y 3 intercambiadas.
+    /// </summary>
+    private static LayoutInfo WideLeftMiddleColumnSplitGrid(int index)
+    {
+        var slots = new[]
+        {
+            new SlotInfo(0, 0, 2, 1),
+            new SlotInfo(0, 1),
+            new SlotInfo(1, 1),
+            new SlotInfo(0, 2, 2, 1)
+        };
+        var cols = new[] { "2*", "*", "*" };
+        return Create(index, slots, cols);
+    }
     /// <summary>
     /// Crea un layout a partir de una lista de slots y columnas, generando márgenes uniformes.
     /// </summary>
@@ -207,6 +225,7 @@ public static class Layouts
         _layouts.Add(4, ThreeColumnsEqualGrid(4));
         _layouts.Add(5, Grid2x2Grid(5));
         _layouts.Add(6, WideLeftRightColumnSplitGrid(6));
+        _layouts.Add(7, WideLeftMiddleColumnSplitGrid(7));
     }
 
     /// <summary>

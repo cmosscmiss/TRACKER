@@ -12,6 +12,7 @@ public class LayoutType : Enumeration
     public static readonly LayoutType ThreeColumnsEqualGrid = new(4, nameof(ThreeColumnsEqualGrid));
     public static readonly LayoutType Grid2x2 = new(5, nameof(Grid2x2));
     public static readonly LayoutType WideLeftRightColumnSplit = new(6, nameof(WideLeftRightColumnSplit));
+    public static readonly LayoutType WideLeftMiddleColumnSplit = new(7, nameof(WideLeftMiddleColumnSplit));
 
     public LayoutType()
     {
