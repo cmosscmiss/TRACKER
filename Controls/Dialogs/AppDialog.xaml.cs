@@ -28,6 +28,17 @@ public enum AppDialogResult
 /// </summary>
 public sealed partial class AppDialog : UserControl
 {
+    #region Constants
+    /// <summary>
+    /// Glifos (fuente de iconos del sistema) de los botones del pie, por ROL: el primario confirma (check), el de
+    /// cerrar cancela (aspa) y "Apply" guarda los cambios sin cerrar (disquete). El secundario no lleva icono porque
+    /// su acción cambia según el diálogo.
+    /// </summary>
+    private const string ConfirmGlyph = "\uE73E";   // CheckMark
+    private const string CancelGlyph = "\uE711";    // Cancel: el mismo aspa que ya usan los botones de cancelar del log
+    private const string ApplyGlyph = "\uE74E";     // Save (disquete)
+    #endregion
+
     #region Attributes
     private Popup? _popup;
     private XamlRoot? _xamlRoot;
@@ -74,17 +85,24 @@ public sealed partial class AppDialog : UserControl
         TitleText.Text = title ?? string.Empty;
         ContentHost.Content = content;
 
-        SetButton(PrimaryButton, primaryText);
+        SetButton(PrimaryButton, primaryText, ConfirmGlyph);
         SetButton(SecondaryButton, secondaryText);
-        SetButton(CloseButton, closeText);
+        SetButton(CloseButton, closeText, CancelGlyph);
         // Botón "Apply" (opcional): aplica los cambios SIN cerrar el diálogo.
-        SetButton(ApplyButton, applyText);
+        SetButton(ApplyButton, applyText, ApplyGlyph);
 
         // Content can gate the primary button (e.g. require a selection before allowing the action).
         if (content is IAppDialogPrimaryGate gate)
         {
             PrimaryButton.IsEnabled = gate.IsPrimaryEnabled;
             gate.PrimaryEnabledChanged += (_, _) => PrimaryButton.IsEnabled = gate.IsPrimaryEnabled;
+        }
+
+        // Content can also gate the "Apply" button (e.g. only while there are pending changes).
+        if (content is IAppDialogApplyGate applyGate)
+        {
+            ApplyButton.IsEnabled = applyGate.IsApplyEnabled;
+            applyGate.ApplyEnabledChanged += (_, _) => ApplyButton.IsEnabled = applyGate.IsApplyEnabled;
         }
 
         // El contenido del diálogo resuelve sus {ThemeResource} contra la copia local de Theme.xaml (ver Resources): se
@@ -137,7 +155,12 @@ public sealed partial class AppDialog : UserControl
     #endregion
 
     #region Methods (private)
-    private static void SetButton(Button button, string? text)
+    /// <summary>
+    /// Configura un botón del pie: lo oculta si no tiene texto y, si se le da un glifo, compone el contenido como
+    /// icono + texto. El icono ENLAZA su <c>Foreground</c> al del botón para que sea exactamente el mismo color que
+    /// el texto (los estados visuales de los botones cambian el fondo, no el color de primer plano).
+    /// </summary>
+    private static void SetButton(Button button, string? text, string? glyph = null)
     {
         if (string.IsNullOrEmpty(text))
         {
@@ -145,8 +168,39 @@ public sealed partial class AppDialog : UserControl
             return;
         }
 
-        button.Content = text;
+        button.Content = string.IsNullOrEmpty(glyph) ? text : BuildIconContent(button, glyph!, text);
         button.Visibility = Visibility.Visible;
+    }
+
+    /// <summary>Contenido "icono + texto" de un botón del pie, centrado y con el icono al mismo color que el texto.</summary>
+    private static StackPanel BuildIconContent(Button button, string glyph, string text)
+    {
+        var icon = new FontIcon
+        {
+            Glyph = glyph,
+            FontSize = 14,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        // El FontIcon no siempre hereda el Foreground del ContentPresenter (WinUI le aplica el suyo por defecto):
+        // se enlaza al del propio botón, que es el mismo que pinta el texto.
+        icon.SetBinding(FontIcon.ForegroundProperty, new Microsoft.UI.Xaml.Data.Binding
+        {
+            Source = button,
+            Path = new PropertyPath(nameof(Button.Foreground))
+        });
+
+        var panel = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            Spacing = 8,
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+        panel.Children.Add(icon);
+        panel.Children.Add(new TextBlock { Text = text, VerticalAlignment = VerticalAlignment.Center });
+
+        return panel;
     }
 
     private void SizeToWindow()

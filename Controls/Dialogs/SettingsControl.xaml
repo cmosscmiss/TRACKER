@@ -18,7 +18,11 @@
 
     <!-- Contenido de la ventana de configuración (dentro del AppDialog, que aporta cabecera con logo y botones
          OK/Apply/Cancel). 2 columnas: categorías (izq) + opciones de la categoría (der). -->
-    <Grid Width="806" Height="460" ColumnDefinitions="190, *">
+    <Grid Width="806" Height="460">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="190"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
         <!-- Columna izquierda: lista de categorías. Los ítems reproducen el aspecto de las OPCIONES de un ComboBox
              (hover = AccentLight, seleccionado = Accent, texto = Text), reusando los mismos colores que ComboBoxItem*
@@ -62,7 +66,11 @@
 
         <!-- Columna derecha: cabecera de la categoría + página de opciones. -->
         <Border Grid.Column="1" CornerRadius="4" Margin="8 0 0 0" Background="{ThemeResource CardBackgroundBrush}">
-            <Grid RowDefinitions="Auto, *">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
                 <Border Grid.Row="0" Background="{ThemeResource BackgroundLightBrush}" CornerRadius="4 4 0 0" Padding="12 8">
                     <TextBlock Text="{Binding SelectedSection.Title}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{ThemeResource AccentLightBrush}"/>
                 </Border>

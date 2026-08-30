@@ -51,7 +51,9 @@
     </Style>
     <!-- Estilo para los botones por defecto -->
     <Style x:Key="Button_Default" TargetType="Button">
-        <Setter Property="Background" Value="{ThemeResource AccentBrush}"/>
+        <!-- El fondo BASE es el de tarjeta, no el de acento: es lo que ve cualquier estado que no lo sobreescriba (en
+             particular Disabled, que solo atenúa). Con AccentBrush aquí, el botón deshabilitado salía con color de acento. -->
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource TextBrush}"/>
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Padding" Value="8"/>
@@ -83,7 +85,8 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="Chrome.Opacity" Value="0.75"/>
+                                        <Setter Target="Chrome.Background" Value="{ThemeResource CardBackgroundBrush}"/>
+                                        <Setter Target="Chrome.Opacity" Value="0.5"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>

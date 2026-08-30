@@ -41,7 +41,7 @@
         </Grid.Background>
 
         <!-- Caja del diálogo, centrada. -->
-        <Border x:Name="Card" HorizontalAlignment="Center" VerticalAlignment="Center" Tapped="OnCardTapped" Background="{ThemeResource BackgroundBrush}" BorderBrush="{ThemeResource CardBackgroundLightBrush}" BorderThickness="1" CornerRadius="8" MaxWidth="860" MinWidth="420" RenderTransformOrigin="0.5,0.5">
+        <Border x:Name="Card" HorizontalAlignment="Center" VerticalAlignment="Center" Tapped="OnCardTapped" Background="{ThemeResource CardBackgroundBrush}" BorderBrush="{ThemeResource AccentDarkBrushOpacity60}" BorderThickness="2" CornerRadius="8" MaxWidth="860" MinWidth="420" RenderTransformOrigin="0.5,0.5">
             <Border.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1"/>

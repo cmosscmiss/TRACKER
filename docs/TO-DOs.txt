@@ -1,3 +1,4 @@
+Al hacer un apply en la ventana de settings, con un cambio de tema, los colores se aplican bien excepto en el díalogo de settings, donde no todos los colores se actualizan.
 Instalar .net si no está instalado al arrancar.
 Chequear que todos los requerimientos de sistema se cumplen al arrancar.
 Generar un manual de usuario de la aplicación, y que se almacene en la carpeta Docs.

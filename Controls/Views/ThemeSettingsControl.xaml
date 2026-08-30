@@ -14,7 +14,11 @@
          refresco del TintedImage de la ventana principal). DataContext heredado del SettingsDialogViewModel. -->
     <StackPanel Spacing="12">
         <!-- Tema activo. -->
-        <Grid ColumnDefinitions="240,*">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <TextBlock Text="{loc:Str Key=ThemeSettings_Theme_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
             <ComboBox Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
                       ItemsSource="{Binding ThemeNames}"
@@ -26,7 +30,11 @@
 
         <!-- Colores personalizados: el flag habilita el botón que abre el editor de colores del tema (que oculta este
              diálogo de ajustes y vuelve a él al aceptar). -->
-        <Grid ColumnDefinitions="240,*">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <CheckBox Content="{loc:Str Key=ThemeSettings_UseCustomColors_Label}" Foreground="{ThemeResource TextBrush}"
                       VerticalAlignment="Center" IsChecked="{Binding UseCustomColors, Mode=TwoWay}"/>
             <Button Grid.Column="1" HorizontalAlignment="Left" Content="{loc:Str Key=ThemeSettings_EditColors_Label}"
@@ -49,7 +57,12 @@
         <!-- Tinte del overlay del fondo (ventana principal). -->
         <TextBlock Text="{loc:Str Key=ThemeSettings_BackgroundOverlay_Header}" Foreground="{ThemeResource TextSecondaryBrush}"/>
 
-        <Grid ColumnDefinitions="240,*,56">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="56"/>
+            </Grid.ColumnDefinitions>
             <TextBlock Text="{loc:Str Key=ThemeSettings_TintOpacity_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
             <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center"
                     Value="{Binding TintOpacity, Mode=TwoWay}"/>
@@ -57,7 +70,12 @@
                        Text="{Binding TintOpacity}"/>
         </Grid>
 
-        <Grid ColumnDefinitions="240,*,56">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="56"/>
+            </Grid.ColumnDefinitions>
             <TextBlock Text="{loc:Str Key=ThemeSettings_TintSaturation_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
             <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center"
                     Value="{Binding TintSaturation, Mode=TwoWay}"/>
@@ -65,7 +83,12 @@
                        Text="{Binding TintSaturation}"/>
         </Grid>
 
-        <Grid ColumnDefinitions="240,*,56">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="56"/>
+            </Grid.ColumnDefinitions>
             <TextBlock Text="{loc:Str Key=ThemeSettings_TintBrightness_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
             <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center"
                     Value="{Binding TintBrightness, Mode=TwoWay}"/>
@@ -73,7 +96,12 @@
                        Text="{Binding TintBrightness}"/>
         </Grid>
 
-        <Grid ColumnDefinitions="240,*,56">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="56"/>
+            </Grid.ColumnDefinitions>
             <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayBlur_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
             <Slider Grid.Column="1" Minimum="0" Maximum="50" StepFrequency="1" VerticalAlignment="Center"
                     Value="{Binding OverlayImageBlur, Mode=TwoWay}"/>
@@ -81,7 +109,12 @@
                        Text="{Binding OverlayImageBlur}"/>
         </Grid>
 
-        <Grid ColumnDefinitions="240,*,56">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="56"/>
+            </Grid.ColumnDefinitions>
             <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayOpacity_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
             <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center"
                     Value="{Binding OverlayImageOpacity, Mode=TwoWay}"/>

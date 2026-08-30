@@ -43,7 +43,16 @@
 
         <!-- Detalles. -->
         <TextBlock Text="{loc:Str Key=AboutSettings_Details_Header}" FontSize="11" CharacterSpacing="140" Foreground="{ThemeResource TextSecondaryBrush}"/>
-        <Grid ColumnSpacing="16" RowSpacing="9" ColumnDefinitions="150,*" RowDefinitions="Auto,Auto,Auto">
+        <Grid ColumnSpacing="16" RowSpacing="9">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Str Key=AboutSettings_Build_Label}" FontSize="13.5" Foreground="{ThemeResource TextSecondaryBrush}"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding BuildText}" FontSize="13.5" Foreground="{ThemeResource TextBrush}"/>
 
@@ -61,7 +70,11 @@
         <ItemsControl ItemsSource="{Binding ThirdPartyLicenses}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="*,Auto" Margin="0 3">
+                    <Grid Margin="0 3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding Component}" FontSize="13" Foreground="{ThemeResource TextBrush}"/>
                         <TextBlock Grid.Column="1" Text="{Binding License}" FontSize="12" Foreground="{ThemeResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                     </Grid>

@@ -70,6 +70,13 @@ public partial class SettingsDialogViewModel : ObservableObject
 
     /// <summary>True cuando la categoría seleccionada aún no tiene página (placeholder).</summary>
     public bool IsPlaceholder => !IsGeneral && !IsTheme && !IsAbout;
+
+    /// <summary>
+    /// Hay cambios en el staging todavía sin aplicar: es lo que habilita el botón "Apply" del diálogo (ver
+    /// <see cref="Controls.Dialogs.IAppDialogApplyGate"/>). Se enciende al tocar CUALQUIER ajuste y se apaga al
+    /// aplicar; navegar entre categorías no cuenta como cambio.
+    /// </summary>
+    [ObservableProperty] private bool isDirty;
     #endregion
 
     #region General settings (staging)
@@ -252,6 +259,9 @@ public partial class SettingsDialogViewModel : ObservableObject
         SelectedThemeName = ThemeNames.Contains(_themeService.CurrentThemeName) ? _themeService.CurrentThemeName : ThemeNames.FirstOrDefault();
 
         LoadGeneralFromSettings();
+
+        // A partir de aquí (staging ya cargado), cualquier cambio de un ajuste enciende IsDirty y con él el botón Apply.
+        PropertyChanged += OnStagingPropertyChanged;
     }
     #endregion
 
@@ -271,6 +281,7 @@ public partial class SettingsDialogViewModel : ObservableObject
         _loadingSettings = true;
         UseCustomColors = _appSettings.General.UseCustomColors;
         _loadingSettings = false;
+        IsDirty = false;
     }
 
     /// <summary>Vuelca el staging en AppSettings (aplicándolo en caliente donde aplica) y persiste al ini. Lo llama OK/Apply.</summary>
@@ -351,6 +362,9 @@ public partial class SettingsDialogViewModel : ObservableObject
         }
 
         _persistAndRestoreService.PersistData();
+
+        // Lo aplicado deja de estar pendiente: el botón "Apply" se apaga hasta el siguiente cambio.
+        IsDirty = false;
     }
     #endregion
 
@@ -369,6 +383,33 @@ public partial class SettingsDialogViewModel : ObservableObject
             _themeService.ApplyStoredOverrides();
         else
             _themeService.ClearOverrides();
+    }
+
+    /// <summary>
+    /// Enciende <see cref="IsDirty"/> (y con él el botón "Apply" del diálogo) en cuanto cambia cualquier ajuste del
+    /// staging. Se excluyen las propiedades que NO son ajustes: el propio IsDirty, la categoría seleccionada y sus
+    /// derivadas (navegar entre secciones no es un cambio) y el preview del tema, que se recalcula solo cuando cambia
+    /// <see cref="SelectedThemeName"/>, la cual ya marca por su cuenta. Mientras se carga el staging no marca nada.
+    /// </summary>
+    private void OnStagingPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (_loadingSettings || IsDirty)
+            return;
+
+        switch (e.PropertyName)
+        {
+            case nameof(IsDirty):
+            case nameof(SelectedSection):
+            case nameof(IsGeneral):
+            case nameof(IsTheme):
+            case nameof(IsAbout):
+            case nameof(IsPlaceholder):
+            case nameof(ThemePreviewSource):
+            case nameof(ThemePreviewTintColor):
+                return;
+        }
+
+        IsDirty = true;
     }
 
     private void LoadGeneralFromSettings()
