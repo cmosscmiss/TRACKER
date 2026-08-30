@@ -282,8 +282,10 @@ public sealed class PriceSchedulerService
                 alerts.Add(string.Format(L(LocKeys.Notify_AlertReached_Line), product.Name, FormatPrice(ap, currency)));
 
             // Nuevo mínimo histórico (bajó respecto a la pasada previa y ahora es el mínimo de todo el histórico).
+            // El PRECIO va primero en la línea ("39,99 € - Nuevo mínimo: Producto"): es el dato que se busca de un
+            // vistazo en la notificación.
             if (now is decimal nl && oldBest is decimal obl && nl < obl && product.IsHistoricalLow)
-                lows.Add(string.Format(L(LocKeys.Notify_NewLow_Line), product.Name, FormatPrice(nl, currency)));
+                lows.Add(string.Format(L(LocKeys.Notify_NewLow_Line), FormatPrice(nl, currency), product.Name));
 
             // Vuelta a stock: antes sin precio (no disponible), ahora con precio.
             if (oldBest is null && now is not null)

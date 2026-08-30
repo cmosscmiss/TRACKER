@@ -387,6 +387,14 @@ public class WindowService
         var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
 
+        // Ventana ESCONDIDA (bandeja) o minimizada: AppWindow.Position devuelve coordenadas fuera de pantalla
+        // (-32000), así que se lee el placement NATIVO, cuyo rcNormalPosition conserva la geometría "restaurada"
+        // real. Pasa al salir desde el menú de la bandeja sin volver a mostrar la ventana.
+        bool minimized = appWindow.Presenter is OverlappedPresenter minimizedPresenter
+                         && minimizedPresenter.State == OverlappedPresenterState.Minimized;
+        if ((!appWindow.IsVisible || minimized) && TryGetNativePlacement(hWnd) is WindowPlacement native)
+            return native;
+
         var placement = new WindowPlacement
         {
             X = appWindow.Position.X,
@@ -404,6 +412,64 @@ public class WindowService
 
         return placement;
     }
+
+    /// <summary>
+    /// Placement NATIVO de la ventana (Win32 <c>GetWindowPlacement</c>): devuelve la geometría "restaurada"
+    /// (<c>rcNormalPosition</c>) y si la ventana volvería a maximizarse, valores que siguen siendo correctos con la
+    /// ventana escondida o minimizada (a diferencia de <c>AppWindow.Position</c>). null si la llamada falla.
+    /// </summary>
+    private static WindowPlacement? TryGetNativePlacement(IntPtr hWnd)
+    {
+        var native = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
+        if (!GetWindowPlacement(hWnd, ref native))
+            return null;
+
+        return new WindowPlacement
+        {
+            X = native.rcNormalPosition.Left,
+            Y = native.rcNormalPosition.Top,
+            Width = native.rcNormalPosition.Right - native.rcNormalPosition.Left,
+            Height = native.rcNormalPosition.Bottom - native.rcNormalPosition.Top,
+            // Maximizada ahora, o minimizada pero con "restaurar a maximizada" pendiente.
+            IsMaximized = native.showCmd == SW_SHOWMAXIMIZED || (native.flags & WPF_RESTORETOMAXIMIZED) != 0
+        };
+    }
+
+    #region Win32 window placement
+    private const int SW_SHOWMAXIMIZED = 3;
+    private const int WPF_RESTORETOMAXIMIZED = 0x0002;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct POINTSTRUCT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WINDOWPLACEMENT
+    {
+        public int length;
+        public int flags;
+        public int showCmd;
+        public POINTSTRUCT ptMinPosition;
+        public POINTSTRUCT ptMaxPosition;
+        public RECT rcNormalPosition;
+    }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+    #endregion
 
     /// <summary>
     /// Configura la ventana principal: centrada, con barra de título alta, posibilidad

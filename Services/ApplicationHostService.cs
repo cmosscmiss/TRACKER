@@ -93,6 +93,10 @@ public sealed class ApplicationHostService : IHostedService
         // el logging está activo para capturar también fallos tempranos del arranque.
         ExceptionService.LoggingEnabled = _appSettings.General.ExceptionLoggingEnabled;
 
+        // Arranque automático con Windows: sincroniza la clave Run del usuario con el ajuste (por defecto activado),
+        // de modo que también se corrige sola si el ejecutable ha cambiado de carpeta.
+        StartupService.Apply(_appSettings.General.StartWithWindows);
+
         // Localización (i18n): aplica el idioma guardado y publica el servicio como recurso de app ("Loc") para poder
         // enlazar textos con {Binding Source={StaticResource Loc}} (además de la markup extension {loc:Str}). Debe
         // ocurrir antes de mostrar cualquier ventana. El validador de claves solo actúa en DEBUG.

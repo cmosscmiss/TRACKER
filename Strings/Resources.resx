@@ -303,7 +303,7 @@
     <value>Target reached: {0} {1}</value>
   </data>
   <data name="Notify_NewLow_Line" xml:space="preserve">
-    <value>New low: {0} {1}</value>
+    <value>{0} - New low: {1}</value>
   </data>
   <data name="Notify_BackInStock_Line" xml:space="preserve">
     <value>Back in stock: {0}</value>
@@ -313,6 +313,15 @@
   </data>
   <data name="Notify_Open_Label" xml:space="preserve">
     <value>Open</value>
+  </data>
+  <data name="Tray_Show_Label" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Tray_Hide_Label" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="Tray_Exit_Label" xml:space="preserve">
+    <value>Exit</value>
   </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Next automatic price update</value>
@@ -493,6 +502,12 @@
   </data>
   <data name="GeneralSettings_AutoRefreshHours_Label" xml:space="preserve">
     <value>Auto-refresh prices every (hours)</value>
+  </data>
+  <data name="GeneralSettings_MinimizeToTray_Label" xml:space="preserve">
+    <value>Minimise to the system tray instead of closing the app</value>
+  </data>
+  <data name="GeneralSettings_StartWithWindows_Label" xml:space="preserve">
+    <value>Start automatically when Windows starts</value>
   </data>
   <data name="ThemeSettings_Theme_Label" xml:space="preserve">
     <value>Theme</value>

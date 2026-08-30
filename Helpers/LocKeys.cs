@@ -157,6 +157,8 @@ public static class LocKeys
     public const string GeneralSettings_FooterEventViewer_Label = "GeneralSettings_FooterEventViewer_Label";
     public const string GeneralSettings_LogExceptions_Label = "GeneralSettings_LogExceptions_Label";
     public const string GeneralSettings_AutoRefreshHours_Label = "GeneralSettings_AutoRefreshHours_Label";
+    public const string GeneralSettings_MinimizeToTray_Label = "GeneralSettings_MinimizeToTray_Label";
+    public const string GeneralSettings_StartWithWindows_Label = "GeneralSettings_StartWithWindows_Label";
     public const string ThemeSettings_Theme_Label = "ThemeSettings_Theme_Label";
     public const string ThemeSettings_RandomTheme_Label = "ThemeSettings_RandomTheme_Label";
     public const string ThemeSettings_BackgroundOverlay_Header = "ThemeSettings_BackgroundOverlay_Header";
@@ -240,6 +242,11 @@ public static class LocKeys
     public const string Notify_BackInStock_Line = "Notify_BackInStock_Line";
     public const string Notify_PreorderReleased_Line = "Notify_PreorderReleased_Line";
     public const string Notify_Open_Label = "Notify_Open_Label";
+
+    // Menú del icono de la bandeja del sistema (botón derecho)
+    public const string Tray_Show_Label = "Tray_Show_Label";
+    public const string Tray_Hide_Label = "Tray_Hide_Label";
+    public const string Tray_Exit_Label = "Tray_Exit_Label";
     public const string Footer_NextUpdate_Tooltip = "Footer_NextUpdate_Tooltip";
 
     // Acciones del widget de producto

@@ -93,6 +93,23 @@ public class AppSettings
         public bool HelpTooltipsEnabled { get; set; } = true;
 
         /// <summary>
+        /// Si es true (por defecto), el botón de cerrar de la ventana NO cierra la aplicación: la esconde en la
+        /// bandeja del sistema (y minimizar también la esconde), de forma que el planificador sigue leyendo precios
+        /// en segundo plano. Se sale de la aplicación desde el menú del icono de la bandeja (botón derecho -> Exit).
+        /// Si es false, la app se comporta como una ventana normal: cerrar termina el proceso y minimizar la deja en
+        /// la barra de tareas. Se lee EN VIVO (no hace falta reiniciar).
+        /// </summary>
+        public bool MinimizeToTray { get; set; } = true;
+
+        /// <summary>
+        /// Si es true (por defecto), la aplicación se registra para arrancar automáticamente al iniciar sesión en
+        /// Windows (clave <c>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</c>, ver
+        /// <see cref="Tracker.Services.StartupService"/>). El registro se sincroniza con este valor al arrancar y al
+        /// aceptar la ventana de configuración.
+        /// </summary>
+        public bool StartWithWindows { get; set; } = true;
+
+        /// <summary>
         /// Si es true, el precio de los productos incluye los gastos de envío (precio + envío) en toda la app. Lo
         /// alterna un toggle del footer (vía <see cref="Tracker.Services.SharedDataService.IncludeShippingInPrice"/>).
         /// Por defecto false.

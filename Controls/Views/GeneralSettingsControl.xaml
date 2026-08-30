@@ -36,6 +36,8 @@
         <!-- Interruptores. -->
         <CheckBox Content="{loc:Str Key=GeneralSettings_ShowWidgetHeader_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ShowWidgetHeader, Mode=TwoWay}"/>
         <CheckBox Content="{loc:Str Key=GeneralSettings_FooterEventViewer_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding FooterEventViewerAlwaysVisible, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=GeneralSettings_MinimizeToTray_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding MinimizeToTray, Mode=TwoWay}"/>
+        <CheckBox Content="{loc:Str Key=GeneralSettings_StartWithWindows_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding StartWithWindows, Mode=TwoWay}"/>
         <CheckBox Content="{loc:Str Key=GeneralSettings_LogExceptions_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ExceptionLoggingEnabled, Mode=TwoWay}"/>
 
     </StackPanel>

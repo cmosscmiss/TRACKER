@@ -77,6 +77,12 @@ public partial class SettingsDialogViewModel : ObservableObject
     [ObservableProperty] private bool footerEventViewerAlwaysVisible;
     [ObservableProperty] private bool exceptionLoggingEnabled;
 
+    /// <summary>Si true, cerrar/minimizar la ventana la esconde en la bandeja del sistema en vez de terminar la app.</summary>
+    [ObservableProperty] private bool minimizeToTray;
+
+    /// <summary>Si true, la app se registra para arrancar automáticamente al iniciar sesión en Windows.</summary>
+    [ObservableProperty] private bool startWithWindows;
+
     /// <summary>Horas entre actualizaciones automáticas de precios (mínimo 1). Se aplica al planificador al aceptar.</summary>
     [ObservableProperty] private double autoRefreshHours;
 
@@ -284,6 +290,13 @@ public partial class SettingsDialogViewModel : ObservableObject
             g.SettingsLastSection = SelectedSection.Kind.ToString();
         g.FooterEventViewerAlwaysVisible = FooterEventViewerAlwaysVisible;
         g.ExceptionLoggingEnabled = ExceptionLoggingEnabled;
+        g.MinimizeToTray = MinimizeToTray;
+
+        // Autoarranque con Windows: además del ajuste, hay que tocar la clave Run del usuario (solo si cambió).
+        bool startWithWindowsChanged = g.StartWithWindows != StartWithWindows;
+        g.StartWithWindows = StartWithWindows;
+        if (startWithWindowsChanged)
+            StartupService.Apply(StartWithWindows);
 
         // Idioma: se aplica EN CALIENTE (los textos localizados se refrescan solos por notificación del servicio).
         string newLanguage = SelectedLanguageOption?.Code ?? "en";
@@ -365,6 +378,8 @@ public partial class SettingsDialogViewModel : ObservableObject
         ShowWidgetHeader = g.ShowWidgetHeader;
         FooterEventViewerAlwaysVisible = g.FooterEventViewerAlwaysVisible;
         ExceptionLoggingEnabled = g.ExceptionLoggingEnabled;
+        MinimizeToTray = g.MinimizeToTray;
+        StartWithWindows = g.StartWithWindows;
         AutoRefreshHours = g.AutoRefreshHours;
         SelectedLanguageOption = LanguageOptions.FirstOrDefault(o => o.Code == g.Language) ?? LanguageOptions[0];
 

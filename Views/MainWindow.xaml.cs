@@ -33,6 +33,12 @@ public sealed partial class MainWindow : Window
     private readonly AmazonAuthService _amazonAuth;
     private readonly TrayIcon _trayIcon = new();
 
+    /// <summary>Ajustes de la app: se consultan EN VIVO (p. ej. MinimizeToTray, que la ventana de ajustes cambia sin reiniciar).</summary>
+    private readonly Models.AppSettings _appSettings = App.GetService<Microsoft.Extensions.Options.IOptions<Models.AppSettings>>().Value;
+
+    /// <summary>True cuando el cierre viene de "Exit" del menú de la bandeja: entonces NO se cancela (se cierra de verdad).</summary>
+    private bool _exitRequested;
+
     private DispatcherQueueTimer? _nextUpdateTimer;
 
     private bool _initialized;
@@ -79,9 +85,17 @@ public sealed partial class MainWindow : Window
 
         InitializeToolbarBehavior();
 
-        // Minimizar a la bandeja del sistema: al minimizar se oculta de la barra de tareas y el icono de la bandeja
-        // la restaura. Mantener el proceso vivo en la bandeja es lo que permite al scheduler seguir leyendo precios.
+        // Minimizar/cerrar a la bandeja del sistema (ajuste MinimizeToTray, leído EN VIVO): al minimizar se oculta de
+        // la barra de tareas y el icono de la bandeja la restaura. Mantener el proceso vivo en la bandeja es lo que
+        // permite al scheduler seguir leyendo precios. Con el ajuste activo, la app solo se cierra desde el menú del
+        // icono (botón derecho -> Exit), que es lo que dispara ExitRequested.
+        _trayIcon.MinimizeToTrayProvider = () => _appSettings.General.MinimizeToTray;
+        _trayIcon.ExitRequested += OnTrayExitRequested;
         _trayIcon.Initialize(WinRT.Interop.WindowNative.GetWindowHandle(this), "Tracker");
+
+        // El botón X de la ventana: con MinimizeToTray se cancela el cierre y la ventana se esconde en la bandeja;
+        // sin él (o al salir desde el menú de la bandeja) el cierre sigue su curso y termina el proceso.
+        AppWindow.Closing += OnAppWindowClosing;
 
         // Si se intenta abrir una segunda instancia, la principal (esta) restaura la ventana en pantalla en vez de
         // mostrar un aviso. La señal llega en un hilo en segundo plano; se marshalea al hilo de UI.
@@ -288,6 +302,27 @@ public sealed partial class MainWindow : Window
         _refreshTooltipCache = tooltip;
     }
 
+    /// <summary>
+    /// Cierre de la ventana (botón X o Alt+F4). Con el ajuste "minimizar a la bandeja" se CANCELA el cierre y la
+    /// ventana se esconde en la bandeja (el proceso sigue vivo refrescando precios); sin él, el cierre sigue su curso
+    /// y termina la app. Salir desde el menú de la bandeja marca <see cref="_exitRequested"/> y por eso no se cancela.
+    /// </summary>
+    private void OnAppWindowClosing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+    {
+        if (_exitRequested || !_appSettings.General.MinimizeToTray)
+            return;
+
+        args.Cancel = true;
+        _trayIcon.Hide();
+    }
+
+    /// <summary>"Exit" del menú del icono de la bandeja: cierra la ventana de verdad (sin esconderla a la bandeja).</summary>
+    private void OnTrayExitRequested()
+    {
+        _exitRequested = true;
+        DispatcherQueue.TryEnqueue(Close);
+    }
+
     private void OnClosed(object sender, WindowEventArgs e)
     {
         // PRIMERO se quita el icono de la bandeja (NIM_DELETE): así se ejecuta SIEMPRE, aunque el guardado de abajo
@@ -300,6 +335,8 @@ public sealed partial class MainWindow : Window
         _viewModel.SaveConfig();
 
         Activated -= OnWindowActivated;
+        AppWindow.Closing -= OnAppWindowClosing;
+        _trayIcon.ExitRequested -= OnTrayExitRequested;
         Closed -= OnClosed;
 
         App.ActivationRequested = null;

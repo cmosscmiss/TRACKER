@@ -298,7 +298,7 @@
     <value>Precio objetivo: {0} {1}</value>
   </data>
   <data name="Notify_NewLow_Line" xml:space="preserve">
-    <value>Nuevo mínimo: {0} {1}</value>
+    <value>{0} - Nuevo mínimo: {1}</value>
   </data>
   <data name="Notify_BackInStock_Line" xml:space="preserve">
     <value>De nuevo disponible: {0}</value>
@@ -308,6 +308,15 @@
   </data>
   <data name="Notify_Open_Label" xml:space="preserve">
     <value>Abrir</value>
+  </data>
+  <data name="Tray_Show_Label" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="Tray_Hide_Label" xml:space="preserve">
+    <value>Ocultar</value>
+  </data>
+  <data name="Tray_Exit_Label" xml:space="preserve">
+    <value>Salir</value>
   </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Siguiente actualización automática de precios</value>
@@ -488,6 +497,12 @@
   </data>
   <data name="GeneralSettings_AutoRefreshHours_Label" xml:space="preserve">
     <value>Actualizar precios cada (horas)</value>
+  </data>
+  <data name="GeneralSettings_MinimizeToTray_Label" xml:space="preserve">
+    <value>Minimizar a la bandeja del sistema en vez de cerrar la aplicación</value>
+  </data>
+  <data name="GeneralSettings_StartWithWindows_Label" xml:space="preserve">
+    <value>Iniciar automáticamente al arrancar Windows</value>
   </data>
   <data name="ThemeSettings_Theme_Label" xml:space="preserve">
     <value>Tema</value>
