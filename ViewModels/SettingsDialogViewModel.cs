@@ -136,6 +136,12 @@ public partial class SettingsDialogViewModel : ObservableObject
     /// <summary>Lo dispara el botón "Editar colores…": la vista oculta el diálogo de ajustes y abre el editor de colores.</summary>
     public event Action? EditColorsRequested;
 
+    /// <summary>
+    /// Se dispara tras aplicar un cambio que exige RECONSTRUIR el diálogo (tema nuevo o colores personalizados): el
+    /// <see cref="Services.DialogsService"/> lo cierra y lo vuelve a abrir para que todo se monte con el tema nuevo.
+    /// </summary>
+    public event Action? ReopenRequested;
+
     private RelayCommand? _editColorsCommand;
 
     /// <summary>Comando del botón "Editar colores…": pide abrir el editor de colores (ver <see cref="EditColorsRequested"/>).</summary>
@@ -365,6 +371,13 @@ public partial class SettingsDialogViewModel : ObservableObject
 
         // Lo aplicado deja de estar pendiente: el botón "Apply" se apaga hasta el siguiente cambio.
         IsDirty = false;
+
+        // Un cambio de tema (o de los colores personalizados) NO se puede repintar del todo sobre este diálogo ya
+        // abierto: los controles con plantilla del sistema (ComboBox, CheckBox, Slider…) conservan los brushes con los
+        // que se montaron, y los valores de sus VisualState (item seleccionado, check marcado, thumb) sobreviven
+        // incluso a re-aplicar la plantilla. La única forma fiable es CONSTRUIRLO DE NUEVO, así que se pide reabrir.
+        if (themeNameChanged || useCustomColorsChanged)
+            ReopenRequested?.Invoke();
     }
     #endregion
 

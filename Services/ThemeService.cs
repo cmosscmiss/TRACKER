@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Options;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Tracker.Models;
 using Windows.UI;
@@ -360,8 +361,12 @@ public class ThemeService : ObservableObject
     public void UnregisterExternalResources(ResourceDictionary dictionary)
     {
         if (dictionary is not null)
+        {
             _externalDictionaries.Remove(dictionary);
+        }
     }
+
+    /// <summary>
 
     /// <summary>Color actual del tema para un nombre base (p. ej. "Accent"); negro si el nombre no corresponde a ninguno.</summary>
     public Color GetThemeColor(string baseName)
@@ -430,10 +435,15 @@ public class ThemeService : ObservableObject
     /// <summary>
     /// Inserta o actualiza un <see cref="SolidColorBrush"/> en el diccionario: si ya existe con esa clave, muta su
     /// color in situ (actualización en vivo de todo lo que ya lo referencia); si no, crea la instancia.
+    ///
+    /// La búsqueda entra en los diccionarios MERGEADOS (<see cref="TryFindResource"/>): en la copia de
+    /// <c>Theme.xaml</c> que registra cada diálogo, los brushes viven en el merge, no en el diccionario raíz. Mirando
+    /// solo el raíz se creaba ahí un brush NUEVO y los controles del diálogo seguían pintando con la instancia
+    /// anterior, que es justo lo que hacía que la ventana de configuración no se recoloreara en caliente.
     /// </summary>
     private static void UpsertBrush(ResourceDictionary dict, string key, Color color)
     {
-        if (dict.TryGetValue(key, out object? existing) && existing is SolidColorBrush brush)
+        if (TryFindResource(dict, key, out object? existing) && existing is SolidColorBrush brush)
         {
             brush.Color = color;
         }
@@ -538,54 +548,143 @@ public class ThemeService : ObservableObject
     }
 
     /// <summary>
-    /// Muchos controles (botones AppBar/Toggle/Split/Icon y sliders) usan brushes con NOMBRE definidos en
-    /// <c>Resources/Buttons.xaml</c> y <c>Resources/GenericControls.xaml</c> (p. ej. <c>ButtonBrushBorder</c>,
-    /// <c>SliderTrackFill</c>), cuyo color se fijó una vez desde un recurso de tipo <see cref="Color"/>. Al ser instancias
-    /// distintas de las que genera este servicio, no se actualizaban al cambiar de tema en caliente. Aquí se localizan por
-    /// clave y se muta su color in situ para que todos esos controles se actualicen en vivo.
+    /// Muchos controles (botones, RadioButton, CheckBox, ComboBox y sus ítems, TextBox y sliders) usan brushes con
+    /// NOMBRE definidos en <c>Resources/Buttons.xaml</c> y <c>Resources/GenericControls.xaml</c> (p. ej.
+    /// <c>ButtonBrushBorder</c>, <c>ComboBoxItemBackgroundSelected</c>), cuyo color se fijó UNA vez desde un recurso de
+    /// tipo <see cref="Color"/>. Al ser instancias distintas de las que genera este servicio, no se actualizan solas al
+    /// cambiar de tema en caliente. Aquí se localizan por clave y se muta su color in situ para que todos esos
+    /// controles se recoloreen en vivo.
     ///
-    /// El mapeo clave -> color reproduce el de esos XAML. Los estados deshabilitados llevan su propia
-    /// <see cref="Brush.Opacity"/> en el XAML: aquí solo se toca el color (la opacidad del brush se conserva).
+    /// El mapeo clave -> color reproduce el de esos XAML, así que hay que mantenerlo si se tocan. Se puede REGENERAR
+    /// con:
+    /// <code>
+    /// grep -rh 'SolidColorBrush x:Key="[^"]*" Color="{ThemeResource [^}]*}"' Resources/*.xaml \
+    ///   | sed 's/.*x:Key="\([^"]*\)" Color="{ThemeResource \([^}]*\)}".*/\1|\2/'
+    /// </code>
+    /// (las variantes <c>...ColorOpacity60</c> se traducen a <c>WithAlpha(&lt;base&gt;Color, 0.6)</c>).
+    ///
+    /// Los estados deshabilitados llevan su propia <see cref="Brush.Opacity"/> en el XAML: aquí solo se toca el color
+    /// (la opacidad del brush se conserva).
     /// </summary>
     private void RefreshNamedControlBrushes(ResourceDictionary target)
     {
         // (clave del brush en Buttons.xaml / GenericControls.xaml, color del tema con el que debe pintarse)
         (string Key, Color Color)[] map =
         {
-            // Normal
+            // Botones (Buttons.xaml)
             ("ButtonBrushBackgroundSubtle", WithAlpha(CardBackgroundLightColor, 0.6)),
             ("ButtonBrushBorder", WithAlpha(CardBackgroundLightColor, 0.6)),
             ("ButtonBrushForeground", TextSecondaryColor),
-            // PointerOver
             ("ButtonBrushBackgroundSubtlePointerOver", CardBackgroundLightColor),
             ("ButtonBrushBorderPointerOver", CardBackgroundLightColor),
             ("ButtonBrushForegroundPointerOver", AccentLightColor),
-            // Pressed
             ("ButtonBrushBackgroundSubtlePressed", CardBackgroundLightColor),
             ("ButtonBrushBorderPressed", CardBackgroundLightColor),
             ("ButtonBrushForegroundPressed", AccentColor),
-            // Checked
             ("ButtonBrushBackgroundChecked", AccentDarkColor),
             ("ButtonBrushBorderChecked", AccentDarkColor),
             ("ButtonBrushForegroundChecked", TextColor),
-            // Checked + PointerOver
             ("ButtonBrushBackgroundCheckedPointerOver", WithAlpha(AccentLightColor, 0.6)),
             ("ButtonBrushBorderCheckedPointerOver", AccentLightColor),
             ("ButtonBrushForegroundCheckedPointerOver", TextColor),
-            // Checked + Pressed
             ("ButtonBrushBackgroundCheckedPressed", AccentLightColor),
             ("ButtonBrushBorderCheckedPressed", AccentLightColor),
             ("ButtonBrushForegroundCheckedPressed", TextColor),
-            // Disabled (la opacidad del brush la fija el XAML; aquí solo el color)
             ("ButtonBrushBackgroundSubtleDisabled", CardBackgroundLightColor),
             ("ButtonBrushBorderDisabled", CardBackgroundLightColor),
             ("ButtonBrushForegroundDisabled", TextSecondaryColor),
-            // Checked + Disabled
             ("ButtonBrushBackgroundCheckedDisabled", AccentDarkColor),
             ("ButtonBrushBorderCheckedDisabled", AccentDarkColor),
             ("ButtonBrushForegroundCheckedDisabled", TextColor),
 
-            // Sliders (GenericControls.xaml). Los *Disabled llevan su Opacity en el XAML: aquí solo el color.
+            // RadioButton (Buttons.xaml)
+            ("RadioButtonForeground", TextColor),
+            ("RadioButtonForegroundPointerOver", TextColor),
+            ("RadioButtonForegroundPressed", TextColor),
+            ("RadioButtonForegroundDisabled", TextColor),
+            ("RadioButtonOuterEllipseStroke", TextSecondaryColor),
+            ("RadioButtonOuterEllipseStrokePointerOver", AccentLightColor),
+            ("RadioButtonOuterEllipseStrokePressed", AccentColor),
+            ("RadioButtonOuterEllipseStrokeDisabled", TextSecondaryColor),
+            ("RadioButtonOuterEllipseCheckedStroke", AccentColor),
+            ("RadioButtonOuterEllipseCheckedStrokePointerOver", AccentLightColor),
+            ("RadioButtonOuterEllipseCheckedStrokePressed", AccentLightColor),
+            ("RadioButtonOuterEllipseCheckedStrokeDisabled", AccentColor),
+            ("RadioButtonCheckGlyphFill", AccentColor),
+            ("RadioButtonCheckGlyphFillPointerOver", AccentLightColor),
+            ("RadioButtonCheckGlyphFillPressed", AccentLightColor),
+            ("RadioButtonCheckGlyphFillDisabled", AccentColor),
+            ("RadioButtonCheckGlyphStroke", AccentColor),
+            ("RadioButtonCheckGlyphStrokeChecked", AccentColor),
+            ("RadioButtonCheckGlyphStrokeCheckedPointerOver", AccentLightColor),
+            ("RadioButtonCheckGlyphStrokeCheckedPressed", AccentLightColor),
+            ("RadioButtonCheckGlyphStrokeCheckedDisabled", AccentColor),
+            ("RadioButtonCheckGlyphStrokePointerOver", AccentLightColor),
+            ("RadioButtonCheckGlyphStrokePressed", AccentLightColor),
+            ("RadioButtonCheckGlyphStrokeDisabled", AccentColor),
+
+            // ComboBox (GenericControls.xaml)
+            ("ComboBoxDropDownBackground", BackgroundLightColor),
+            ("ComboBoxDropDownBorderBrush", AccentColor),
+
+            // Items del desplegable de un ComboBox (GenericControls.xaml)
+            ("ComboBoxItemForeground", TextColor),
+            ("ComboBoxItemBackgroundPointerOver", AccentLightColor),
+            ("ComboBoxItemBorderBrushPointerOver", AccentLightColor),
+            ("ComboBoxItemForegroundPointerOver", TextColor),
+            ("ComboBoxItemBackgroundPressed", AccentLightColor),
+            ("ComboBoxItemBorderBrushPressed", AccentLightColor),
+            ("ComboBoxItemForegroundPressed", TextColor),
+            ("ComboBoxItemBackgroundSelected", AccentColor),
+            ("ComboBoxItemBorderBrushSelected", AccentColor),
+            ("ComboBoxItemForegroundSelected", TextColor),
+            ("ComboBoxItemBackgroundSelectedPointerOver", AccentLightColor),
+            ("ComboBoxItemBorderBrushSelectedPointerOver", AccentLightColor),
+            ("ComboBoxItemForegroundSelectedPointerOver", TextColor),
+            ("ComboBoxItemBackgroundSelectedPressed", AccentLightColor),
+            ("ComboBoxItemBorderBrushSelectedPressed", AccentLightColor),
+            ("ComboBoxItemForegroundSelectedPressed", TextColor),
+
+            // ComboBox (GenericControls.xaml)
+            ("ComboBoxForeground", TextColor),
+            ("ComboBoxForegroundPointerOver", TextColor),
+            ("ComboBoxForegroundPressed", TextColor),
+            ("ComboBoxForegroundDisabled", TextSecondaryColor),
+            ("ComboBoxForegroundFocused", TextColor),
+            ("ComboBoxForegroundFocusedPressed", TextColor),
+            ("ComboBoxBackground", WithAlpha(CardBackgroundLightColor, 0.6)),
+            ("ComboBoxBackgroundPointerOver", CardBackgroundLightColor),
+            ("ComboBoxBackgroundPressed", CardBackgroundLightColor),
+            ("ComboBoxBackgroundDisabled", CardBackgroundLightColor),
+            ("ComboBoxBackgroundFocused", CardBackgroundLightColor),
+            ("ComboBoxBorderBrush", WithAlpha(CardBackgroundLightColor, 0.6)),
+            ("ComboBoxBorderBrushPointerOver", AccentLightColor),
+            ("ComboBoxBorderBrushPressed", AccentColor),
+            ("ComboBoxBorderBrushDisabled", CardBackgroundLightColor),
+            ("ComboBoxBorderBrushFocused", AccentColor),
+            ("ComboBoxDropDownGlyphForeground", AccentColor),
+
+            // TextBox (GenericControls.xaml)
+            ("TextControlBorderBrush", TextSecondaryColor),
+            ("TextControlBorderBrushPointerOver", AccentLightColor),
+            ("TextControlBorderBrushFocused", AccentColor),
+            ("TextControlBorderBrushDisabled", TextSecondaryColor),
+
+            // CheckBox (GenericControls.xaml)
+            ("CheckBoxCheckBackgroundStrokeUnchecked", TextSecondaryColor),
+            ("CheckBoxCheckBackgroundStrokeUncheckedPointerOver", TextColor),
+            ("CheckBoxCheckBackgroundStrokeUncheckedPressed", TextColor),
+            ("CheckBoxCheckBackgroundFillChecked", AccentColor),
+            ("CheckBoxCheckBackgroundFillCheckedPointerOver", AccentLightColor),
+            ("CheckBoxCheckBackgroundFillCheckedPressed", AccentDarkColor),
+            ("CheckBoxCheckBackgroundStrokeChecked", AccentColor),
+            ("CheckBoxCheckBackgroundStrokeCheckedPointerOver", AccentLightColor),
+            ("CheckBoxCheckBackgroundStrokeCheckedPressed", AccentDarkColor),
+            ("CheckBoxCheckGlyphForegroundChecked", BackgroundColor),
+            ("CheckBoxCheckGlyphForegroundCheckedPointerOver", BackgroundColor),
+            ("CheckBoxCheckGlyphForegroundCheckedPressed", BackgroundColor),
+
+            // Sliders (GenericControls.xaml). Los *Disabled llevan su Opacity en el XAML: aqui solo el color.
             ("SliderThumbBackground", AccentColor),
             ("SliderThumbBackgroundPointerOver", AccentLightColor),
             ("SliderThumbBackgroundPressed", AccentLightColor),
@@ -605,13 +704,48 @@ public class ThemeService : ObservableObject
             ("SliderInlineTickBarFill", TextColor),
         };
 
+        int applied = 0;
         foreach ((string key, Color color) in map)
         {
-            if (target.TryGetValue(key, out object? value) && value is SolidColorBrush brush)
+            if (TryFindResource(target, key, out object? value) && value is SolidColorBrush brush)
             {
                 brush.Color = color;
+                applied++;
             }
         }
+
+
+        // Red de seguridad: si NO se encontró ninguna clave, el tema no se está aplicando a estos controles (es lo que
+        // pasaba cuando la búsqueda no miraba los diccionarios mergeados). Solo se registra ese caso, para no ensuciar.
+        if (applied == 0)
+            ExceptionService.LogToFile(null, $"Theme: no se encontró ninguno de los {map.Length} brushes con nombre; los controles no se recolorearán.");
+    }
+
+    /// <summary>
+    /// Busca una clave en un diccionario y, si no está, en sus <see cref="ResourceDictionary.MergedDictionaries"/> en
+    /// profundidad. Hace falta porque el lookup DIRECTO de <see cref="ResourceDictionary"/> (indexador / TryGetValue)
+    /// NO mira los diccionarios mergeados: eso solo lo hace la resolución de <c>{StaticResource}</c>/<c>{ThemeResource}</c>
+    /// del XAML. Los brushes con nombre de esta app cuelgan dos niveles por debajo
+    /// (<c>App.xaml</c> -> <c>Theme.xaml</c> -> <c>Buttons.xaml</c> / <c>GenericControls.xaml</c>), así que sin esto
+    /// <see cref="RefreshNamedControlBrushes"/> no encontraba NINGUNA clave y no repintaba nada.
+    ///
+    /// Los merges se recorren en orden INVERSO, que es el de prioridad real en XAML: el último diccionario mergeado
+    /// gana. Importa porque muchas de estas claves (p. ej. <c>SliderTrackFill</c>) existen también en
+    /// <c>XamlControlsResources</c>, mergeado ANTES que el tema de la app: hay que quedarse con el de la app.
+    /// </summary>
+    private static bool TryFindResource(ResourceDictionary dict, string key, out object? value)
+    {
+        if (dict.TryGetValue(key, out value))
+            return true;
+
+        for (int i = dict.MergedDictionaries.Count - 1; i >= 0; i--)
+        {
+            if (TryFindResource(dict.MergedDictionaries[i], key, out value))
+                return true;
+        }
+
+        value = null;
+        return false;
     }
 
     /// <summary>Devuelve el color con la componente alfa ajustada a <paramref name="opacity"/> (0..1).</summary>

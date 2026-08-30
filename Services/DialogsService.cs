@@ -95,29 +95,52 @@ public class DialogsService
     /// </summary>
     public async Task ShowSettingsAsync(XamlRoot xamlRoot)
     {
-        SettingsControl content = new();
-        AppDialog dialog = new();
-
-        // Botón "Editar colores…" (sección Theme): oculta este diálogo, abre el editor de colores y, al cerrarse, vuelve.
-        async void OnEditColorsRequested()
+        // Bucle de REAPERTURA: aplicar un tema nuevo no se puede repintar del todo sobre el diálogo abierto (los
+        // controles con plantilla del sistema conservan los brushes con los que se montaron), así que en ese caso el
+        // ViewModel pide reabrir y aquí se cierra y se vuelve a construir todo con el tema ya aplicado. Como los
+        // cambios se acaban de volcar a AppSettings, el diálogo nuevo arranca con los mismos valores y en la misma
+        // categoría (que se persiste al cambiarla), de modo que para el usuario es como si no se hubiera movido.
+        bool reopen;
+        do
         {
-            dialog.Hide();
-            await ShowThemeColorsAsync(xamlRoot);
-            dialog.Reopen();
+            reopen = false;
+
+            SettingsControl content = new();
+            AppDialog dialog = new();
+
+            // Botón "Editar colores…" (sección Theme): oculta este diálogo, abre el editor de colores y, al cerrarse, vuelve.
+            async void OnEditColorsRequested()
+            {
+                dialog.Hide();
+                await ShowThemeColorsAsync(xamlRoot);
+                dialog.Reopen();
+            }
+            content.ViewModel.EditColorsRequested += OnEditColorsRequested;
+
+            void OnReopenRequested()
+            {
+                reopen = true;
+                dialog.Close(AppDialogResult.Secondary);   // cierre "neutro": ni acepta ni descarta, solo reconstruye
+            }
+            content.ViewModel.ReopenRequested += OnReopenRequested;
+
+            AppDialogResult result = await dialog.ShowAsync(
+                xamlRoot, L(LocKeys.DialogsService_Settings_Title), content,
+                L(LocKeys.Common_OK_Label), null, L(LocKeys.Common_Cancel_Label),
+                applyText: L(LocKeys.Common_Apply_Label), onApply: content.Apply);
+
+            content.ViewModel.EditColorsRequested -= OnEditColorsRequested;
+            content.ViewModel.ReopenRequested -= OnReopenRequested;
+
+            if (reopen)
+                continue;   // los cambios ya se aplicaron y persistieron en el Apply que pidió reabrir
+
+            if (result == AppDialogResult.Primary)
+                content.Apply();
+            else
+                content.Cancel();   // deshace la vista previa en caliente (p. ej. "Usar colores personalizados")
         }
-        content.ViewModel.EditColorsRequested += OnEditColorsRequested;
-
-        AppDialogResult result = await dialog.ShowAsync(
-            xamlRoot, L(LocKeys.DialogsService_Settings_Title), content,
-            L(LocKeys.Common_OK_Label), null, L(LocKeys.Common_Cancel_Label),
-            applyText: L(LocKeys.Common_Apply_Label), onApply: content.Apply);
-
-        content.ViewModel.EditColorsRequested -= OnEditColorsRequested;
-
-        if (result == AppDialogResult.Primary)
-            content.Apply();
-        else
-            content.Cancel();   // deshace la vista previa en caliente (p. ej. "Usar colores personalizados")
+        while (reopen);
     }
 
     /// <summary>

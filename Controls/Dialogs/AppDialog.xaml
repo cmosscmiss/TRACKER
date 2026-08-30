@@ -37,7 +37,7 @@
     <!-- Overlay atenuado a pantalla completa (su tamaño lo fija el code-behind = tamaño de la ventana). -->
     <Grid x:Name="Overlay" Opacity="0" Tapped="OnOverlayTapped">
         <Grid.Background>
-            <SolidColorBrush Color="{ThemeResource BackgroundColor}" Opacity="0.7"/>
+            <SolidColorBrush x:Name="OverlayBrush" Color="{ThemeResource BackgroundColor}" Opacity="0.7"/>
         </Grid.Background>
 
         <!-- Caja del diálogo, centrada. -->

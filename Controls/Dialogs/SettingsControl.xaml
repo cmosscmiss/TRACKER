@@ -28,8 +28,8 @@
              (hover = AccentLight, seleccionado = Accent, texto = Text), reusando los mismos colores que ComboBoxItem*
              mediante override de los brushes de ListViewItem en el ámbito de este ListView. Se oculta el "pill" de
              selección para que el seleccionado sea un relleno completo, como en el desplegable. -->
-        <Border Grid.Column="0" CornerRadius="4" Background="{ThemeResource CardBackgroundBrush}">
-            <ListView ItemsSource="{Binding Sections}"
+        <Border Grid.Column="0" Background="{ThemeResource CardBackgroundBrush}">
+            <ListView x:Name="SectionsList" ItemsSource="{Binding Sections}"
                       SelectedItem="{Binding SelectedSection, Mode=TwoWay}"
                       Background="Transparent" SelectionMode="Single">
                 <ListView.Resources>

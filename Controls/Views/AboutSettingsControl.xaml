@@ -18,8 +18,8 @@
             <Border Width="72" Height="72" CornerRadius="16" BorderThickness="1" BorderBrush="{ThemeResource AccentDarkBrush}">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="{ThemeResource CardBackgroundLightColorOpacity80}" Offset="0"/>
-                        <GradientStop Color="{ThemeResource BackgroundColorOpacity80}" Offset="1"/>
+                        <GradientStop x:Name="LogoStopLight" Color="{ThemeResource CardBackgroundLightColorOpacity80}" Offset="0"/>
+                        <GradientStop x:Name="LogoStopDark" Color="{ThemeResource BackgroundColorOpacity80}" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
                 <FontIcon Glyph="&#xE8B9;" FontSize="34" Foreground="{ThemeResource AccentLightBrush}"/>

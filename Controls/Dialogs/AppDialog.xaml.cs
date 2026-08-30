@@ -107,7 +107,11 @@ public sealed partial class AppDialog : UserControl
 
         // El contenido del diálogo resuelve sus {ThemeResource} contra la copia local de Theme.xaml (ver Resources): se
         // registra en el ThemeService para que los cambios de color del tema (u overrides en caliente) se reflejen aquí.
-        App.GetService<ThemeService>().RegisterExternalResources(Resources);
+        // Además se escucha ThemeChanged mientras el diálogo está abierto, para lo que ese registro NO cubre: el fondo
+        // del overlay toma su color de un recurso de tipo Color, que no se propaga solo (ver OnThemeChanged).
+        ThemeService themeService = App.GetService<ThemeService>();
+        themeService.RegisterExternalResources(Resources);
+        themeService.ThemeChanged += OnThemeChanged;
 
         _popup = new Popup { XamlRoot = xamlRoot, Child = this };
 
@@ -131,6 +135,13 @@ public sealed partial class AppDialog : UserControl
 
         return _tcs.Task;
     }
+
+    /// <summary>
+    /// Cierra el diálogo por CÓDIGO con el resultado indicado, igual que si se hubiera pulsado ese botón (completa la
+    /// Task de <see cref="ShowAsync"/>). Lo usa la ventana de configuración para cerrarse y volver a abrirse tras
+    /// aplicar un tema nuevo.
+    /// </summary>
+    public void Close(AppDialogResult result) => Complete(result);
 
     /// <summary>Oculta temporalmente el diálogo SIN completarlo (la Task de <see cref="ShowAsync"/> sigue pendiente). Reversible con <see cref="Reopen"/>.</summary>
     public void Hide()
@@ -216,6 +227,17 @@ public sealed partial class AppDialog : UserControl
 
     private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args) => SizeToWindow();
 
+    /// <summary>
+    /// Repinta el fondo atenuado del overlay al cambiar de tema con el diálogo abierto: su brush toma el color de un
+    /// recurso de tipo <c>Color</c>, que se resuelve una sola vez al cargar y NO se propaga en caliente (el
+    /// <see cref="ThemeService"/> solo muta in situ los recursos de tipo <c>Brush</c>).
+    /// </summary>
+    private void OnThemeChanged(object? sender, System.EventArgs e)
+    {
+        if (OverlayBrush is not null)
+            OverlayBrush.Color = App.GetService<ThemeService>().BackgroundColor;
+    }
+
     private void OnKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -280,7 +302,9 @@ public sealed partial class AppDialog : UserControl
         }
         _completed = true;
 
-        App.GetService<ThemeService>().UnregisterExternalResources(Resources);
+        ThemeService themeService = App.GetService<ThemeService>();
+        themeService.UnregisterExternalResources(Resources);
+        themeService.ThemeChanged -= OnThemeChanged;
 
         if (_xamlRoot is not null)
         {
