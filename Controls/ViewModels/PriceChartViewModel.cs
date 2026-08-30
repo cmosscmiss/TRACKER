@@ -59,6 +59,14 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     private ChartType _selectedChartType = ChartType.Line;
     private SortMode _sortOrder = SortMode.None;
     private int _topN;
+
+    /// <summary>
+    /// Precio MÁS ALTO de la serie de mejores precios del histórico (el pico de la curva de mínimos, que es la que
+    /// dibuja la gráfica de precio mínimo): es la referencia contra la que se calcula el % de bajada de las dos
+    /// tarjetas. 0 si no hay histórico. Se recalcula en <see cref="Recompute"/> y lo consume también
+    /// <see cref="UpdateCurrentPriceCard"/>, que se llama por su cuenta al marcar/desmarcar la compra.
+    /// </summary>
+    private double _peakBestPrice;
     #endregion
 
     #region Properties
@@ -105,14 +113,20 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Precio de la tarjeta izquierda: mejor precio actual, o el precio de COMPRA si el producto está comprado. "—" si no hay.</summary>
     public string CurrentPriceText { get; private set; } = "—";
 
-    /// <summary>Tienda del mejor precio actual (descripción de la tarjeta); vacío si el producto está comprado.</summary>
-    public string CurrentPriceStore { get; private set; } = string.Empty;
+    /// <summary>
+    /// Descripción de la tarjeta izquierda: la tienda del mejor precio (o la fecha si el producto está comprado),
+    /// más el % de bajada respecto al pico histórico (ver <see cref="DropFromPeakText"/>) cuando lo hay.
+    /// </summary>
+    public string CurrentPriceDescription { get; private set; } = string.Empty;
 
     /// <summary>Precio más bajo del histórico formateado, o "—".</summary>
     public string LowestPriceText { get; private set; } = "—";
 
-    /// <summary>Tienda donde se dio el precio más bajo del histórico (para la descripción de la tarjeta), o vacío.</summary>
-    public string LowestPriceStore { get; private set; } = string.Empty;
+    /// <summary>
+    /// Descripción de la tarjeta del precio más bajo: la tienda donde se dio, más el % de bajada respecto al pico
+    /// histórico (ver <see cref="DropFromPeakText"/>) cuando lo hay.
+    /// </summary>
+    public string LowestPriceDescription { get; private set; } = string.Empty;
 
     /// <summary>Se muestra el pill de Prime (solo si el mejor precio es de una tienda Amazon).</summary>
     public bool ShowPrime { get; private set; }
@@ -326,24 +340,49 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
     /// <summary>
     /// Actualiza la tarjeta de precio izquierda según el estado de compra: si el producto está COMPRADO muestra
-    /// "Precio de compra" + el precio de compra (sin tienda); si no, "Precio actual" + el mejor precio y su tienda.
+    /// "Precio de compra" + el precio de compra (con su fecha); si no, "Precio actual" + el mejor precio y su tienda.
+    /// La descripción lleva además el % de bajada respecto al pico histórico (ver <see cref="DropFromPeakText"/>).
     /// </summary>
     private void UpdateCurrentPriceCard()
     {
         Product? product = _product;
         bool purchased = product?.IsPurchased ?? false;
 
+        decimal? shownPrice = purchased ? product?.PurchasePrice : product?.BestPrice;
+
         CurrentPriceLabel = L(purchased ? LocKeys.PriceChart_PurchasedPrice_Label : LocKeys.PriceChart_CurrentPrice_Label);
-        CurrentPriceText = FormatPrice(purchased ? product?.PurchasePrice : product?.BestPrice);
+        CurrentPriceText = FormatPrice(shownPrice);
         // Descripción: si está comprado, la FECHA de compra (local, formato corto); si no, la tienda del mejor precio.
-        CurrentPriceStore = purchased
+        string source = purchased
             ? (product?.PurchasedAt is DateTime at ? at.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : string.Empty)
             : (product?.BestStore?.Label ?? string.Empty);
+        CurrentPriceDescription = WithDrop(source, DropFromPeakText(shownPrice));
 
         OnPropertyChanged(nameof(CurrentPriceLabel));
         OnPropertyChanged(nameof(CurrentPriceText));
-        OnPropertyChanged(nameof(CurrentPriceStore));
+        OnPropertyChanged(nameof(CurrentPriceDescription));
     }
+
+    /// <summary>
+    /// Texto del % de bajada de un precio respecto a <see cref="_peakBestPrice"/> (lo más alto que ha llegado a estar
+    /// el mejor precio del producto): "-25%". Vacío si no hay pico, si el precio no está por debajo de él, o si el
+    /// redondeo da 0 (una bajada que no llega al 1% no aporta nada).
+    /// </summary>
+    private string DropFromPeakText(decimal? price)
+    {
+        if (_peakBestPrice <= 0 || price is not decimal value)
+            return string.Empty;
+
+        double drop = (_peakBestPrice - (double)value) / _peakBestPrice * 100.0;
+        int rounded = (int)Math.Round(drop, MidpointRounding.AwayFromZero);
+        return rounded <= 0 ? string.Empty : string.Format(CultureInfo.CurrentCulture, L(LocKeys.PriceChart_DropFromPeak_Format), rounded);
+    }
+
+    /// <summary>Une la descripción de una tarjeta con su % de bajada ("Amazon · -25%"); sin separador si falta alguno.</summary>
+    private static string WithDrop(string description, string drop)
+        => string.IsNullOrEmpty(drop)
+            ? description
+            : (string.IsNullOrEmpty(description) ? drop : description + " · " + drop);
 
     private void Recompute()
     {
@@ -396,6 +435,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         Image = BuildImage(product?.ImageUrl);
 
         ProductStore? bestStore = product?.BestStore;
+
+        // Referencia del % de bajada de las dos tarjetas: lo MÁS ALTO que ha llegado a estar el mejor precio, es
+        // decir el pico de la serie de mínimos (la curva de la gráfica de precio mínimo). Los 0 son rondas sin dato.
+        _peakBestPrice = MinPriceValues.Where(value => value > 0).DefaultIfEmpty(0).Max();
+
         UpdateCurrentPriceCard();
 
         // Precio más bajo del histórico, por precio EFECTIVO (suma el envío actual de la tienda si el ajuste lo incluye).
@@ -410,12 +454,12 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             decimal EffectiveOf(PricePoint p) => p.Price + (includeShippingLow && product.Stores.FirstOrDefault(s => s.Id == p.StoreId)?.ShippingCost is decimal c ? c : 0);
             PricePoint lowest = availableHistory.OrderBy(EffectiveOf).First();
             LowestPriceText = FormatPrice(EffectiveOf(lowest));
-            LowestPriceStore = lowest.StoreLabel;
+            LowestPriceDescription = WithDrop(lowest.StoreLabel, DropFromPeakText(EffectiveOf(lowest)));
         }
         else
         {
             LowestPriceText = "—";
-            LowestPriceStore = string.Empty;
+            LowestPriceDescription = string.Empty;
         }
 
         // Promoción / oferta / cupón / voucher en alguna tienda del producto.
@@ -464,9 +508,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         OnPropertyChanged(nameof(ProductName));
         OnPropertyChanged(nameof(Image));
         OnPropertyChanged(nameof(CurrentPriceText));
-        OnPropertyChanged(nameof(CurrentPriceStore));
+        OnPropertyChanged(nameof(CurrentPriceDescription));
         OnPropertyChanged(nameof(LowestPriceText));
-        OnPropertyChanged(nameof(LowestPriceStore));
+        OnPropertyChanged(nameof(LowestPriceDescription));
         OnPropertyChanged(nameof(ShowPrime));
         OnPropertyChanged(nameof(ShowPromo));
         OnPropertyChanged(nameof(ShowIssues));

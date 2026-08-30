@@ -46,8 +46,8 @@ public class TemplateService
     #region Methods (public)
     /// <summary>
     /// Todos los templates disponibles para CARGAR (<c>Assets/Templates/*.json</c>), ordenados por el número de slots
-    /// de su layout, de menos a más (los que empatan, por nombre). El nombre visible es el del fichero y la miniatura
-    /// es el <c>.jpg</c> con el mismo nombre, si existe.
+    /// de su layout, de menos a más (los que empatan, por nombre). El nombre visible es el LOCALIZADO del fichero (ver
+    /// <see cref="LocalizedName"/>) y la miniatura es el <c>.jpg</c> con el mismo nombre, si existe.
     /// </summary>
     public IReadOnlyList<TemplateEntry> GetAllTemplates()
     {
@@ -57,11 +57,11 @@ public class TemplateService
         return Directory.EnumerateFiles(AppTemplatesFolderPath, "*.json")
             .Select(jsonPath =>
             {
-                string name = Path.GetFileNameWithoutExtension(jsonPath);
-                string image = Path.Combine(AppTemplatesFolderPath, name + ".jpg");
+                string fileName = Path.GetFileNameWithoutExtension(jsonPath);
+                string image = Path.Combine(AppTemplatesFolderPath, fileName + ".jpg");
 
                 return (Slots: SlotCountOf(jsonPath),
-                        Entry: new TemplateEntry(name, jsonPath, File.Exists(image) ? image : string.Empty));
+                        Entry: new TemplateEntry(LocalizedName(fileName), jsonPath, File.Exists(image) ? image : string.Empty));
             })
             .OrderBy(item => item.Slots)
             .ThenBy(item => item.Entry.Name, StringComparer.OrdinalIgnoreCase)
@@ -88,6 +88,19 @@ public class TemplateService
     #endregion
 
     #region Methods (private)
+
+    /// <summary>
+    /// Nombre VISIBLE de un template: el texto localizado de la clave <c>Template_&lt;fichero&gt;_Name</c> (p. ej.
+    /// <c>Template_Basic_Name</c>) y, si esa clave no existe, el propio nombre del fichero. Así los templates que se
+    /// distribuyen con la app salen traducidos y cualquier otro que se deje en la carpeta sigue mostrando su nombre.
+    /// </summary>
+    private static string LocalizedName(string fileName)
+    {
+        string key = $"Template_{fileName}_Name";
+        string? localized = LocalizationService.Instance?[key];
+        return string.IsNullOrEmpty(localized) || localized == key ? fileName : localized;
+    }
+
     /// <summary>
     /// Número de slots del layout que usa un template, leído de su JSON. Es lo que ordena el selector: primero los
     /// layouts más simples. Si el fichero no se puede leer o no trae layout, va al final.

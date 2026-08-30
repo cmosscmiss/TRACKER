@@ -206,7 +206,8 @@
             </Grid>
         </Grid>
 
-        <!-- Pie: precio actual y precio más bajo del histórico, como tarjetas de estadística. -->
+        <!-- Pie: precio actual y precio más bajo del histórico, como tarjetas de estadística. La descripción de cada
+             una lleva, tras la tienda, el % de bajada respecto al precio más alto que ha llegado a tener el mejor precio. -->
         <Grid Grid.Row="3" Margin="4 0 4 4"
               Visibility="{x:Bind ViewModel.HasProduct, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}">
             <Grid.ColumnDefinitions>
@@ -217,12 +218,12 @@
                                       Glyph="&#xE8EC;"
                                       Label="{x:Bind ViewModel.CurrentPriceLabel, Mode=OneWay}"
                                       Value="{x:Bind ViewModel.CurrentPriceText, Mode=OneWay}"
-                                      Description="{x:Bind ViewModel.CurrentPriceStore, Mode=OneWay}"/>
+                                      Description="{x:Bind ViewModel.CurrentPriceDescription, Mode=OneWay}"/>
             <uc:WidgetStatCardControl Grid.Column="1" VisualStyle="IconBoxSoftNeon" ColorVariant="AccentLight"
                                       Glyph="&#xE96E;"
                                       Label="{loc:Str Key=PriceChart_LowestPrice_Label}"
                                       Value="{x:Bind ViewModel.LowestPriceText, Mode=OneWay}"
-                                      Description="{x:Bind ViewModel.LowestPriceStore, Mode=OneWay}"/>
+                                      Description="{x:Bind ViewModel.LowestPriceDescription, Mode=OneWay}"/>
         </Grid>
     </Grid>
 </UserControl>

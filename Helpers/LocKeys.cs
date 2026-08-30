@@ -210,6 +210,7 @@ public static class LocKeys
     public const string PriceChart_CurrentPrice_Label = "PriceChart_CurrentPrice_Label";
     public const string PriceChart_PurchasedPrice_Label = "PriceChart_PurchasedPrice_Label";
     public const string PriceChart_LowestPrice_Label = "PriceChart_LowestPrice_Label";
+    public const string PriceChart_DropFromPeak_Format = "PriceChart_DropFromPeak_Format";
 
     // Product activity log
     public const string ProductLog_Added_Progress = "ProductLog_Added_Progress";
@@ -247,6 +248,11 @@ public static class LocKeys
     public const string Tray_Show_Label = "Tray_Show_Label";
     public const string Tray_Hide_Label = "Tray_Hide_Label";
     public const string Tray_Exit_Label = "Tray_Exit_Label";
+
+    // Nombres de los templates que se distribuyen con la app (clave = Template_<nombre de fichero>_Name)
+    public const string Template_Basic_Name = "Template_Basic_Name";
+    public const string Template_Normal_Name = "Template_Normal_Name";
+    public const string Template_Full_Name = "Template_Full_Name";
     public const string Footer_NextUpdate_Tooltip = "Footer_NextUpdate_Tooltip";
 
     // Acciones del widget de producto

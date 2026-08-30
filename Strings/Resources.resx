@@ -323,6 +323,18 @@
   <data name="Tray_Exit_Label" xml:space="preserve">
     <value>Exit</value>
   </data>
+  <data name="Template_Basic_Name" xml:space="preserve">
+    <value>Basic layout</value>
+  </data>
+  <data name="Template_Normal_Name" xml:space="preserve">
+    <value>Normal layout</value>
+  </data>
+  <data name="Template_Full_Name" xml:space="preserve">
+    <value>Full layout</value>
+  </data>
+  <data name="PriceChart_DropFromPeak_Format" xml:space="preserve">
+    <value>-{0}%</value>
+  </data>
   <data name="Footer_NextUpdate_Tooltip" xml:space="preserve">
     <value>Next automatic price update</value>
   </data>
