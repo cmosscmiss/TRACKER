@@ -10,6 +10,7 @@
     xmlns:template="using:Tracker.Controls.Templates"
     xmlns:loc="using:Tracker.Markup"
     xmlns:help="using:Tracker.Helpers"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -67,6 +68,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -135,14 +137,38 @@
             </StackPanel>
         </Grid>
 
+        <!-- Rango de precio: filtra la lista entre los dos pulgares. El mínimo del recorrido es 0 y el máximo, el
+             precio más alto entre todos los productos (se reajusta solo al leer precios nuevos). Con el rango
+             completo no filtra nada; a los lados, el valor de cada pulgar. -->
+        <Grid Grid.Row="1" ColumnSpacing="8" Padding="16 0 16 8" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.MinPriceText, Mode=OneWay}" FontSize="12"
+                       Foreground="{ThemeResource TextSecondaryBrush}" VerticalAlignment="Center" MinWidth="48" TextAlignment="Right"/>
+
+            <toolkit:RangeSelector x:Name="PriceRangeSelector" Grid.Column="1" VerticalAlignment="Center"
+                                   Minimum="0" Maximum="{x:Bind ViewModel.PriceCeiling, Mode=OneWay}"
+                                   RangeStart="{x:Bind ViewModel.MinPrice, Mode=TwoWay}"
+                                   RangeEnd="{x:Bind ViewModel.MaxPrice, Mode=TwoWay}"
+                                   StepFrequency="1"
+                                   help:Help.Key="ProductList_PriceRange_Tooltip"/>
+
+            <TextBlock Grid.Column="2" Text="{x:Bind ViewModel.MaxPriceText, Mode=OneWay}" FontSize="12"
+                       Foreground="{ThemeResource TextSecondaryBrush}" VerticalAlignment="Center" MinWidth="48"/>
+        </Grid>
+
         <!-- La selección se gestiona en code-behind (no TwoWay): así una deselección transitoria al reordenar la lista
              alfabéticamente (Move al cargar el título) no borra el producto seleccionado. -->
-        <ListView x:Name="ProductListView" Grid.Row="1" ItemsSource="{x:Bind ViewModel.FilteredProducts, Mode=OneWay}" SelectionChanged="OnSelectionChanged" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+        <ListView x:Name="ProductListView" Grid.Row="2" ItemsSource="{x:Bind ViewModel.FilteredProducts, Mode=OneWay}" SelectionChanged="OnSelectionChanged" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
 
         <!-- Pie: nº de productos mostrados frente al total rastreado (mismo estilo que la antigua lista de juegos). -->
-        <template:SeparatorEx Grid.Row="2" Margin="0 0 0 8" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+        <template:SeparatorEx Grid.Row="3" Margin="0 0 0 8" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="16 0 16 12" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="16 0 16 12" HorizontalAlignment="Right">
             <TextBlock Text="{x:Bind ViewModel.CountText, Mode=OneWay}" Foreground="{ThemeResource TextSecondaryBrush}"/>
         </StackPanel>
     </Grid>

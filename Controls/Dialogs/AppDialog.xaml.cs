@@ -67,8 +67,13 @@ public sealed partial class AppDialog : UserControl
     #region Methods (public)
     /// <summary>
     /// Muestra el diálogo y devuelve el resultado. Los botones con texto vacío/null se ocultan.
+    ///
+    /// <paramref name="animate"/> gobierna la animación de entrada (fundido del overlay + escala de la tarjeta). Se
+    /// desactiva cuando el diálogo NO está apareciendo de verdad, sino reconstruyéndose sobre sí mismo (la ventana de
+    /// configuración al aplicar un tema nuevo): ahí la animación se lee como un parpadeo, porque el usuario ya tenía
+    /// el diálogo delante.
     /// </summary>
-    public Task<AppDialogResult> ShowAsync(XamlRoot xamlRoot, string title, object content, string? primaryText, string? secondaryText, string closeText, string? applyText = null, System.Action? onApply = null, bool dimOverlay = true, bool draggable = false)
+    public Task<AppDialogResult> ShowAsync(XamlRoot xamlRoot, string title, object content, string? primaryText, string? secondaryText, string closeText, string? applyText = null, System.Action? onApply = null, bool dimOverlay = true, bool draggable = false, bool animate = true)
     {
         _xamlRoot = xamlRoot;
         _completed = false;
@@ -120,7 +125,9 @@ public sealed partial class AppDialog : UserControl
 
         _popup.IsOpen = true;
 
-        if (Resources.TryGetValue("ShowStoryboard", out object sb) && sb is Storyboard storyboard)
+        // Sin animación, el diálogo aparece ya montado: el overlay a plena opacidad y la tarjeta a su escala final
+        // (los valores base del XAML son 1, así que basta con no arrancar el storyboard).
+        if (animate && Resources.TryGetValue("ShowStoryboard", out object sb) && sb is Storyboard storyboard)
         {
             storyboard.Begin();
         }
@@ -141,7 +148,24 @@ public sealed partial class AppDialog : UserControl
     /// Task de <see cref="ShowAsync"/>). Lo usa la ventana de configuración para cerrarse y volver a abrirse tras
     /// aplicar un tema nuevo.
     /// </summary>
-    public void Close(AppDialogResult result) => Complete(result);
+    /// <param name="keepVisible">
+    /// Si es cierto, el diálogo se da por terminado (su Task se completa) pero su popup SIGUE EN PANTALLA hasta que
+    /// se le llame a <see cref="Dismiss"/>. Lo usa la ventana de configuración al reconstruirse por un cambio de
+    /// tema: el diálogo viejo hace de telón mientras se monta el nuevo, así no queda ni un fotograma con la ventana
+    /// sin el overlay (el parpadeo que se veía al aplicar el tema).
+    /// </param>
+    public void Close(AppDialogResult result, bool keepVisible = false) => Complete(result, keepVisible);
+
+    /// <summary>Retira de pantalla un diálogo ya completado con <c>keepVisible</c>. No hace nada en los demás casos.</summary>
+    public void Dismiss()
+    {
+        if (_popup is null)
+            return;
+
+        _popup.IsOpen = false;
+        _popup.Child = null;
+        _popup = null;
+    }
 
     /// <summary>Oculta temporalmente el diálogo SIN completarlo (la Task de <see cref="ShowAsync"/> sigue pendiente). Reversible con <see cref="Reopen"/>.</summary>
     public void Hide()
@@ -294,7 +318,7 @@ public sealed partial class AppDialog : UserControl
 
     private void OnCloseClick(object sender, RoutedEventArgs e) => Complete(AppDialogResult.Close);
 
-    private void Complete(AppDialogResult result)
+    private void Complete(AppDialogResult result, bool keepVisible = false)
     {
         if (_completed)
         {
@@ -311,10 +335,10 @@ public sealed partial class AppDialog : UserControl
             _xamlRoot.Changed -= OnXamlRootChanged;
         }
 
-        if (_popup is not null)
+        // Con keepVisible el popup se queda en pantalla (hace de telón) hasta que el llamador invoque Dismiss.
+        if (!keepVisible)
         {
-            _popup.IsOpen = false;
-            _popup.Child = null;
+            Dismiss();
         }
 
         _tcs?.TrySetResult(result);

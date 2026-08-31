@@ -241,6 +241,12 @@ public partial class Product : ObservableObject
     public string PurchasePriceText => PurchasePrice is decimal value ? FormatWithCurrency(value) : "—";
 
     /// <summary>
+    /// Precio con el que cuenta el producto en la lista: el de COMPRA si está comprado; si no, el mejor precio actual.
+    /// Es el importe que muestra el recuadro y contra el que filtra el rango de precio.
+    /// </summary>
+    public decimal? ListPrice => IsPurchased ? PurchasePrice : BestPrice;
+
+    /// <summary>
     /// Precio a mostrar en el recuadro de la lista: el de COMPRA si el producto está comprado; si no, el mejor precio
     /// actual.
     /// </summary>
@@ -410,6 +416,7 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(BestStore));
         OnPropertyChanged(nameof(LastChecked));
         OnPropertyChanged(nameof(BestPriceText));
+        OnPropertyChanged(nameof(ListPrice));
         OnPropertyChanged(nameof(ListPriceText));
         OnPropertyChanged(nameof(Trend));
         OnPropertyChanged(nameof(IsHistoricalLow));
@@ -434,6 +441,7 @@ public partial class Product : ObservableObject
     /// <summary>Al marcar/desmarcar comprado, refresca el precio y el resaltado que muestra la lista.</summary>
     partial void OnIsPurchasedChanged(bool value)
     {
+        OnPropertyChanged(nameof(ListPrice));
         OnPropertyChanged(nameof(ListPriceText));
         OnPropertyChanged(nameof(ListPriceHighlight));
     }
@@ -442,6 +450,7 @@ public partial class Product : ObservableObject
     partial void OnPurchasePriceChanged(decimal? value)
     {
         OnPropertyChanged(nameof(PurchasePriceText));
+        OnPropertyChanged(nameof(ListPrice));
         OnPropertyChanged(nameof(ListPriceText));
     }
     #endregion

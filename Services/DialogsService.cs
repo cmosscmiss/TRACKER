@@ -101,6 +101,8 @@ public class DialogsService
         // cambios se acaban de volcar a AppSettings, el diálogo nuevo arranca con los mismos valores y en la misma
         // categoría (que se persiste al cambiarla), de modo que para el usuario es como si no se hubiera movido.
         bool reopen;
+        bool reopening = false;     // esta vuelta del bucle viene de una reapertura, no de abrir la ventana de cero
+        AppDialog? previous = null; // diálogo de la vuelta anterior: sigue en pantalla haciendo de telón
         do
         {
             reopen = false;
@@ -120,20 +122,34 @@ public class DialogsService
             void OnReopenRequested()
             {
                 reopen = true;
-                dialog.Close(AppDialogResult.Secondary);   // cierre "neutro": ni acepta ni descarta, solo reconstruye
+                // Cierre "neutro": ni acepta ni descarta, solo reconstruye. Con keepVisible el diálogo viejo se queda
+                // en pantalla como telón hasta que el nuevo esté montado (lo retira el Dismiss de la vuelta siguiente).
+                dialog.Close(AppDialogResult.Secondary, keepVisible: true);
             }
             content.ViewModel.ReopenRequested += OnReopenRequested;
 
-            AppDialogResult result = await dialog.ShowAsync(
+            Task<AppDialogResult> pending = dialog.ShowAsync(
                 xamlRoot, L(LocKeys.DialogsService_Settings_Title), content,
                 L(LocKeys.Common_OK_Label), null, L(LocKeys.Common_Cancel_Label),
-                applyText: L(LocKeys.Common_Apply_Label), onApply: content.Apply);
+                applyText: L(LocKeys.Common_Apply_Label), onApply: content.Apply,
+                animate: !reopening);   // la reconstrucción por cambio de tema es instantánea: animarla es el flicker
+
+            // El diálogo de la vuelta anterior se retira AHORA, con el nuevo ya abierto encima: así no hay ni un
+            // fotograma con la ventana sin overlay, que es la otra mitad del parpadeo al aplicar un tema.
+            previous?.Dismiss();
+            previous = null;
+
+            AppDialogResult result = await pending;
 
             content.ViewModel.EditColorsRequested -= OnEditColorsRequested;
             content.ViewModel.ReopenRequested -= OnReopenRequested;
 
             if (reopen)
+            {
+                reopening = true;
+                previous = dialog;
                 continue;   // los cambios ya se aplicaron y persistieron en el Apply que pidió reabrir
+            }
 
             if (result == AppDialogResult.Primary)
                 content.Apply();

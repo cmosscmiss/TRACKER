@@ -272,6 +272,7 @@ public static class LocKeys
     public const string Product_Preorder_Tooltip = "Product_Preorder_Tooltip";
     public const string ProductList_Filter_Placeholder = "ProductList_Filter_Placeholder";
     public const string ProductList_Filters_Tooltip = "ProductList_Filters_Tooltip";
+    public const string ProductList_PriceRange_Tooltip = "ProductList_PriceRange_Tooltip";
     public const string ProductList_FilterFavorites_Label = "ProductList_FilterFavorites_Label";
     public const string ProductList_FilterIssues_Label = "ProductList_FilterIssues_Label";
     public const string ProductList_FilterPriceChange_Label = "ProductList_FilterPriceChange_Label";

@@ -1,7 +1,3 @@
-Los borrados de productos que sean lógicos y que se pueden deshacer como otros eventos del log.
-Para evitar el flicker del cierre y reapertura del díalogo, no podríamos hacer que ese cierre y reapertura (al pulsar el apply habiendo cambio de tema) se hiciera sin animación? Para que fuera immediato y el flicker se reduzca.
-Slider con precio mínimo y precio máximo que funcione como un filtro de productos por precio.
-Al hacer un apply en la ventana de settings, con un cambio de tema, los colores se aplican bien excepto en el díalogo de settings, donde no todos los colores se actualizan.
 Instalar .net si no está instalado al arrancar.
 Chequear que todos los requerimientos de sistema se cumplen al arrancar.
 Generar un manual de usuario de la aplicación, y que se almacene en la carpeta Docs.

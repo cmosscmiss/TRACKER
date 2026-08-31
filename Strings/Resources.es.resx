@@ -381,6 +381,9 @@
   <data name="ProductList_Filters_Tooltip" xml:space="preserve">
     <value>Filtros</value>
   </data>
+  <data name="ProductList_PriceRange_Tooltip" xml:space="preserve">
+    <value>Filtrar por rango de precio</value>
+  </data>
   <data name="ProductList_FilterFavorites_Label" xml:space="preserve">
     <value>Favoritos</value>
   </data>
