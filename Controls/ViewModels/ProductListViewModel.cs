@@ -29,6 +29,8 @@ public partial class ProductListViewModel : WidgetViewModelBase
     private bool _sortByPrice;
     private bool _sortDescending;
     private RelayCommand? _filtersChangedCommand;
+    private bool _applyingFilters;
+    private bool _filtersDirty;
 
     /// <summary>Propiedades de un producto que, al cambiar, pueden alterar si pasa los filtros o el orden por precio.</summary>
     private static readonly HashSet<string> FilterAffectingProperties = new()
@@ -133,6 +135,35 @@ public partial class ProductListViewModel : WidgetViewModelBase
     /// Clear) para no perturbar la selección del ListView.
     /// </summary>
     public void ApplyFilters()
+    {
+        // Reconciliar la colección notifica al ListView de forma SÍNCRONA, y esa notificación puede acabar pidiendo
+        // otro refiltrado (el cambio de selección mueve el gráfico, que toca propiedades del producto). Reconciliar
+        // de forma anidada deja al ListView con índices obsoletos, así que la llamada reentrante solo marca la lista
+        // como sucia y la de fuera repite hasta converger.
+        if (_applyingFilters)
+        {
+            _filtersDirty = true;
+            return;
+        }
+
+        _applyingFilters = true;
+        try
+        {
+            do
+            {
+                _filtersDirty = false;
+                ApplyFiltersCore();
+            }
+            while (_filtersDirty);
+        }
+        finally
+        {
+            _applyingFilters = false;
+        }
+    }
+
+    /// <summary>Cuerpo real del refiltrado. Siempre a través de <see cref="ApplyFilters"/> (protege de la reentrada).</summary>
+    private void ApplyFiltersCore()
     {
         IEnumerable<Product> source = SharedDataService.ProductSet.Products;
 

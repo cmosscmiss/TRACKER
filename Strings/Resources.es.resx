@@ -462,6 +462,9 @@
   <data name="ProductLog_Removed_Progress" xml:space="preserve">
     <value>Producto borrado: {0}</value>
   </data>
+  <data name="ProductLog_Restored_Progress" xml:space="preserve">
+    <value>Producto restaurado: {0}</value>
+  </data>
   <data name="Common_Save_Label" xml:space="preserve">
     <value>Guardar</value>
   </data>

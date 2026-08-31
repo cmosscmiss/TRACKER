@@ -144,6 +144,15 @@ public sealed partial class ProductListControl : UserControl
     private void SyncListViewToSelection()
     {
         Models.Product? selected = _sharedDataService?.SelectedProduct;
+
+        // El ListView NO puede seleccionar lo que no muestra: si el producto seleccionado ya no está en la lista
+        // filtrada (p. ej. al marcarlo como comprado con los comprados ocultos, o al perder el favorito con el filtro
+        // de favoritos activo), la vista se queda SIN selección y el modelo no se toca. Asignar un item ausente
+        // desincroniza el ListView de su ItemsSource y acaba en el ArgumentOutOfRangeException del ABI ("indices
+        // larger than Int32.MaxValue") que cierra el proceso.
+        if (selected is not null && ViewModel?.FilteredProducts.Contains(selected) != true)
+            selected = null;
+
         if (ReferenceEquals(ProductListView.SelectedItem, selected))
             return;
 
@@ -163,7 +172,10 @@ public sealed partial class ProductListControl : UserControl
         // lleva siempre al principio de la lista).
         DispatcherQueue.TryEnqueue(() =>
         {
-            if (_sharedDataService?.SelectedProduct is Models.Product current)
+            // Entre encolar y ejecutar, la lista pudo reconciliarse y dejar fuera al seleccionado: hacer scroll a un
+            // item que ya no está en el ItemsSource pide un índice inválido al ABI y revienta el proceso.
+            if (_sharedDataService?.SelectedProduct is Models.Product current
+                && ViewModel?.FilteredProducts.Contains(current) == true)
                 ProductListView.ScrollIntoView(current, ScrollIntoViewAlignment.Default);
         });
     }

@@ -242,12 +242,38 @@ public partial class App : Application
             // vuelven a pagar ToString() + I/O una vez alcanzado el tope por firma.
             if (!ShouldLogFirstChance(ex)) { return; }
 
-            ExceptionService.LogToFile(ex, "FirstChanceException");
+            // Las first-chance que nacen en el ABI de WinRT llegan con un stack de uno o dos frames (todavía no se ha
+            // desenrollado nada), así que por sí solas no dicen QUÉ código de la app las provocó. En ese caso -que es
+            // justo el de las que preceden a un fail-fast nativo- se adjunta el stack VIVO del hilo. Solo ahí: el
+            // throttle ya limita cuántas veces se paga.
+            string context = HasShallowStack(ex)
+                ? "FirstChanceException" + Environment.NewLine + "Live stack:" + Environment.NewLine + Environment.StackTrace
+                : "FirstChanceException";
+
+            ExceptionService.LogToFile(ex, context);
         }
         finally
         {
             _loggingFirstChance = false;
         }
+    }
+
+    /// <summary>
+    /// Cierto si el stack propio de la excepción tiene como mucho dos frames (o ninguno), señal de que acaba de
+    /// lanzarse y no dice de dónde viene: es cuando merece la pena adjuntar el stack vivo del hilo.
+    /// </summary>
+    private static bool HasShallowStack(Exception ex)
+    {
+        string? stack = ex.StackTrace;
+        if (string.IsNullOrEmpty(stack)) { return true; }
+
+        int lines = 1;
+        foreach (char character in stack)
+        {
+            if (character == '\n' && ++lines > 2) { return false; }
+        }
+
+        return true;
     }
 
     /// <summary>

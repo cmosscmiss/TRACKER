@@ -58,7 +58,8 @@ public sealed class ProductDatabaseService
                 PurchasePrice TEXT NULL,
                 PurchasedAt TEXT NULL,
                 IsFavorite INTEGER NOT NULL DEFAULT 0,
-                AlertPrice TEXT NULL
+                AlertPrice TEXT NULL,
+                Deleted    INTEGER NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS ProductStores (
@@ -110,6 +111,7 @@ public sealed class ProductDatabaseService
         EnsureColumn(connection, "Products", "PurchasedAt", "TEXT NULL");
         EnsureColumn(connection, "Products", "IsFavorite", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "AlertPrice", "TEXT NULL");
+        EnsureColumn(connection, "Products", "Deleted", "INTEGER NOT NULL DEFAULT 0");
     }
 
     /// <summary>Añade una columna a una tabla si aún no existe (migración idempotente).</summary>
@@ -145,7 +147,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice, PurchasedAt FROM Products ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice, PurchasedAt FROM Products WHERE Deleted = 0 ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -384,12 +386,20 @@ public sealed class ProductDatabaseService
         command.ExecuteNonQuery();
     }
 
-    /// <summary>Deletes a product and, by FK cascade, its stores and price history.</summary>
-    public void DeleteProduct(Product product)
+    /// <summary>
+    /// Marca (o desmarca) un producto como BORRADO sin eliminar su fila, sus tiendas ni su histórico: así el borrado
+    /// se puede DESHACER desde el log. Los productos con <c>Deleted = 1</c> se excluyen de la carga
+    /// (<see cref="LoadInto"/>), y con ellos sus tiendas y su histórico, que cuelgan del producto.
+    /// </summary>
+    public void SetProductDeleted(Product product, bool deleted)
     {
+        if (product is null || product.Id <= 0)
+            return;
+
         using SqliteConnection connection = OpenConnection();
         using SqliteCommand command = connection.CreateCommand();
-        command.CommandText = "DELETE FROM Products WHERE Id = $id;";
+        command.CommandText = "UPDATE Products SET Deleted = $deleted WHERE Id = $id;";
+        command.Parameters.AddWithValue("$deleted", deleted ? 1 : 0);
         command.Parameters.AddWithValue("$id", product.Id);
         command.ExecuteNonQuery();
     }

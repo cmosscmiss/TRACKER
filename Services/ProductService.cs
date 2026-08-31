@@ -331,13 +331,42 @@ public sealed class ProductService
         _database.SetAlertPrice(product, alertPrice);
     }
 
-    /// <summary>Removes a product from the shared list and the database (its stores and history cascade).</summary>
+    /// <summary>
+    /// Quita un producto de la lista. El borrado es LÓGICO: la fila se marca en BD (con sus tiendas y su histórico
+    /// intactos, que cuelgan de ella) y el objeto sigue vivo en la entry del log, así que se puede DESHACER desde el
+    /// registro de actividad igual que el borrado de un enlace.
+    /// </summary>
     public void RemoveProduct(Product product)
     {
-        _database.DeleteProduct(product);
+        if (product is null)
+            return;
+
+        _database.SetProductDeleted(product, true);
         RemoveFromListSelectingNext(product);
 
-        _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Removed_Progress), product.Name));
+        ProgressNotifier entry = _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Removed_Progress), product.Name));
+        entry.UndoAction = () =>
+        {
+            RestoreProduct(product);
+            return Task.CompletedTask;
+        };
+    }
+
+    /// <summary>
+    /// Deshace el borrado de un producto (desde el log): lo desmarca en BD y lo devuelve a la lista en su posición
+    /// alfabética, dejándolo seleccionado. El objeto conserva sus tiendas y su histórico en memoria, así que no hay
+    /// que releer nada de la base de datos.
+    /// </summary>
+    private void RestoreProduct(Product product)
+    {
+        if (product is null || _sharedDataService.ProductSet.Products.Contains(product))
+            return;
+
+        _database.SetProductDeleted(product, false);
+        _sharedDataService.ProductSet.AddSorted(product);
+        _sharedDataService.SelectedProduct = product;
+
+        _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_Restored_Progress), product.Name));
     }
 
     /// <summary>
