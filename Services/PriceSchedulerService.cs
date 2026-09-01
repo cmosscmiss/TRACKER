@@ -29,6 +29,16 @@ public sealed class PriceSchedulerService
 
     private DispatcherQueueTimer? _timer;
     private bool _running;
+
+    /// <summary>
+    /// Espera antes de reintentar cuando, al vencer el turno, la pasada anterior sigue viva. Sin esto el turno se
+    /// perdía en silencio: <see cref="NextRunUtc"/> quedaba en el pasado y la cuenta atrás del footer se clavaba en
+    /// 00:00:00 hasta reiniciar la app.
+    /// </summary>
+    private static readonly TimeSpan BusyRetry = TimeSpan.FromMinutes(5);
+
+    /// <summary>Margen de cortesía antes de que el vigilante dé por perdido un turno ya vencido (ver <see cref="EnsureScheduled"/>).</summary>
+    private static readonly TimeSpan OverdueGrace = TimeSpan.FromMinutes(1);
     #endregion
 
     #region Properties
@@ -81,7 +91,7 @@ public sealed class PriceSchedulerService
             return;
 
         _timer = uiDispatcher.CreateTimer();
-        _timer.Tick += (_, _) => _ = RunAsync(dueOnly: false);
+        _timer.Tick += (_, _) => OnTick();
 
         // La cuenta atrás se ancla a la ÚLTIMA pasada COMPLETA persistida en BD (no a la lectura por tienda más
         // reciente, que la mueven los refrescos sueltos y el catch-up), así sobrevive al cierre/reapertura. Para
@@ -155,6 +165,30 @@ public sealed class PriceSchedulerService
     public Task RefreshAllAsync() => RunAsync(dueOnly: false);
 
     /// <summary>
+    /// Vigilante de la programación, que la UI llama en cada tick de la cuenta atrás (no hace nada salvo cuando hay
+    /// algo que corregir): si el turno lleva vencido más de <see cref="OverdueGrace"/> sin haberse relanzado (un tick
+    /// perdido, el temporizador detenido), lo recupera. Así la cuenta atrás nunca se queda clavada en cero.
+    /// </summary>
+    public void EnsureScheduled()
+    {
+        if (_timer is null || NextRunUtc is not DateTime next)
+            return;
+
+        if (DateTime.UtcNow - next < OverdueGrace)
+            return;
+
+        if (_running)
+        {
+            ExceptionService.LogToFile(null, "[Scheduler] Turno vencido con una pasada aún en curso: se reprograma el reintento.");
+            RescheduleIn(BusyRetry);
+            return;
+        }
+
+        ExceptionService.LogToFile(null, "[Scheduler] Turno vencido sin haberse ejecutado: se lanza la pasada ahora.");
+        _ = RunAsync(dueOnly: false);
+    }
+
+    /// <summary>
     /// Reaplica el intervalo tras cambiarlo en ajustes: recalcula cuándo toca la próxima actualización CONTANDO desde
     /// la última lectura (última + nuevo intervalo). Si ya ha pasado, lanza el refresco ahora; si no, el reloj/temporizador
     /// arrancan con el tiempo restante hasta esa próxima actualización.
@@ -185,6 +219,35 @@ public sealed class PriceSchedulerService
 
     #region Methods (private)
     /// <summary>
+    /// Vencido el turno: lanza la pasada periódica, salvo que la anterior siga viva (una pasada larga, o colgada). En
+    /// ese caso el turno NO se pierde: se reprograma un reintento corto, que además mantiene viva la cuenta atrás.
+    /// </summary>
+    private void OnTick()
+    {
+        if (_running)
+        {
+            ExceptionService.LogToFile(null, "[Scheduler] Tick omitido: la pasada anterior sigue en curso; se reintenta en 5 min.");
+            RescheduleIn(BusyRetry);
+            return;
+        }
+
+        _ = RunAsync(dueOnly: false);
+    }
+
+    /// <summary>Reprograma el temporizador (y con él la cuenta atrás) para dentro de <paramref name="delay"/>, sin tocar el ancla persistida.</summary>
+    private void RescheduleIn(TimeSpan delay)
+    {
+        NextRunUtc = DateTime.UtcNow + delay;
+        if (_timer is null)
+            return;
+
+        _timer.Stop();
+        _timer.Interval = delay;
+        _timer.Start();
+    }
+
+    /// <summary>
+
     /// Refreshes tracked products through the parser. When <paramref name="dueOnly"/> is true only products with a
     /// store whose last reading is missing/older than the interval are refreshed (used for the startup catch-up);
     /// otherwise every product is refreshed (the periodic pass). Runs sequentially on the UI thread.

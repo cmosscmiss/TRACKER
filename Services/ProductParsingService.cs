@@ -53,6 +53,14 @@ public sealed class ProductParsingService
     #region Constants
     private const int NavigationTimeoutSeconds = 30;
 
+    /// <summary>
+    /// Tope para el script de extracción. <c>ExecuteScriptAsync</c> no vuelve NUNCA si la página deja de responder
+    /// (pestaña bloqueada, renderer colgado), y esa espera se propaga hasta el planificador: su pasada de precios
+    /// seguiría "en curso" para siempre y la cuenta atrás del footer se quedaría clavada. Al vencer el tope, la
+    /// tienda se trata como "no leída".
+    /// </summary>
+    private const int ScriptTimeoutSeconds = 30;
+
     /// <summary>Margen tras NavigationCompleted para que Amazon termine de pintar el precio (a veces es dinámico).</summary>
     private const int SettleDelayMs = 1500;
 
@@ -252,8 +260,7 @@ public sealed class ProductParsingService
 
             await Task.Delay(SettleDelayMs);
 
-            string json = await core.ExecuteScriptAsync(BuildExtractionScript(priceSelector));
-            return ParseResult(json);
+            return await RunExtractionAsync(core, priceSelector);
         }
         catch
         {
@@ -278,8 +285,7 @@ public sealed class ProductParsingService
 
         try
         {
-            string json = await core.ExecuteScriptAsync(BuildExtractionScript(priceSelector));
-            return ParseResult(json);
+            return await RunExtractionAsync(core, priceSelector);
         }
         catch
         {
@@ -289,6 +295,19 @@ public sealed class ProductParsingService
     #endregion
 
     #region Methods (private)
+    /// <summary>
+    /// Ejecuta el script de extracción en la página ya cargada, con el tope de <see cref="ScriptTimeoutSeconds"/>
+    /// (ver el porqué allí). Devuelve <c>null</c> si el script no responde a tiempo o no extrajo nada.
+    /// </summary>
+    private static async Task<ProductParseResult?> RunExtractionAsync(CoreWebView2 core, string? priceSelector)
+    {
+        Task<string> script = core.ExecuteScriptAsync(BuildExtractionScript(priceSelector)).AsTask();
+        if (await Task.WhenAny(script, Task.Delay(TimeSpan.FromSeconds(ScriptTimeoutSeconds))) != script)
+            return null;
+
+        return ParseResult(script.Result);
+    }
+
     /// <summary>Construye el script de extracción inyectando el selector de precio del usuario (o <c>null</c>) como literal JS seguro.</summary>
     private static string BuildExtractionScript(string? priceSelector)
         => ExtractionScriptTemplate.Replace("__PRICE_SELECTOR__", JsonSerializer.Serialize(priceSelector));

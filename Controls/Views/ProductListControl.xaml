@@ -137,29 +137,17 @@
             </StackPanel>
         </Grid>
 
-        <!-- Rango de precio: filtra la lista entre los dos pulgares. El mínimo del recorrido es 0 y el máximo, el
-             precio más alto entre todos los productos (se reajusta solo al leer precios nuevos). Con el rango
-             completo no filtra nada; a los lados, el valor de cada pulgar. -->
-        <Grid Grid.Row="1" ColumnSpacing="8" Padding="16 0 16 8" VerticalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.MinPriceText, Mode=OneWay}" FontSize="12"
-                       Foreground="{ThemeResource TextSecondaryBrush}" VerticalAlignment="Center" MinWidth="48" TextAlignment="Right"/>
-
-            <toolkit:RangeSelector x:Name="PriceRangeSelector" Grid.Column="1" VerticalAlignment="Center"
-                                   Minimum="0" Maximum="{x:Bind ViewModel.PriceCeiling, Mode=OneWay}"
-                                   RangeStart="{x:Bind ViewModel.MinPrice, Mode=TwoWay}"
-                                   RangeEnd="{x:Bind ViewModel.MaxPrice, Mode=TwoWay}"
-                                   StepFrequency="1"
-                                   help:Help.Key="ProductList_PriceRange_Tooltip"/>
-
-            <TextBlock Grid.Column="2" Text="{x:Bind ViewModel.MaxPriceText, Mode=OneWay}" FontSize="12"
-                       Foreground="{ThemeResource TextSecondaryBrush}" VerticalAlignment="Center" MinWidth="48"/>
-        </Grid>
+        <!-- Rango de precio: filtra la lista entre los dos pulgares. El recorrido va del precio más bajo al más alto
+             entre todos los productos (se reajusta solo al leer precios nuevos), así que se aprovecha entero. Con el
+             rango completo no filtra nada. Sin etiquetas a los lados: ocupa todo el ancho de la columna. -->
+        <toolkit:RangeSelector x:Name="PriceRangeSelector" Grid.Row="1" Margin="16 0 16 8"
+                               HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                               Minimum="{x:Bind ViewModel.PriceFloor, Mode=OneWay}"
+                               Maximum="{x:Bind ViewModel.PriceCeiling, Mode=OneWay}"
+                               RangeStart="{x:Bind ViewModel.MinPrice, Mode=TwoWay}"
+                               RangeEnd="{x:Bind ViewModel.MaxPrice, Mode=TwoWay}"
+                               StepFrequency="1"
+                               help:Help.Key="ProductList_PriceRange_Tooltip"/>
 
         <!-- La selección se gestiona en code-behind (no TwoWay): así una deselección transitoria al reordenar la lista
              alfabéticamente (Move al cargar el título) no borra el producto seleccionado. -->

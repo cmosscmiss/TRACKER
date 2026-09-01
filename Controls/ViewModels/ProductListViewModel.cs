@@ -31,6 +31,7 @@ public partial class ProductListViewModel : WidgetViewModelBase
     private RelayCommand? _filtersChangedCommand;
     private bool _applyingFilters;
     private bool _filtersDirty;
+    private double _priceFloor;
     private double _priceCeiling = 1;
     private double _minPrice;
     private double _maxPrice = 1;
@@ -43,8 +44,8 @@ public partial class ProductListViewModel : WidgetViewModelBase
         nameof(Product.IsPurchased), nameof(Product.PurchasePrice),
     };
 
-    /// <summary>Propiedades de un producto que, al cambiar, pueden mover el techo del rango de precio.</summary>
-    private static readonly HashSet<string> PriceCeilingProperties = new()
+    /// <summary>Propiedades de un producto que, al cambiar, pueden mover los extremos del rango de precio.</summary>
+    private static readonly HashSet<string> PriceBoundsProperties = new()
     {
         nameof(Product.BestPrice), nameof(Product.PurchasePrice), nameof(Product.IsPurchased),
     };
@@ -93,9 +94,24 @@ public partial class ProductListViewModel : WidgetViewModelBase
     }
 
     /// <summary>
+    /// Suelo del rango de precio: el precio más BAJO entre TODOS los productos (el que muestra cada uno en la lista),
+    /// redondeado al euro inferior. Es el mínimo del slider: arrancar siempre en 0 desperdiciaba todo el tramo por
+    /// debajo del producto más barato. Vale 0 mientras no hay ningún precio leído.
+    /// </summary>
+    public double PriceFloor
+    {
+        get => _priceFloor;
+        private set
+        {
+            if (SetProperty(ref _priceFloor, value))
+                OnPropertyChanged(nameof(PriceFloorText));
+        }
+    }
+
+    /// <summary>
     /// Techo del rango de precio: el precio más alto entre TODOS los productos (el que muestra cada uno en la lista),
-    /// redondeado al euro superior. Es el máximo del slider; el mínimo es siempre 0. Nunca baja de 1, para que el
-    /// control siga teniendo recorrido cuando aún no hay ningún precio leído.
+    /// redondeado al euro superior. Es el máximo del slider; el mínimo es <see cref="PriceFloor"/>. Siempre queda al
+    /// menos un euro por encima del suelo, para que el control conserve recorrido aunque aún no haya precios leídos.
     /// </summary>
     public double PriceCeiling
     {
@@ -107,7 +123,7 @@ public partial class ProductListViewModel : WidgetViewModelBase
         }
     }
 
-    /// <summary>Extremo INFERIOR del rango de precio elegido con el slider (0 = sin límite por abajo).</summary>
+    /// <summary>Extremo INFERIOR del rango de precio elegido con el slider (igual al suelo = sin límite por abajo).</summary>
     public double MinPrice
     {
         get => _minPrice;
@@ -141,13 +157,16 @@ public partial class ProductListViewModel : WidgetViewModelBase
     /// El rango de precio está ACOTADO: alguno de los dos pulgares se ha movido de su extremo. Mientras es falso, el
     /// slider no descarta ningún producto (ni siquiera los que aún no tienen precio).
     /// </summary>
-    public bool IsPriceRangeNarrowed => MinPrice > 0 || MaxPrice < PriceCeiling;
+    public bool IsPriceRangeNarrowed => MinPrice > PriceFloor || MaxPrice < PriceCeiling;
 
     /// <summary>Extremo inferior del rango, formateado para la etiqueta del slider.</summary>
     public string MinPriceText => FormatPrice(MinPrice);
 
     /// <summary>Extremo superior del rango, formateado para la etiqueta del slider.</summary>
     public string MaxPriceText => FormatPrice(MaxPrice);
+
+    /// <summary>Suelo del rango, formateado.</summary>
+    public string PriceFloorText => FormatPrice(PriceFloor);
 
     /// <summary>Techo del rango, formateado.</summary>
     public string PriceCeilingText => FormatPrice(PriceCeiling);
@@ -180,7 +199,7 @@ public partial class ProductListViewModel : WidgetViewModelBase
         // "Comprados" cuando se dejan de mostrar).
         SharedDataService.PropertyChanged += OnSharedDataChanged;
 
-        RefreshPriceCeiling();
+        RefreshPriceBounds();
         ApplyFilters();
     }
     #endregion
@@ -283,26 +302,50 @@ public partial class ProductListViewModel : WidgetViewModelBase
     }
 
     /// <summary>
-    /// Recalcula el techo del rango de precio a partir de TODOS los productos (no de los filtrados). El pulgar
-    /// superior sigue pegado al techo mientras el usuario no lo haya bajado, de modo que leer un precio más alto
-    /// amplía el recorrido sin dejar productos fuera; si el techo baja, los extremos se recortan a él.
+    /// Recalcula los dos extremos del rango de precio a partir de TODOS los productos (no de los filtrados): el suelo
+    /// es el precio más bajo y el techo, el más alto. Cada pulgar sigue pegado a su extremo mientras el usuario no lo
+    /// haya movido, de modo que leer precios nuevos amplía el recorrido sin dejar productos fuera; si el recorrido se
+    /// estrecha, los extremos elegidos se recortan a él.
     /// </summary>
-    private void RefreshPriceCeiling()
+    private void RefreshPriceBounds()
     {
+        double lowest = double.MaxValue;
         double highest = 0;
         foreach (Product product in SharedDataService.ProductSet.Products)
-            if (product.ListPrice is decimal price && (double)price > highest)
-                highest = (double)price;
+            if (product.ListPrice is decimal listPrice)
+            {
+                double price = (double)listPrice;
+                if (price < lowest)
+                    lowest = price;
+                if (price > highest)
+                    highest = price;
+            }
 
-        double ceiling = Math.Max(1, Math.Ceiling(highest));
-        if (Math.Abs(ceiling - PriceCeiling) < 0.0001)
+        double floor = lowest == double.MaxValue ? 0 : Math.Floor(lowest);
+        double ceiling = Math.Max(floor + 1, Math.Ceiling(highest));
+        if (Math.Abs(floor - PriceFloor) < 0.0001 && Math.Abs(ceiling - PriceCeiling) < 0.0001)
             return;
 
+        bool minWasAtFloor = MinPrice <= PriceFloor;
         bool maxWasAtCeiling = MaxPrice >= PriceCeiling;
-        PriceCeiling = ceiling;
+
+        // Al ensanchar el recorrido se sube el techo antes de subir el suelo (y al revés al estrecharlo): así los dos
+        // límites del RangeSelector nunca se cruzan en un estado intermedio.
+        if (ceiling > PriceCeiling)
+        {
+            PriceCeiling = ceiling;
+            PriceFloor = floor;
+        }
+        else
+        {
+            PriceFloor = floor;
+            PriceCeiling = ceiling;
+        }
 
         if (maxWasAtCeiling || MaxPrice > ceiling)
             MaxPrice = ceiling;        // el setter ya refiltra
+        if (minWasAtFloor || MinPrice < floor)
+            MinPrice = floor;
         if (MinPrice > ceiling)
             MinPrice = ceiling;
 
@@ -354,15 +397,15 @@ public partial class ProductListViewModel : WidgetViewModelBase
             foreach (Product product in e.NewItems)
                 product.PropertyChanged += OnProductPropertyChanged;
 
-        RefreshPriceCeiling();
+        RefreshPriceBounds();
         ApplyFilters();
     }
 
     /// <summary>Cambió una propiedad de un producto: si afecta a los filtros (nombre, favorito, avisos, tendencia, alerta, comprado), refiltra.</summary>
     private void OnProductPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is null || PriceCeilingProperties.Contains(e.PropertyName))
-            RefreshPriceCeiling();
+        if (e.PropertyName is null || PriceBoundsProperties.Contains(e.PropertyName))
+            RefreshPriceBounds();
 
         if (e.PropertyName is null || FilterAffectingProperties.Contains(e.PropertyName))
             ApplyFilters();

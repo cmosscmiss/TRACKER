@@ -256,7 +256,13 @@ public sealed partial class MainWindow : Window
     /// <summary>Actualiza el reloj split-flap del footer con el tiempo que falta para la siguiente actualización automática.</summary>
     private void UpdateNextUpdateText()
     {
-        if (App.GetService<PriceSchedulerService>().NextRunUtc is not DateTime nextUtc)
+        PriceSchedulerService scheduler = App.GetService<PriceSchedulerService>();
+
+        // De paso, el vigilante del planificador: si su turno quedó vencido sin relanzarse, lo recupera (si no, el
+        // reloj se quedaría clavado en 00:00:00 hasta reiniciar la app).
+        scheduler.EnsureScheduled();
+
+        if (scheduler.NextRunUtc is not DateTime nextUtc)
         {
             NextUpdateClock.Visibility = Visibility.Collapsed;
             return;
