@@ -59,7 +59,8 @@ public sealed class ProductDatabaseService
                 PurchasedAt TEXT NULL,
                 IsFavorite INTEGER NOT NULL DEFAULT 0,
                 AlertPrice TEXT NULL,
-                Deleted    INTEGER NOT NULL DEFAULT 0
+                Deleted    INTEGER NOT NULL DEFAULT 0,
+                IncludeAlternativeStores INTEGER NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS ProductStores (
@@ -112,6 +113,7 @@ public sealed class ProductDatabaseService
         EnsureColumn(connection, "Products", "IsFavorite", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumn(connection, "Products", "AlertPrice", "TEXT NULL");
         EnsureColumn(connection, "Products", "Deleted", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumn(connection, "Products", "IncludeAlternativeStores", "INTEGER NOT NULL DEFAULT 0");
     }
 
     /// <summary>Añade una columna a una tabla si aún no existe (migración idempotente).</summary>
@@ -147,7 +149,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice, PurchasedAt FROM Products WHERE Deleted = 0 ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice, PurchasedAt, IncludeAlternativeStores FROM Products WHERE Deleted = 0 ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -160,7 +162,8 @@ public sealed class ProductDatabaseService
                     AlertPrice = reader.IsDBNull(4) ? null : ParsePrice(reader.GetString(4)),
                     IsPurchased = !reader.IsDBNull(5) && reader.GetInt64(5) != 0,
                     PurchasePrice = reader.IsDBNull(6) ? null : ParsePrice(reader.GetString(6)),
-                    PurchasedAt = reader.IsDBNull(7) ? null : ParseTimestamp(reader.GetString(7))
+                    PurchasedAt = reader.IsDBNull(7) ? null : ParseTimestamp(reader.GetString(7)),
+                    IncludeAlternativeStores = !reader.IsDBNull(8) && reader.GetInt64(8) != 0
                 };
                 productsById[product.Id] = product;
                 target.Products.Add(product);
@@ -236,10 +239,11 @@ public sealed class ProductDatabaseService
         using (SqliteCommand command = connection.CreateCommand())
         {
             command.Transaction = transaction;
-            command.CommandText = "INSERT INTO Products (Name, ImageUrl, CreatedAt) VALUES ($name, $imageUrl, $createdAt);";
+            command.CommandText = "INSERT INTO Products (Name, ImageUrl, CreatedAt, IncludeAlternativeStores) VALUES ($name, $imageUrl, $createdAt, $alternative);";
             command.Parameters.AddWithValue("$name", product.Name);
             command.Parameters.AddWithValue("$imageUrl", (object?)product.ImageUrl ?? DBNull.Value);
             command.Parameters.AddWithValue("$createdAt", FormatTimestamp(DateTime.UtcNow));
+            command.Parameters.AddWithValue("$alternative", product.IncludeAlternativeStores ? 1 : 0);
             command.ExecuteNonQuery();
             product.Id = LastInsertRowId(connection, transaction);
         }
@@ -344,6 +348,17 @@ public sealed class ProductDatabaseService
         using SqliteCommand command = connection.CreateCommand();
         command.CommandText = "UPDATE Products SET IsFavorite = $fav WHERE Id = $id;";
         command.Parameters.AddWithValue("$fav", isFavorite ? 1 : 0);
+        command.Parameters.AddWithValue("$id", product.Id);
+        command.ExecuteNonQuery();
+    }
+
+    /// <summary>Persiste si el producto sigue también los marketplaces alternativos (amazon.com / amazon.co.jp).</summary>
+    public void SetIncludeAlternativeStores(Product product, bool include)
+    {
+        using SqliteConnection connection = OpenConnection();
+        using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = "UPDATE Products SET IncludeAlternativeStores = $include WHERE Id = $id;";
+        command.Parameters.AddWithValue("$include", include ? 1 : 0);
         command.Parameters.AddWithValue("$id", product.Id);
         command.ExecuteNonQuery();
     }

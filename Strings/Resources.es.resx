@@ -195,6 +195,9 @@
   <data name="PriceChart_Favorite_Tooltip" xml:space="preserve">
     <value>Marcar/quitar favorito</value>
   </data>
+  <data name="PriceChart_AltStores_Tooltip" xml:space="preserve">
+    <value>Seguir también amazon.com y amazon.co.jp en este producto</value>
+  </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Marketplace de Amazon</value>
   </data>
@@ -459,6 +462,12 @@
   <data name="ProductLog_Purchased_Progress" xml:space="preserve">
     <value>Producto marcado como comprado: {0}</value>
   </data>
+  <data name="ProductLog_AltStoresOn_Progress" xml:space="preserve">
+    <value>Ahora se siguen amazon.com y amazon.co.jp: {0}</value>
+  </data>
+  <data name="ProductLog_AltStoresOff_Progress" xml:space="preserve">
+    <value>Ya no se siguen amazon.com y amazon.co.jp: {0}</value>
+  </data>
   <data name="ProductLog_Unpurchased_Progress" xml:space="preserve">
     <value>{0} marcado como no comprado</value>
   </data>
@@ -515,6 +524,15 @@
   </data>
   <data name="GeneralSettings_AutoRefreshHours_Label" xml:space="preserve">
     <value>Actualizar precios cada (horas)</value>
+  </data>
+  <data name="GeneralSettings_ExchangeRates_Header" xml:space="preserve">
+    <value>Tipos de cambio (fijos)</value>
+  </data>
+  <data name="GeneralSettings_DollarsPerEuro_Label" xml:space="preserve">
+    <value>Dólares por euro (amazon.com)</value>
+  </data>
+  <data name="GeneralSettings_YensPerEuro_Label" xml:space="preserve">
+    <value>Yenes por euro (amazon.co.jp)</value>
   </data>
   <data name="GeneralSettings_MinimizeToTray_Label" xml:space="preserve">
     <value>Minimizar a la bandeja del sistema en vez de cerrar la aplicación</value>

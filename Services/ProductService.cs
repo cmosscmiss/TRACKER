@@ -85,9 +85,19 @@ public sealed class ProductService
         string? asin = Amazon.ExtractAsin(normalized);
         if (asin is not null)
         {
+            // Los marketplaces alternativos (amazon.com / amazon.co.jp) solo se dan de alta si el producto se añade
+            // DESDE uno de ellos: en ese caso es justo lo que el usuario está siguiendo. En cualquier otro caso el
+            // producto nace con las cinco tiendas de la eurozona, y las alternativas se añaden con su botón.
+            product.IncludeAlternativeStores = Amazon.IsAlternativeUrl(normalized);
+
             product.Name = $"Amazon {asin}";
-            foreach ((string storeUrl, string label) in Amazon.ProductUrlsForAsin(asin))
-                product.Stores.Add(new ProductStore(storeUrl, label) { Currency = Amazon.Currency });
+            foreach ((string storeUrl, string label, string currency) in Amazon.ProductUrlsForAsin(asin))
+            {
+                if (!product.IncludeAlternativeStores && Amazon.IsAlternativeUrl(storeUrl))
+                    continue;
+
+                product.Stores.Add(new ProductStore(storeUrl, label) { Currency = currency });
+            }
         }
         else
         {
@@ -127,9 +137,21 @@ public sealed class ProductService
             return null;
         }
 
-        var store = new ProductStore(normalized, DeriveStoreLabel(uri));
+        // La moneda del marketplace se fija ya al crear la tienda (no espera a la primera lectura de precio): así un
+        // enlace de amazon.com / amazon.co.jp añadido a mano nace con su divisa aunque la página no dé precio.
+        var store = new ProductStore(normalized, DeriveStoreLabel(uri)) { Currency = Amazon.CurrencyForHost(uri) };
         product.Stores.Add(store);
         _database.InsertStore(product, store);
+
+        // Enlace de un marketplace alternativo añadido a mano: se activa el seguimiento del producto (si no, la
+        // tienda recién creada nacería oculta y parecería que no se ha añadido nada). No se crean las demás
+        // alternativas: el usuario ha pedido ESTA tienda.
+        if (store.IsAlternativeMarketplace && !product.IncludeAlternativeStores)
+        {
+            product.IncludeAlternativeStores = true;
+            _database.SetIncludeAlternativeStores(product, true);
+        }
+
         ApplyParsed(product, store, parsed, updateInfo: false, DateTime.UtcNow);
 
         _progressService.LogEvent(string.Format(L(Helpers.LocKeys.ProductLog_AltLinkAdded_Progress), product.Name));
@@ -164,7 +186,9 @@ public sealed class ProductService
             _progressService.ProgressNotifier.Report(operation);
 
         DateTime timestamp = DateTime.UtcNow;
-        var stores = product.Stores.ToList();
+        // Solo las tiendas ACTIVAS: las de los marketplaces alternativos (amazon.com / amazon.co.jp) no se leen
+        // mientras el producto no las tenga activadas, así que no alargan la pasada.
+        var stores = product.ActiveStores.ToList();
         int total = stores.Count;
         int done = 0;
 
@@ -446,6 +470,28 @@ public sealed class ProductService
             L(purchased ? Helpers.LocKeys.ProductLog_Purchased_Progress : Helpers.LocKeys.ProductLog_Unpurchased_Progress),
             product.Name));
     }
+
+    /// <summary>
+    /// Activa o desactiva el seguimiento de los marketplaces ALTERNATIVOS (amazon.com / amazon.co.jp) de un producto.
+    /// Al desactivarlo, sus tiendas dejan de leerse y desaparecen de las gráficas y de la lista de tiendas (el
+    /// histórico se conserva). Al activarlo, se crean las que falten —los productos dados de alta antes de soportar
+    /// estos marketplaces no las tienen— y sus precios entran en el PRÓXIMO refresco, no ahora.
+    /// </summary>
+    public void SetIncludeAlternativeStores(Product product, bool include)
+    {
+        if (product is null || product.IncludeAlternativeStores == include)
+            return;
+
+        product.IncludeAlternativeStores = include;
+        _database.SetIncludeAlternativeStores(product, include);
+
+        if (include)
+            AddMissingAlternativeStores(product);
+
+        _progressService.LogEvent(string.Format(
+            L(include ? Helpers.LocKeys.ProductLog_AltStoresOn_Progress : Helpers.LocKeys.ProductLog_AltStoresOff_Progress),
+            product.Name));
+    }
     #endregion
 
     #region Methods (private)
@@ -513,13 +559,38 @@ public sealed class ProductService
     }
 
     /// <summary>
-    /// Moneda de la tienda: € FIJO para los marketplaces de Amazon (todos eurozona, más fiable que parsear el
-    /// símbolo); para otras tiendas, la parseada de la página (o la que ya tuviera si no se pudo parsear).
+    /// Da de alta las tiendas de los marketplaces alternativos que le falten al producto, deducidas de su ASIN (el
+    /// mismo artículo en otro marketplace). Sin ASIN —una tienda ajena a Amazon— no hay nada que deducir. Las tiendas
+    /// nacen sin precio: lo tomarán en el próximo refresco.
+    /// </summary>
+    private void AddMissingAlternativeStores(Product product)
+    {
+        string? asin = product.Stores.Select(store => Amazon.ExtractAsin(store.Url)).FirstOrDefault(found => found is not null);
+        if (asin is null)
+            return;
+
+        foreach ((string url, string label, string currency) in Amazon.ProductUrlsForAsin(asin))
+        {
+            if (!Amazon.IsAlternativeUrl(url))
+                continue;
+            if (product.Stores.Any(existing => string.Equals(existing.Url, url, StringComparison.OrdinalIgnoreCase)))
+                continue;
+
+            var store = new ProductStore(url, label) { Currency = currency };
+            product.Stores.Add(store);
+            _database.InsertStore(product, store);
+        }
+    }
+
+    /// <summary>
+    /// Moneda de la tienda: la del MARKETPLACE para los dominios de Amazon (€ en la eurozona, $ en amazon.com, ¥ en
+    /// amazon.co.jp; más fiable que parsear el símbolo de la página); para otras tiendas, la parseada de la página (o
+    /// la que ya tuviera si no se pudo parsear).
     /// </summary>
     private static string? ResolveStoreCurrency(ProductStore store, string? parsedCurrency)
     {
         if (Uri.TryCreate(store.Url, UriKind.Absolute, out Uri? uri) && Amazon.IsAmazon(uri))
-            return Amazon.Currency;
+            return Amazon.CurrencyForHost(uri) ?? Amazon.DefaultCurrency;
 
         return string.IsNullOrWhiteSpace(parsedCurrency) ? store.Currency : parsedCurrency;
     }

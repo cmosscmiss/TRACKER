@@ -35,6 +35,8 @@
                     <ToggleButton Content="FR" Tag="fr" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
                     <ToggleButton Content="BE" Tag="be" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
                     <ToggleButton Content="NL" Tag="nl" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
+                    <ToggleButton Content="US" Tag="us" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
+                    <ToggleButton Content="JP" Tag="jp" Click="OnCountryToggle" Style="{StaticResource ToggleButton_Icon}" MinWidth="40" Padding="8 4"/>
                 </StackPanel>
                 <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="8 0" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}" />
                 <AppBarButton x:Name="abNavigateBack" LabelPosition="Collapsed" Width="40" Click="AbNavigateBack_Click">

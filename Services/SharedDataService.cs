@@ -30,6 +30,8 @@ public class SharedDataService : ObservableObject
     private bool _helpTooltipsEnabled = true;
     private bool _includeShippingInPrice;
     private bool _showPurchased;
+    private double _dollarsPerEuro = AppSettings.GeneralSettings.DefaultDollarsPerEuro;
+    private double _yensPerEuro = AppSettings.GeneralSettings.DefaultYensPerEuro;
     #endregion
 
     #region Properties
@@ -86,9 +88,41 @@ public class SharedDataService : ObservableObject
         set
         {
             if (SetProperty(ref _includeShippingInPrice, value))
-                foreach (Product product in ProductSet.Products)
-                    product.NotifyPricingChanged();
+                NotifyPricingChanged();
         }
+    }
+
+    /// <summary>
+    /// Tasa de cambio (persistida) de amazon.com: dólares por euro (1 € = X $). Observable: la ventana de ajustes la
+    /// cambia y, al hacerlo, se notifica a todos los productos para que recalculen su mejor precio y derivados (las
+    /// tiendas en dólares se comparan convertidas a euros, ver <see cref="Helpers.Money"/>).
+    /// </summary>
+    public double DollarsPerEuro
+    {
+        get => _dollarsPerEuro;
+        set
+        {
+            if (SetProperty(ref _dollarsPerEuro, value))
+                NotifyPricingChanged();
+        }
+    }
+
+    /// <summary>Tasa de cambio (persistida) de amazon.co.jp: yenes por euro (1 € = Y ¥). Ver <see cref="DollarsPerEuro"/>.</summary>
+    public double YensPerEuro
+    {
+        get => _yensPerEuro;
+        set
+        {
+            if (SetProperty(ref _yensPerEuro, value))
+                NotifyPricingChanged();
+        }
+    }
+
+    /// <summary>Fuerza a todos los productos a recalcular su mejor precio y derivados (cambió algo que afecta al precio).</summary>
+    public void NotifyPricingChanged()
+    {
+        foreach (Product product in ProductSet.Products)
+            product.NotifyPricingChanged();
     }
 
     /// <summary>

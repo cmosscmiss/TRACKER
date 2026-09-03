@@ -116,6 +116,25 @@ public class AppSettings
         /// </summary>
         public bool IncludeShippingInPrice { get; set; } = false;
 
+        /// <summary>Tasa de cambio por defecto: dólares por euro (1 € = 1,08 $).</summary>
+        public const double DefaultDollarsPerEuro = 1.08;
+
+        /// <summary>Tasa de cambio por defecto: yenes por euro (1 € = 170 ¥).</summary>
+        public const double DefaultYensPerEuro = 170.0;
+
+        /// <summary>
+        /// Tasa de cambio FIJA para amazon.com: cuántos dólares vale un euro (1 € = X $). Los precios en dólares se
+        /// dividen por ella para compararlos con los del resto de tiendas (ver <see cref="Tracker.Helpers.Money"/>).
+        /// Configurable en la ventana de ajustes; no se consulta ningún servicio de cambio.
+        /// </summary>
+        public double DollarsPerEuro { get; set; } = DefaultDollarsPerEuro;
+
+        /// <summary>
+        /// Tasa de cambio FIJA para amazon.co.jp: cuántos yenes vale un euro (1 € = Y ¥). Ver
+        /// <see cref="DollarsPerEuro"/>.
+        /// </summary>
+        public double YensPerEuro { get; set; } = DefaultYensPerEuro;
+
         /// <summary>
         /// Cada cuántas horas se refrescan automáticamente todos los precios (planificador). Por defecto 24. Se aplica
         /// un mínimo de 1 h. Configurable desde la ventana de ajustes.

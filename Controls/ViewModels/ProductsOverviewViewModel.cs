@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using Tracker.Enums;
+using Tracker.Helpers;
 using Tracker.Models;
 using Tracker.Services;
 using static Tracker.Services.SharedDataService;
@@ -176,7 +177,7 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
         BaseValues = products.Select(product => (double)HistoricalMin(product, includeShipping)).ToList();
         Labels = products.Select(product => product.Name).ToList();
         ValueSuffix = products
-            .Select(product => product.BestStore?.Currency)
+            .Select(product => product.BestStore?.DisplayCurrency)
             .FirstOrDefault(currency => !string.IsNullOrEmpty(currency)) ?? string.Empty;
 
         UpdateHighlight();
@@ -204,10 +205,21 @@ public partial class ProductsOverviewViewModel : WidgetViewModelBase
         if (product.PriceHistory.Count == 0)
             return product.BestPrice ?? 0m;
 
-        decimal EffectiveOf(PricePoint point) => point.Price
-            + (includeShipping && product.Stores.FirstOrDefault(store => store.Id == point.StoreId)?.ShippingCost is decimal cost ? cost : 0m);
+        // El importe se convierte a la moneda de referencia (euros) con la moneda de SU tienda: el histórico puede
+        // mezclar marketplaces en divisas distintas (amazon.com, amazon.co.jp) y la barra los compara entre sí.
+        decimal EffectiveOf(PricePoint point)
+        {
+            ProductStore? store = product.Stores.FirstOrDefault(candidate => candidate.Id == point.StoreId);
+            decimal effective = point.Price + (includeShipping && store?.ShippingCost is decimal cost ? cost : 0m);
+            return Money.ToEuro(effective, store?.Currency) ?? effective;
+        }
 
-        return product.PriceHistory.Min(EffectiveOf);
+        // Solo los puntos de tiendas ACTIVAS (las de un marketplace alternativo desactivado no cuentan).
+        var points = product.PriceHistory
+            .Where(point => product.Stores.FirstOrDefault(store => store.Id == point.StoreId) is ProductStore store && product.IsStoreActive(store))
+            .ToList();
+
+        return points.Count == 0 ? product.BestPrice ?? 0m : points.Min(EffectiveOf);
     }
     #endregion
 

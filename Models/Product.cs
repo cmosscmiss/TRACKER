@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Tracker.Helpers;
 using Tracker.Services;
 
 namespace Tracker.Models;
@@ -90,6 +90,14 @@ public partial class Product : ObservableObject
     /// <summary>Fecha (UTC) en la que se marcó el producto como comprado. Null si no está comprado.</summary>
     [ObservableProperty]
     private DateTime? _purchasedAt;
+
+    /// <summary>
+    /// Si es true, este producto también se sigue en los marketplaces ALTERNATIVOS (amazon.com y amazon.co.jp). Por
+    /// defecto false: sus tiendas alternativas no se leen (no gastan tiempo de la pasada de precios) y quedan ocultas
+    /// en las gráficas y en la lista de tiendas. Al activarlo, sus precios entran en el próximo refresco.
+    /// </summary>
+    [ObservableProperty]
+    private bool _includeAlternativeStores;
     #endregion
 
     #region Properties
@@ -100,20 +108,35 @@ public partial class Product : ObservableObject
     public ObservableCollection<ProductStore> Stores { get; } = new();
 
     /// <summary>
+    /// Tiendas que CUENTAN ahora mismo para el producto: todas menos las de los marketplaces alternativos cuando
+    /// <see cref="IncludeAlternativeStores"/> está desactivado. Es la lista que usan el mejor precio, las pastillas de
+    /// estado, el histórico, las gráficas y la pasada de precios: una tienda oculta no se lee ni se muestra, aunque
+    /// siga guardada (con su histórico) para cuando se vuelva a activar.
+    /// </summary>
+    public IEnumerable<ProductStore> ActiveStores => Stores.Where(IsStoreActive);
+
+    /// <summary>True si la tienda cuenta para este producto (ver <see cref="ActiveStores"/>).</summary>
+    public bool IsStoreActive(ProductStore store) => IncludeAlternativeStores || !store.IsAlternativeMarketplace;
+
+    /// <summary>
     /// Timestamped price observations across all stores, in the order they were recorded. Feeds the
     /// price-evolution chart. Each point records which store it came from.
     /// </summary>
     public List<PricePoint> PriceHistory { get; } = new();
 
-    /// <summary>Mejor precio EFECTIVO actual (con envío si el ajuste global lo incluye) entre las tiendas de la moneda de referencia, o <c>null</c>.</summary>
-    public decimal? BestPrice => BestStore?.EffectivePrice;
+    /// <summary>
+    /// Mejor precio EFECTIVO actual (con envío si el ajuste global lo incluye) entre las tiendas del producto, o
+    /// <c>null</c>. Va SIEMPRE en la moneda de referencia (euros) cuando la tienda ganadora cotiza en una divisa
+    /// convertible: es el importe con el que cuentan la alerta, el filtro de rango y las gráficas.
+    /// </summary>
+    public decimal? BestPrice => BestStore is ProductStore store ? store.ComparablePrice ?? store.EffectivePrice : null;
 
     /// <summary>Whether any tracked store currently shows a promotion / deal / coupon / voucher on the product.</summary>
     public bool HasPromo
     {
         get
         {
-            foreach (ProductStore store in Stores)
+            foreach (ProductStore store in ActiveStores)
                 if (store.HasPromo)
                     return true;
             return false;
@@ -128,7 +151,7 @@ public partial class Product : ObservableObject
     {
         get
         {
-            foreach (ProductStore store in Stores)
+            foreach (ProductStore store in ActiveStores)
                 if (!store.IsAvailable || (store.LastChecked is not null && store.CurrentPrice is null))
                     return true;
             return false;
@@ -140,7 +163,7 @@ public partial class Product : ObservableObject
     {
         get
         {
-            foreach (ProductStore store in Stores)
+            foreach (ProductStore store in ActiveStores)
                 if (store.IsPreorder)
                     return true;
             return false;
@@ -159,7 +182,7 @@ public partial class Product : ObservableObject
     /// <summary>Whether the current best price is at or below the configured alert price (a good deal to flag).</summary>
     public bool IsBelowAlert => AlertPrice is decimal alert && BestPrice is decimal best && best <= alert;
 
-    /// <summary>Alert price formatted with the product's currency (or "—" if no alert).</summary>
+    /// <summary>Alert price formatted with the product's currency (or "—" if no alert). Va en la moneda de referencia (euros).</summary>
     public string AlertPriceText
     {
         get
@@ -167,9 +190,7 @@ public partial class Product : ObservableObject
             if (AlertPrice is not decimal value)
                 return "—";
 
-            string currency = BestStore?.Currency ?? (Stores.Count > 0 ? Stores[0].Currency : null) ?? string.Empty;
-            string text = value.ToString("0.00", CultureInfo.CurrentCulture);
-            return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
+            return FormatWithCurrency(value);
         }
     }
 
@@ -178,24 +199,40 @@ public partial class Product : ObservableObject
     {
         get
         {
-            // Solo se comparan tiendas con la MISMA moneda (la de la mayoría de tiendas con precio), para no comparar
-            // entre divisas distintas. Con los 5 marketplaces de Amazon (todos en euros) no cambia nada; protege el
-            // caso de mezclar una tienda no-EUR.
-            string referenceCurrency = Stores
+            // Se compara por PRECIO EFECTIVO (con envío si el ajuste global lo incluye), de modo que la tienda "más
+            // barata" refleje el coste final. Las tiendas en una divisa convertible (€/$/¥: los marketplaces de
+            // Amazon) se comparan CONVERTIDAS A EUROS, así que amazon.com y amazon.co.jp compiten con las europeas.
+            ProductStore? best = null;
+            decimal bestComparable = 0;
+            foreach (ProductStore store in ActiveStores)
+            {
+                // Una tienda SIN STOCK no ofrece precio real: se ignora para el mejor precio (aunque conserve su último
+                // precio conocido), igual que se ignora en la tendencia y el mínimo histórico.
+                if (!store.IsAvailable)
+                    continue;
+                if (store.ComparablePrice is not decimal comparable)
+                    continue;
+                if (best is null || comparable < bestComparable)
+                {
+                    best = store;
+                    bestComparable = comparable;
+                }
+            }
+            if (best is not null)
+                return best;
+
+            // Ninguna tienda con divisa convertible (p. ej. una tienda ajena en libras): se cae al criterio clásico,
+            // comparar solo entre las tiendas de la moneda MAYORITARIA para no mezclar divisas.
+            string referenceCurrency = ActiveStores
                 .Where(store => store.CurrentPrice is not null)
                 .GroupBy(store => store.Currency ?? string.Empty)
                 .OrderByDescending(group => group.Count())
                 .Select(group => group.Key)
                 .FirstOrDefault() ?? string.Empty;
 
-            // Se compara por PRECIO EFECTIVO (con envío si el ajuste global lo incluye), de modo que la tienda "más
-            // barata" refleje el coste final. Solo entre tiendas de la moneda de referencia.
-            ProductStore? best = null;
             decimal bestEffective = 0;
-            foreach (ProductStore store in Stores)
+            foreach (ProductStore store in ActiveStores)
             {
-                // Una tienda SIN STOCK no ofrece precio real: se ignora para el mejor precio (aunque conserve su último
-                // precio conocido), igual que se ignora en la tendencia y el mínimo histórico.
                 if (!store.IsAvailable)
                     continue;
                 if (store.EffectivePrice is not decimal effective)
@@ -218,7 +255,7 @@ public partial class Product : ObservableObject
         get
         {
             DateTime? last = null;
-            foreach (ProductStore store in Stores)
+            foreach (ProductStore store in ActiveStores)
                 if (store.LastChecked is DateTime stamp && (last is null || stamp > last))
                     last = stamp;
             return last;
@@ -258,12 +295,14 @@ public partial class Product : ObservableObject
     /// </summary>
     public PriceHighlight ListPriceHighlight => IsPurchased ? PriceHighlight.None : PriceHighlight;
 
-    /// <summary>Formatea un importe con la moneda de la tienda de referencia ("39,99 €").</summary>
+    /// <summary>
+    /// Formatea un importe con la moneda con la que se MUESTRA el producto ("39,99 €"): el euro si la tienda de
+    /// referencia cotiza en una divisa convertible (el importe ya viene convertido), o su propia moneda si no.
+    /// </summary>
     private string FormatWithCurrency(decimal value)
     {
-        string currency = BestStore?.Currency ?? (Stores.Count > 0 ? Stores[0].Currency : null) ?? string.Empty;
-        string text = value.ToString("0.00", CultureInfo.CurrentCulture);
-        return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
+        string currency = BestStore?.DisplayCurrency ?? (Stores.Count > 0 ? Stores[0].DisplayCurrency : null) ?? string.Empty;
+        return Money.Format(value, currency);
     }
 
     /// <summary>
@@ -322,9 +361,13 @@ public partial class Product : ObservableObject
     ///
     /// Es público porque la tarjeta del precio más bajo de la gráfica debe usar EXACTAMENTE el mismo criterio: si
     /// calcula el mínimo sobre todo el histórico, acaba anunciando el precio de una tienda donde ya no se puede comprar.
+    ///
+    /// Los puntos de tiendas OCULTAS (marketplaces alternativos con el seguimiento desactivado) tampoco cuentan: su
+    /// histórico se conserva, pero no participa en la tendencia ni en el mínimo mientras la tienda no esté activa.
     /// </summary>
     public IEnumerable<PricePoint> AvailableHistory()
-        => PriceHistory.Where(point => Stores.FirstOrDefault(store => store.Id == point.StoreId)?.IsAvailable == true);
+        => PriceHistory.Where(point => Stores.FirstOrDefault(store => store.Id == point.StoreId) is ProductStore store
+                                       && store.IsAvailable && IsStoreActive(store));
 
     /// <summary>
     /// Resaltado del recuadro de precio en la lista: bajada/subida tienen prioridad (verde/rojo); si no hay cambio
@@ -396,15 +439,19 @@ public partial class Product : ObservableObject
 
     /// <summary>
     /// Precio efectivo de un punto del histórico: su precio + el envío ACTUAL de su tienda si el ajuste global de
-    /// incluir envío está activo (aproximación: no se registró el envío histórico de cada momento).
+    /// incluir envío está activo (aproximación: no se registró el envío histórico de cada momento). El importe se
+    /// devuelve CONVERTIDO A EUROS si la tienda del punto cotiza en otra divisa (amazon.com / amazon.co.jp), para
+    /// poder mezclar en la misma serie los precios de todas las tiendas.
     /// </summary>
     private decimal EffectiveHistoricalPrice(PricePoint point)
     {
-        if (!App.GetService<SharedDataService>().IncludeShippingInPrice)
-            return point.Price;
+        ProductStore? store = Stores.FirstOrDefault(candidate => candidate.Id == point.StoreId);
+        decimal price = point.Price;
 
-        decimal shipping = Stores.FirstOrDefault(store => store.Id == point.StoreId)?.ShippingCost ?? 0;
-        return point.Price + shipping;
+        if (App.GetService<SharedDataService>().IncludeShippingInPrice)
+            price += store?.ShippingCost ?? 0;
+
+        return Money.ToEuro(price, store?.Currency) ?? price;
     }
 
     /// <summary>Recalcula el mejor precio y todos los derivados (p. ej. al cambiar el toggle de incluir envío en el precio).</summary>
@@ -445,6 +492,12 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(ListPriceText));
         OnPropertyChanged(nameof(ListPriceHighlight));
     }
+
+    /// <summary>
+    /// Al activar/desactivar los marketplaces alternativos cambia el conjunto de tiendas que cuentan, así que se
+    /// recalcula todo lo derivado (mejor precio, tendencia, avisos…) y las vistas se redibujan sin sus datos.
+    /// </summary>
+    partial void OnIncludeAlternativeStoresChanged(bool value) => RaiseDerivedChanged();
 
     /// <summary>Al cambiar el precio de compra, refresca el texto de precio de la lista.</summary>
     partial void OnPurchasePriceChanged(decimal? value)
@@ -528,6 +581,25 @@ public partial class ProductStore : ObservableObject
                 : price;
         }
     }
+
+    /// <summary>
+    /// Precio efectivo COMPARABLE con el de las demás tiendas: <see cref="EffectivePrice"/> convertido a euros (la
+    /// moneda de referencia de la app) con la tasa fija del ajuste. <c>null</c> si no hay precio o si la moneda de la
+    /// tienda no es convertible (ver <see cref="Money"/>): esas tiendas se comparan solo entre ellas.
+    /// </summary>
+    public decimal? ComparablePrice => EffectivePrice is decimal price ? Money.ToEuro(price, Currency) : null;
+
+    /// <summary>
+    /// Moneda con la que se MUESTRA el precio comparable de esta tienda: el euro si su divisa es convertible
+    /// (dólares y yenes se enseñan convertidos), o la suya propia si no lo es.
+    /// </summary>
+    public string DisplayCurrency => Money.DisplayCurrency(Currency);
+
+    /// <summary>
+    /// La tienda es de un marketplace ALTERNATIVO (amazon.com / amazon.co.jp): solo se lee y se muestra en los
+    /// productos que activan <see cref="Product.IncludeAlternativeStores"/>.
+    /// </summary>
+    public bool IsAlternativeMarketplace => Amazon.IsAlternativeUrl(Url);
 
     public ProductStore()
     {

@@ -102,7 +102,7 @@ public sealed class AmazonAuthService
             return 0;
 
         int count = 0;
-        foreach ((string _, string host, string _) in Amazon.Marketplaces)
+        foreach ((string _, string host, string _, string _) in Amazon.Marketplaces)
             if (await IsLoggedInOnHostAsync(core, host))
                 count++;
         return count;

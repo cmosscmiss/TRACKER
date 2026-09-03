@@ -277,7 +277,7 @@ public sealed partial class PriceChartControl : UserControl
     private async void OnRemoveLinkClick(object sender, RoutedEventArgs e)
     {
         Product? product = ViewModel?.Product;
-        if (product is null || XamlRoot is null || product.Stores.Count <= 1)
+        if (product is null || XamlRoot is null || product.ActiveStores.Count() <= 1)
             return;
 
         ProductStore? store = ResolveCurrentStore(product);
@@ -305,7 +305,9 @@ public sealed partial class PriceChartControl : UserControl
                 return match;
         }
 
-        return product.BestStore ?? product.Stores.FirstOrDefault();
+        // Solo tiendas ACTIVAS: una tienda oculta (marketplace alternativo desactivado) no se ve en la lista, así que
+        // tampoco puede ser el enlace "actual" sobre el que actúan los botones.
+        return product.BestStore ?? product.ActiveStores.FirstOrDefault();
     }
 
     /// <summary>Alterna el favorito del producto mostrado (deshabilitado si ya hay el máximo de favoritos).</summary>
@@ -314,6 +316,17 @@ public sealed partial class PriceChartControl : UserControl
         Product? product = ViewModel?.Product;
         if (product is not null)
             App.GetService<ProductService>().ToggleFavorite(product);
+    }
+
+    /// <summary>
+    /// Alterna el seguimiento de los marketplaces alternativos (amazon.com / amazon.co.jp) del producto mostrado. No
+    /// lanza un refresco: sus precios se leerán en la próxima actualización (manual o del planificador).
+    /// </summary>
+    private void OnToggleAlternativeStoresClick(object sender, RoutedEventArgs e)
+    {
+        Product? product = ViewModel?.Product;
+        if (product is not null)
+            App.GetService<ProductService>().SetIncludeAlternativeStores(product, !product.IncludeAlternativeStores);
     }
 
     /// <summary>Borra el producto mostrado de la base de datos, previa confirmación.</summary>

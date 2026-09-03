@@ -41,6 +41,7 @@ public static class LocKeys
     public const string MainWindow_ProductsOverviewWidget_Title = "MainWindow_ProductsOverviewWidget_Title";
     public const string MainWindow_FavoritesWidget_Title = "MainWindow_FavoritesWidget_Title";
     public const string PriceChart_Favorite_Tooltip = "PriceChart_Favorite_Tooltip";
+    public const string PriceChart_AltStores_Tooltip = "PriceChart_AltStores_Tooltip";
 
     // Common (mÃ¡s): botones de diÃ¡logo
 
@@ -157,6 +158,9 @@ public static class LocKeys
     public const string GeneralSettings_FooterEventViewer_Label = "GeneralSettings_FooterEventViewer_Label";
     public const string GeneralSettings_LogExceptions_Label = "GeneralSettings_LogExceptions_Label";
     public const string GeneralSettings_AutoRefreshHours_Label = "GeneralSettings_AutoRefreshHours_Label";
+    public const string GeneralSettings_ExchangeRates_Header = "GeneralSettings_ExchangeRates_Header";
+    public const string GeneralSettings_DollarsPerEuro_Label = "GeneralSettings_DollarsPerEuro_Label";
+    public const string GeneralSettings_YensPerEuro_Label = "GeneralSettings_YensPerEuro_Label";
     public const string GeneralSettings_MinimizeToTray_Label = "GeneralSettings_MinimizeToTray_Label";
     public const string GeneralSettings_StartWithWindows_Label = "GeneralSettings_StartWithWindows_Label";
     public const string ThemeSettings_Theme_Label = "ThemeSettings_Theme_Label";
@@ -299,6 +303,8 @@ public static class LocKeys
     public const string PriceChart_Purchased_Confirm_Label = "PriceChart_Purchased_Confirm_Label";
     public const string Common_Delete_Label = "Common_Delete_Label";
     public const string ProductLog_Purchased_Progress = "ProductLog_Purchased_Progress";
+    public const string ProductLog_AltStoresOn_Progress = "ProductLog_AltStoresOn_Progress";
+    public const string ProductLog_AltStoresOff_Progress = "ProductLog_AltStoresOff_Progress";
     public const string ProductLog_Unpurchased_Progress = "ProductLog_Unpurchased_Progress";
     public const string ProductLog_Removed_Progress = "ProductLog_Removed_Progress";
     public const string ProductLog_Restored_Progress = "ProductLog_Restored_Progress";

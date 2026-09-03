@@ -109,6 +109,43 @@ public partial class SettingsDialogViewModel : ObservableObject
         }
     }
 
+    /// <summary>Tasa fija de amazon.com: dólares por euro (1 € = X $). Con ella se convierten sus precios a euros.</summary>
+    [ObservableProperty] private double dollarsPerEuro;
+
+    /// <summary>Tasa fija de amazon.co.jp: yenes por euro (1 € = Y ¥).</summary>
+    [ObservableProperty] private double yensPerEuro;
+
+    /// <summary>
+    /// Tasa de dólares como TEXTO (mismo criterio que <see cref="AutoRefreshHoursText"/>: <c>TextBox</c> normal). Admite
+    /// decimales con el separador de la cultura actual o con punto; las entradas no numéricas se ignoran. El valor se
+    /// acota a un mínimo positivo en <see cref="Apply"/>, no mientras se teclea.
+    /// </summary>
+    public string DollarsPerEuroText
+    {
+        get => DollarsPerEuro.ToString("0.####", CultureInfo.CurrentCulture);
+        set
+        {
+            if (TryParseRate(value, out double rate))
+                DollarsPerEuro = rate;
+        }
+    }
+
+    /// <summary>Tasa de yenes como TEXTO. Ver <see cref="DollarsPerEuroText"/>.</summary>
+    public string YensPerEuroText
+    {
+        get => YensPerEuro.ToString("0.####", CultureInfo.CurrentCulture);
+        set
+        {
+            if (TryParseRate(value, out double rate))
+                YensPerEuro = rate;
+        }
+    }
+
+    /// <summary>Parsea una tasa escrita a mano, admitiendo el separador decimal de la cultura actual o el punto.</summary>
+    private static bool TryParseRate(string? text, out double rate)
+        => double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out rate) ||
+           double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out rate);
+
     /// <summary>Idiomas disponibles para el combo (código + nombre). Vienen del <see cref="LocalizationService"/>.</summary>
     public IReadOnlyList<LocalizationService.LanguageOption> LanguageOptions { get; }
 
@@ -301,6 +338,15 @@ public partial class SettingsDialogViewModel : ObservableObject
         bool refreshHoursChanged = g.AutoRefreshHours != refreshHours;
         g.AutoRefreshHours = refreshHours;
 
+        // Tasas de cambio fijas: se acotan a un valor positivo (una tasa a 0 dejaría los precios sin convertir) y se
+        // aplican EN CALIENTE al servicio compartido, que hace recalcular el mejor precio de todos los productos.
+        double dollars = DollarsPerEuro > 0 ? DollarsPerEuro : AppSettings.GeneralSettings.DefaultDollarsPerEuro;
+        double yens = YensPerEuro > 0 ? YensPerEuro : AppSettings.GeneralSettings.DefaultYensPerEuro;
+        g.DollarsPerEuro = dollars;
+        g.YensPerEuro = yens;
+        _sharedDataService.DollarsPerEuro = dollars;
+        _sharedDataService.YensPerEuro = yens;
+
         g.ShowWidgetHeader = ShowWidgetHeader;
         // Recuerda la categoría abierta para restaurarla al reabrir el diálogo.
         if (SelectedSection != null)
@@ -435,6 +481,8 @@ public partial class SettingsDialogViewModel : ObservableObject
         MinimizeToTray = g.MinimizeToTray;
         StartWithWindows = g.StartWithWindows;
         AutoRefreshHours = g.AutoRefreshHours;
+        DollarsPerEuro = g.DollarsPerEuro;
+        YensPerEuro = g.YensPerEuro;
         SelectedLanguageOption = LanguageOptions.FirstOrDefault(o => o.Code == g.Language) ?? LanguageOptions[0];
 
         AppSettings.ThemeSettings t = _appSettings.Theme;

@@ -357,7 +357,7 @@ public partial class ProductListViewModel : WidgetViewModelBase
     {
         string text = value.ToString("0", System.Globalization.CultureInfo.CurrentCulture);
         string currency = SharedDataService.ProductSet.Products
-            .Select(product => product.BestStore?.Currency)
+            .Select(product => product.BestStore?.DisplayCurrency)
             .FirstOrDefault(symbol => !string.IsNullOrEmpty(symbol)) ?? string.Empty;
 
         return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";

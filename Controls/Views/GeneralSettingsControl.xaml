@@ -41,6 +41,32 @@
 
         <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
 
+        <!-- Tipos de cambio FIJOS: unidades por euro. Convierten a euros los precios de amazon.com (dólares) y
+             amazon.co.jp (yenes) para poder compararlos con los de las tiendas de la eurozona. -->
+        <TextBlock Text="{loc:Str Key=GeneralSettings_ExchangeRates_Header}" FontWeight="SemiBold" Foreground="{ThemeResource AccentLightBrush}"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{loc:Str Key=GeneralSettings_DollarsPerEuro_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number"
+                     Text="{Binding DollarsPerEuroText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{loc:Str Key=GeneralSettings_YensPerEuro_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
+            <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number"
+                     Text="{Binding YensPerEuroText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+
         <!-- Interruptores. -->
         <CheckBox Content="{loc:Str Key=GeneralSettings_ShowWidgetHeader_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ShowWidgetHeader, Mode=TwoWay}"/>
         <CheckBox Content="{loc:Str Key=GeneralSettings_FooterEventViewer_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding FooterEventViewerAlwaysVisible, Mode=TwoWay}"/>

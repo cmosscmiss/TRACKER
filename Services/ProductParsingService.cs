@@ -139,8 +139,9 @@ public sealed class ProductParsingService
                    || document.querySelector('.savingsPercentage'));
 
     // Pre-order (reserva): botón/mensaje de pre-order del buy-box. Detección estructural + texto multi-idioma
-    // (en/es/de/fr/nl, incluye Bélgica). Ej.: 'Pre-order', 'Reservar', 'Vorbestellen', 'Précommander', 'Vooraf bestellen'.
-    var preRegex = /pre-?order|reserva|vorbestell|pr[eé]command|vooraf\s*bestell|reserveer/i;
+    // (en/es/de/fr/nl/ja, incluye Bélgica, EE. UU. y Japón). Ej.: 'Pre-order', 'Reservar', 'Vorbestellen',
+    // 'Précommander', 'Vooraf bestellen', '予約' (yoyaku = reserva).
+    var preRegex = /pre-?order|reserva|vorbestell|pr[eé]command|vooraf\s*bestell|reserveer|予約/i;
     var buyboxText = ((document.getElementById('buybox') || document.getElementById('desktop_buybox') || {}).textContent || '');
     var atc = document.getElementById('add-to-cart-button');
     var isPreorder = !!(document.getElementById('preorderMessage')
@@ -161,8 +162,10 @@ public sealed class ProductParsingService
             text = db ? db.textContent : '';
         }
         if (!text) return '';
-        if (/gratis|free|kostenlos|gratuit/i.test(text)) return '';   // envío gratis => sin pastilla
-        var m = text.match(/(?:eur|€|\$|£)\s*([0-9]+(?:[.,][0-9]{1,2})?)|([0-9]+(?:[.,][0-9]{1,2})?)\s*(?:eur|€)/i);
+        if (/gratis|free|kostenlos|gratuit|無料/i.test(text)) return '';   // envío gratis (incl. 送料無料) => sin pastilla
+        // Importe con su símbolo delante (€/$/£/¥) o detrás (EUR/€/円). Los dígitos se capturan CON sus separadores
+        // ('1,299.00', '1.500', '3,980'): el lado C# decide cuál es el decimal y cuál el de miles.
+        var m = text.match(/(?:eur|€|\$|£|¥|￥)\s*([0-9][0-9.,]*)|([0-9][0-9.,]*)\s*(?:eur|€|円)/i);
         return m ? (m[1] || m[2]) : '';
     }
     var shipping = available ? shippingCost() : '';
@@ -383,17 +386,32 @@ public sealed class ProductParsingService
         if (string.IsNullOrWhiteSpace(text))
             return null;
 
+        return NormalizeNumber(text) is decimal value && value > 0 ? value : null;
+    }
+
+    /// <summary>
+    /// Convierte a número el texto de un importe con separadores de cualquier locale ("39,99", "1,299.00", "1.500",
+    /// "3,980"). Se queda con los dígitos y los separadores, y decide cuál es el DECIMAL: solo lo es el último
+    /// separador si le siguen una o dos cifras; si le siguen tres (o no hay separador final corto) es de miles y se
+    /// elimina. Esa distinción es lo que evita leer los yenes de amazon.co.jp ("￥3,980") como 3,98 €.
+    /// </summary>
+    private static decimal? NormalizeNumber(string text)
+    {
         string number = new string(text.Where(ch => char.IsDigit(ch) || ch == '.' || ch == ',').ToArray());
         if (number.Length == 0)
             return null;
 
-        int lastDot = number.LastIndexOf('.');
-        int lastComma = number.LastIndexOf(',');
-        char decimalSeparator = lastDot >= lastComma ? '.' : ',';
-        char thousandsSeparator = decimalSeparator == '.' ? ',' : '.';
-        number = number.Replace(thousandsSeparator.ToString(), string.Empty).Replace(decimalSeparator, '.');
+        int lastSeparator = number.LastIndexOfAny(new[] { '.', ',' });
+        int decimals = lastSeparator < 0 ? 0 : number.Length - lastSeparator - 1;
+        bool hasDecimalPart = lastSeparator >= 0 && decimals >= 1 && decimals <= 2;
 
-        return decimal.TryParse(number, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal value) && value > 0
+        string integerPart = lastSeparator >= 0 && hasDecimalPart ? number.Substring(0, lastSeparator) : number;
+        string fractionPart = hasDecimalPart ? number.Substring(lastSeparator + 1) : string.Empty;
+
+        integerPart = integerPart.Replace(".", string.Empty).Replace(",", string.Empty);
+        number = fractionPart.Length > 0 ? $"{integerPart}.{fractionPart}" : integerPart;
+
+        return decimal.TryParse(number, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal value)
             ? value
             : null;
     }
@@ -411,8 +429,8 @@ public sealed class ProductParsingService
     }
 
     /// <summary>
-    /// Heuristic parse of a formatted price string like "39,99 €", "€39.99" or "$1,299.00". Extracts the currency
-    /// symbol into <paramref name="currency"/> and normalizes the number (the last '.'/',' is the decimal separator).
+    /// Heuristic parse of a formatted price string like "39,99 €", "€39.99", "$1,299.00" or "￥3,980". Extracts the
+    /// currency symbol into <paramref name="currency"/> and normalizes the number (see <see cref="NormalizeNumber"/>).
     /// </summary>
     private static decimal? TryParsePriceText(string? text, ref string? currency)
     {
@@ -425,21 +443,9 @@ public sealed class ProductParsingService
 
         // PRIMERA línea no vacía: cuando el elemento contiene varios precios en bloques (p. ej. el de oferta + el
         // 'regular' oculto), suelen ir en líneas distintas; quedarnos con la primera evita mezclarlos. Dentro de la
-        // línea se conserva el tratamiento clásico, que admite separador de miles con punto, coma o espacio.
+        // línea se normaliza con el criterio común de separadores (ver NormalizeNumber).
         string line = text.Replace("\r", "\n").Split('\n').Select(l => l.Trim()).FirstOrDefault(l => l.Length > 0) ?? text;
-        string number = new string(line.Where(ch => char.IsDigit(ch) || ch == '.' || ch == ',').ToArray());
-        if (number.Length == 0)
-            return null;
-
-        int lastDot = number.LastIndexOf('.');
-        int lastComma = number.LastIndexOf(',');
-        char decimalSeparator = lastDot >= lastComma ? '.' : ',';
-        char thousandsSeparator = decimalSeparator == '.' ? ',' : '.';
-
-        number = number.Replace(thousandsSeparator.ToString(), string.Empty).Replace(decimalSeparator, '.');
-        return decimal.TryParse(number, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal value)
-            ? value
-            : null;
+        return NormalizeNumber(line);
     }
     #endregion
 }

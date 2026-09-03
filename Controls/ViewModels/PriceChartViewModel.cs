@@ -176,6 +176,12 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>Se puede eliminar el enlace actual: hay producto y tiene MÁS de una tienda (nunca se borra el último enlace).</summary>
     public bool CanRemoveStore { get; private set; }
 
+    /// <summary>
+    /// El producto mostrado sigue también los marketplaces alternativos (amazon.com / amazon.co.jp): estado del botón
+    /// de la barra. Al cambiarlo, sus tiendas empiezan (o dejan) de leerse y de aparecer en gráficas y pastillas.
+    /// </summary>
+    public bool IncludeAlternativeStores { get; private set; }
+
     /// <summary>Tipo de gráfica (enlazado TwoWay al <c>ChartTypeSelectorControl</c>); se persiste por widget/favorito.</summary>
     public ChartType SelectedChartType
     {
@@ -336,6 +342,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
             UpdateFavoriteState();     // refresca IsPurchased (pill), y CanToggleFavorite
             UpdateCurrentPriceCard();  // "Precio actual" <-> "Precio de compra"
         }
+        else if (e.PropertyName == nameof(Product.IncludeAlternativeStores))
+        {
+            // Cambió el conjunto de tiendas que cuentan: se rehacen series, pastillas y tarjetas.
+            Recompute();
+        }
     }
 
     /// <summary>
@@ -388,7 +399,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     {
         Product? product = _product;
         List<PricePoint>? history = product?.PriceHistory;
-        ValueSuffix = product?.BestStore?.Currency ?? product?.Stores.FirstOrDefault()?.Currency ?? string.Empty;
+        // Las series se dibujan en la moneda de REFERENCIA (los precios en dólares/yenes van convertidos a euros), así
+        // que el sufijo del eje es la moneda de display de la tienda, no su divisa nativa.
+        ValueSuffix = product?.BestStore?.DisplayCurrency ?? product?.ActiveStores.FirstOrDefault()?.DisplayCurrency ?? string.Empty;
 
         if (product is null || history is null || history.Count == 0)
         {
@@ -406,7 +419,9 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
             // Una serie por TIENDA (identificada por Id, NO por etiqueta: dos enlaces al mismo host son series distintas)
             // que tenga al menos un precio, en el orden de las tiendas del producto.
-            List<ProductStore> seriesStores = product.Stores
+            // Solo tiendas ACTIVAS: las de los marketplaces alternativos desactivados no pintan serie (su histórico
+            // se conserva, pero no se muestra mientras el producto no las siga).
+            List<ProductStore> seriesStores = product.ActiveStores
                 .Where(store => history.Any(point => point.StoreId == store.Id))
                 .ToList();
 
@@ -418,7 +433,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
                 .Select(store =>
                 {
                     double shipping = includeShipping && store.ShippingCost is decimal cost ? (double)cost : 0;
-                    return (IReadOnlyList<double>)BuildStoreSeries(store.Id, rounds, history, shipping);
+                    return (IReadOnlyList<double>)BuildStoreSeries(store.Id, rounds, history, shipping, store.Currency);
                 })
                 .ToList();
 
@@ -451,7 +466,14 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         if (product is not null && availableHistory.Count > 0)
         {
             bool includeShippingLow = SharedDataService.IncludeShippingInPrice;
-            decimal EffectiveOf(PricePoint p) => p.Price + (includeShippingLow && product.Stores.FirstOrDefault(s => s.Id == p.StoreId)?.ShippingCost is decimal c ? c : 0);
+            // Mismo criterio que la serie: el importe se convierte a euros con la moneda de SU tienda, para poder
+            // comparar puntos de marketplaces con divisas distintas.
+            decimal EffectiveOf(PricePoint p)
+            {
+                ProductStore? store = product.Stores.FirstOrDefault(s => s.Id == p.StoreId);
+                decimal effective = p.Price + (includeShippingLow && store?.ShippingCost is decimal c ? c : 0);
+                return Money.ToEuro(effective, store?.Currency) ?? effective;
+            }
             PricePoint lowest = availableHistory.OrderBy(EffectiveOf).First();
             LowestPriceText = FormatPrice(EffectiveOf(lowest));
             LowestPriceDescription = WithDrop(lowest.StoreLabel, DropFromPeakText(EffectiveOf(lowest)));
@@ -480,7 +502,7 @@ public partial class PriceChartViewModel : WidgetViewModelBase
 
         Stores = product is null
             ? Array.Empty<StoreChip>()
-            : product.Stores.Select(store => new StoreChip
+            : product.ActiveStores.Select(store => new StoreChip
             {
                 Label = store.Label,
                 Url = store.Url,
@@ -542,19 +564,20 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         int favoriteCount = SharedDataService.ProductSet.Products.Count(product => product.IsFavorite);
         // Un producto comprado no puede ser favorito: el botón se deshabilita.
         CanToggleFavorite = _product is not null && !_product.IsPurchased && (_product.IsFavorite || favoriteCount < ProductService.MaxFavorites);
-        CanRemoveStore = _product is not null && _product.Stores.Count > 1;
+        CanRemoveStore = _product is not null && _product.ActiveStores.Count() > 1;
+        IncludeAlternativeStores = _product?.IncludeAlternativeStores ?? false;
         OnPropertyChanged(nameof(IsFavorite));
         OnPropertyChanged(nameof(IsPurchased));
         OnPropertyChanged(nameof(CanToggleFavorite));
         OnPropertyChanged(nameof(CanRemoveStore));
+        OnPropertyChanged(nameof(IncludeAlternativeStores));
     }
 
-    /// <summary>Formatea el precio de una tienda con su moneda ("39,99 €").</summary>
-    private static string FormatStorePrice(decimal price, string? currency)
-    {
-        string text = price.ToString("0.00", CultureInfo.CurrentCulture);
-        return string.IsNullOrEmpty(currency) ? text : $"{text} {currency}";
-    }
+    /// <summary>
+    /// Formatea el precio de una tienda en SU PROPIA moneda ("39,99 €", "39.99 $", "3.980 ¥"): las pastillas de
+    /// tienda muestran lo que cuesta allí de verdad, sin convertir (la conversión es solo para comparar).
+    /// </summary>
+    private static string FormatStorePrice(decimal price, string? currency) => Money.Format(price, currency);
 
     /// <summary>Texto localizado de una clave (o la propia clave si no hay servicio de localización).</summary>
     private static string L(string key) => LocalizationService.Instance?[key] ?? key;
@@ -562,9 +585,11 @@ public partial class PriceChartViewModel : WidgetViewModelBase
     /// <summary>
     /// Construye la serie de precios de una tienda alineada a las rondas: usa el precio de la tienda en cada ronda
     /// y, si falta (fallo de lectura), arrastra el último conocido; las rondas anteriores a su primera lectura se
-    /// rellenan con esa primera lectura (para no dibujar caídas a 0).
+    /// rellenan con esa primera lectura (para no dibujar caídas a 0). Los valores se devuelven CONVERTIDOS a la
+    /// moneda de referencia (euros) según <paramref name="currency"/>, para que las series de amazon.com y
+    /// amazon.co.jp compartan eje con las europeas.
     /// </summary>
-    private static double[] BuildStoreSeries(long storeId, List<DateTime> rounds, List<PricePoint> history, double shippingOffset = 0)
+    private static double[] BuildStoreSeries(long storeId, List<DateTime> rounds, List<PricePoint> history, double shippingOffset = 0, string? currency = null)
     {
         var byTimestamp = new Dictionary<DateTime, double>();
         foreach (PricePoint point in history)
@@ -585,7 +610,8 @@ public partial class PriceChartViewModel : WidgetViewModelBase
         {
             if (byTimestamp.TryGetValue(rounds[i], out double value))
                 last = value;
-            series[i] = last + shippingOffset;   // + envío si el ajuste lo incluye (offset constante por tienda)
+            decimal effective = (decimal)(last + shippingOffset);   // + envío si el ajuste lo incluye (offset constante por tienda)
+            series[i] = (double)(Money.ToEuro(effective, currency) ?? effective);
         }
         return series;
     }

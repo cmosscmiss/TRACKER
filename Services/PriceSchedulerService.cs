@@ -136,7 +136,7 @@ public sealed class PriceSchedulerService
     {
         DateTime? max = null;
         foreach (Product product in _sharedDataService.ProductSet.Products)
-            foreach (ProductStore store in product.Stores)
+            foreach (ProductStore store in product.ActiveStores)
                 if (store.LastChecked is DateTime checkedAt && (max is null || checkedAt > max))
                     max = checkedAt;
         return max;
@@ -329,7 +329,7 @@ public sealed class PriceSchedulerService
         {
             (decimal? oldBest, bool oldBelow, bool oldPreorder) = before[product];
             decimal? now = product.BestPrice;
-            string currency = product.BestStore?.Currency ?? string.Empty;
+            string currency = product.BestStore?.DisplayCurrency ?? string.Empty;
 
             if (oldBest is decimal ob && now is decimal nb && nb < ob)
             {
@@ -388,16 +388,19 @@ public sealed class PriceSchedulerService
     /// </summary>
     private bool IsDue(Product product)
     {
-        if (product.Stores.Count == 0)
+        // Solo cuentan las tiendas ACTIVAS: las de un marketplace alternativo desactivado ni se leen ni deciden
+        // cuándo toca refrescar.
+        var stores = product.ActiveStores.ToList();
+        if (stores.Count == 0)
             return false;
 
         // Producto nunca cargado: hay que cargarlo.
-        if (product.Stores.All(store => store.LastChecked is null))
+        if (stores.All(store => store.LastChecked is null))
             return true;
 
         // Ya cargado alguna vez: due solo si alguna tienda con lectura previa ha caducado.
         DateTime now = DateTime.UtcNow;
-        return product.Stores.Any(store => store.LastChecked is DateTime checkedAt && now - checkedAt >= Interval);
+        return stores.Any(store => store.LastChecked is DateTime checkedAt && now - checkedAt >= Interval);
     }
     #endregion
 }

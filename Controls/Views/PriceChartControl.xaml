@@ -30,6 +30,17 @@
             <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnSearchProductClick" help:Help.Key="PriceChart_Search_Tooltip">
                 <FontIcon Glyph="&#xE721;" FontSize="16"/>
             </Button>
+            <!-- Sigue (o deja de seguir) los marketplaces alternativos —amazon.com y amazon.co.jp— SOLO en este
+                 producto: acentuado = activado. Sus precios entran en el próximo refresco. -->
+            <Button Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8" Click="OnToggleAlternativeStoresClick"
+                    help:Help.Key="PriceChart_AltStores_Tooltip">
+                <Grid>
+                    <FontIcon Glyph="&#xE774;" FontSize="16" Foreground="{ThemeResource AccentBrush}"
+                              Visibility="{x:Bind ViewModel.IncludeAlternativeStores, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Glyph="&#xE774;" FontSize="16"
+                              Visibility="{x:Bind ViewModel.IncludeAlternativeStores, Converter={StaticResource HiddenIfTrueConverter}, FallbackValue=Visible, Mode=OneWay}"/>
+                </Grid>
+            </Button>
 
             <template:SeparatorEx VerticalAlignment="Stretch" HorizontalAlignment="Center" Thickness="2" Margin="2 4" Orientation="Vertical" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
 

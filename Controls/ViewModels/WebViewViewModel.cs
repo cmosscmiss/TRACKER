@@ -45,7 +45,7 @@ public class WebViewViewModel : WidgetViewModelBase
     private void OnSelectedProductChanged(object? sender, ProductChangedEventArgs e)
     {
         Product? product = e.NewProduct;
-        string? url = product?.BestStore?.Url ?? product?.Stores.FirstOrDefault()?.Url;
+        string? url = product?.BestStore?.Url ?? product?.ActiveStores.FirstOrDefault()?.Url;
         if (!string.IsNullOrWhiteSpace(url))
             NavigationRequested?.Invoke(url!);
     }

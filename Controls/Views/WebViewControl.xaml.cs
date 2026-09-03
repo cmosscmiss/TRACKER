@@ -204,7 +204,7 @@ public sealed partial class WebViewControl : UserControl
     private void NavigateToCurrentViewModelUrl()
     {
         Models.Product? product = ViewModel?.SharedDataService.SelectedProduct;
-        string? url = product?.BestStore?.Url ?? product?.Stores.FirstOrDefault()?.Url;
+        string? url = product?.BestStore?.Url ?? product?.ActiveStores.FirstOrDefault()?.Url;
         if (!string.IsNullOrWhiteSpace(url))
         {
             NavigateTo(url);

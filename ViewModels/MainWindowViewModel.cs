@@ -215,6 +215,10 @@ public class MainWindowViewModel : WidgetViewModelBase
         _sharedDataService.HelpTooltipsEnabled = _appSettings.General.HelpTooltipsEnabled;
         _sharedDataService.IncludeShippingInPrice = _appSettings.General.IncludeShippingInPrice;
         _sharedDataService.ShowPurchased = _appSettings.General.ShowPurchased;
+        // Tasas de cambio fijas (amazon.com / amazon.co.jp): con ellas se convierten a euros los precios en dólares
+        // y yenes para poder compararlos con los de las tiendas europeas.
+        _sharedDataService.DollarsPerEuro = _appSettings.General.DollarsPerEuro;
+        _sharedDataService.YensPerEuro = _appSettings.General.YensPerEuro;
     }
 
     public override void SaveConfig()
@@ -225,6 +229,8 @@ public class MainWindowViewModel : WidgetViewModelBase
         _appSettings.General.HelpTooltipsEnabled = _sharedDataService.HelpTooltipsEnabled;
         _appSettings.General.IncludeShippingInPrice = _sharedDataService.IncludeShippingInPrice;
         _appSettings.General.ShowPurchased = _sharedDataService.ShowPurchased;
+        _appSettings.General.DollarsPerEuro = _sharedDataService.DollarsPerEuro;
+        _appSettings.General.YensPerEuro = _sharedDataService.YensPerEuro;
     }
 
     public override void Dispose()
