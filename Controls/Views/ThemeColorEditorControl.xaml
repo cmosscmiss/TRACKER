@@ -9,9 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!-- Contenido del diálogo de edición EN CALIENTE de colores del tema. Izquierda: combobox de color + ColorPicker
-         (inputs de texto ocultos) + revertir. Derecha: lista de colores con su muestra base y las variantes de
-         opacidad. Un separador vertical divide ambas secciones. -->
+    <!-- Contenido del diálogo de edición EN CALIENTE de colores del tema. -->
     <Grid ColumnSpacing="16" Padding="4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -21,38 +19,39 @@
 
         <!-- Editor -->
         <StackPanel x:Name="EditorColumn" Grid.Column="0" Spacing="12" Width="280">
-            <!-- Selector de color + botón de revertir (icono) a su derecha, en la misma fila. -->
+            <StackPanel Spacing="2">
+                <TextBlock Text="{loc:Str Key=ThemeColors_Picker_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+                <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+            </StackPanel>
+
+            <!-- Selector de color + botón de revertir. -->
             <Grid ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <ComboBox x:Name="ColorCombo" Grid.Column="0" HorizontalAlignment="Stretch"
-                          DisplayMemberPath="Display" SelectionChanged="OnColorSelectionChanged"/>
+                <ComboBox x:Name="ColorCombo" Grid.Column="0" HorizontalAlignment="Stretch" DisplayMemberPath="Display" SelectionChanged="OnColorSelectionChanged"/>
                 <!-- Revierte el color seleccionado a su valor original (antes de los cambios en caliente). -->
-                <Button x:Name="RevertButton" Grid.Column="1" Style="{StaticResource Button_Icon}" BorderThickness="0"
-                        Padding="8 0" VerticalAlignment="Stretch" Click="OnRevertClick"
-                        ToolTipService.ToolTip="{loc:Str Key=ThemeColors_Revert}">
+                <Button x:Name="RevertButton" Grid.Column="1" Style="{StaticResource Button_Icon}" BorderThickness="0" Padding="8 0" VerticalAlignment="Stretch" Click="OnRevertClick" ToolTipService.ToolTip="{loc:Str Key=ThemeColors_Revert}">
                     <FontIcon Glyph="&#xE7A7;" FontSize="16"/>
                 </Button>
             </Grid>
-            <ColorPicker x:Name="Picker" IsAlphaEnabled="False"
-                         IsHexInputVisible="False" IsColorChannelTextInputVisible="True"
-                         ColorChanged="OnPickerColorChanged"/>
+            <ColorPicker x:Name="Picker" IsAlphaEnabled="False" IsHexInputVisible="False" IsColorChannelTextInputVisible="True" ColorChanged="OnPickerColorChanged"/>
         </StackPanel>
 
         <!-- Separador vertical entre las dos secciones. -->
-        <template:SeparatorEx Grid.Column="1" Orientation="Vertical" VerticalAlignment="Stretch"
-                              Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        <template:SeparatorEx Grid.Column="1" Orientation="Vertical" VerticalAlignment="Stretch" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
 
-        <!-- Lista de colores: muestra base + variantes de opacidad (80/60/40/20) + nombre. Cada muestra enlaza al
-             brush VIVO del recurso (mutado in situ), así se actualiza en caliente. -->
+        <!-- Lista de colores. -->
         <Grid Grid.Column="2" Width="470" RowSpacing="6" Height="{Binding ActualHeight, ElementName=EditorColumn}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="{loc:Str Key=ThemeColors_Swatches}" FontWeight="SemiBold"/>
+            <StackPanel Grid.Row="0" Spacing="2">
+                <TextBlock Text="{loc:Str Key=ThemeColors_Swatches}" Style="{StaticResource GroupHeaderStyle}"/>
+                <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+            </StackPanel>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl x:Name="ColorList">
                     <ItemsControl.ItemTemplate>

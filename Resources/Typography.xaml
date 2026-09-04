@@ -33,6 +33,29 @@
         <Setter Property="CharacterSpacing" Value="80" />
         <Setter Property="Foreground" Value="{ThemeResource TextBrush}"/>
     </Style>
+    <!-- Cabecera de grupo (secciones de la ventana de ajustes): acento, mayúsculas y espaciado de caracteres. Vive
+         aquí, en Typography.xaml, porque Theme.xaml lo mergea y cada diálogo mergea su propia copia de Theme.xaml:
+         así también se resuelve desde el Popup del AppDialog. -->
+    <Style x:Key="GroupHeaderStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource AccentBrush}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CharacterSpacing" Value="120" />
+    </Style>
+    <!-- Fila de un grupo (ficha/ajustes), con el mismo reparto que la ficha de juego de MM4LB: el DESCRIPTOR va en
+         secundario, pequeño y semibold; el VALOR, en el color de texto normal y un punto mayor. -->
+    <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource TextSecondaryBrush}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="FieldValueStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource TextBrush}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
     <Style x:Key="BodyTextStyle" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />

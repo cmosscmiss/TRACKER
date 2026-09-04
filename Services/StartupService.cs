@@ -20,9 +20,41 @@ public static class StartupService
 
     /// <summary>Nombre del valor bajo la clave Run (identifica a esta app; estable entre versiones).</summary>
     private const string RunValueName = "Tracker";
+
+    /// <summary>
+    /// Argumento con el que Windows lanza la app desde la clave Run: es lo único que distingue un arranque automático
+    /// (al iniciar sesión) de uno manual, y lo consulta <see cref="IsAutoStartLaunch"/> para decidir si la app debe
+    /// arrancar escondida en la bandeja (<c>AppSettings.GeneralSettings.StartMinimizedOnAutoStart</c>).
+    /// </summary>
+    public const string AutoStartArgument = "--autostart";
     #endregion
 
     #region Methods (public)
+    /// <summary>
+    /// Indica si ESTA ejecución la ha lanzado Windows al iniciar sesión, es decir, si la línea de comandos trae
+    /// <see cref="AutoStartArgument"/> (lo escribe <see cref="Apply"/> en la clave Run). Un arranque manual —doble
+    /// clic en el ejecutable o desde Visual Studio— no lleva el argumento y devuelve false.
+    /// </summary>
+    public static bool IsAutoStartLaunch()
+    {
+        try
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            // El índice 0 es la ruta del propio ejecutable: se salta.
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (string.Equals(args[i], AutoStartArgument, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            ExceptionService.LogToFile(ex, "Could not read the command line arguments.");
+            return false;
+        }
+    }
+
     /// <summary>Indica si la app está registrada actualmente para arrancar con Windows.</summary>
     public static bool IsEnabled()
     {
@@ -61,8 +93,9 @@ public static class StartupService
             if (string.IsNullOrWhiteSpace(exePath))
                 return;
 
-            // Entre comillas: la ruta puede llevar espacios (p. ej. "C:\Program Files\...").
-            string command = $"\"{exePath}\"";
+            // Entre comillas: la ruta puede llevar espacios (p. ej. "C:\Program Files\..."). El argumento marca la
+            // ejecución como arranque automático, para que la app pueda quedarse escondida en la bandeja.
+            string command = $"\"{exePath}\" {AutoStartArgument}";
             if (key.GetValue(RunValueName) as string != command)
                 key.SetValue(RunValueName, command, RegistryValueKind.String);
         }

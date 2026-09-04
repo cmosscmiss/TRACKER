@@ -108,6 +108,9 @@
                             <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterAlert_Label}"
                                 IsChecked="{x:Bind ViewModel.ActiveFilters.WithAlert, Mode=TwoWay}"
                                 Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
+                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterWithoutPrice_Label}"
+                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithoutPrice, Mode=TwoWay}"
+                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
                             <!-- Solo disponible cuando el footer muestra los comprados. -->
                             <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPurchased_Label}"
                                 IsChecked="{x:Bind ViewModel.ActiveFilters.WithPurchased, Mode=TwoWay}"

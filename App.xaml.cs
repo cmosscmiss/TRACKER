@@ -338,6 +338,13 @@ public partial class App : Application
         // Show the main window directly (no loading/splash window). Al cerrarla, se detiene y libera el host
         // (persistiendo la configuración) y se termina el proceso.
         var mainWindow = Host.Services.GetRequiredService<MainWindow>();
+
+        // Arranque automático con Windows: si la app la ha lanzado la clave Run (argumento --autostart) y el ajuste
+        // StartMinimizedOnAutoStart está activo (por defecto), la ventana se esconde en la bandeja en cuanto ha
+        // terminado de cargar. Hay que activarla igualmente: sin Activate, WinUI no carga el contenido y no se
+        // inicializarían ni los widgets ni el pool de scraping que necesita el planificador de precios.
+        mainWindow.StartHiddenInTray = StartupService.IsAutoStartLaunch() && _appSettings.General.StartMinimizedOnAutoStart;
+
         mainWindow.Closed += async (_, _) =>
         {
             notifications.Unregister();

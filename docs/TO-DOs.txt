@@ -1,6 +1,7 @@
-Flag que determina si la app se arranca minimizada (en la bandeja de entrada) cuando se auto-arranca al iniciar windows o no.
+Sorting por fecha de creacióin en la base de datos (ascendente y descendente). Se añade a la sección de sorting de la lista de productos.
 Instalar .net si no está instalado al arrancar.
 Chequear que todos los requerimientos de sistema se cumplen al arrancar.
 Generar un manual de usuario de la aplicación, y que se almacene en la carpeta Docs.
 Generar unas release notes y guardarlo también en la carpeta Docs.
 Paquetizar la app para distribución y guardar una copia en una carpeta Releases.
+Si algún día quiero compartir: Vamos a añadir una sección nueva al diálogo de settings. Sección que permite seleccionar 2 cosas: Las tiendas por defecto y las tiendas alternativas. Lista con checkboxes. 

@@ -110,6 +110,26 @@ public class AppSettings
         public bool StartWithWindows { get; set; } = true;
 
         /// <summary>
+        /// Si es true (por defecto), cuando la app la lanza Windows al iniciar sesión (ver
+        /// <see cref="StartWithWindows"/>) arranca escondida en la bandeja del sistema, sin mostrar la ventana: el
+        /// planificador lee precios en segundo plano y la ventana se abre desde el icono de la bandeja. Si es false,
+        /// el autoarranque muestra la ventana como un arranque normal. NO afecta a los arranques manuales (doble clic
+        /// en el ejecutable), que siempre muestran la ventana: el arranque automático se distingue por el argumento
+        /// <c>--autostart</c> que <see cref="Tracker.Services.StartupService"/> escribe en la clave Run.
+        /// </summary>
+        public bool StartMinimizedOnAutoStart { get; set; } = true;
+
+        /// <summary>
+        /// Si es true (por defecto), cuando la ventana se cerró estando MAXIMIZADA vuelve a mostrarse maximizada, y en
+        /// el monitor donde se cerró. Se aplica en los dos momentos en que la ventana aparece: al arrancar y al
+        /// sacarla de la bandeja del sistema (icono o menú). Si es false, la ventana se muestra siempre con el tamaño
+        /// y la posición "restaurados" que tenía sin maximizar. NO compite con
+        /// <see cref="StartMinimizedOnAutoStart"/>: si la app arranca escondida en la bandeja, manda ese ajuste y
+        /// este solo decide cómo se ve la ventana cuando el usuario la saca de la bandeja.
+        /// </summary>
+        public bool RestoreMaximized { get; set; } = true;
+
+        /// <summary>
         /// Si es true, el precio de los productos incluye los gastos de envío (precio + envío) en toda la app. Lo
         /// alterna un toggle del footer (vía <see cref="Tracker.Services.SharedDataService.IncludeShippingInPrice"/>).
         /// Por defecto false.

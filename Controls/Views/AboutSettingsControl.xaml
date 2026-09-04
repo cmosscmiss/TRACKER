@@ -9,85 +9,84 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!-- Página de la categoría About: identidad de la app, descripción, detalles del build/runtime y componentes de
-         terceros con su licencia. Solo lectura. DataContext heredado del SettingsDialogViewModel. -->
+    <!-- Página de la categoría About. -->
     <StackPanel Spacing="14">
-
-        <!-- Identidad: marca + nombre + tagline + pastilla de build. -->
-        <StackPanel Orientation="Horizontal" Spacing="16">
-            <Border Width="72" Height="72" CornerRadius="16" BorderThickness="1" BorderBrush="{ThemeResource AccentDarkBrush}">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop x:Name="LogoStopLight" Color="{ThemeResource CardBackgroundLightColorOpacity80}" Offset="0"/>
-                        <GradientStop x:Name="LogoStopDark" Color="{ThemeResource BackgroundColorOpacity80}" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <FontIcon Glyph="&#xE8B9;" FontSize="34" Foreground="{ThemeResource AccentLightBrush}"/>
-            </Border>
-
-            <StackPanel VerticalAlignment="Center" Spacing="6">
-                <TextBlock Text="{loc:Str Key=Common_AppName}" FontSize="32" FontWeight="Bold" Foreground="{ThemeResource TextBrush}"/>
-                <TextBlock Text="{loc:Str Key=AboutSettings_Tagline_Text}" FontSize="14" Foreground="{ThemeResource TextSecondaryBrush}"/>
-                <Border HorizontalAlignment="Left" CornerRadius="10" Padding="9 3" Margin="0 2 0 0"
-                        Background="{ThemeResource AccentBrushOpacity20}" BorderThickness="1" BorderBrush="{ThemeResource AccentDarkBrush}">
-                    <TextBlock FontSize="12" Foreground="{ThemeResource AccentLightBrush}" Text="{Binding BuildText}"/>
-                </Border>
-            </StackPanel>
-        </StackPanel>
-
-        <!-- Descripción. -->
-        <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="21" Foreground="{ThemeResource TextBrush}"
-                   Text="{loc:Str Key=AboutSettings_Description_Text}"/>
-
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
-        <!-- Detalles. -->
-        <TextBlock Text="{loc:Str Key=AboutSettings_Details_Header}" FontSize="11" CharacterSpacing="140" Foreground="{ThemeResource TextSecondaryBrush}"/>
-        <Grid ColumnSpacing="16" RowSpacing="9">
+        <Grid ColumnSpacing="16">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Str Key=AboutSettings_Build_Label}" FontSize="13.5" Foreground="{ThemeResource TextSecondaryBrush}"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding BuildText}" FontSize="13.5" Foreground="{ThemeResource TextBrush}"/>
-
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Str Key=AboutSettings_Runtime_Label}" FontSize="13.5" Foreground="{ThemeResource TextSecondaryBrush}"/>
-            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RuntimeText}" FontSize="13.5" Foreground="{ThemeResource TextBrush}"/>
-
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Str Key=AboutSettings_Architecture_Label}" FontSize="13.5" Foreground="{ThemeResource TextSecondaryBrush}"/>
-            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ArchitectureText}" FontSize="13.5" Foreground="{ThemeResource TextBrush}"/>
+            <Image Source="ms-appx:///Assets/TRACKER-Logo-HR.png" Height="96" Stretch="Uniform" VerticalAlignment="Top"/>
+            <StackPanel Grid.Column="1" Spacing="6">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{loc:Str Key=Common_AppName}" FontSize="26" FontWeight="Bold" Foreground="{ThemeResource TextBrush}"/>
+                    <Border Grid.Column="1" VerticalAlignment="Top" CornerRadius="10" Padding="9 3" Background="{ThemeResource AccentBrushOpacity20}" BorderThickness="1" BorderBrush="{ThemeResource AccentDarkBrush}">
+                        <TextBlock FontSize="12" Foreground="{ThemeResource AccentLightBrush}" Text="{Binding BuildText}"/>
+                    </Border>
+                </Grid>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="21" Foreground="{ThemeResource TextBrush}" Text="{loc:Str Key=AboutSettings_Description_Text}"/>
+            </StackPanel>
         </Grid>
 
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
+        <!-- Detalles: como las filas de la ficha de juego de MM4LB, el descriptor va ENCIMA del valor. -->
+        <StackPanel Spacing="2">
+            <TextBlock Text="{loc:Str Key=AboutSettings_Details_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+            <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        </StackPanel>
+        <StackPanel>
+            <StackPanel Padding="20 0">
+                <TextBlock Text="{loc:Str Key=AboutSettings_DevelopedBy_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBlock Text="Víctor BLÁZQUEZ (CMOSS)" Style="{StaticResource FieldValueStyle}"/>
+            </StackPanel>
+            <template:SeparatorEx Margin="0 8 0 0" Thickness="1" UseGradient="True"/>
+        </StackPanel>
+        <StackPanel>
+            <StackPanel Padding="20 0">
+                <TextBlock Text="{loc:Str Key=AboutSettings_Build_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBlock Text="{Binding BuildText}" Style="{StaticResource FieldValueStyle}"/>
+            </StackPanel>
+            <template:SeparatorEx Margin="0 8 0 0" Thickness="1" UseGradient="True"/>
+        </StackPanel>
+        <StackPanel>
+            <StackPanel Padding="20 0">
+                <TextBlock Text="{loc:Str Key=AboutSettings_Architecture_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBlock Text="{Binding ArchitectureText}" Style="{StaticResource FieldValueStyle}"/>
+            </StackPanel>
+            <template:SeparatorEx Margin="0 8 0 0" Thickness="1" UseGradient="True"/>
+        </StackPanel>
+        <StackPanel>
+            <StackPanel Padding="20 0">
+                <TextBlock Text="{loc:Str Key=AboutSettings_Runtime_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBlock Text="{Binding RuntimeText}" Style="{StaticResource FieldValueStyle}"/>
+            </StackPanel>
+            <template:SeparatorEx Margin="0 8 0 0" Thickness="1" UseGradient="True"/>
+        </StackPanel>
 
-        <!-- Componentes de terceros (con su licencia). -->
-        <TextBlock Text="{loc:Str Key=AboutSettings_ThirdParty_Header}" FontSize="11" CharacterSpacing="140" Foreground="{ThemeResource TextSecondaryBrush}"/>
+        <!-- Componentes de terceros. -->
+        <StackPanel Spacing="2" Margin="0 8 0 0">
+            <TextBlock Text="{loc:Str Key=AboutSettings_ThirdParty_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+            <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        </StackPanel>
         <ItemsControl ItemsSource="{Binding ThirdPartyLicenses}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="0 3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Component}" FontSize="13" Foreground="{ThemeResource TextBrush}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding License}" FontSize="12" Foreground="{ThemeResource TextSecondaryBrush}" VerticalAlignment="Center"/>
-                    </Grid>
+                    <StackPanel>
+                        <Grid Padding="20 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Component}" Style="{StaticResource FieldValueStyle}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding License}" Style="{StaticResource FieldLabelStyle}"/>
+                        </Grid>
+                        <template:SeparatorEx Margin="0 8" Thickness="1" UseGradient="True"/>
+                    </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
-        <!-- Nota de acento por tema + copyright. -->
-        <TextBlock FontSize="12" Foreground="{ThemeResource TextSecondaryBrush}" Text="{loc:Str Key=AboutSettings_AccentNote_Text}"/>
-        <TextBlock FontSize="11" TextWrapping="Wrap" Foreground="{ThemeResource TextSecondaryBrush}"
-                   Text="{loc:Str Key=AboutSettings_Copyright_Text}"/>
-
     </StackPanel>
 </UserControl>

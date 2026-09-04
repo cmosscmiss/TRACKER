@@ -9,70 +9,83 @@
     xmlns:loc="using:Tracker.Markup"
     mc:Ignorable="d">
 
-    <!-- Página de la categoría General. Los controles editan el staging del SettingsDialogViewModel (DataContext
-         heredado); OK/Apply los aplica a AppSettings, Cancel los descarta. -->
+    <!-- Página de la categoría General. -->
     <StackPanel Spacing="14">
+        <!-- INTERFAZ -->
+        <StackPanel Spacing="2">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_InterfaceSection_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+            <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        </StackPanel>
+        <StackPanel Padding="20 0" Spacing="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=GeneralSettings_Language_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <ComboBox x:Name="LanguageCombo" Grid.Column="1" MinWidth="220" HorizontalAlignment="Left" ItemsSource="{Binding LanguageOptions}" DisplayMemberPath="DisplayName" SelectionChanged="OnLanguageSelectionChanged"/>
+            </Grid>
+            <CheckBox IsChecked="{Binding ShowWidgetHeader, Mode=TwoWay}">
+                <TextBlock Text="{loc:Str Key=GeneralSettings_ShowWidgetHeader_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+            <CheckBox IsChecked="{Binding FooterEventViewerAlwaysVisible, Mode=TwoWay}">
+                <TextBlock Text="{loc:Str Key=GeneralSettings_FooterEventViewer_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+        </StackPanel>
 
-        <!-- Idioma de la interfaz. Cambia EN CALIENTE al aceptar un idioma distinto. -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=GeneralSettings_Language_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <ComboBox x:Name="LanguageCombo" Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
-                      ItemsSource="{Binding LanguageOptions}"
-                      DisplayMemberPath="DisplayName"
-                      SelectionChanged="OnLanguageSelectionChanged"/>
-        </Grid>
+        <!-- DATOS -->
+        <StackPanel Spacing="2" Margin="0 8 0 0">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_DataSection_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+            <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        </StackPanel>        
+        <StackPanel Padding="20 0" Spacing="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=GeneralSettings_AutoRefreshHours_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number" Text="{Binding AutoRefreshHoursText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=GeneralSettings_DollarsPerEuro_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number" Text="{Binding DollarsPerEuroText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=GeneralSettings_YensPerEuro_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number" Text="{Binding YensPerEuroText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <CheckBox IsChecked="{Binding ExceptionLoggingEnabled, Mode=TwoWay}">
+                <TextBlock Text="{loc:Str Key=GeneralSettings_LogExceptions_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+        </StackPanel>
 
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
-        <!-- Intervalo de actualización automática de precios (horas). -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=GeneralSettings_AutoRefreshHours_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number"
-                     Text="{Binding AutoRefreshHoursText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </Grid>
-
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
-        <!-- Tipos de cambio FIJOS: unidades por euro. Convierten a euros los precios de amazon.com (dólares) y
-             amazon.co.jp (yenes) para poder compararlos con los de las tiendas de la eurozona. -->
-        <TextBlock Text="{loc:Str Key=GeneralSettings_ExchangeRates_Header}" FontWeight="SemiBold" Foreground="{ThemeResource AccentLightBrush}"/>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=GeneralSettings_DollarsPerEuro_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number"
-                     Text="{Binding DollarsPerEuroText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </Grid>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=GeneralSettings_YensPerEuro_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <TextBox Grid.Column="1" MinWidth="140" HorizontalAlignment="Left" InputScope="Number"
-                     Text="{Binding YensPerEuroText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </Grid>
-
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
-        <!-- Interruptores. -->
-        <CheckBox Content="{loc:Str Key=GeneralSettings_ShowWidgetHeader_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ShowWidgetHeader, Mode=TwoWay}"/>
-        <CheckBox Content="{loc:Str Key=GeneralSettings_FooterEventViewer_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding FooterEventViewerAlwaysVisible, Mode=TwoWay}"/>
-        <CheckBox Content="{loc:Str Key=GeneralSettings_MinimizeToTray_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding MinimizeToTray, Mode=TwoWay}"/>
-        <CheckBox Content="{loc:Str Key=GeneralSettings_StartWithWindows_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding StartWithWindows, Mode=TwoWay}"/>
-        <CheckBox Content="{loc:Str Key=GeneralSettings_LogExceptions_Label}" Foreground="{ThemeResource TextBrush}" IsChecked="{Binding ExceptionLoggingEnabled, Mode=TwoWay}"/>
-
+        <!-- VENTANA -->
+        <StackPanel Spacing="2" Margin="0 8 0 0">
+            <TextBlock Text="{loc:Str Key=GeneralSettings_WindowSection_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+            <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        </StackPanel>
+        <StackPanel Padding="20 0" Spacing="8">
+            <CheckBox IsChecked="{Binding MinimizeToTray, Mode=TwoWay}">
+                <TextBlock Text="{loc:Str Key=GeneralSettings_MinimizeToTray_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+            <CheckBox IsChecked="{Binding RestoreMaximized, Mode=TwoWay}">
+                <TextBlock Text="{loc:Str Key=GeneralSettings_RestoreMaximized_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+            <CheckBox IsChecked="{Binding StartWithWindows, Mode=TwoWay}">
+                <TextBlock Text="{loc:Str Key=GeneralSettings_StartWithWindows_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+            <CheckBox Margin="24 0 0 0" IsChecked="{Binding StartMinimizedOnAutoStart, Mode=TwoWay}" IsEnabled="{Binding StartWithWindows}">
+                <TextBlock Text="{loc:Str Key=GeneralSettings_StartMinimized_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+        </StackPanel>
     </StackPanel>
 </UserControl>

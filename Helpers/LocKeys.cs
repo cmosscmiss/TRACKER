@@ -124,6 +124,7 @@ public static class LocKeys
     public const string ThemeColors_Title = "ThemeColors_Title";
     public const string ThemeColors_Revert = "ThemeColors_Revert";
     public const string ThemeColors_Swatches = "ThemeColors_Swatches";
+    public const string ThemeColors_Picker_Header = "ThemeColors_Picker_Header";
     // Nombres (genéricos) de cada color; el control resuelve la clave como "ThemeColors_Name_" + nombre base.
     public const string ThemeColors_Name_Accent = "ThemeColors_Name_Accent";
     public const string ThemeColors_Name_AccentLight = "ThemeColors_Name_AccentLight";
@@ -158,13 +159,18 @@ public static class LocKeys
     public const string GeneralSettings_FooterEventViewer_Label = "GeneralSettings_FooterEventViewer_Label";
     public const string GeneralSettings_LogExceptions_Label = "GeneralSettings_LogExceptions_Label";
     public const string GeneralSettings_AutoRefreshHours_Label = "GeneralSettings_AutoRefreshHours_Label";
-    public const string GeneralSettings_ExchangeRates_Header = "GeneralSettings_ExchangeRates_Header";
+    public const string GeneralSettings_InterfaceSection_Header = "GeneralSettings_InterfaceSection_Header";
+    public const string GeneralSettings_DataSection_Header = "GeneralSettings_DataSection_Header";
+    public const string GeneralSettings_WindowSection_Header = "GeneralSettings_WindowSection_Header";
     public const string GeneralSettings_DollarsPerEuro_Label = "GeneralSettings_DollarsPerEuro_Label";
     public const string GeneralSettings_YensPerEuro_Label = "GeneralSettings_YensPerEuro_Label";
     public const string GeneralSettings_MinimizeToTray_Label = "GeneralSettings_MinimizeToTray_Label";
     public const string GeneralSettings_StartWithWindows_Label = "GeneralSettings_StartWithWindows_Label";
+    public const string GeneralSettings_StartMinimized_Label = "GeneralSettings_StartMinimized_Label";
+    public const string GeneralSettings_RestoreMaximized_Label = "GeneralSettings_RestoreMaximized_Label";
     public const string ThemeSettings_Theme_Label = "ThemeSettings_Theme_Label";
     public const string ThemeSettings_RandomTheme_Label = "ThemeSettings_RandomTheme_Label";
+    public const string ThemeSettings_ThemeSection_Header = "ThemeSettings_ThemeSection_Header";
     public const string ThemeSettings_BackgroundOverlay_Header = "ThemeSettings_BackgroundOverlay_Header";
     public const string ThemeSettings_TintOpacity_Label = "ThemeSettings_TintOpacity_Label";
     public const string ThemeSettings_TintSaturation_Label = "ThemeSettings_TintSaturation_Label";
@@ -173,15 +179,13 @@ public static class LocKeys
     public const string ThemeSettings_OverlayOpacity_Label = "ThemeSettings_OverlayOpacity_Label";
     public const string ThemeSettings_UseCustomColors_Label = "ThemeSettings_UseCustomColors_Label";
     public const string ThemeSettings_EditColors_Label = "ThemeSettings_EditColors_Label";
-    public const string AboutSettings_Tagline_Text = "AboutSettings_Tagline_Text";
     public const string AboutSettings_Description_Text = "AboutSettings_Description_Text";
     public const string AboutSettings_Details_Header = "AboutSettings_Details_Header";
     public const string AboutSettings_Build_Label = "AboutSettings_Build_Label";
     public const string AboutSettings_Runtime_Label = "AboutSettings_Runtime_Label";
     public const string AboutSettings_Architecture_Label = "AboutSettings_Architecture_Label";
+    public const string AboutSettings_DevelopedBy_Label = "AboutSettings_DevelopedBy_Label";
     public const string AboutSettings_ThirdParty_Header = "AboutSettings_ThirdParty_Header";
-    public const string AboutSettings_AccentNote_Text = "AboutSettings_AccentNote_Text";
-    public const string AboutSettings_Copyright_Text = "AboutSettings_Copyright_Text";
 
     // Amazon login/logout
     public const string AmazonLogin_Tooltip = "AmazonLogin_Tooltip";
@@ -283,6 +287,7 @@ public static class LocKeys
     public const string ProductList_FilterHistoricalLow_Label = "ProductList_FilterHistoricalLow_Label";
     public const string ProductList_FilterAlert_Label = "ProductList_FilterAlert_Label";
     public const string ProductList_FilterPurchased_Label = "ProductList_FilterPurchased_Label";
+    public const string ProductList_FilterWithoutPrice_Label = "ProductList_FilterWithoutPrice_Label";
     public const string ProductList_Count_Format = "ProductList_Count_Format";
     public const string ProductList_Sort_Tooltip = "ProductList_Sort_Tooltip";
     public const string ProductList_SortPriceAsc_Label = "ProductList_SortPriceAsc_Label";

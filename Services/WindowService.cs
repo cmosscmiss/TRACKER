@@ -414,6 +414,34 @@ public class WindowService
     }
 
     /// <summary>
+    /// Indica si la ventana debería volver a mostrarse MAXIMIZADA: o lo está ahora mismo, o está escondida/minimizada
+    /// con el "restaurar a maximizada" pendiente. Lo consulta la restauración desde la bandeja, donde un
+    /// <c>SW_RESTORE</c> a secas desmaximizaría una ventana que se escondió maximizada.
+    /// </summary>
+    public bool ShouldRestoreMaximized(Window window)
+    {
+        var hWnd = WindowNative.GetWindowHandle(window);
+        var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
+        var appWindow = AppWindow.GetFromWindowId(windowId);
+
+        if (appWindow.IsVisible
+            && appWindow.Presenter is OverlappedPresenter presenter
+            && presenter.State == OverlappedPresenterState.Maximized)
+        {
+            return true;
+        }
+
+        // Escondida en la bandeja: el estilo WS_MAXIMIZE sobrevive al SW_HIDE (a diferencia del showCmd del placement
+        // nativo, que puede reportar ya el estado "oculta"), así que es la señal más fiable de que se escondió estando
+        // maximizada. Si NO lo estaba —tamaño ajustado a mano—, aquí se devuelve false y la ventana vuelve tal cual.
+        if ((GetWindowLongPtr(hWnd, GWL_STYLE).ToInt64() & WS_MAXIMIZE) != 0)
+            return true;
+
+        // Minimizada: showCmd/WPF_RESTORETOMAXIMIZED dicen si al restaurarla volvería a maximizarse.
+        return TryGetNativePlacement(hWnd)?.IsMaximized ?? false;
+    }
+
+    /// <summary>
     /// Placement NATIVO de la ventana (Win32 <c>GetWindowPlacement</c>): devuelve la geometría "restaurada"
     /// (<c>rcNormalPosition</c>) y si la ventana volvería a maximizarse, valores que siguen siendo correctos con la
     /// ventana escondida o minimizada (a diferencia de <c>AppWindow.Position</c>). null si la llamada falla.
@@ -436,6 +464,12 @@ public class WindowService
     }
 
     #region Win32 window placement
+    /// <summary>Índice de GetWindowLongPtr para leer los estilos de la ventana.</summary>
+    private const int GWL_STYLE = -16;
+
+    /// <summary>Estilo presente mientras la ventana está maximizada (se conserva aunque esté escondida).</summary>
+    private const long WS_MAXIMIZE = 0x01000000;
+
     private const int SW_SHOWMAXIMIZED = 3;
     private const int WPF_RESTORETOMAXIMIZED = 0x0002;
 

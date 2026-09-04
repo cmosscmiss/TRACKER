@@ -39,6 +39,7 @@ public sealed class TrayIcon : IDisposable
     private const int SW_HIDE = 0;
     private const int SW_SHOW = 5;
     private const int SW_RESTORE = 9;
+    private const int SW_SHOWMAXIMIZED = 3;
 
     private const int NIM_ADD = 0;
     private const int NIM_MODIFY = 1;
@@ -70,6 +71,14 @@ public sealed class TrayIcon : IDisposable
     /// restaurar o salir desde su menú.
     /// </summary>
     public Func<bool>? MinimizeToTrayProvider { get; set; }
+
+    /// <summary>
+    /// Consulta EN VIVO si la ventana debe salir de la bandeja MAXIMIZADA (ajuste
+    /// <c>AppSettings.GeneralSettings.RestoreMaximized</c> + estado real de la ventana). Es necesario porque un
+    /// <c>SW_RESTORE</c> a secas desmaximiza: sin esto, una ventana escondida estando maximizada volvía en tamaño
+    /// normal. Si devuelve false (o no se ha fijado), se restaura como siempre.
+    /// </summary>
+    public Func<bool>? RestoreMaximizedProvider { get; set; }
 
     /// <summary>Lo dispara la opción "Exit" del menú del icono (botón derecho): la ventana debe cerrarse de verdad.</summary>
     public event Action? ExitRequested;
@@ -185,8 +194,18 @@ public sealed class TrayIcon : IDisposable
 
     private void RestoreFromTray()
     {
-        ShowWindow(_hwnd, SW_SHOW);
-        ShowWindow(_hwnd, SW_RESTORE);
+        // Maximizada: un solo SW_SHOWMAXIMIZED (mostrar + maximizar). El SW_RESTORE del camino normal es justo lo
+        // contrario —restaura el tamaño no maximizado—, así que aquí no se encadena.
+        if (RestoreMaximizedProvider?.Invoke() ?? false)
+        {
+            ShowWindow(_hwnd, SW_SHOWMAXIMIZED);
+        }
+        else
+        {
+            ShowWindow(_hwnd, SW_SHOW);
+            ShowWindow(_hwnd, SW_RESTORE);
+        }
+
         SetForegroundWindow(_hwnd);
     }
 

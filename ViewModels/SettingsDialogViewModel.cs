@@ -90,6 +90,12 @@ public partial class SettingsDialogViewModel : ObservableObject
     /// <summary>Si true, la app se registra para arrancar automáticamente al iniciar sesión en Windows.</summary>
     [ObservableProperty] private bool startWithWindows;
 
+    /// <summary>Si true, el arranque automático con Windows deja la app escondida en la bandeja (sin mostrar la ventana).</summary>
+    [ObservableProperty] private bool startMinimizedOnAutoStart;
+
+    /// <summary>Si true, la ventana vuelve a mostrarse maximizada (y en su monitor) cuando se cerró maximizada.</summary>
+    [ObservableProperty] private bool restoreMaximized;
+
     /// <summary>Horas entre actualizaciones automáticas de precios (mínimo 1). Se aplica al planificador al aceptar.</summary>
     [ObservableProperty] private double autoRefreshHours;
 
@@ -361,6 +367,13 @@ public partial class SettingsDialogViewModel : ObservableObject
         if (startWithWindowsChanged)
             StartupService.Apply(StartWithWindows);
 
+        // Solo se consulta en el arranque automático (el argumento --autostart ya va en la clave Run pase lo que pase,
+        // así que este ajuste no obliga a reescribirla).
+        g.StartMinimizedOnAutoStart = StartMinimizedOnAutoStart;
+
+        // Se lee EN VIVO al mostrar la ventana (arranque o salida de la bandeja): no hace falta reiniciar.
+        g.RestoreMaximized = RestoreMaximized;
+
         // Idioma: se aplica EN CALIENTE (los textos localizados se refrescan solos por notificación del servicio).
         string newLanguage = SelectedLanguageOption?.Code ?? "en";
         g.Language = newLanguage;
@@ -480,6 +493,8 @@ public partial class SettingsDialogViewModel : ObservableObject
         ExceptionLoggingEnabled = g.ExceptionLoggingEnabled;
         MinimizeToTray = g.MinimizeToTray;
         StartWithWindows = g.StartWithWindows;
+        StartMinimizedOnAutoStart = g.StartMinimizedOnAutoStart;
+        RestoreMaximized = g.RestoreMaximized;
         AutoRefreshHours = g.AutoRefreshHours;
         DollarsPerEuro = g.DollarsPerEuro;
         YensPerEuro = g.YensPerEuro;

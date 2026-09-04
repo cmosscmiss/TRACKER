@@ -141,7 +141,10 @@
     <value>Revert</value>
   </data>
   <data name="ThemeColors_Swatches" xml:space="preserve">
-    <value>Swatches (base + opacity)</value>
+    <value>SWATCHES (BASE + OPACITY)</value>
+  </data>
+  <data name="ThemeColors_Picker_Header" xml:space="preserve">
+    <value>COLOR PICKER</value>
   </data>
   <data name="ThemeColors_Name_Accent" xml:space="preserve">
     <value>Accent</value>
@@ -404,6 +407,9 @@
   <data name="ProductList_FilterAlert_Label" xml:space="preserve">
     <value>With price alert</value>
   </data>
+  <data name="ProductList_FilterWithoutPrice_Label" xml:space="preserve">
+    <value>Without price</value>
+  </data>
   <data name="ProductList_FilterPurchased_Label" xml:space="preserve">
     <value>Purchased</value>
   </data>
@@ -495,7 +501,7 @@
     <value>Apply</value>
   </data>
   <data name="Common_AppName" xml:space="preserve">
-    <value>Tracker</value>
+    <value>TRACKER</value>
   </data>
   <data name="Toolbar_Settings_Tooltip" xml:space="preserve">
     <value>Settings</value>
@@ -525,13 +531,19 @@
     <value>Always show the footer event viewer</value>
   </data>
   <data name="GeneralSettings_LogExceptions_Label" xml:space="preserve">
-    <value>Log exceptions to a file</value>
+    <value>Log exceptions</value>
   </data>
   <data name="GeneralSettings_AutoRefreshHours_Label" xml:space="preserve">
-    <value>Auto-refresh prices every (hours)</value>
+    <value>Refresh prices (hours)</value>
   </data>
-  <data name="GeneralSettings_ExchangeRates_Header" xml:space="preserve">
-    <value>Exchange rates (fixed)</value>
+  <data name="GeneralSettings_InterfaceSection_Header" xml:space="preserve">
+    <value>INTERFACE</value>
+  </data>
+  <data name="GeneralSettings_DataSection_Header" xml:space="preserve">
+    <value>DATA</value>
+  </data>
+  <data name="GeneralSettings_WindowSection_Header" xml:space="preserve">
+    <value>WINDOW</value>
   </data>
   <data name="GeneralSettings_DollarsPerEuro_Label" xml:space="preserve">
     <value>Dollars per euro (amazon.com)</value>
@@ -540,19 +552,28 @@
     <value>Yen per euro (amazon.co.jp)</value>
   </data>
   <data name="GeneralSettings_MinimizeToTray_Label" xml:space="preserve">
-    <value>Minimise to the system tray instead of closing the app</value>
+    <value>Close to system tray</value>
   </data>
   <data name="GeneralSettings_StartWithWindows_Label" xml:space="preserve">
-    <value>Start automatically when Windows starts</value>
+    <value>Start with Windows</value>
+  </data>
+  <data name="GeneralSettings_StartMinimized_Label" xml:space="preserve">
+    <value>Start minimised (system tray)</value>
+  </data>
+  <data name="GeneralSettings_RestoreMaximized_Label" xml:space="preserve">
+    <value>Restore maximised</value>
   </data>
   <data name="ThemeSettings_Theme_Label" xml:space="preserve">
     <value>Theme</value>
   </data>
   <data name="ThemeSettings_RandomTheme_Label" xml:space="preserve">
-    <value>Pick a random theme on each launch</value>
+    <value>Random theme on launch</value>
+  </data>
+  <data name="ThemeSettings_ThemeSection_Header" xml:space="preserve">
+    <value>THEME</value>
   </data>
   <data name="ThemeSettings_BackgroundOverlay_Header" xml:space="preserve">
-    <value>Background Overlay</value>
+    <value>BACKGROUND OVERLAY</value>
   </data>
   <data name="ThemeSettings_TintOpacity_Label" xml:space="preserve">
     <value>Tint opacity</value>
@@ -575,14 +596,11 @@
   <data name="ThemeSettings_EditColors_Label" xml:space="preserve">
     <value>Custom colours...</value>
   </data>
-  <data name="AboutSettings_Tagline_Text" xml:space="preserve">
-    <value>Amazon price tracker</value>
-  </data>
   <data name="AboutSettings_Description_Text" xml:space="preserve">
     <value>Tracker monitors the prices of your Amazon products across marketplaces, charts their history and highlights the best deals.</value>
   </data>
   <data name="AboutSettings_Details_Header" xml:space="preserve">
-    <value>Details</value>
+    <value>DETAILS</value>
   </data>
   <data name="AboutSettings_Build_Label" xml:space="preserve">
     <value>Build</value>
@@ -593,14 +611,11 @@
   <data name="AboutSettings_Architecture_Label" xml:space="preserve">
     <value>Architecture</value>
   </data>
+  <data name="AboutSettings_DevelopedBy_Label" xml:space="preserve">
+    <value>Developed by</value>
+  </data>
   <data name="AboutSettings_ThirdParty_Header" xml:space="preserve">
-    <value>Third-party components</value>
-  </data>
-  <data name="AboutSettings_AccentNote_Text" xml:space="preserve">
-    <value>The accent colour comes from the active theme.</value>
-  </data>
-  <data name="AboutSettings_Copyright_Text" xml:space="preserve">
-    <value>Built with WinUI 3 and the Windows App SDK.</value>
+    <value>THIRD-PARTY COMPONENTS</value>
   </data>
   <data name="AmazonLogin_Tooltip" xml:space="preserve">
     <value>Sign in to Amazon</value>

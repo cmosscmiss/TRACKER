@@ -49,6 +49,15 @@ public sealed partial class MainWindow : Window
     // Expuesto para los x:Bind del XAML (x:Bind resuelve contra el code-behind, no contra el DataContext).
     public MainWindowViewModel ViewModel => _viewModel;
 
+    /// <summary>
+    /// Si es true, la ventana se esconde en la bandeja del sistema en cuanto ha terminado de cargar, sin llegar a
+    /// usarse: es el arranque automático con Windows con el ajuste
+    /// <c>AppSettings.GeneralSettings.StartMinimizedOnAutoStart</c> activo. La fija <see cref="App"/> ANTES de
+    /// activar la ventana. Se esconde al final de la carga (no antes) para que el árbol visual, los widgets y el pool
+    /// de scraping se inicialicen con la ventana visible; a cambio, se ve un instante al iniciar sesión.
+    /// </summary>
+    public bool StartHiddenInTray { get; set; }
+
     #endregion
 
     #region Constructor
@@ -90,6 +99,10 @@ public sealed partial class MainWindow : Window
         // permite al scheduler seguir leyendo precios. Con el ajuste activo, la app solo se cierra desde el menú del
         // icono (botón derecho -> Exit), que es lo que dispara ExitRequested.
         _trayIcon.MinimizeToTrayProvider = () => _appSettings.General.MinimizeToTray;
+
+        // Al sacar la ventana de la bandeja se recupera el estado maximizado (ajuste RestoreMaximized, leído EN VIVO),
+        // que es el otro momento —además del arranque— en que la ventana aparece en pantalla.
+        _trayIcon.RestoreMaximizedProvider = () => _appSettings.General.RestoreMaximized && _windowService.ShouldRestoreMaximized(this);
         _trayIcon.ExitRequested += OnTrayExitRequested;
         _trayIcon.Initialize(WinRT.Interop.WindowNative.GetWindowHandle(this), "Tracker");
 
@@ -117,6 +130,11 @@ public sealed partial class MainWindow : Window
         _initialized = true;
 
         var placement = _viewModel.GetSavedWindowPlacement();
+
+        // Ajuste "restaurar maximizada": si está desactivado, se conservan posición, tamaño y monitor guardados, pero
+        // la ventana se muestra sin maximizar aunque se cerrara así.
+        if (placement is not null && !_appSettings.General.RestoreMaximized)
+            placement.IsMaximized = false;
 
         _windowService.MainWindow(
             this,
@@ -172,9 +190,14 @@ public sealed partial class MainWindow : Window
 
         await InitializeScraperAsync();
 
-        // TEMPORAL (pruebas de estilo del popup de settings): abre la ventana de ajustes al arrancar.
-        if (Content is FrameworkElement rootElement)
-            _ = App.GetService<DialogsService>().ShowSettingsAsync(rootElement.XamlRoot);
+        // Arranque automático con Windows y ajuste "arrancar minimizada": ya está todo inicializado, así que la
+        // ventana desaparece a la bandeja. Se esconde SIEMPRE en la bandeja (el icono existe con independencia de
+        // MinimizeToTray), que es de donde se recupera con un clic o con el menú del botón derecho.
+        if (StartHiddenInTray)
+        {
+            StartHiddenInTray = false;   // solo aplica al arranque; a partir de aquí la ventana es una más
+            _trayIcon.Hide();
+        }
     }
 
     /// <summary>

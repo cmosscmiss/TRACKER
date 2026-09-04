@@ -9,117 +9,106 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!-- Página de la categoría Theme: selector del tema visual activo + resto de parámetros de AppSettings.ThemeSettings.
-         Todo se aplica en caliente al pulsar OK/Apply (SettingsDialogViewModel.Apply -> ThemeService.ApplyTheme +
-         refresco del TintedImage de la ventana principal). DataContext heredado del SettingsDialogViewModel. -->
+    <!-- Página de la categoría Theme. Mismo patrón de grupo/fila que la página General. -->
     <StackPanel Spacing="12">
-        <!-- Tema activo. -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=ThemeSettings_Theme_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <ComboBox Grid.Column="1" MinWidth="220" HorizontalAlignment="Left"
-                      ItemsSource="{Binding ThemeNames}"
-                      SelectedItem="{Binding SelectedThemeName, Mode=TwoWay}"/>
-        </Grid>
+        <!-- TEMA -->
+        <StackPanel Spacing="2">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_ThemeSection_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+            <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        </StackPanel>
+        <StackPanel Padding="20 0" Spacing="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=ThemeSettings_Theme_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <ComboBox Grid.Column="1" MinWidth="220" HorizontalAlignment="Left" ItemsSource="{Binding ThemeNames}" SelectedItem="{Binding SelectedThemeName, Mode=TwoWay}"/>
+            </Grid>
+            <CheckBox IsChecked="{Binding RandomTheme, Mode=TwoWay}">
+                <TextBlock Text="{loc:Str Key=ThemeSettings_RandomTheme_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox IsChecked="{Binding UseCustomColors, Mode=TwoWay}" VerticalAlignment="Center">
+                    <TextBlock Text="{loc:Str Key=ThemeSettings_UseCustomColors_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                </CheckBox>
+                <!-- Icono + texto, como los botones del pie del AppDialog: el FontIcon no hereda el Foreground del
+                     ContentPresenter (WinUI le pone el suyo), así que se enlaza al del propio botón. -->
+                <Button x:Name="EditColorsButton" Grid.Column="1" HorizontalAlignment="Left" Command="{Binding EditColorsCommand}" IsEnabled="{Binding UseCustomColors}">
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE790;" FontSize="14" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=EditColorsButton}"/>
+                        <TextBlock Text="{loc:Str Key=ThemeSettings_EditColors_Label}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </StackPanel>
 
-        <CheckBox Content="{loc:Str Key=ThemeSettings_RandomTheme_Label}" Foreground="{ThemeResource TextBrush}"
-                  IsChecked="{Binding RandomTheme, Mode=TwoWay}"/>
-
-        <!-- Colores personalizados: el flag habilita el botón que abre el editor de colores del tema (que oculta este
-             diálogo de ajustes y vuelve a él al aceptar). -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <CheckBox Content="{loc:Str Key=ThemeSettings_UseCustomColors_Label}" Foreground="{ThemeResource TextBrush}"
-                      VerticalAlignment="Center" IsChecked="{Binding UseCustomColors, Mode=TwoWay}"/>
-            <Button Grid.Column="1" HorizontalAlignment="Left" Content="{loc:Str Key=ThemeSettings_EditColors_Label}"
-                    Command="{Binding EditColorsCommand}" IsEnabled="{Binding UseCustomColors}"/>
-        </Grid>
-
+        <!-- OVERLAY DEL FONDO (ventana principal) -->
+        <StackPanel Spacing="2" Margin="0 8 0 0">
+            <TextBlock Text="{loc:Str Key=ThemeSettings_BackgroundOverlay_Header}" Style="{StaticResource GroupHeaderStyle}"/>
+            <template:SeparatorEx Margin="0 4" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+        </StackPanel>
         <!-- Preview en vivo del fondo del tema seleccionado (staging, no aplicado). -->
-        <Border CornerRadius="6" BorderThickness="1" BorderBrush="{ThemeResource CardBackgroundLightBrush}">
-            <template:TintedImage Height="160" HorizontalAlignment="Stretch"
-                                  Source="{Binding ThemePreviewSource}"
-                                  TintColor="{Binding ThemePreviewTintColor}"
-                                  TintOpacity="{Binding TintOpacity}"
-                                  TintSaturation="{Binding TintSaturation}"
-                                  TintBrightness="{Binding TintBrightness}"
-                                  BlendMode="Hue"/>
-        </Border>
-
-        <template:SeparatorEx Margin="0 4" Thickness="1" UseGradient="True"/>
-
-        <!-- Tinte del overlay del fondo (ventana principal). -->
-        <TextBlock Text="{loc:Str Key=ThemeSettings_BackgroundOverlay_Header}" Foreground="{ThemeResource TextSecondaryBrush}"/>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="56"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=ThemeSettings_TintOpacity_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center"
-                    Value="{Binding TintOpacity, Mode=TwoWay}"/>
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
-                       Text="{Binding TintOpacity}"/>
-        </Grid>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="56"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=ThemeSettings_TintSaturation_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center"
-                    Value="{Binding TintSaturation, Mode=TwoWay}"/>
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
-                       Text="{Binding TintSaturation}"/>
-        </Grid>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="56"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=ThemeSettings_TintBrightness_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center"
-                    Value="{Binding TintBrightness, Mode=TwoWay}"/>
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
-                       Text="{Binding TintBrightness}"/>
-        </Grid>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="56"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayBlur_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <Slider Grid.Column="1" Minimum="0" Maximum="50" StepFrequency="1" VerticalAlignment="Center"
-                    Value="{Binding OverlayImageBlur, Mode=TwoWay}"/>
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
-                       Text="{Binding OverlayImageBlur}"/>
-        </Grid>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="56"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayOpacity_Label}" VerticalAlignment="Center" Foreground="{ThemeResource TextBrush}"/>
-            <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center"
-                    Value="{Binding OverlayImageOpacity, Mode=TwoWay}"/>
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextSecondaryBrush}"
-                       Text="{Binding OverlayImageOpacity}"/>
-        </Grid>
+        <StackPanel>
+            <Border Margin="20 0" CornerRadius="6" BorderThickness="1" BorderBrush="{ThemeResource CardBackgroundLightBrush}">
+                <template:TintedImage Height="160" HorizontalAlignment="Stretch" Source="{Binding ThemePreviewSource}" TintColor="{Binding ThemePreviewTintColor}" TintOpacity="{Binding TintOpacity}" TintSaturation="{Binding TintSaturation}" TintBrightness="{Binding TintBrightness}" BlendMode="Hue"/>
+            </Border>
+        </StackPanel>
+        <StackPanel Padding="20 0" Spacing="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayBlur_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <Slider Grid.Column="1" Minimum="0" Maximum="50" StepFrequency="1" VerticalAlignment="Center" Value="{Binding OverlayImageBlur, Mode=TwoWay}"/>
+                <TextBlock Grid.Column="2" Margin="0 0 8 0" HorizontalAlignment="Right" Style="{StaticResource FieldValueStyle}" Text="{Binding OverlayImageBlur}"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=ThemeSettings_OverlayOpacity_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center" Value="{Binding OverlayImageOpacity, Mode=TwoWay}"/>
+                <TextBlock Grid.Column="2" Margin="0 0 8 0" HorizontalAlignment="Right" Style="{StaticResource FieldValueStyle}" Text="{Binding OverlayImageOpacity}"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=ThemeSettings_TintBrightness_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center" Value="{Binding TintBrightness, Mode=TwoWay}"/>
+                <TextBlock Grid.Column="2" Margin="0 0 8 0" HorizontalAlignment="Right" Style="{StaticResource FieldValueStyle}" Text="{Binding TintBrightness}"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=ThemeSettings_TintOpacity_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <Slider Grid.Column="1" Minimum="0" Maximum="1" StepFrequency="0.01" VerticalAlignment="Center" Value="{Binding TintOpacity, Mode=TwoWay}"/>
+                <TextBlock Grid.Column="2" Margin="0 0 8 0" HorizontalAlignment="Right" Style="{StaticResource FieldValueStyle}" Text="{Binding TintOpacity}"/>
+            </Grid>
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Str Key=ThemeSettings_TintSaturation_Label}" Style="{StaticResource FieldLabelStyle}"/>
+                <Slider Grid.Column="1" Minimum="0" Maximum="2" StepFrequency="0.01" VerticalAlignment="Center" Value="{Binding TintSaturation, Mode=TwoWay}"/>
+                <TextBlock Grid.Column="2" Margin="0 0 8 0" HorizontalAlignment="Right" Style="{StaticResource FieldValueStyle}" Text="{Binding TintSaturation}"/>
+            </Grid>
+        </StackPanel>
     </StackPanel>
 </UserControl>

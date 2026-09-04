@@ -35,8 +35,16 @@ public partial class ProductFilters : ObservableObject
     [ObservableProperty]
     private bool _withPurchased;
 
+    /// <summary>
+    /// Solo productos SIN precio: los que la lista muestra con "—" porque no hay ninguna lectura utilizable
+    /// (ninguna tienda activa con precio, o comprado sin precio de compra). Sirve para localizar los que no se
+    /// están leyendo bien.
+    /// </summary>
+    [ObservableProperty]
+    private bool _withoutPrice;
+
     /// <summary>True si hay al menos un filtro por variable activo.</summary>
-    public bool HasAny => Favorites || WithIssues || WithPriceChange || WithHistoricalLow || WithAlert || WithPurchased;
+    public bool HasAny => Favorites || WithIssues || WithPriceChange || WithHistoricalLow || WithAlert || WithPurchased || WithoutPrice;
 
     /// <summary>
     /// Aplica los filtros por variable activos (combinados con OR) a la secuencia dada. Si no hay ninguno activo,
@@ -53,6 +61,9 @@ public partial class ProductFilters : ObservableObject
             (WithPriceChange && (product.Trend == PriceTrend.Up || product.Trend == PriceTrend.Down)) ||
             (WithHistoricalLow && product.IsHistoricalLow) ||
             (WithAlert && product.HasAlert) ||
-            (WithPurchased && product.IsPurchased));
+            (WithPurchased && product.IsPurchased) ||
+            // Mismo criterio que el precio del recuadro de la lista (ListPrice): si ahí sale "—", el producto está
+            // sin precio.
+            (WithoutPrice && product.ListPrice is null));
     }
 }

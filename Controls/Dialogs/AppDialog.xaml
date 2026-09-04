@@ -41,7 +41,7 @@
         </Grid.Background>
 
         <!-- Caja del diálogo, centrada. -->
-        <Border x:Name="Card" HorizontalAlignment="Center" VerticalAlignment="Center" Tapped="OnCardTapped" Background="{ThemeResource CardBackgroundBrush}" BorderBrush="{ThemeResource AccentDarkBrushOpacity60}" BorderThickness="2" CornerRadius="8" MaxWidth="860" MinWidth="420" RenderTransformOrigin="0.5,0.5">
+        <Border x:Name="Card" HorizontalAlignment="Center" VerticalAlignment="Center" Tapped="OnCardTapped" Background="{ThemeResource BackgroundLightBrush}" BorderBrush="{ThemeResource AccentDarkBrushOpacity60}" BorderThickness="2" CornerRadius="8" MaxWidth="860" MinWidth="420" RenderTransformOrigin="0.5,0.5">
             <Border.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1"/>
@@ -59,8 +59,7 @@
 
                 <!-- Cabecera: logo + título en accent. Sirve de asa para arrastrar el diálogo (si draggable). El
                      Background transparente hace que capte el puntero en toda su superficie. -->
-                <StackPanel x:Name="HeaderBar" Grid.Row="0" Orientation="Horizontal" Spacing="12" Padding="12" Background="Transparent"
-                            PointerPressed="OnHeaderPointerPressed" PointerMoved="OnHeaderPointerMoved" PointerReleased="OnHeaderPointerReleased">
+                <StackPanel x:Name="HeaderBar" Grid.Row="0" Orientation="Horizontal" Spacing="12" Padding="12" Background="Transparent"  PointerPressed="OnHeaderPointerPressed" PointerMoved="OnHeaderPointerMoved" PointerReleased="OnHeaderPointerReleased">
                     <Image Source="ms-appx:///Assets/TRACKER-Logo.png" VerticalAlignment="Center" Height="24"/>
                     <TextBlock x:Name="TitleText" Style="{StaticResource SubTitleStyle}"/>
                 </StackPanel>
@@ -71,7 +70,7 @@
                 </Border>
 
                 <!-- Botonera a la derecha, con los estilos de la app. -->
-                <Grid Grid.Row="2" Background="{ThemeResource BackgroundLightBrush}" Margin="0 8 0 0" Padding="12 8">
+                <Grid Grid.Row="2" Background="{ThemeResource BackgroundBrush}" Margin="0 8 0 0" Padding="12 8">
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
                         <Button x:Name="CloseButton" Style="{StaticResource Button_Default}" MinWidth="96" Click="OnCloseClick" Visibility="Collapsed"/>
                         <Button x:Name="ApplyButton" Style="{StaticResource Button_Default}" MinWidth="96" Click="OnApplyClick" Visibility="Collapsed"/>
