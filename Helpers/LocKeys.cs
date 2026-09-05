@@ -292,6 +292,8 @@ public static class LocKeys
     public const string ProductList_Sort_Tooltip = "ProductList_Sort_Tooltip";
     public const string ProductList_SortPriceAsc_Label = "ProductList_SortPriceAsc_Label";
     public const string ProductList_SortPriceDesc_Label = "ProductList_SortPriceDesc_Label";
+    public const string ProductList_SortDateAsc_Label = "ProductList_SortDateAsc_Label";
+    public const string ProductList_SortDateDesc_Label = "ProductList_SortDateDesc_Label";
     public const string PriceChart_Alert_Tooltip = "PriceChart_Alert_Tooltip";
     public const string PriceChart_BelowAlert_Tooltip = "PriceChart_BelowAlert_Tooltip";
     public const string PriceChart_AlertDialog_Title = "PriceChart_AlertDialog_Title";

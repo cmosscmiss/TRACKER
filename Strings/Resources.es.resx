@@ -112,7 +112,7 @@
     <value>Rastrear un producto</value>
   </data>
   <data name="AddProduct_Dialog_Message" xml:space="preserve">
-    <value>Pega la URL del producto</value>
+    <value>URL del producto:</value>
   </data>
   <data name="AddProduct_Url_Placeholder" xml:space="preserve">
     <value>https://www.amazon.es/...</value>
@@ -196,10 +196,10 @@
     <value>FAVORITOS</value>
   </data>
   <data name="PriceChart_Favorite_Tooltip" xml:space="preserve">
-    <value>Marcar/quitar favorito</value>
+    <value>Marcar como favorito</value>
   </data>
   <data name="PriceChart_AltStores_Tooltip" xml:space="preserve">
-    <value>Seguir también amazon.com y amazon.co.jp en este producto</value>
+    <value>Seguir otras tiendas de amazon</value>
   </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Marketplace de Amazon</value>
@@ -214,7 +214,7 @@
     <value>Seleccionar la imagen del producto</value>
   </data>
   <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
-    <value>Añadir enlace alternativo al producto seleccionado</value>
+    <value>Añadir enlace alternativo</value>
   </data>
   <data name="PriceChart_CurrentPrice_Label" xml:space="preserve">
     <value>Actual</value>
@@ -280,16 +280,16 @@
     <value>Último refresco: nunca</value>
   </data>
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
-    <value>Mostrar u ocultar las etiquetas de los ejes</value>
+    <value>Alternar las etiquetas de los ejes</value>
   </data>
   <data name="Footer_MinChart_Tooltip" xml:space="preserve">
-    <value>Mostrar u ocultar la gráfica de evolución del precio mínimo</value>
+    <value>Alternar la gráfica de precio mínimo</value>
   </data>
   <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
-    <value>Mostrar/ocultar los tooltips de los botones</value>
+    <value>Alternar los tooltips</value>
   </data>
   <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
-    <value>Incluir los gastos de envío en el precio</value>
+    <value>Incluir gastos de envío</value>
   </data>
   <data name="Footer_ShowPurchased_Tooltip" xml:space="preserve">
     <value>Mostrar/ocultar productos comprados</value>
@@ -420,6 +420,12 @@
   <data name="ProductList_SortPriceDesc_Label" xml:space="preserve">
     <value>Precio: de mayor a menor</value>
   </data>
+  <data name="ProductList_SortDateAsc_Label" xml:space="preserve">
+    <value>Añadido: más antiguos primero</value>
+  </data>
+  <data name="ProductList_SortDateDesc_Label" xml:space="preserve">
+    <value>Añadido: más recientes primero</value>
+  </data>
   <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
     <value>Definir precio de alerta</value>
   </data>
@@ -439,7 +445,7 @@
     <value>Borrar producto</value>
   </data>
   <data name="PriceChart_DeleteDialog_Message" xml:space="preserve">
-    <value>¿Borrar "{0}" y su histórico de precios? Puedes deshacerlo desde el registro de actividad.</value>
+    <value>¿Borrar "{0}" y su histórico de precios? Puedes deshacerlo en el registro de actividad.</value>
   </data>
   <data name="PriceChart_RemoveLink_Tooltip" xml:space="preserve">
     <value>Eliminar enlace</value>
@@ -448,7 +454,7 @@
     <value>Eliminar enlace</value>
   </data>
   <data name="PriceChart_RemoveLinkDialog_Message" xml:space="preserve">
-    <value>¿Eliminar el enlace "{0}" de "{1}"? Puedes deshacerlo desde el registro de actividad.</value>
+    <value>¿Eliminar el enlace "{0}" de "{1}"? Puedes deshacerlo en el registro de actividad.</value>
   </data>
   <data name="PriceChart_PurchasedDialog_Title" xml:space="preserve">
     <value>Marcar como comprado</value>

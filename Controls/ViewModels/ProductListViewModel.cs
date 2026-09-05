@@ -12,6 +12,16 @@ using Tracker.Services;
 
 namespace Tracker.Controls.ViewModels;
 
+/// <summary>Criterio por el que se ordena la lista de productos cuando el orden está activo.</summary>
+public enum ProductSortField
+{
+    /// <summary>Por el mejor precio actual.</summary>
+    Price,
+
+    /// <summary>Por antigüedad: la fecha de alta en la base de datos (ver <see cref="Tracker.Models.Product.SortDate"/>).</summary>
+    Created
+}
+
 /// <summary>
 /// ViewModel asociado a <see cref="Views.ProductListControl"/>.
 ///
@@ -35,6 +45,11 @@ public partial class ProductListViewModel : WidgetViewModelBase
     private double _priceCeiling = 1;
     private double _minPrice;
     private double _maxPrice = 1;
+    private ProductSortField _sortField = ProductSortField.Price;
+    private IReadOnlyList<int> _priceHistogram = System.Array.Empty<int>();
+
+    /// <summary>Nº de tramos (barras) del histograma de precios que se dibuja sobre el slider de rango.</summary>
+    private const int PriceHistogramBuckets = 48;
 
     /// <summary>Propiedades de un producto que, al cambiar, pueden alterar si pasa los filtros o el orden por precio.</summary>
     private static readonly HashSet<string> FilterAffectingProperties = new()
@@ -86,11 +101,18 @@ public partial class ProductListViewModel : WidgetViewModelBase
         set { if (SetProperty(ref _sortByPrice, value)) ApplyFilters(); }
     }
 
-    /// <summary>Dirección del orden por precio: false = ascendente (por defecto), true = descendente. Al cambiar, reordena.</summary>
+    /// <summary>Dirección del orden: false = ascendente (por defecto), true = descendente. Al cambiar, reordena.</summary>
     public bool SortDescending
     {
         get => _sortDescending;
         set { if (SetProperty(ref _sortDescending, value)) ApplyFilters(); }
+    }
+
+    /// <summary>Criterio del orden mientras el interruptor maestro está activo: por precio o por antigüedad.</summary>
+    public ProductSortField SortField
+    {
+        get => _sortField;
+        set { if (SetProperty(ref _sortField, value)) ApplyFilters(); }
     }
 
     /// <summary>
@@ -121,6 +143,18 @@ public partial class ProductListViewModel : WidgetViewModelBase
             if (SetProperty(ref _priceCeiling, value))
                 OnPropertyChanged(nameof(PriceCeilingText));
         }
+    }
+
+    /// <summary>
+    /// Distribución de precios para el histograma que se dibuja sobre el slider: cuántos productos con precio caen en
+    /// cada uno de los <see cref="PriceHistogramBuckets"/> tramos iguales en que se reparte
+    /// <see cref="PriceFloor"/>..<see cref="PriceCeiling"/>. Se reemplaza entera al recalcularse (el binding es OneWay
+    /// sobre la lista, no sobre sus elementos).
+    /// </summary>
+    public IReadOnlyList<int> PriceHistogram
+    {
+        get => _priceHistogram;
+        private set => SetProperty(ref _priceHistogram, value);
     }
 
     /// <summary>Extremo INFERIOR del rango de precio elegido con el slider (igual al suelo = sin límite por abajo).</summary>
@@ -275,11 +309,20 @@ public partial class ProductListViewModel : WidgetViewModelBase
             source = source.Where(product => product.ListPrice is decimal price && price >= min && price <= max);
         }
 
-        // Orden: si el maestro está activo, por mejor precio (sin precio => al final); si no, se conserva el alfabético.
+        // Orden: si el maestro está activo, por el criterio elegido (los productos sin dato quedan al final en ambas
+        // direcciones); si no, se conserva el alfabético de la fuente.
         if (SortByPrice)
-            source = SortDescending
-                ? source.OrderByDescending(product => product.BestPrice ?? decimal.MinValue)
-                : source.OrderBy(product => product.BestPrice ?? decimal.MaxValue);
+        {
+            source = SortField switch
+            {
+                ProductSortField.Created => SortDescending
+                    ? source.OrderByDescending(product => product.SortDate ?? DateTime.MinValue)
+                    : source.OrderBy(product => product.SortDate ?? DateTime.MaxValue),
+                _ => SortDescending
+                    ? source.OrderByDescending(product => product.BestPrice ?? decimal.MinValue)
+                    : source.OrderBy(product => product.BestPrice ?? decimal.MaxValue),
+            };
+        }
 
         List<Product> desired = source.ToList();
 
@@ -324,7 +367,10 @@ public partial class ProductListViewModel : WidgetViewModelBase
         double floor = lowest == double.MaxValue ? 0 : Math.Floor(lowest);
         double ceiling = Math.Max(floor + 1, Math.Ceiling(highest));
         if (Math.Abs(floor - PriceFloor) < 0.0001 && Math.Abs(ceiling - PriceCeiling) < 0.0001)
+        {
+            RefreshPriceHistogram();   // el recorrido no se mueve, pero los conteos por tramo sí pueden haber cambiado
             return;
+        }
 
         bool minWasAtFloor = MinPrice <= PriceFloor;
         bool maxWasAtCeiling = MaxPrice >= PriceCeiling;
@@ -350,6 +396,37 @@ public partial class ProductListViewModel : WidgetViewModelBase
             MinPrice = ceiling;
 
         OnPropertyChanged(nameof(IsPriceRangeNarrowed));
+        RefreshPriceHistogram();
+    }
+
+    /// <summary>
+    /// Recalcula la distribución de precios del histograma: reparte <see cref="PriceFloor"/>..<see cref="PriceCeiling"/>
+    /// en <see cref="PriceHistogramBuckets"/> tramos iguales y cuenta en cuál cae cada producto CON precio (los que aún
+    /// no tienen no suman en ninguno). Se llama junto a <see cref="RefreshPriceBounds"/>, que puede salir antes de
+    /// tiempo si los extremos no se mueven: los conteos sí cambian aunque el recorrido siga igual.
+    /// </summary>
+    private void RefreshPriceHistogram()
+    {
+        double span = PriceCeiling - PriceFloor;
+        if (span <= 0)
+        {
+            PriceHistogram = System.Array.Empty<int>();
+            return;
+        }
+
+        int[] buckets = new int[PriceHistogramBuckets];
+        foreach (Product product in SharedDataService.ProductSet.Products)
+        {
+            if (product.ListPrice is not decimal listPrice)
+                continue;
+
+            // El techo cae en el último tramo (si no, se saldría del array por un tramo).
+            int index = (int)(((double)listPrice - PriceFloor) / span * PriceHistogramBuckets);
+            index = Math.Clamp(index, 0, PriceHistogramBuckets - 1);
+            buckets[index]++;
+        }
+
+        PriceHistogram = buckets;
     }
 
     /// <summary>Formatea un extremo del rango para su etiqueta: importe entero con la moneda de referencia ("120 €").</summary>

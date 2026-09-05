@@ -58,6 +58,8 @@
                         <RadioMenuFlyoutItem x:Name="Top5Item"   GroupName="TopN" Tag="5"   Text="Top 5"   Click="OnTopNClick"/>
                         <RadioMenuFlyoutItem x:Name="Top10Item"  GroupName="TopN" Tag="10"  Text="Top 10"  Click="OnTopNClick"/>
                         <RadioMenuFlyoutItem x:Name="Top20Item"  GroupName="TopN" Tag="20"  Text="Top 20"  Click="OnTopNClick"/>
+                        <RadioMenuFlyoutItem x:Name="Top30Item"  GroupName="TopN" Tag="30"  Text="Top 30"  Click="OnTopNClick"/>
+                        <RadioMenuFlyoutItem x:Name="Top40Item"  GroupName="TopN" Tag="40"  Text="Top 40"  Click="OnTopNClick"/>
                         <RadioMenuFlyoutItem x:Name="Top50Item"  GroupName="TopN" Tag="50"  Text="Top 50"  Click="OnTopNClick"/>
                         <RadioMenuFlyoutItem x:Name="Top100Item" GroupName="TopN" Tag="100" Text="Top 100" Click="OnTopNClick"/>
                         <RadioMenuFlyoutItem x:Name="AllItem"    GroupName="TopN" Tag="All" Text="{loc:Str Key=ChartType_All_Label}" Click="OnTopNClick"/>

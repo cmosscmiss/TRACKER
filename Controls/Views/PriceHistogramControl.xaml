@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Tracker.Controls.Views.PriceHistogramControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- Las barras se generan por código (ver el code-behind): una columna por bucket, y dentro de cada columna dos
+         filas proporcionales (hueco / barra) para que la altura salga del reparto del Grid y no haya que recalcular
+         nada al redimensionar. -->
+    <Grid x:Name="BarsHost" VerticalAlignment="Stretch"/>
+</UserControl>

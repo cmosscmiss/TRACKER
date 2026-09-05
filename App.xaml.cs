@@ -11,6 +11,7 @@ using Tracker.Services;
 using Tracker.ViewModels;
 using Tracker.Views;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -76,8 +77,9 @@ public partial class App : Application
         _singleInstanceMutex = new Mutex(initiallyOwned: true, @"Local\Tracker.Tracker.SingleInstance", out bool createdNew);
         if (!createdNew)
         {
+            // No vuelve: termina el proceso (por eso está marcado [DoesNotReturn], que además le dice al compilador
+            // que Host SÍ queda asignado en todos los caminos que siguen vivos).
             SignalExistingInstanceAndExit();
-            return;
         }
 
         // Instancia principal: crea el evento de activación y escucha señales de futuras segundas instancias para
@@ -398,6 +400,7 @@ public partial class App : Application
     /// Segunda instancia: concede permiso de primer plano y señala a la instancia principal para que se traiga a
     /// pantalla; luego termina. Si no puede señalar (no existe el evento), cae al aviso clásico.
     /// </summary>
+    [DoesNotReturn]
     private static void SignalExistingInstanceAndExit()
     {
         try

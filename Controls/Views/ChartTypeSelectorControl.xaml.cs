@@ -30,7 +30,7 @@ public sealed partial class ChartTypeSelectorControl : UserControl
     private ThemeService? _themeService;
 
     /// <summary>Umbrales de los botones "Top X" (en orden); "All" no tiene umbral.</summary>
-    private static readonly int[] TopThresholds = { 5, 10, 20, 50, 100 };
+    private static readonly int[] TopThresholds = { 5, 10, 20, 30, 40, 50, 100 };
 
     /// <summary>Evita la reentrada al deshacer el "checked" de un <c>ToggleSplitButton</c> dentro de su propio evento.</summary>
     private bool _suppressToggle;
@@ -587,6 +587,8 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         Top5Item.Visibility = count > 5 ? Visibility.Visible : Visibility.Collapsed;
         Top10Item.Visibility = count > 10 ? Visibility.Visible : Visibility.Collapsed;
         Top20Item.Visibility = count > 20 ? Visibility.Visible : Visibility.Collapsed;
+        Top30Item.Visibility = count > 30 ? Visibility.Visible : Visibility.Collapsed;
+        Top40Item.Visibility = count > 40 ? Visibility.Visible : Visibility.Collapsed;
         Top50Item.Visibility = count > 50 ? Visibility.Visible : Visibility.Collapsed;
         Top100Item.Visibility = count > 100 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -603,6 +605,8 @@ public sealed partial class ChartTypeSelectorControl : UserControl
         Top5Item.IsChecked = TopN == 5;
         Top10Item.IsChecked = TopN == 10;
         Top20Item.IsChecked = TopN == 20;
+        Top30Item.IsChecked = TopN == 30;
+        Top40Item.IsChecked = TopN == 40;
         Top50Item.IsChecked = TopN == 50;
         Top100Item.IsChecked = TopN == 100;
         AllItem.IsChecked = TopN == 0;

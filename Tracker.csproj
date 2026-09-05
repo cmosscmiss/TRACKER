@@ -24,6 +24,12 @@
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<WindowsPackageType>None</WindowsPackageType>
 		<LangVersion>latest</LangVersion>
+		<!-- MVVMTK0045: el toolkit avisa de que [ObservableProperty] sobre CAMPOS no es compatible con AOT en
+		     escenarios WinRT y recomienda propiedades parciales. Esta app es unpackaged y framework-dependent (solo
+		     el Windows App SDK va self-contained), nunca se compila con AOT nativo, así que el aviso no aplica y
+		     migrar los 47 campos no cambiaría nada funcional. Se silencia para que el build quede sin ruido y un
+		     aviso NUEVO se vea a la primera. -->
+		<NoWarn>$(NoWarn);MVVMTK0045</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Remove="Assets\TRACKER-Logo.ico" />

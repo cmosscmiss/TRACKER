@@ -21,18 +21,13 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <!-- Recuadro del precio: verde si bajó, rojo si subió, azul si es el mínimo histórico, gris si neutro.
-                     Para los comprados muestra el precio de COMPRA en neutro (sin verde/rojo/azul). -->
+                <!-- Recuadro del precio: verde si bajó, rojo si subió, azul si es el mínimo histórico, gris si neutro. -->
                 <Border Grid.Column="0" Background="{x:Bind ListPriceHighlight, Converter={StaticResource PriceHighlightToBrushConverter}, Mode=OneWay}" CornerRadius="6" Padding="6 2" VerticalAlignment="Center">
                     <TextBlock Text="{x:Bind ListPriceText, Mode=OneWay}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
                 </Border>
                 <!-- Título: los comprados van en color secundario (para que el tachado se distinga del texto normal). -->
-                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"
-                           Foreground="{x:Bind IsPurchased, Converter={StaticResource PurchasedTextBrushConverter}, Mode=OneWay}"
-                           TextDecorations="{x:Bind IsPurchased, Converter={StaticResource StrikethroughIfTrueConverter}, Mode=OneWay}" />
-                <!-- Iconos tras el título: pre-order + precio bajo la alerta + aviso de problema + estrella de favorito.
-                     Cada tipo en su propia columna de ancho fijo, de modo que aunque alguno esté oculto los demás
-                     conservan su posición y quedan verticalmente alineados entre filas. -->
+                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{x:Bind IsPurchased, Converter={StaticResource PurchasedTextBrushConverter}, Mode=OneWay}" TextDecorations="{x:Bind IsPurchased, Converter={StaticResource StrikethroughIfTrueConverter}, Mode=OneWay}" />
+                <!-- Iconos tras el título. -->
                 <Grid Grid.Column="2" VerticalAlignment="Center" Margin="4 0 0 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="18"/>
@@ -40,27 +35,19 @@
                         <ColumnDefinition Width="18"/>
                         <ColumnDefinition Width="18"/>
                         <ColumnDefinition Width="18"/>
-                        <!-- Icono de comprado: columna Auto al final. Solo tiene contenido cuando se muestran los
-                             comprados (el resto del tiempo no hay productos comprados visibles, así que ocupa 0). -->
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
-                              help:Help.Key="Product_Preorder_Tooltip"
-                              Visibility="{x:Bind IsPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                              help:Help.Key="Product_Preorder_Tooltip" Visibility="{x:Bind IsPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                     <FontIcon Grid.Column="1" Glyph="&#xE7ED;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
-                              help:Help.Key="PriceChart_BelowAlert_Tooltip"
-                              Visibility="{x:Bind IsBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                              help:Help.Key="PriceChart_BelowAlert_Tooltip" Visibility="{x:Bind IsBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                     <FontIcon Grid.Column="2" Glyph="&#xE7BA;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
-                              help:Help.Key="Product_Issues_Tooltip"
-                              Visibility="{x:Bind HasIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                              help:Help.Key="Product_Issues_Tooltip" Visibility="{x:Bind HasIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                     <FontIcon Grid.Column="3" Glyph="&#xE7B8;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
-                              help:Help.Key="PriceChart_Shipping_Tooltip"
-                              Visibility="{x:Bind HasShipping, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                              help:Help.Key="PriceChart_Shipping_Tooltip" Visibility="{x:Bind HasShipping, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                     <FontIcon Grid.Column="4" Glyph="&#xE735;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
                               Visibility="{x:Bind IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="5" Glyph="&#xE73E;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center" Width="18"
-                              help:Help.Key="PriceChart_Purchased_Tooltip"
-                              Visibility="{x:Bind IsPurchased, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Grid.Column="5" Glyph="&#xE73E;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center" Width="18" help:Help.Key="PriceChart_Purchased_Tooltip" Visibility="{x:Bind IsPurchased, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -70,96 +57,56 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <!-- Banda de filtro: TextBox por nombre (subcadena, en vivo) + ToggleSplitButton con los filtros por variable.
-             La cara del split-button activa/desactiva todos los filtros; su desplegable lista cada variable. -->
+        <!-- Banda de filtro. -->
         <Grid Grid.Row="0" ColumnSpacing="8" Padding="16 0 16 8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
-            <TextBox Grid.Column="0"
-                     Text="{x:Bind ViewModel.FilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     PlaceholderText="{loc:Str Key=ProductList_Filter_Placeholder}"/>
-
+            <TextBox Grid.Column="0" Text="{x:Bind ViewModel.FilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{loc:Str Key=ProductList_Filter_Placeholder}"/>
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
-                <ToggleSplitButton IsChecked="{x:Bind ViewModel.FiltersEnabled, Mode=TwoWay}"
-                                   help:Help.Key="ProductList_Filters_Tooltip">
+                <ToggleSplitButton IsChecked="{x:Bind ViewModel.FiltersEnabled, Mode=TwoWay}" help:Help.Key="ProductList_Filters_Tooltip">
                     <SymbolIcon Symbol="Filter"/>
                     <ToggleSplitButton.Flyout>
-                        <MenuFlyout>
-                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterFavorites_Label}"
-                                IsChecked="{x:Bind ViewModel.ActiveFilters.Favorites, Mode=TwoWay}"
-                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterIssues_Label}"
-                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithIssues, Mode=TwoWay}"
-                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPriceChange_Label}"
-                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithPriceChange, Mode=TwoWay}"
-                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterHistoricalLow_Label}"
-                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithHistoricalLow, Mode=TwoWay}"
-                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterAlert_Label}"
-                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithAlert, Mode=TwoWay}"
-                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterWithoutPrice_Label}"
-                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithoutPrice, Mode=TwoWay}"
-                                Command="{x:Bind ViewModel.FiltersChangedCommand}"/>
-                            <!-- Solo disponible cuando el footer muestra los comprados. -->
-                            <ToggleMenuFlyoutItem Text="{loc:Str Key=ProductList_FilterPurchased_Label}"
-                                IsChecked="{x:Bind ViewModel.ActiveFilters.WithPurchased, Mode=TwoWay}"
-                                Command="{x:Bind ViewModel.FiltersChangedCommand}"
-                                Visibility="{x:Bind ViewModel.SharedDataService.ShowPurchased, Converter={StaticResource VisibleIfTrueConverter}, Mode=OneWay}"/>
-                        </MenuFlyout>
+                        <!-- Los items los crea el code-behind (BuildFilterMenu): van ORDENADOS ALFABÉTICAMENTE por su
+                             texto ya traducido, así que el orden depende del idioma y se rehace al cambiarlo. -->
+                        <MenuFlyout x:Name="FiltersFlyout"/>
                     </ToggleSplitButton.Flyout>
                 </ToggleSplitButton>
-
-                <!-- Orden (igual que el filtro): la cara activa/desactiva la ordenación por precio; sin activar se ordena
-                     por título (alfabético). El desplegable elige la dirección (asc/desc), que además activa el orden. -->
-                <ToggleSplitButton x:Name="SortButton"
-                                   IsChecked="{x:Bind ViewModel.SortByPrice, Mode=TwoWay}"
-                                   help:Help.Key="ProductList_Sort_Tooltip">
+                <!-- Orden -->
+                <ToggleSplitButton x:Name="SortButton" IsChecked="{x:Bind ViewModel.SortByPrice, Mode=TwoWay}" help:Help.Key="ProductList_Sort_Tooltip">
                     <SymbolIcon Symbol="Sort"/>
                     <ToggleSplitButton.Flyout>
+                        <!-- A diferencia del de filtros, este menú NO se ordena alfabéticamente: el orden fijo
+                             (asc/desc dentro de cada criterio, separados por una línea) se lee mejor. -->
                         <MenuFlyout>
-                            <!-- ToggleMenuFlyoutItem (como el filtro) para que el check de la opción activa coincida y
-                                 quede alineado con el del desplegable de filtrar. La exclusividad se gestiona en código. -->
-                            <ToggleMenuFlyoutItem x:Name="SortAscItem" Tag="asc" IsChecked="True"
-                                Text="{loc:Str Key=ProductList_SortPriceAsc_Label}" Click="OnSortDirectionClick"/>
-                            <ToggleMenuFlyoutItem x:Name="SortDescItem" Tag="desc"
-                                Text="{loc:Str Key=ProductList_SortPriceDesc_Label}" Click="OnSortDirectionClick"/>
+                            <ToggleMenuFlyoutItem x:Name="SortPriceAscItem" Tag="price-asc" IsChecked="True" Text="{loc:Str Key=ProductList_SortPriceAsc_Label}" Click="OnSortDirectionClick"/>
+                            <ToggleMenuFlyoutItem x:Name="SortPriceDescItem" Tag="price-desc" Text="{loc:Str Key=ProductList_SortPriceDesc_Label}" Click="OnSortDirectionClick"/>
+                            <MenuFlyoutSeparator/>
+                            <ToggleMenuFlyoutItem x:Name="SortDateAscItem" Tag="date-asc" Text="{loc:Str Key=ProductList_SortDateAsc_Label}" Click="OnSortDirectionClick"/>
+                            <ToggleMenuFlyoutItem x:Name="SortDateDescItem" Tag="date-desc" Text="{loc:Str Key=ProductList_SortDateDesc_Label}" Click="OnSortDirectionClick"/>
                         </MenuFlyout>
                     </ToggleSplitButton.Flyout>
                 </ToggleSplitButton>
             </StackPanel>
         </Grid>
 
-        <!-- Rango de precio: filtra la lista entre los dos pulgares. El recorrido va del precio más bajo al más alto
-             entre todos los productos (se reajusta solo al leer precios nuevos), así que se aprovecha entero. Con el
-             rango completo no filtra nada. Sin etiquetas a los lados: ocupa todo el ancho de la columna. -->
-        <toolkit:RangeSelector x:Name="PriceRangeSelector" Grid.Row="1" Margin="16 0 16 8"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                               Minimum="{x:Bind ViewModel.PriceFloor, Mode=OneWay}"
-                               Maximum="{x:Bind ViewModel.PriceCeiling, Mode=OneWay}"
-                               RangeStart="{x:Bind ViewModel.MinPrice, Mode=TwoWay}"
-                               RangeEnd="{x:Bind ViewModel.MaxPrice, Mode=TwoWay}"
-                               StepFrequency="1"
-                               help:Help.Key="ProductList_PriceRange_Tooltip"/>
+        <!-- Distribución de precios sobre el slider -->
+        <local:PriceHistogramControl Grid.Row="1" Height="60" Margin="16 8 16 2" BarSpacing="1.5" Values="{x:Bind ViewModel.PriceHistogram, Mode=OneWay}" Minimum="{x:Bind ViewModel.PriceFloor, Mode=OneWay}" Maximum="{x:Bind ViewModel.PriceCeiling, Mode=OneWay}" RangeStart="{x:Bind ViewModel.MinPrice, Mode=OneWay}" RangeEnd="{x:Bind ViewModel.MaxPrice, Mode=OneWay}" InRangeBrush="{ThemeResource AccentBrush}" OutOfRangeBrush="{ThemeResource TextSecondaryBrush}"/>
 
-        <!-- La selección se gestiona en code-behind (no TwoWay): así una deselección transitoria al reordenar la lista
-             alfabéticamente (Move al cargar el título) no borra el producto seleccionado. -->
-        <ListView x:Name="ProductListView" Grid.Row="2" ItemsSource="{x:Bind ViewModel.FilteredProducts, Mode=OneWay}" SelectionChanged="OnSelectionChanged" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
+        <!-- Rango de precio -->
+        <toolkit:RangeSelector x:Name="PriceRangeSelector" Grid.Row="2" Margin="16 0 16 8" HorizontalAlignment="Stretch" VerticalAlignment="Center" Minimum="{x:Bind ViewModel.PriceFloor, Mode=OneWay}" Maximum="{x:Bind ViewModel.PriceCeiling, Mode=OneWay}" RangeStart="{x:Bind ViewModel.MinPrice, Mode=TwoWay}" RangeEnd="{x:Bind ViewModel.MaxPrice, Mode=TwoWay}" StepFrequency="1" help:Help.Key="ProductList_PriceRange_Tooltip"/>
+       
+        <ListView x:Name="ProductListView" Grid.Row="3" ItemsSource="{x:Bind ViewModel.FilteredProducts, Mode=OneWay}" SelectionChanged="OnSelectionChanged" ItemTemplate="{StaticResource ProductItemTemplate}" ItemContainerStyle="{StaticResource ListViewItemDefaultStyle}" />
 
-        <!-- Pie: nº de productos mostrados frente al total rastreado (mismo estilo que la antigua lista de juegos). -->
-        <template:SeparatorEx Grid.Row="3" Margin="0 0 0 8" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
+        <template:SeparatorEx Grid.Row="4" Margin="0 0 0 8" VerticalAlignment="Bottom" Thickness="1" UseGradient="True"/>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="16 0 16 12" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="16 0 16 12" HorizontalAlignment="Right">
             <TextBlock Text="{x:Bind ViewModel.CountText, Mode=OneWay}" Foreground="{ThemeResource TextSecondaryBrush}"/>
         </StackPanel>
     </Grid>

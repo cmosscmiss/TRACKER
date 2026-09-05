@@ -117,7 +117,7 @@
     <value>Track a product</value>
   </data>
   <data name="AddProduct_Dialog_Message" xml:space="preserve">
-    <value>Paste the product URL</value>
+    <value>Product URL:</value>
   </data>
   <data name="AddProduct_Url_Placeholder" xml:space="preserve">
     <value>https://www.amazon.es/...</value>
@@ -201,10 +201,10 @@
     <value>FAVOURITES</value>
   </data>
   <data name="PriceChart_Favorite_Tooltip" xml:space="preserve">
-    <value>Toggle favourite</value>
+    <value>Mark as favourite</value>
   </data>
   <data name="PriceChart_AltStores_Tooltip" xml:space="preserve">
-    <value>Also track amazon.com and amazon.co.jp for this product</value>
+    <value>Track other amazon stores</value>
   </data>
   <data name="WebView_Country_Tooltip" xml:space="preserve">
     <value>Amazon marketplace</value>
@@ -219,7 +219,7 @@
     <value>Pick product image</value>
   </data>
   <data name="WebView_AddAltLink_Tooltip" xml:space="preserve">
-    <value>Add alternative link to selected product</value>
+    <value>Add alternative link</value>
   </data>
   <data name="PriceChart_CurrentPrice_Label" xml:space="preserve">
     <value>Current</value>
@@ -285,16 +285,16 @@
     <value>Last refresh: never</value>
   </data>
   <data name="Footer_AxisLabels_Tooltip" xml:space="preserve">
-    <value>Toggle chart axis labels visibility</value>
+    <value>Toggle chart axis labels</value>
   </data>
   <data name="Footer_MinChart_Tooltip" xml:space="preserve">
-    <value>Toggle lowest price evolution chart</value>
+    <value>Toggle lowest price chart</value>
   </data>
   <data name="Footer_Tooltips_Tooltip" xml:space="preserve">
-    <value>Show/hide button tooltips</value>
+    <value>Toggle tooltips</value>
   </data>
   <data name="Footer_IncludeShipping_Tooltip" xml:space="preserve">
-    <value>Include shipping cost in the price</value>
+    <value>Include shipping cost</value>
   </data>
   <data name="Footer_ShowPurchased_Tooltip" xml:space="preserve">
     <value>Show/hide purchased products</value>
@@ -425,6 +425,12 @@
   <data name="ProductList_SortPriceDesc_Label" xml:space="preserve">
     <value>Price: high to low</value>
   </data>
+  <data name="ProductList_SortDateAsc_Label" xml:space="preserve">
+    <value>Added: oldest first</value>
+  </data>
+  <data name="ProductList_SortDateDesc_Label" xml:space="preserve">
+    <value>Added: newest first</value>
+  </data>
   <data name="PriceChart_Alert_Tooltip" xml:space="preserve">
     <value>Set alert price</value>
   </data>
@@ -444,7 +450,7 @@
     <value>Delete product</value>
   </data>
   <data name="PriceChart_DeleteDialog_Message" xml:space="preserve">
-    <value>Delete "{0}" and its price history? This can be undone via the log entry.</value>
+    <value>Delete "{0}" and its price history? You can undo this in the activity log.</value>
   </data>
   <data name="PriceChart_RemoveLink_Tooltip" xml:space="preserve">
     <value>Remove link</value>
@@ -453,7 +459,7 @@
     <value>Remove link</value>
   </data>
   <data name="PriceChart_RemoveLinkDialog_Message" xml:space="preserve">
-    <value>Remove the "{0}" link from "{1}"? You can undo this from the activity log.</value>
+    <value>Remove the "{0}" link from "{1}"? You can undo this in the activity log.</value>
   </data>
   <data name="PriceChart_PurchasedDialog_Title" xml:space="preserve">
     <value>Mark as purchased</value>

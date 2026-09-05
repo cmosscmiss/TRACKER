@@ -15,13 +15,9 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
         <!-- FlipView: página 0 = producto seleccionado, resto = favoritos. Cada página es la vista de producto. -->
-        <FlipView x:Name="Flip" Grid.Row="0" ItemsSource="{x:Bind ViewModel.FavoriteViews, Mode=OneWay}"
-                  SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
-                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <!-- Sin esto los FlipViewItem NO estiran su contenido a lo alto: la fila '*' de la gráfica colapsa a 0
-                 (la gráfica "no coge altura"). Fuerza que cada página llene el alto del FlipView. -->
+        <FlipView x:Name="Flip" Grid.Row="0" ItemsSource="{x:Bind ViewModel.FavoriteViews, Mode=OneWay}" SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <!-- Fuerza que cada página llene el alto del FlipView. -->
             <FlipView.ItemContainerStyle>
                 <Style TargetType="FlipViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -34,14 +30,6 @@
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
-
-        <!-- Selector de vista (puntitos): solo si hay más de una página (seleccionado + algún favorito). -->
-        <!-- MaxVisiblePips por defecto es 5: con 6+ páginas se limitaría a 5 pips (con desplazamiento). Se enlaza al
-             número de páginas para mostrarlas TODAS. -->
-        <PipsPager Grid.Row="1" HorizontalAlignment="Center" Margin="0 4 0 8"
-                   NumberOfPages="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}"
-                   MaxVisiblePips="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}"
-                   SelectedPageIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
-                   Visibility="{x:Bind ViewModel.ShowPager, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+        <PipsPager Grid.Row="1" HorizontalAlignment="Center" Margin="0 4 0 8" NumberOfPages="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}" MaxVisiblePips="{x:Bind ViewModel.FavoritesCount, Mode=OneWay}" SelectedPageIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}" Visibility="{x:Bind ViewModel.ShowPager, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
     </Grid>
 </UserControl>

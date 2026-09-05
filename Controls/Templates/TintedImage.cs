@@ -22,8 +22,7 @@ namespace Tracker.Controls.Templates;
 ///
 /// Este control:
 /// - Carga una imagen desde un recurso o ruta interna.
-/// - Aplica un tinte basado en un color, opacidad, saturación y brillo.
-/// - Ajusta el tinte modificando el color en el espacio HSL antes de mezclarlo.
+/// - Aplica un tinte basado en un color, y ajusta opacidad, saturación y brillo DEL RESULTADO.
 /// - Usa BlendEffect para combinar la imagen con el tinte según el modo seleccionado.
 /// - Mantiene sincronía entre RenderTransform (XAML) y el SpriteVisual de composición.
 /// - Ofrece un rendimiento óptimo al usar efectos nativos de Win2D + Composition.
@@ -403,100 +402,23 @@ public sealed class TintedImage : Control
         _imageSurface = null;
     }
 
-    /// <summary>
-    /// Convierte un color RGB a su representación en el espacio HSL.
-    /// 
-    /// Se utiliza para poder modificar saturación y brillo del tinte
-    /// antes de reconstruir el color final.
-    /// </summary>
-    private static (double H, double S, double L) ToHSL(Color c)
-    {
-        double r = c.R / 255.0;
-        double g = c.G / 255.0;
-        double b = c.B / 255.0;
-
-        double max = Math.Max(r, Math.Max(g, b));
-        double min = Math.Min(r, Math.Min(g, b));
-        double h = 0, s, l = (max + min) / 2.0;
-
-        if (max == min)
-        {
-            h = s = 0;
-        }
-        else
-        {
-            double d = max - min;
-            s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
-
-            if (max == r)
-                h = (g - b) / d + (g < b ? 6 : 0);
-            else if (max == g)
-                h = (b - r) / d + 2;
-            else
-                h = (r - g) / d + 4;
-
-            h /= 6.0;
-        }
-
-        return (h, s, l);
-    }
-
-    /// <summary>
-    /// Reconstruye un color RGB a partir de valores HSL y un canal alfa.
-    /// 
-    /// Permite generar el color final del tinte tras aplicar saturación,
-    /// brillo y opacidad.
-    /// </summary>
-    private static Color FromHSL(double h, double s, double l, byte alpha)
-    {
-        double r, g, b;
-
-        if (s == 0)
-        {
-            r = g = b = l;
-        }
-        else
-        {
-            double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-            double p = 2 * l - q;
-
-            double HueToRGB(double t)
-            {
-                if (t < 0) t += 1;
-                if (t > 1) t -= 1;
-                if (t < 1.0 / 6) return p + (q - p) * 6 * t;
-                if (t < 1.0 / 2) return q;
-                if (t < 2.0 / 3) return p + (q - p) * (2.0 / 3 - t) * 6;
-                return p;
-            }
-
-            r = HueToRGB(h + 1.0 / 3);
-            g = HueToRGB(h);
-            b = HueToRGB(h - 1.0 / 3);
-        }
-
-        return Color.FromArgb(
-            alpha,
-            (byte)(r * 255),
-            (byte)(g * 255),
-            (byte)(b * 255)
-        );
-    }
 
 
     /// <summary>
-    /// Construye o actualiza el efecto de composición que mezcla la imagen
-    /// con el tinte configurado.
+    /// Construye o actualiza el efecto de composición que mezcla la imagen con el tinte configurado.
     ///
-    /// Proceso:
-    /// 1. Convierte TintColor a HSL.
-    /// 2. Aplica TintSaturation y TintBrightness.
-    /// 3. Aplica TintOpacity al canal alfa.
-    /// 4. Reconstruye el color final del tinte.
-    /// 5. Crea un BlendEffect que mezcla la imagen con el tinte.
-    /// 
-    /// El resultado mantiene la imagen completamente opaca y ajusta únicamente
-    /// la intensidad del tinte.
+    /// El grafo va en este orden, y cada parámetro actúa sobre el resultado (no sobre el color del tinte, que es lo
+    /// que antes hacía que los sliders no se notaran):
+    /// 1. La imagen, opcionalmente desenfocada (<see cref="Blur"/>).
+    /// 2. Esa imagen mezclada con el tinte según <see cref="BlendMode"/>, con el color de tinte SIEMPRE opaco.
+    /// 3. Un CrossFade entre la imagen sin teñir (0) y la teñida (1) gobernado por <see cref="TintOpacity"/>: así el
+    ///    tinte entra de forma gradual. Aplicar la opacidad al alfa del color no servía: en modos como Hue el alfa del
+    ///    fondo apenas altera la mezcla, y lo poco que hacía se percibía como un cambio de brillo. En los extremos
+    ///    (0 y 1) se monta una sola rama, para no pagar dos veces el blur.
+    /// 4. <see cref="TintSaturation"/> sobre el resultado (0 = gris, 1 = igual, 2 = saturación doble).
+    /// 5. <see cref="TintBrightness"/> sobre el resultado, multiplicando el RGB (0 = negro, 1 = igual, 2 = doble).
+    ///    Antes multiplicaba la L del color del tinte y el recorte a 1 se comía casi todo el recorrido del slider,
+    ///    por eso solo se notaba en los extremos.
     /// </summary>
     private void UpdateEffect()
     {
@@ -505,55 +427,81 @@ public sealed class TintedImage : Control
 
         var compositor = _sprite.Compositor;
 
-        // Convertir a HSL
-        var (h, s, l) = ToHSL(TintColor);
-
-        // Aplicar saturación y brillo
-        s *= TintSaturation;
-        l *= TintBrightness;
-
-        // Clamp
-        s = Math.Clamp(s, 0, 1);
-        l = Math.Clamp(l, 0, 1);
-
-        // Aplicar TintOpacity al alfa
-        byte alpha = (byte)(TintOpacity * 255);
-
-        // Reconstruir color final
-        var finalTint = FromHSL(h, s, l, alpha);
-
-        // Fuente de la imagen: opcionalmente con blur
-        var sourceParameter = new CompositionEffectSourceParameter("source");
-
-        IGraphicsEffectSource foregroundSource;
-
-        var blur = Math.Max(0.0, Blur);
-        if (blur > 0)
+        // El grafo de efectos tiene que ser un ÁRBOL: Composition rechaza ("Non-tree shaped effect graph") que un
+        // mismo nodo cuelgue de dos ramas. Por eso la imagen se construye de nuevo para cada rama, con su propio
+        // parámetro de origen (los dos se enlazan luego al mismo surface brush).
+        IGraphicsEffectSource BuildImageSource(string parameterName)
         {
-            foregroundSource = new GaussianBlurEffect
+            var parameter = new CompositionEffectSourceParameter(parameterName);
+
+            double blurAmount = Math.Max(0.0, Blur);
+            if (blurAmount <= 0)
+                return parameter;
+
+            // El nombre va ligado al parámetro: dentro de un grafo no puede repetirse ("Duplicate effect name").
+            return new GaussianBlurEffect
             {
-                Name = "Blur",
-                BlurAmount = (float)blur,
+                Name = $"Blur_{parameterName}",
+                BlurAmount = (float)blurAmount,
                 BorderMode = EffectBorderMode.Hard,
-                Source = sourceParameter
+                Source = parameter
             };
+        }
+
+        // Cuánto tiñe. En los extremos basta una rama, así que el blur (que es lo caro) no se calcula dos veces.
+        double tintAmount = Math.Clamp(TintOpacity, 0.0, 1.0);
+        bool blendsBothBranches = tintAmount is > 0.001 and < 0.999;
+
+        IGraphicsEffectSource mixed;
+        if (tintAmount <= 0.001)
+        {
+            mixed = BuildImageSource("source");
         }
         else
         {
-            foregroundSource = sourceParameter;
+            // Imagen teñida a pleno: el "cuánto tiñe" lo decide el CrossFade, no el alfa del color.
+            var tinted = new BlendEffect
+            {
+                Mode = BlendMode,
+                Background = new ColorSourceEffect { Color = Color.FromArgb(255, TintColor.R, TintColor.G, TintColor.B) },
+                Foreground = BuildImageSource("source")
+            };
+
+            mixed = blendsBothBranches
+                ? new CrossFadeEffect
+                {
+                    Source1 = BuildImageSource("sourceUntinted"),
+                    Source2 = tinted,
+                    CrossFade = (float)tintAmount
+                }
+                : tinted;
         }
 
-        // BlendEffect con el tinte modificado y la imagen (posiblemente desenfocada)
-        var blend = new BlendEffect
+        var saturated = new SaturationEffect
         {
-            Mode = BlendMode,
-            Background = new ColorSourceEffect { Color = finalTint },
-            Foreground = foregroundSource
+            Saturation = (float)Math.Clamp(TintSaturation, 0.0, 2.0),
+            Source = mixed
         };
 
-        var factory = compositor.CreateEffectFactory(blend);
+        // Brillo multiplicativo (1 = neutro): una matriz de color diagonal sobre el RGB, dejando el alfa intacto.
+        float brightness = (float)Math.Clamp(TintBrightness, 0.0, 2.0);
+        var adjusted = new ColorMatrixEffect
+        {
+            Source = saturated,
+            ColorMatrix = new Matrix5x4
+            {
+                M11 = brightness,
+                M22 = brightness,
+                M33 = brightness,
+                M44 = 1f
+            }
+        };
+
+        var factory = compositor.CreateEffectFactory(adjusted);
         _effectBrush = factory.CreateBrush();
         _effectBrush.SetSourceParameter("source", _surfaceBrush);
+        if (blendsBothBranches)
+            _effectBrush.SetSourceParameter("sourceUntinted", _surfaceBrush);
 
         _sprite.Brush = ApplyFadeMask(_effectBrush);
     }

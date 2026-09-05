@@ -92,6 +92,14 @@ public partial class Product : ObservableObject
     private DateTime? _purchasedAt;
 
     /// <summary>
+    /// Fecha (UTC) en la que se dio de alta el producto en la base de datos (columna <c>CreatedAt</c>). Null en los
+    /// productos que aún no se han guardado; para ordenar por antigüedad se usa <see cref="SortDate"/>, que cae al
+    /// histórico cuando falta.
+    /// </summary>
+    [ObservableProperty]
+    private DateTime? _createdAt;
+
+    /// <summary>
     /// Si es true, este producto también se sigue en los marketplaces ALTERNATIVOS (amazon.com y amazon.co.jp). Por
     /// defecto false: sus tiendas alternativas no se leen (no gastan tiempo de la pasada de precios) y quedan ocultas
     /// en las gráficas y en la lista de tiendas. Al activarlo, sus precios entran en el próximo refresco.
@@ -172,6 +180,26 @@ public partial class Product : ObservableObject
 
     /// <summary>Whether an alert price is configured for this product.</summary>
     public bool HasAlert => AlertPrice.HasValue;
+
+    /// <summary>
+    /// Antigüedad del producto para ordenar la lista: la fecha de alta en la base de datos (<see cref="CreatedAt"/>)
+    /// y, si no consta —productos guardados antes de leerse esa columna—, la del PRIMER precio de su histórico, que es
+    /// lo más cercano al momento en que se empezó a seguir. Null si no hay ni una cosa ni la otra.
+    /// </summary>
+    public DateTime? SortDate
+    {
+        get
+        {
+            if (CreatedAt is DateTime created)
+                return created;
+
+            DateTime? earliest = null;
+            foreach (PricePoint point in PriceHistory)
+                if (earliest is null || point.Timestamp < earliest)
+                    earliest = point.Timestamp;
+            return earliest;
+        }
+    }
 
     /// <summary>
     /// La tienda del mejor precio tiene gastos de envío (&gt; 0). Para el icono de la lista (se muestra siempre que

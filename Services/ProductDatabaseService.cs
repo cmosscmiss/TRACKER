@@ -149,7 +149,7 @@ public sealed class ProductDatabaseService
         // Products
         using (SqliteCommand command = connection.CreateCommand())
         {
-            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice, PurchasedAt, IncludeAlternativeStores FROM Products WHERE Deleted = 0 ORDER BY Id;";
+            command.CommandText = "SELECT Id, Name, ImageUrl, IsFavorite, AlertPrice, Purchased, PurchasePrice, PurchasedAt, IncludeAlternativeStores, CreatedAt FROM Products WHERE Deleted = 0 ORDER BY Id;";
             using SqliteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -163,7 +163,10 @@ public sealed class ProductDatabaseService
                     IsPurchased = !reader.IsDBNull(5) && reader.GetInt64(5) != 0,
                     PurchasePrice = reader.IsDBNull(6) ? null : ParsePrice(reader.GetString(6)),
                     PurchasedAt = reader.IsDBNull(7) ? null : ParseTimestamp(reader.GetString(7)),
-                    IncludeAlternativeStores = !reader.IsDBNull(8) && reader.GetInt64(8) != 0
+                    IncludeAlternativeStores = !reader.IsDBNull(8) && reader.GetInt64(8) != 0,
+                    // Fecha de alta: la escribe el INSERT desde el primer día, pero hasta ahora no se leía. Un valor
+                    // ilegible (o ausente en una fila antigua) deja null y el orden por antigüedad cae al histórico.
+                    CreatedAt = reader.IsDBNull(9) ? null : TryParseTimestamp(reader.GetString(9))
                 };
                 productsById[product.Id] = product;
                 target.Products.Add(product);
@@ -242,7 +245,11 @@ public sealed class ProductDatabaseService
             command.CommandText = "INSERT INTO Products (Name, ImageUrl, CreatedAt, IncludeAlternativeStores) VALUES ($name, $imageUrl, $createdAt, $alternative);";
             command.Parameters.AddWithValue("$name", product.Name);
             command.Parameters.AddWithValue("$imageUrl", (object?)product.ImageUrl ?? DBNull.Value);
-            command.Parameters.AddWithValue("$createdAt", FormatTimestamp(DateTime.UtcNow));
+            // La misma marca va a la BD y al objeto en memoria, para que el producto recién añadido se ordene por
+            // antigüedad igual que los ya cargados (sin esperar al siguiente arranque).
+            DateTime createdAt = DateTime.UtcNow;
+            product.CreatedAt = createdAt;
+            command.Parameters.AddWithValue("$createdAt", FormatTimestamp(createdAt));
             command.Parameters.AddWithValue("$alternative", product.IncludeAlternativeStores ? 1 : 0);
             command.ExecuteNonQuery();
             product.Id = LastInsertRowId(connection, transaction);
@@ -519,5 +526,9 @@ public sealed class ProductDatabaseService
     private static string FormatTimestamp(DateTime value) => value.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture);
 
     private static DateTime ParseTimestamp(string raw) => DateTime.Parse(raw, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
+    /// <summary>Como <see cref="ParseTimestamp"/>, pero devuelve null en vez de lanzar si el texto no es una fecha válida.</summary>
+    private static DateTime? TryParseTimestamp(string raw)
+        => DateTime.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime value) ? value : null;
     #endregion
 }
