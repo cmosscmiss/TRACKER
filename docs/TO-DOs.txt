@@ -5,9 +5,3 @@ Generar unas release notes y guardarlo también en la carpeta Docs.
 Paquetizar la app para distribución y guardar una copia en una carpeta Releases.
 Si algún día quiero compartir: Vamos a añadir una sección nueva al diálogo de settings. Sección que permite seleccionar 2 cosas: Las tiendas por defecto y las tiendas alternativas. Lista con checkboxes. 
 
-
-Renombra: 
-"This can be undone via de log entry." a "You can undo this in the activity log."
-"You can undo this from the activity log." a "You can undo this in the activity log."
-"Paste the product URL" a "Product URL:"
-
