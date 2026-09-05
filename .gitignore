@@ -370,3 +370,6 @@ Tools/ffmpeg/ffmpeg.exe
 
 # Export de plataformas de LaunchBox (~1MB): no se versiona, se coloca localmente
 docs/Platforms.xml
+
+# Paquetes de distribucion generados (publish + zip + instalador)
+/Releases/

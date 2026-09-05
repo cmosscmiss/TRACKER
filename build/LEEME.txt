@@ -1,0 +1,48 @@
+TRACKER 1.0 RC 1
+================
+
+Seguimiento de precios de productos (Amazon y otras tiendas).
+
+
+CÓMO EJECUTARLO
+---------------
+Descomprime la carpeta donde quieras y ejecuta Tracker.exe. No hay instalación:
+puedes dejarla en el escritorio, en una carpeta de programas o en un USB.
+
+La primera vez Windows puede mostrar el aviso "Windows protegió su PC" (SmartScreen).
+Es lo habitual en programas sin firma digital: pulsa "Más información" y luego
+"Ejecutar de todos modos".
+
+
+REQUISITOS
+----------
+- Windows 10 versión 1809 (octubre de 2018) o posterior, de 64 bits.
+- Runtime de WebView2. Viene incluido en Windows 11 y en los Windows 10 al día.
+  Si la ventana del navegador aparece en blanco o la app avisa de que no puede
+  iniciarlo, instálalo desde:
+  https://developer.microsoft.com/microsoft-edge/webview2/
+
+NO hace falta instalar .NET: esta versión lo lleva todo dentro.
+
+
+TUS DATOS
+---------
+La base de datos de productos, los ajustes y el registro de errores se guardan en:
+
+    %LocalAppData%\Tracker
+
+Es decir, FUERA de esta carpeta. Para actualizar a una versión nueva basta con
+sustituir la carpeta del programa: no perderás los productos ni el histórico de
+precios. Para llevártelo a otro equipo, copia también esa carpeta de datos.
+
+
+ARRANQUE AUTOMÁTICO Y BANDEJA
+-----------------------------
+Por defecto la app se registra para arrancar con Windows y queda escondida en la
+bandeja del sistema, leyendo precios en segundo plano; el botón X de la ventana
+la esconde ahí en vez de cerrarla. Se sale del todo desde el menú del icono de la
+bandeja (botón derecho -> Exit). Todo esto se cambia en Ajustes -> General,
+sección WINDOW.
+
+Si mueves la carpeta del programa, el arranque automático se corrige solo la
+próxima vez que abras la app.
