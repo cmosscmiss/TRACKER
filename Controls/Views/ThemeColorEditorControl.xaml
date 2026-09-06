@@ -16,6 +16,10 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
         <!-- Editor -->
         <StackPanel x:Name="EditorColumn" Grid.Column="0" Spacing="12" Width="280">
@@ -78,5 +82,15 @@
                 </ItemsControl>
             </ScrollViewer>
         </Grid>
+
+        <!-- Pie: ajuste del texto por contraste. Vive AQUÍ y no en la pestaña Theme de los ajustes (que sería su sitio
+             "de manual") porque este diálogo se muestra sin atenuar el fondo: se ve el efecto sobre la app entera al
+             instante. Se aplica en caliente y lo confirma el OK del diálogo, igual que los colores. -->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0 12 0 0">
+            <template:SeparatorEx Margin="0 0 0 10" Thickness="2" UseGradient="True" LineBrush="{ThemeResource AccentBrush}"/>
+            <CheckBox x:Name="ContrastTextCheck" Checked="OnContrastTextChanged" Unchecked="OnContrastTextChanged">
+                <TextBlock Text="{loc:Str Key=ThemeColors_UseContrastText_Label}" Style="{StaticResource FieldLabelStyle}"/>
+            </CheckBox>
+        </StackPanel>
     </Grid>
 </UserControl>

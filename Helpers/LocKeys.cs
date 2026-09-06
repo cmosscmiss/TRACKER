@@ -125,6 +125,7 @@ public static class LocKeys
     public const string ThemeColors_Revert = "ThemeColors_Revert";
     public const string ThemeColors_Swatches = "ThemeColors_Swatches";
     public const string ThemeColors_Picker_Header = "ThemeColors_Picker_Header";
+    public const string ThemeColors_UseContrastText_Label = "ThemeColors_UseContrastText_Label";
     // Nombres (genéricos) de cada color; el control resuelve la clave como "ThemeColors_Name_" + nombre base.
     public const string ThemeColors_Name_Accent = "ThemeColors_Name_Accent";
     public const string ThemeColors_Name_AccentLight = "ThemeColors_Name_AccentLight";

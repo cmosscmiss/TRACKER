@@ -8,7 +8,9 @@
     <!-- Estilo para los botones de tema -->
     <Style x:Key="Button_Theme" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource AccentBrush}"/>
-        <Setter Property="Foreground" Value="{ThemeResource TextBrush}"/>
+        <!-- Texto SOBRE el acento: TextOnAccent, no TextBrush (ver docs/Plan-Contraste-Texto.md). Con el ajuste
+             "texto por contraste" desactivado vale exactamente lo mismo que TextBrush. -->
+        <Setter Property="Foreground" Value="{ThemeResource TextOnAccentBrush}"/>
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="Padding" Value="8"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -18,23 +20,28 @@
                 <ControlTemplate TargetType="Button">
                     <Grid x:Name="RootGrid">
                         <Border x:Name="Chrome" Background="{TemplateBinding Background}" CornerRadius="4">
-                            <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}" FontSize="{TemplateBinding FontSize}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter x:Name="ContentHost" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}" FontSize="{TemplateBinding FontSize}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
+                                <!-- El fondo cambia de Accent a AccentLight con el puntero, así que el color del texto
+                                     va con él: cada estado fija el TextOn* de SU fondo. -->
                                 <VisualState x:Name="Normal">
                                     <VisualState.Setters>
                                         <Setter Target="Chrome.Background" Value="{ThemeResource AccentBrush}"/>
+                                        <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentBrush}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
                                         <Setter Target="Chrome.Background" Value="{ThemeResource AccentLightBrush}"/>
+                                        <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentLightBrush}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="Chrome.Background" Value="{ThemeResource AccentLightBrush}"/>
+                                        <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentLightBrush}"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -116,7 +123,7 @@
     <!-- Checked state: Estado seleccionado/activo para ToggleButton-like controls -->
     <SolidColorBrush x:Key="ButtonBrushBackgroundChecked" Color="{ThemeResource AccentDarkColor}" />
     <SolidColorBrush x:Key="ButtonBrushBorderChecked" Color="{ThemeResource AccentDarkColor}" />
-    <SolidColorBrush x:Key="ButtonBrushForegroundChecked" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ButtonBrushForegroundChecked" Color="{ThemeResource TextOnAccentDarkColor}" />
     <!-- Checked + PointerOver state: Estado seleccionado con hover. -->
     <SolidColorBrush x:Key="ButtonBrushBackgroundCheckedPointerOver" Color="{ThemeResource AccentLightColorOpacity60}" />
     <SolidColorBrush x:Key="ButtonBrushBorderCheckedPointerOver" Color="{ThemeResource AccentLightColor}" />
@@ -124,7 +131,7 @@
     <!-- Checked + Pressed state: Estado seleccionado mientras se pulsa. -->
     <SolidColorBrush x:Key="ButtonBrushBackgroundCheckedPressed" Color="{ThemeResource AccentLightColor}" />
     <SolidColorBrush x:Key="ButtonBrushBorderCheckedPressed" Color="{ThemeResource AccentLightColor}" />
-    <SolidColorBrush x:Key="ButtonBrushForegroundCheckedPressed" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ButtonBrushForegroundCheckedPressed" Color="{ThemeResource TextOnAccentLightColor}" />
     <!-- Disabled state: Estado deshabilitado para botones no seleccionados. -->
     <SolidColorBrush x:Key="ButtonBrushBackgroundDisabled" Color="Transparent" />
     <SolidColorBrush x:Key="ButtonBrushBackgroundSubtleDisabled" Color="{ThemeResource CardBackgroundLightColor}" Opacity="0.35" />
@@ -133,7 +140,7 @@
     <!-- Checked + Disabled state: Estado seleccionado pero deshabilitado. -->
     <SolidColorBrush x:Key="ButtonBrushBackgroundCheckedDisabled" Color="{ThemeResource AccentDarkColor}" Opacity="0.45" />
     <SolidColorBrush x:Key="ButtonBrushBorderCheckedDisabled" Color="{ThemeResource AccentDarkColor}" Opacity="0.45" />
-    <SolidColorBrush x:Key="ButtonBrushForegroundCheckedDisabled" Color="{ThemeResource TextColor}" Opacity="0.45" />
+    <SolidColorBrush x:Key="ButtonBrushForegroundCheckedDisabled" Color="{ThemeResource TextOnAccentDarkColor}" Opacity="0.45" />
 
     <!-- Estilo para los ToggleSplitButton / SplitButton -->
     <Style TargetType="ToggleSplitButton">

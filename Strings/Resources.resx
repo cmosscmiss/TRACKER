@@ -602,6 +602,9 @@
   <data name="ThemeSettings_EditColors_Label" xml:space="preserve">
     <value>Custom colours...</value>
   </data>
+  <data name="ThemeColors_UseContrastText_Label" xml:space="preserve">
+    <value>Use contrast colour on background</value>
+  </data>
   <data name="AboutSettings_Description_Text" xml:space="preserve">
     <value>Tracker monitors the prices of your Amazon products across marketplaces, charts their history and highlights the best deals.</value>
   </data>

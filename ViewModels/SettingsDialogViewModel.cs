@@ -239,6 +239,9 @@ public partial class SettingsDialogViewModel : ObservableObject
     /// <summary>Un componente de terceros y su licencia, para la lista de la sección About.</summary>
     public sealed record LicenseInfo(string Component, string License);
 
+    /// <summary>Versión de la app (InformationalVersion del csproj), ya con la "v" delante: p. ej. "v1.0 RC 1".</summary>
+    public string VersionText => ResolveVersionText();
+
     /// <summary>Marca de compilación (fecha/hora de última escritura del ensamblado, que se reescribe al compilar).</summary>
     public string BuildText => ResolveBuildText();
 
@@ -258,6 +261,33 @@ public partial class SettingsDialogViewModel : ObservableObject
         new LicenseInfo("Microsoft.Data.Sqlite", "MIT"),
         new LicenseInfo("Newtonsoft.Json", "MIT"),
     };
+
+    /// <summary>
+    /// Versión declarada en el csproj (<c>InformationalVersion</c>, con <c>Version</c> como respaldo). El SDK puede
+    /// añadirle el hash del commit tras un '+', así que se recorta ahí.
+    /// </summary>
+    private static string ResolveVersionText()
+    {
+        try
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var attribute = (System.Reflection.AssemblyInformationalVersionAttribute?)Attribute.GetCustomAttribute(
+                assembly, typeof(System.Reflection.AssemblyInformationalVersionAttribute));
+            string? version = attribute?.InformationalVersion;
+            if (string.IsNullOrWhiteSpace(version))
+                version = assembly.GetName().Version?.ToString();
+            if (string.IsNullOrWhiteSpace(version))
+                return "v?";
+            int plus = version.IndexOf('+');
+            if (plus >= 0)
+                version = version[..plus];
+            return $"v{version.Trim()}";
+        }
+        catch
+        {
+            return "v?";
+        }
+    }
 
     /// <summary>Fecha/hora de compilación derivada de la última escritura del .exe/.dll (se reescribe en cada build).</summary>
     private static string ResolveBuildText()
@@ -424,6 +454,11 @@ public partial class SettingsDialogViewModel : ObservableObject
                 _themeService.ApplyStoredOverrides();
             else
                 _themeService.ClearOverrides();
+
+            // Activar/desactivar los colores personalizados cambia QUIÉN decide el texto por contraste (el ajuste
+            // general o el propio tema, ver ThemeService.UseContrastText), así que hay que recalcular los TextOn*
+            // aunque no hubiera ningún override que aplicar o revertir.
+            _themeService.RefreshThemeResources();
         }
 
         _persistAndRestoreService.PersistData();

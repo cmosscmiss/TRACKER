@@ -1,7 +1,4 @@
 Regenerar los el excel de labels.
-Hemos implementado el Plan-Contraste-Texto.md?
-Probar los colores y el contraste con el texto.
-Actualizar los colores base de los 4 temas que ya tengo.
 Añadir un tema amarillo y un tema violeta.
 Generar un manual de usuario de la aplicación, y que se almacene en la carpeta Docs.
 Generar unas release notes con los cambios desde la versión anterior y guardarlo en la carpeta de la release.

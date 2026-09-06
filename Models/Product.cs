@@ -43,6 +43,24 @@ public enum PriceHighlight
 }
 
 /// <summary>
+/// Tono del texto de un producto en la lista. Existe porque el fondo de la fila cambia con la selección: el item
+/// seleccionado se pinta con el acento y ahí el texto tiene que ser el que contraste con él, no el de siempre (ver
+/// docs/Plan-Contraste-Texto.md). El <c>DataTemplate</c> no puede saber por su cuenta si su item está seleccionado,
+/// así que el tono lo decide el modelo y un converter lo traduce a un brush del tema.
+/// </summary>
+public enum ListTextTone
+{
+    /// <summary>Texto normal del tema, sobre el fondo normal de la lista.</summary>
+    Normal,
+
+    /// <summary>Texto secundario (producto comprado: hace que el tachado se distinga del texto normal).</summary>
+    Secondary,
+
+    /// <summary>Texto sobre el acento: la fila está seleccionada y su fondo es el color de acento.</summary>
+    OnAccent,
+}
+
+/// <summary>
 /// A tracked product whose price is monitored across one or more store URLs (mainly Amazon
 /// marketplaces in different countries). Exposes the current best price across its stores and a
 /// timestamped price history used to chart the price evolution.
@@ -324,6 +342,23 @@ public partial class Product : ObservableObject
     public PriceHighlight ListPriceHighlight => IsPurchased ? PriceHighlight.None : PriceHighlight;
 
     /// <summary>
+    /// Si este producto es el seleccionado en la lista. Lo mantiene <see cref="Services.SharedDataService"/> al cambiar
+    /// la selección; no se persiste. Solo lo usa la vista para saber sobre qué fondo se pinta la fila.
+    /// </summary>
+    [ObservableProperty] private bool isSelected;
+
+    /// <summary>
+    /// Tono del TÍTULO en la lista: sobre el acento si la fila está seleccionada (su fondo es el acento); si no,
+    /// secundario cuando el producto está comprado y normal en el resto de casos.
+    /// </summary>
+    public ListTextTone ListTitleTone => IsSelected
+        ? ListTextTone.OnAccent
+        : IsPurchased ? ListTextTone.Secondary : ListTextTone.Normal;
+
+    /// <summary>Tono de los ICONOS que siguen al título: sobre el acento si la fila está seleccionada, normal si no.</summary>
+    public ListTextTone ListIconTone => IsSelected ? ListTextTone.OnAccent : ListTextTone.Normal;
+
+    /// <summary>
     /// Formatea un importe con la moneda con la que se MUESTRA el producto ("39,99 €"): el euro si la tienda de
     /// referencia cotiza en una divisa convertible (el importe ya viene convertido), o su propia moneda si no.
     /// </summary>
@@ -519,6 +554,14 @@ public partial class Product : ObservableObject
         OnPropertyChanged(nameof(ListPrice));
         OnPropertyChanged(nameof(ListPriceText));
         OnPropertyChanged(nameof(ListPriceHighlight));
+        OnPropertyChanged(nameof(ListTitleTone));
+    }
+
+    /// <summary>Al seleccionar/deseleccionar la fila cambia su fondo, y con él el tono del texto y de los iconos.</summary>
+    partial void OnIsSelectedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ListTitleTone));
+        OnPropertyChanged(nameof(ListIconTone));
     }
 
     /// <summary>

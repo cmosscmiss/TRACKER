@@ -246,12 +246,12 @@ public sealed partial class WidgetSelectorControl : UserControl
     /// </summary>
     /// <param name="iconName">Nombre base del icono del widget.</param>
     /// <param name="isChecked">Indica si se debe resolver el icono activo o inactivo.</param>
-    /// <returns>Imagen lista para ser usada como fuente visual.</returns>
-    private BitmapImage CreateWidgetIcon(string iconName, bool isChecked = true)
+    /// <returns>Imagen lista para usar como fuente visual, o null si el widget no tiene icono en el tema.</returns>
+    private BitmapImage? CreateWidgetIcon(string iconName, bool isChecked = true)
     {
         string resolvedIconName = isChecked ? iconName : $"{iconName}-off";
 
-        return new BitmapImage(_themeService.GetWidgetIconUri(resolvedIconName));
+        return _themeService.GetWidgetIconUri(resolvedIconName) is Uri uri ? new BitmapImage(uri) : null;
     }
 
     /// <summary>

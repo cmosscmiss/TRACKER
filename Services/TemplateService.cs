@@ -29,6 +29,14 @@ public class TemplateService
     private readonly SharedDataService _sharedDataService;
     #endregion
 
+    #region Constants
+    /// <summary>
+    /// Template que se carga en el PRIMER arranque (fichero <c>Normal.json</c>, "Normal layout"): sin él la app
+    /// arrancaría con el panel de widgets vacío, porque por defecto no hay ningún widget asignado a un slot.
+    /// </summary>
+    private const string DefaultTemplateFileName = "Normal";
+    #endregion
+
     #region Properties
     /// <summary>Carpeta de los templates, dentro de los assets de la app.</summary>
     public static string AppTemplatesFolderPath => Path.Combine(AppContext.BaseDirectory, "Assets", "Templates");
@@ -85,6 +93,15 @@ public class TemplateService
 
         ApplyLoadedSettingsLive();
     }
+
+    /// <summary>
+    /// Carga el template de partida ("Normal layout") como si se hubiera elegido en el selector. Lo llama el arranque
+    /// cuando NO hay configuración guardada (instalación nueva): sin esto la app abriría con el área de widgets vacía,
+    /// porque <see cref="AppSettings.LayoutSelectorControlSettings.WidgetSlots"/> nace sin ninguna asignación. No hace
+    /// nada si el fichero no está.
+    /// </summary>
+    public void LoadDefaultTemplate()
+        => LoadTemplate(Path.Combine(AppTemplatesFolderPath, DefaultTemplateFileName + ".json"));
     #endregion
 
     #region Methods (private)

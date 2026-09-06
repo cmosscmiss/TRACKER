@@ -69,13 +69,28 @@ public class ThemeService : ObservableObject
     public Color ExtraColor2 => Parse(_currentTheme.ExtraColor2);
     public Color ExtraColor3 => Parse(_currentTheme.ExtraColor3);
     public Color ExtraColor4 => Parse(_currentTheme.ExtraColor4);
-    public Uri? BackgroundImageUri => string.IsNullOrWhiteSpace(_currentTheme.BackgroundImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.BackgroundImage}");
     public Uri? LogoImageUri => string.IsNullOrWhiteSpace(_currentTheme.LogoImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.LogoImage}");
     public Uri? OverlayImageUri => string.IsNullOrWhiteSpace(_currentTheme.OverlayImage) ? null : new Uri($"ms-appx:///{_currentTheme.AssetsPath}{_currentTheme.OverlayImage}");
     public double TintOpacity => _appSettings.Theme.TintOpacity;
     public double TintSaturation => _appSettings.Theme.TintSaturation;
     public double TintBrightness => _appSettings.Theme.TintBrightness;
     public bool RandomTheme => _appSettings.Theme.RandomTheme;
+
+    /// <summary>
+    /// Si el texto sobre fondos de color se elige por contraste (ver <see cref="TextColorOn"/> y los recursos
+    /// <c>TextOn&lt;Name&gt;Brush</c>). Con false, todo eso vale <see cref="TextColor"/>, como antes de la función.
+    ///
+    /// Quién manda: con el TEMA PURO decide el propio tema
+    /// (<see cref="AppSettings.ThemeDefinition.UseContrastText"/>: solo LoL lo trae activado, por su acento claro). En
+    /// cuanto se usan colores personalizados tiene precedencia el ajuste GENERAL
+    /// (<see cref="AppSettings.ThemeSettings.UseContrastText"/>), que es el del pie del editor de colores: si el
+    /// usuario ha cambiado los colores, el tema ya no sabe si su texto contrasta, y además el editor solo se abre con
+    /// los colores personalizados activos.
+    /// </summary>
+    public bool UseContrastText => _appSettings.General.UseCustomColors
+        ? _appSettings.Theme.UseContrastText
+        : _currentTheme.UseContrastText;
+
     public int OverlayImageBlur => _appSettings.Theme.OverlayImageBlur;
     public double OverlayImageOpacity => _appSettings.Theme.OverlayImageOpacity;
 
@@ -152,7 +167,6 @@ public class ThemeService : ObservableObject
             OnPropertyChanged(nameof(TintSaturation));
             OnPropertyChanged(nameof(TintBrightness));
 
-            OnPropertyChanged(nameof(BackgroundImageUri));
             OnPropertyChanged(nameof(LogoImageUri));
             OnPropertyChanged(nameof(OverlayImageUri));
 
@@ -208,18 +222,13 @@ public class ThemeService : ObservableObject
     /// por ejemplo: <c>GameListControl</c>.
     /// </param>
     /// <returns>
-    /// URI del icono del widget dentro de la carpeta <c>Widgets</c> del tema activo.
-    /// Si el nombre recibido está vacío, se utiliza <c>DefaultWidget.png</c>.
+    /// URI del icono del widget dentro de la carpeta <c>Widgets</c> del tema activo, o <c>null</c> si el nombre viene
+    /// vacío: no hay icono genérico de reserva, así que el llamante simplemente se queda sin icono.
     /// </returns>
-    public Uri GetWidgetIconUri(string widgetControlName)
-    {
-        if (string.IsNullOrWhiteSpace(widgetControlName))
-        {
-            widgetControlName = "DefaultWidget";
-        }
-
-        return GetThemeAssetUri($"Widgets/{widgetControlName}.png");
-    }
+    public Uri? GetWidgetIconUri(string? widgetControlName)
+        => string.IsNullOrWhiteSpace(widgetControlName)
+            ? null
+            : GetThemeAssetUri($"Widgets/{widgetControlName}.png");
 
     /// <summary>
     /// Obtiene la URI de un icono genérico de interfaz dentro del tema activo.
@@ -228,18 +237,13 @@ public class ThemeService : ObservableObject
     /// Nombre del icono sin extensión. Por ejemplo: <c>icon-close</c>.
     /// </param>
     /// <returns>
-    /// URI del icono dentro de la carpeta <c>Icons</c> del tema activo.
-    /// Si el nombre recibido está vacío, se utiliza <c>icon-default.png</c>.
+    /// URI del icono dentro de la carpeta <c>Icons</c> del tema activo, o <c>null</c> si el nombre viene vacío: no hay
+    /// icono genérico de reserva, así que el llamante simplemente se queda sin icono.
     /// </returns>
-    public Uri GetIconUri(string iconName)
-    {
-        if (string.IsNullOrWhiteSpace(iconName))
-        {
-            iconName = "icon-default";
-        }
-
-        return GetThemeAssetUri($"Icons/{iconName}.png");
-    }
+    public Uri? GetIconUri(string? iconName)
+        => string.IsNullOrWhiteSpace(iconName)
+            ? null
+            : GetThemeAssetUri($"Icons/{iconName}.png");
 
     /// <summary>
     /// Sobrescribe EN CALIENTE un color del tema por su nombre base (p. ej. "Accent", "CardBackgroundLight",
@@ -335,7 +339,12 @@ public class ThemeService : ObservableObject
         // Refleja el color en la definición del tema activo (coherencia con la propiedad reactiva y un re-apply).
         _currentTheme.GetType().GetProperty(baseName + "Color")?.SetValue(_currentTheme, ToHex(color));
 
-        AddThemeColorResources(_currentDictionary!, baseName, color);   // Color/Brush base + opacidades (brushes in situ)
+        // Color/Brush base + opacidades + TextOn* (brushes mutados in situ). Si lo que cambia es el propio color de
+        // texto, hay que rehacer TODOS los nombres base: el TextOn* de cada uno se calcula contra él.
+        if (string.Equals(baseName, "Text", StringComparison.Ordinal))
+            AddAllThemeColors(_currentDictionary!);
+        else
+            AddThemeColorResources(_currentDictionary!, baseName, color);
         RefreshNamedControlBrushes(Application.Current.Resources);
         SyncExternalDictionaries();
 
@@ -368,6 +377,32 @@ public class ThemeService : ObservableObject
 
     /// <summary>
 
+    /// <summary>
+    /// Color de texto con el que pintar SOBRE <paramref name="background"/> (que debe ser el fondo real al 100%, no
+    /// una variante con opacidad): el que mejor contraste da entre <see cref="TextColor"/> y
+    /// <see cref="Helpers.ContrastHelper.DarkText"/>. Punto ÚNICO de decisión: si
+    /// <see cref="UseContrastText"/> está desactivado devuelve siempre <see cref="TextColor"/>.
+    ///
+    /// Lo usan tanto los recursos <c>TextOn&lt;Name&gt;Brush</c> como los sitios que resuelven el foreground por
+    /// código (converters, gráficas, brushes de slot), que no ven los <c>{ThemeResource}</c>.
+    /// </summary>
+    public Color TextColorOn(Color background)
+        => UseContrastText
+            ? Helpers.ContrastHelper.BestForeground(background, TextColor, Helpers.ContrastHelper.DarkText)
+            : TextColor;
+
+    /// <summary>
+    /// Repuebla los diccionarios (el de la app y las copias de los diálogos) con el tema actual y avisa vía
+    /// <see cref="ThemeChanged"/>, sin cambiar de tema. Se usa cuando cambia un ajuste que altera los recursos
+    /// derivados pero no los colores base, como <see cref="UseContrastText"/>: al ir todo por <c>UpsertBrush</c>, los
+    /// brushes se mutan in situ y el cambio se ve EN VIVO.
+    /// </summary>
+    public void RefreshThemeResources()
+    {
+        ApplyThemeResources();
+        ThemeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     /// <summary>Color actual del tema para un nombre base (p. ej. "Accent"); negro si el nombre no corresponde a ninguno.</summary>
     public Color GetThemeColor(string baseName)
         => GetType().GetProperty(baseName + "Color")?.GetValue(this) is Color c ? c : Color.FromArgb(255, 0, 0, 0);
@@ -383,6 +418,8 @@ public class ThemeService : ObservableObject
     /// Generates:
     /// - AccentColor
     /// - AccentBrush
+    /// - TextOnAccentColor
+    /// - TextOnAccentBrush
     /// - AccentColorTransparent20
     /// - AccentColorTransparent40
     /// - AccentColorTransparent60
@@ -403,7 +440,7 @@ public class ThemeService : ObservableObject
     /// reemplazan, pero al ser tipos por valor no se propagan a elementos ya cargados: esos controles deben
     /// reconstruirse al recibir <see cref="ThemeChanged"/>.
     /// </remarks>
-    private static void AddThemeColorResources(ResourceDictionary dict, string resourceName, Color color)
+    private void AddThemeColorResources(ResourceDictionary dict, string resourceName, Color color)
     {
         if (dict is null)
         {
@@ -418,6 +455,13 @@ public class ThemeService : ObservableObject
         // Base color and base brush.
         dict[$"{resourceName}Color"] = color;
         UpsertBrush(dict, $"{resourceName}Brush", color);
+
+        // Color de texto para pintar ENCIMA de este color al 100%: el que mejor contraste da entre el del tema y el
+        // oscuro de ContrastHelper. Con el ajuste desactivado es el del tema, o sea lo mismo que TextBrush, de forma
+        // que usar TextOn<Name>Brush en el XAML no cambia nada hasta que se activa.
+        Color textOn = TextColorOn(color);
+        dict[$"TextOn{resourceName}Color"] = textOn;
+        UpsertBrush(dict, $"TextOn{resourceName}Brush", textOn);
 
         double[] opacityLevels = [0.2, 0.4, 0.6, 0.8];
 
@@ -488,7 +532,6 @@ public class ThemeService : ObservableObject
     {
         AddAllThemeColors(dict);
 
-        dict["BackgroundImage"] = BackgroundImageUri;
         dict["LogoImage"] = LogoImageUri;
         dict["OverlayImageUri"] = OverlayImageUri;
 
@@ -581,21 +624,23 @@ public class ThemeService : ObservableObject
             ("ButtonBrushBackgroundSubtlePressed", CardBackgroundLightColor),
             ("ButtonBrushBorderPressed", CardBackgroundLightColor),
             ("ButtonBrushForegroundPressed", AccentColor),
+            // Un botón "checked" se pinta con el acento, así que su contenido pasa por TextColorOn. El PointerOver es
+            // la excepción: su fondo lleva opacidad (mezcla con lo de debajo), y ahí el contraste no aplica.
             ("ButtonBrushBackgroundChecked", AccentDarkColor),
             ("ButtonBrushBorderChecked", AccentDarkColor),
-            ("ButtonBrushForegroundChecked", TextColor),
+            ("ButtonBrushForegroundChecked", TextColorOn(AccentDarkColor)),
             ("ButtonBrushBackgroundCheckedPointerOver", WithAlpha(AccentLightColor, 0.6)),
             ("ButtonBrushBorderCheckedPointerOver", AccentLightColor),
             ("ButtonBrushForegroundCheckedPointerOver", TextColor),
             ("ButtonBrushBackgroundCheckedPressed", AccentLightColor),
             ("ButtonBrushBorderCheckedPressed", AccentLightColor),
-            ("ButtonBrushForegroundCheckedPressed", TextColor),
+            ("ButtonBrushForegroundCheckedPressed", TextColorOn(AccentLightColor)),
             ("ButtonBrushBackgroundSubtleDisabled", CardBackgroundLightColor),
             ("ButtonBrushBorderDisabled", CardBackgroundLightColor),
             ("ButtonBrushForegroundDisabled", TextSecondaryColor),
             ("ButtonBrushBackgroundCheckedDisabled", AccentDarkColor),
             ("ButtonBrushBorderCheckedDisabled", AccentDarkColor),
-            ("ButtonBrushForegroundCheckedDisabled", TextColor),
+            ("ButtonBrushForegroundCheckedDisabled", TextColorOn(AccentDarkColor)),
 
             // RadioButton (Buttons.xaml)
             ("RadioButtonForeground", TextColor),
@@ -627,23 +672,25 @@ public class ThemeService : ObservableObject
             ("ComboBoxDropDownBackground", BackgroundLightColor),
             ("ComboBoxDropDownBorderBrush", AccentColor),
 
-            // Items del desplegable de un ComboBox (GenericControls.xaml)
+            // Items del desplegable de un ComboBox (GenericControls.xaml). El item resaltado o seleccionado se pinta
+            // con el acento, así que su texto pasa por TextColorOn (ver docs/Plan-Contraste-Texto.md): en reposo el
+            // fondo es transparente y ahí se queda el color de texto normal.
             ("ComboBoxItemForeground", TextColor),
             ("ComboBoxItemBackgroundPointerOver", AccentLightColor),
             ("ComboBoxItemBorderBrushPointerOver", AccentLightColor),
-            ("ComboBoxItemForegroundPointerOver", TextColor),
+            ("ComboBoxItemForegroundPointerOver", TextColorOn(AccentLightColor)),
             ("ComboBoxItemBackgroundPressed", AccentLightColor),
             ("ComboBoxItemBorderBrushPressed", AccentLightColor),
-            ("ComboBoxItemForegroundPressed", TextColor),
+            ("ComboBoxItemForegroundPressed", TextColorOn(AccentLightColor)),
             ("ComboBoxItemBackgroundSelected", AccentColor),
             ("ComboBoxItemBorderBrushSelected", AccentColor),
-            ("ComboBoxItemForegroundSelected", TextColor),
+            ("ComboBoxItemForegroundSelected", TextColorOn(AccentColor)),
             ("ComboBoxItemBackgroundSelectedPointerOver", AccentLightColor),
             ("ComboBoxItemBorderBrushSelectedPointerOver", AccentLightColor),
-            ("ComboBoxItemForegroundSelectedPointerOver", TextColor),
+            ("ComboBoxItemForegroundSelectedPointerOver", TextColorOn(AccentLightColor)),
             ("ComboBoxItemBackgroundSelectedPressed", AccentLightColor),
             ("ComboBoxItemBorderBrushSelectedPressed", AccentLightColor),
-            ("ComboBoxItemForegroundSelectedPressed", TextColor),
+            ("ComboBoxItemForegroundSelectedPressed", TextColorOn(AccentLightColor)),
 
             // ComboBox (GenericControls.xaml)
             ("ComboBoxForeground", TextColor),

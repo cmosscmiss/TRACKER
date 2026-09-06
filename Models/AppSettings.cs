@@ -384,6 +384,16 @@ public class AppSettings
         public int OverlayImageBlur { get; set; } = 10;
         public double OverlayImageOpacity { get; set; } = 0.35;
         public bool RandomTheme { get; set; } = false;
+
+        /// <summary>
+        /// Si es true (por defecto), el texto que se pinta sobre un fondo de color del tema usa el color que mejor
+        /// contrasta con ese fondo (los recursos <c>TextOn&lt;Name&gt;Brush</c> que genera
+        /// <see cref="Tracker.Services.ThemeService"/>). Si es false, esos recursos valen lo mismo que
+        /// <c>TextBrush</c>, es decir, el color de texto del tema, sin más. Se alterna en la pestaña Theme de los
+        /// ajustes y se aplica en caliente.
+        /// </summary>
+        public bool UseContrastText { get; set; } = true;
+
         public double TintBrightness { get; set; } = 1.0;
         public double TintOpacity { get; set; } = 0.5;
         public double TintSaturation { get; set; } = 1.0;
@@ -396,7 +406,7 @@ public class AppSettings
         {
             ["Cyber City"] = new ThemeDefinition
             {
-                AccentColor = "#ff00e5",
+                AccentColor = "#CC00B7",
                 AccentLightColor = "#ef77ec",
                 AccentDarkColor = "#670865",
                 BackgroundColor = "#101010",
@@ -412,14 +422,13 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/TRACKER-SC-CYBER-CITY-NO-FRAME.png",
                 LogoImage = "TRACKER-LOGO-CYBER-CITY.png",
                 OverlayImage = "Backgrounds/TRACKER-SC-CYBER-CITY-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/CyberCity/"
             },
             ["Dead Space"] = new ThemeDefinition
             {
-                AccentColor = "#ff8040",
+                AccentColor = "#e6733a",
                 AccentLightColor = "#F4A627",
                 AccentDarkColor = "#d85513",
                 BackgroundColor = "#101010",
@@ -435,15 +444,14 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/TRACKER-SC-DEAD-SPACE-NO-FRAME.png",
                 LogoImage = "TRACKER-LOGO-DEAD-SPACE.png",
                 OverlayImage = "Backgrounds/TRACKER-SC-DEAD-SPACE-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/DeadSpace/"
             },
             ["Doom"] = new ThemeDefinition
             {
-                AccentColor = "#ff0000",
-                AccentLightColor = "#fc4545",
+                AccentColor = "#e60000",
+                AccentLightColor = "#fc6d6d",
                 AccentDarkColor = "#941515",
                 BackgroundColor = "#101010",
                 BackgroundLightColor = "#181818",
@@ -458,13 +466,37 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/TRACKER-SC-DOOM-NO-FRAME.png",
                 LogoImage = "TRACKER-LOGO-DOOM.png",
                 OverlayImage = "Backgrounds/TRACKER-SC-DOOM-OVERLAY.jpg",
                 AssetsPath = "Assets/Theme/Doom/"
             },
             ["LoL"] = new ThemeDefinition
             {
+                AccentColor = "#8bf500",
+                AccentLightColor = "#c5f50a",
+                AccentDarkColor = "#44a143",
+                BackgroundColor = "#101010",
+                BackgroundLightColor = "#181818",
+                CardBackgroundLightColor = "#2f2f2f",
+                CardBackgroundColor = "#20212f",
+                TextColor = "#ffffff",
+                TextSecondaryColor = "#b2b2b2",
+                DangerColor = "#CC3300",
+                SuccessColor = "#2E7D32",
+                WarningColor = "#fff000",
+                ExtraColor1 = "#546E7A",
+                ExtraColor2 = "#2F6FED",
+                ExtraColor3 = "#CC5500",
+                ExtraColor4 = "#00A8E1",
+                LogoImage = "TRACKER-LOGO-LOL.png",
+                OverlayImage = "Backgrounds/TRACKER-SC-LOL-OVERLAY.jpg",
+                AssetsPath = "Assets/Theme/LoL/",
+                // Acento verde claro: el texto blanco encima se lee mal, así que este tema sí quiere el contraste.
+                UseContrastText = true
+            },
+            ["Dying Light"] = new ThemeDefinition
+            {
+                // Paleta PROVISIONAL: copiada tal cual de LoL hasta tener los colores propios del tema.
                 AccentColor = "#5cd65a",
                 AccentLightColor = "#a3d439",
                 AccentDarkColor = "#44a143",
@@ -481,10 +513,34 @@ public class AppSettings
                 ExtraColor2 = "#2F6FED",
                 ExtraColor3 = "#CC5500",
                 ExtraColor4 = "#00A8E1",
-                BackgroundImage = "Backgrounds/TRACKER-SC-LOL-NO-FRAME.png",
-                LogoImage = "TRACKER-LOGO-LOL.png",
-                OverlayImage = "Backgrounds/TRACKER-SC-LOL-OVERLAY.jpg",
-                AssetsPath = "Assets/Theme/LoL/"
+                LogoImage = "TRACKER-LOGO-DYING-LIGHT.png",
+                OverlayImage = "Backgrounds/TRACKER-SC-DYING-LIGHT-OVERLAY.jpg",
+                AssetsPath = "Assets/Theme/DyingLight/",
+                UseContrastText = true
+            },
+            ["Monkey Island"] = new ThemeDefinition
+            {
+                // Paleta PROVISIONAL: copiada tal cual de LoL hasta tener los colores propios del tema.
+                AccentColor = "#5cd65a",
+                AccentLightColor = "#a3d439",
+                AccentDarkColor = "#44a143",
+                BackgroundColor = "#101010",
+                BackgroundLightColor = "#181818",
+                CardBackgroundLightColor = "#2f2f2f",
+                CardBackgroundColor = "#20212f",
+                TextColor = "#ffffff",
+                TextSecondaryColor = "#b2b2b2",
+                DangerColor = "#CC3300",
+                SuccessColor = "#2E7D32",
+                WarningColor = "#fff000",
+                ExtraColor1 = "#546E7A",
+                ExtraColor2 = "#2F6FED",
+                ExtraColor3 = "#CC5500",
+                ExtraColor4 = "#00A8E1",
+                LogoImage = "TRACKER-LOGO-MONKEY-ISLAND.png",
+                OverlayImage = "Backgrounds/TRACKER-SC-MONKEY-ISLAND-OVERLAY.jpg",
+                AssetsPath = "Assets/Theme/MonkeyIsland/",
+                UseContrastText = true
             }
         };
     }
@@ -550,10 +606,6 @@ public class AppSettings
         public string ExtraColor3 { get; set; } = string.Empty;
         public string ExtraColor4 { get; set; } = string.Empty;
 
-        public string BackgroundImage
-        {
-            get; set;
-        } = string.Empty;
         public string LogoImage
         {
             get; set;
@@ -566,6 +618,23 @@ public class AppSettings
         {
             get; set;
         } = string.Empty;
+
+        /// <summary>
+        /// Si ESTE tema quiere el texto por contraste sobre sus fondos de color (los recursos <c>TextOn&lt;Name&gt;</c>
+        /// que genera <see cref="Tracker.Services.ThemeService"/>). Por defecto false: el tema se diseñó con su color
+        /// de texto y ya contrasta. Se pone a true en los temas cuyo acento es claro (LoL), donde el blanco de siempre
+        /// se lee mal encima.
+        ///
+        /// Solo manda con el TEMA PURO: en cuanto se usan colores personalizados
+        /// (<see cref="GeneralSettings.UseCustomColors"/>) tiene precedencia el ajuste general
+        /// <see cref="ThemeSettings.UseContrastText"/>, porque el usuario ya ha tocado los colores y es él quien
+        /// decide. Ver docs/Plan-Contraste-Texto.md.
+        ///
+        /// Va con <see cref="JsonIgnoreAttribute"/> como el resto de la definición del tema: los temas viven en el
+        /// código, no en el .ini.
+        /// </summary>
+        [JsonIgnore]
+        public bool UseContrastText { get; set; } = false;
     }
     #endregion
 

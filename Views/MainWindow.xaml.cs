@@ -178,7 +178,7 @@ public sealed partial class MainWindow : Window
 
         WidgetPanel.SetWidgets(widgetEntries);
 
-        _viewModel.Widgets = widgetEntries.Select(w => new WidgetInfo(w.ViewModel, w.Control.Title, w.Control.Content?.GetType().Name ?? "DefaultWidget")).ToList();
+        _viewModel.Widgets = widgetEntries.Select(w => new WidgetInfo(w.ViewModel, w.Control.Title, w.Control.Content?.GetType().Name ?? string.Empty)).ToList();
 
         _viewModel.RestoreWidgetSlots();
 

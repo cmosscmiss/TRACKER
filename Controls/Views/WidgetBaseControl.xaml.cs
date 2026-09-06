@@ -501,30 +501,14 @@ public sealed partial class WidgetBaseControl : UserControl, INotifyPropertyChan
     /// <c>Widgets/GameListControl.png</c> dentro del tema activo.
     /// </summary>
     /// <param name="content">
-    /// Control alojado dentro del widget. Si es null, se usa el icono
-    /// <c>DefaultWidget.png</c>.
+    /// Control alojado dentro del widget. Si es null (o su tema no trae ese icono), el widget se queda SIN icono: no
+    /// hay imagen genérica de reserva.
     /// </param>
     private void UpdateWidgetIconFromContent(object? content)
     {
-        string widgetControlName = GetWidgetControlName(content);
-        Uri iconUri = _themeService.GetWidgetIconUri(widgetControlName);
+        Uri? iconUri = _themeService.GetWidgetIconUri(content?.GetType().Name);
 
-        WidgetIconSource = new BitmapImage(iconUri);
-    }
-
-    /// <summary>
-    /// Obtiene el nombre del control contenido para derivar el nombre
-    /// del icono correspondiente.
-    /// </summary>
-    /// <param name="content">
-    /// Contenido alojado dentro del widget.
-    /// </param>
-    /// <returns>
-    /// Nombre del tipo del contenido, o <c>DefaultWidget</c> si no hay contenido.
-    /// </returns>
-    private static string GetWidgetControlName(object? content)
-    {
-        return content?.GetType().Name ?? "DefaultWidget";
+        WidgetIconSource = iconUri is null ? null : new BitmapImage(iconUri);
     }
 
     /// <summary>

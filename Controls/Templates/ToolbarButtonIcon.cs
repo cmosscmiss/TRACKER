@@ -165,18 +165,18 @@ public class ToolbarButtonIcon : ContentControl
     /// </summary>
     private void UpdateThemeIcons()
     {
-        if (!string.IsNullOrWhiteSpace(IconName))
-            Icon = new BitmapImage(ResolveIconUri(IconName));
+        if (ResolveIconUri(IconName) is Uri icon)
+            Icon = new BitmapImage(icon);
 
-        if (!string.IsNullOrWhiteSpace(CheckedIconName))
-            CheckedIcon = new BitmapImage(ResolveIconUri(CheckedIconName));
+        if (ResolveIconUri(CheckedIconName) is Uri checkedIcon)
+            CheckedIcon = new BitmapImage(checkedIcon);
 
-        if (!string.IsNullOrWhiteSpace(UncheckedIconName))
-            UncheckedIcon = new BitmapImage(ResolveIconUri(UncheckedIconName));
+        if (ResolveIconUri(UncheckedIconName) is Uri uncheckedIcon)
+            UncheckedIcon = new BitmapImage(uncheckedIcon);
     }
 
-    /// <summary>Construye la URI de un icono del tema activo según <see cref="IconFolder"/>.</summary>
-    private Uri ResolveIconUri(string name)
+    /// <summary>Construye la URI de un icono del tema activo según <see cref="IconFolder"/>; null si no hay nombre.</summary>
+    private Uri? ResolveIconUri(string? name)
         => IconFolder == ToolbarIconFolder.Widgets
             ? _themeService.GetWidgetIconUri(name)
             : _themeService.GetIconUri(name);

@@ -5,6 +5,8 @@ using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Extensions.Options;
+using Tracker.Models;
 using Tracker.Services;
 
 namespace Tracker.Controls.Views;
@@ -59,9 +61,17 @@ public sealed partial class ThemeColorEditorControl : UserControl
     /// <summary>Evita que fijar el picker al elegir un color del combobox dispare un override (bucle).</summary>
     private bool _suppressPickerChange;
 
+    /// <summary>Evita que reflejar el ajuste guardado en el check al abrir se tome por un cambio del usuario.</summary>
+    private bool _suppressContrastChange;
+
     public ThemeColorEditorControl()
     {
         InitializeComponent();
+
+        // Estado inicial del ajuste de texto por contraste (ver OnContrastTextChanged).
+        _suppressContrastChange = true;
+        ContrastTextCheck.IsChecked = App.GetService<IOptions<AppSettings>>().Value.Theme.UseContrastText;
+        _suppressContrastChange = false;
 
         // Todos los colores del tema por su nombre BASE; el nombre visible se localiza como "ThemeColors_Name_" + base.
         string[] bases =
@@ -117,6 +127,21 @@ public sealed partial class ThemeColorEditorControl : UserControl
             return;
 
         App.GetService<ThemeService>().OverrideColor(option.BaseName, args.NewColor);
+    }
+
+    /// <summary>
+    /// Alterna el ajuste "usar color de contraste sobre el fondo" y lo aplica EN CALIENTE: repoblar los recursos del
+    /// tema recalcula los <c>TextOn*</c> mutando los brushes in situ, así que el efecto se ve al momento en la app de
+    /// detrás (este diálogo no atenúa el fondo, que es justo por lo que el ajuste vive aquí). Como los colores, se
+    /// confirma con el OK del diálogo y se deshace al cancelar (ver <see cref="Services.DialogsService"/>).
+    /// </summary>
+    private void OnContrastTextChanged(object sender, RoutedEventArgs e)
+    {
+        if (_suppressContrastChange)
+            return;
+
+        App.GetService<IOptions<AppSettings>>().Value.Theme.UseContrastText = ContrastTextCheck.IsChecked == true;
+        App.GetService<ThemeService>().RefreshThemeResources();
     }
 
     /// <summary>Revierte el color seleccionado a su original y refleja el resultado en el picker (sin re-disparar override).</summary>

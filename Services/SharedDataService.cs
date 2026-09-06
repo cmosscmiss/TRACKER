@@ -148,6 +148,15 @@ public class SharedDataService : ObservableObject
                 var oldValue = _selectedProduct;
                 var newValue = value;
                 SetProperty(ref _selectedProduct, newValue);
+
+                // La fila seleccionada se pinta con el acento, así que su contenido necesita saberlo para elegir el
+                // color de texto que contrasta (ver Product.ListTitleTone). Se marca aquí, que es por donde pasan
+                // TODAS las selecciones (lista, gráfica, alta), y no en el SelectionChanged del ListView.
+                if (oldValue is not null)
+                    oldValue.IsSelected = false;
+                if (newValue is not null)
+                    newValue.IsSelected = true;
+
                 SelectedProductChanged?.Invoke(this, new ProductChangedEventArgs(oldValue, newValue));
             }
         }

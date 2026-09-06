@@ -25,27 +25,64 @@
 
         <!-- Columna izquierda: lista de categorías. -->
         <ListView x:Name="SectionsList" ItemsSource="{Binding Sections}" SelectedItem="{Binding SelectedSection, Mode=TwoWay}" SelectionMode="Single">
-            <ListView.Resources>
-                <SolidColorBrush x:Key="ListViewItemBackground" Color="Transparent"/>
-                <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver" Color="{ThemeResource AccentLightColor}"/>
-                <SolidColorBrush x:Key="ListViewItemBackgroundPressed" Color="{ThemeResource AccentLightColor}"/>
-                <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="{ThemeResource AccentColor}"/>
-                <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="{ThemeResource AccentLightColor}"/>
-                <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPressed" Color="{ThemeResource AccentLightColor}"/>
-                <SolidColorBrush x:Key="ListViewItemForeground" Color="{ThemeResource TextColor}"/>
-                <SolidColorBrush x:Key="ListViewItemForegroundPointerOver" Color="{ThemeResource TextColor}"/>
-                <SolidColorBrush x:Key="ListViewItemForegroundPressed" Color="{ThemeResource TextColor}"/>
-                <SolidColorBrush x:Key="ListViewItemForegroundSelected" Color="{ThemeResource TextColor}"/>
-                <SolidColorBrush x:Key="ListViewItemForegroundSelectedPointerOver" Color="{ThemeResource TextColor}"/>
-                <SolidColorBrush x:Key="ListViewItemForegroundSelectedPressed" Color="{ThemeResource TextColor}"/>
-                <x:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">False</x:Boolean>
-            </ListView.Resources>
             <ListView.ItemContainerStyle>
+                <!-- Plantilla PROPIA en vez de los brushes con nombre (ListViewItemBackgroundSelected…) sobre la del
+                     sistema: así el fondo y el color del texto se fijan juntos en cada estado, que es lo que hace
+                     falta para el texto por contraste (el item seleccionado se pinta con el acento, ver
+                     docs/Plan-Contraste-Texto.md). Con los brushes con nombre el fondo sí cambiaba, pero el contenido
+                     seguía con el color de texto normal. Mismo patrón que ListViewItemDefaultStyle en
+                     Resources/GenericControls.xaml. -->
                 <Style TargetType="ListViewItem">
                     <Setter Property="Margin" Value="0 -6 0 0"/>
                     <Setter Property="Padding" Value="16 14"/>
                     <Setter Property="MinHeight" Value="0"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border x:Name="RootGrid" Background="Transparent" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter x:Name="ContentHost" Foreground="{ThemeResource TextBrush}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="{ThemeResource AccentLightBrush}"/>
+                                                    <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentLightBrush}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="{ThemeResource AccentLightBrush}"/>
+                                                    <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentLightBrush}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="{ThemeResource AccentBrush}"/>
+                                                    <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentBrush}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="PointerOverSelected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="{ThemeResource AccentLightBrush}"/>
+                                                    <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentLightBrush}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="PressedSelected">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootGrid.Background" Value="{ThemeResource AccentLightBrush}"/>
+                                                    <Setter Target="ContentHost.Foreground" Value="{ThemeResource TextOnAccentLightBrush}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>

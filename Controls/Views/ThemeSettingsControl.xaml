@@ -36,11 +36,14 @@
                 <CheckBox IsChecked="{Binding UseCustomColors, Mode=TwoWay}" VerticalAlignment="Center">
                     <TextBlock Text="{loc:Str Key=ThemeSettings_UseCustomColors_Label}" Style="{StaticResource FieldLabelStyle}"/>
                 </CheckBox>
-                <!-- Icono + texto, como los botones del pie del AppDialog: el FontIcon no hereda el Foreground del
-                     ContentPresenter (WinUI le pone el suyo), así que se enlaza al del propio botón. -->
-                <Button x:Name="EditColorsButton" Grid.Column="1" HorizontalAlignment="Left" Command="{Binding EditColorsCommand}" IsEnabled="{Binding UseCustomColors}">
+                <!-- Icono + texto, como los botones del pie del AppDialog, y con SU MISMO estilo (Button_Default, que
+                     atenúa el Disabled con la opacidad del chrome). El icono es un TextBlock con la fuente de
+                     símbolos, no un FontIcon: el FontIcon trae su propio Foreground del estilo de WinUI, así que no
+                     hereda el del contenido del botón y se quedaba en blanco puro; enlazarlo por Binding tampoco vale,
+                     porque un Foreground HEREDADO no re-evalúa el binding. -->
+                <Button x:Name="EditColorsButton" Grid.Column="1" Style="{StaticResource Button_Default}" HorizontalAlignment="Left" Command="{Binding EditColorsCommand}" IsEnabled="{Binding UseCustomColors}">
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE790;" FontSize="14" VerticalAlignment="Center" Foreground="{Binding Foreground, ElementName=EditColorsButton}"/>
+                        <TextBlock Text="&#xE790;" FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="14" VerticalAlignment="Center"/>
                         <TextBlock Text="{loc:Str Key=ThemeSettings_EditColors_Label}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>

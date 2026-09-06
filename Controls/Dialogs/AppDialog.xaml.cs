@@ -37,6 +37,15 @@ public sealed partial class AppDialog : UserControl
     private const string ConfirmGlyph = "\uE73E";   // CheckMark
     private const string CancelGlyph = "\uE711";    // Cancel: el mismo aspa que ya usan los botones de cancelar del log
     private const string ApplyGlyph = "\uE74E";     // Save (disquete)
+
+    /// <summary>
+    /// Fuente de los glifos de los botones (la misma que usa <c>FontIcon</c>): el recurso est\u00E1ndar de WinUI si est\u00E1,
+    /// y si no la fuente de iconos de Windows 11 por su nombre.
+    /// </summary>
+    private static readonly FontFamily SymbolFont =
+        Application.Current.Resources.TryGetValue("SymbolThemeFontFamily", out object? f) && f is FontFamily family
+            ? family
+            : new FontFamily("Segoe Fluent Icons");
     #endregion
 
     #region Attributes
@@ -203,27 +212,27 @@ public sealed partial class AppDialog : UserControl
             return;
         }
 
-        button.Content = string.IsNullOrEmpty(glyph) ? text : BuildIconContent(button, glyph!, text);
+        button.Content = string.IsNullOrEmpty(glyph) ? text : BuildIconContent(glyph!, text);
         button.Visibility = Visibility.Visible;
     }
 
     /// <summary>Contenido "icono + texto" de un botón del pie, centrado y con el icono al mismo color que el texto.</summary>
-    private static StackPanel BuildIconContent(Button button, string glyph, string text)
+    private static StackPanel BuildIconContent(string glyph, string text)
     {
-        var icon = new FontIcon
+        // El icono es un TextBlock con la fuente de símbolos, NO un FontIcon: el FontIcon trae su propio Foreground
+        // del estilo por defecto de WinUI, así que no hereda el del ContentPresenter y se quedaba en blanco puro
+        // cuando el botón recolorea su contenido por estado (Button_Theme con los TextOn* del acento, o el gris del
+        // deshabilitado). Enlazarlo por Binding tampoco vale: el Foreground HEREDADO no re-evalúa el binding. Un
+        // TextBlock hereda igual que la etiqueta de al lado, sin bindings de por medio.
+        var icon = new TextBlock
         {
-            Glyph = glyph,
+            Text = glyph,
+            FontFamily = SymbolFont,
             FontSize = 14,
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        // El FontIcon no siempre hereda el Foreground del ContentPresenter (WinUI le aplica el suyo por defecto):
-        // se enlaza al del propio botón, que es el mismo que pinta el texto.
-        icon.SetBinding(FontIcon.ForegroundProperty, new Microsoft.UI.Xaml.Data.Binding
-        {
-            Source = button,
-            Path = new PropertyPath(nameof(Button.Foreground))
-        });
+        var label = new TextBlock { Text = text, VerticalAlignment = VerticalAlignment.Center };
 
         var panel = new StackPanel
         {
@@ -233,7 +242,7 @@ public sealed partial class AppDialog : UserControl
             HorizontalAlignment = HorizontalAlignment.Center
         };
         panel.Children.Add(icon);
-        panel.Children.Add(new TextBlock { Text = text, VerticalAlignment = VerticalAlignment.Center });
+        panel.Children.Add(label);
 
         return panel;
     }

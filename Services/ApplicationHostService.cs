@@ -34,13 +34,14 @@ public sealed class ApplicationHostService : IHostedService
     private readonly ProgressService _progressService;
     private readonly ThemeService _themeService;
     private readonly LocalizationService _localizationService;
+    private readonly TemplateService _templateService;
     private readonly AppSettings _appSettings;
 
     private bool _isInitialized;
     #endregion
 
     #region Constructor
-    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ProductDatabaseService productDatabaseService, SharedDataService sharedDataService, ProgressService progressService, ThemeService themeService, LocalizationService localizationService, IOptions<AppSettings> settings)
+    public ApplicationHostService(ConsoleViewModel consoleViewModel, PersistAndRestoreService persistAndRestoreService, ProductDatabaseService productDatabaseService, SharedDataService sharedDataService, ProgressService progressService, ThemeService themeService, LocalizationService localizationService, TemplateService templateService, IOptions<AppSettings> settings)
     {
         _persistAndRestoreService = persistAndRestoreService;
         _productDatabaseService = productDatabaseService;
@@ -48,6 +49,7 @@ public sealed class ApplicationHostService : IHostedService
         _progressService = progressService;
         _themeService = themeService;
         _localizationService = localizationService;
+        _templateService = templateService;
         _appSettings = settings.Value;
     }
     #endregion
@@ -71,7 +73,17 @@ public sealed class ApplicationHostService : IHostedService
     {
         if (_isInitialized) return;
 
+        // PRIMER arranque (instalación nueva, o config borrada): se comprueba ANTES de restaurar, porque cargar el
+        // template ya escribe el .ini.
+        bool firstRun = !_persistAndRestoreService.HasStoredSettings;
+
         _persistAndRestoreService.RestoreData();
+
+        // Sin configuración previa no hay ningún widget asignado a un slot, así que el panel saldría vacío: se carga
+        // el template de partida ("Normal layout"), igual que si se hubiera elegido en el selector de templates. Va
+        // antes de crear la ventana, de modo que el panel se monta ya con su layout.
+        if (firstRun)
+            _templateService.LoadDefaultTemplate();
 
         // Base de datos de productos: se crea en el primer arranque (%LocalAppData%\Tracker\tracker.db) y se cargan
         // los productos persistidos (con sus tiendas e histórico) en el ProductSet compartido antes de mostrar la UI.

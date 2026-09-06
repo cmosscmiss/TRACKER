@@ -36,6 +36,13 @@ public class PersistAndRestoreService
     public static string SettingsFolderPath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         _settingsFileFolder);
+
+    /// <summary>
+    /// Si ya hay un fichero de configuración guardado. Consultado ANTES de <see cref="RestoreData"/>, distingue el
+    /// PRIMER arranque (instalación nueva, o config borrada) de uno normal: es lo que usa el arranque para dejar la
+    /// app con un layout de widgets de partida en vez de un panel vacío.
+    /// </summary>
+    public bool HasStoredSettings => File.Exists(_filePath);
     private static readonly JsonSerializer Serializer = new JsonSerializer
     {
         Converters =

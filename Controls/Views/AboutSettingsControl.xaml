@@ -24,9 +24,15 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{loc:Str Key=Common_AppName}" FontSize="26" FontWeight="Bold" Foreground="{ThemeResource TextBrush}"/>
-                    <Border Grid.Column="1" VerticalAlignment="Top" CornerRadius="10" Padding="9 3" Background="{ThemeResource AccentBrushOpacity20}" BorderThickness="1" BorderBrush="{ThemeResource AccentDarkBrush}">
-                        <TextBlock FontSize="12" Foreground="{ThemeResource AccentLightBrush}" Text="{Binding BuildText}"/>
-                    </Border>
+                    <!-- Pastillas de identidad: versión declarada en el csproj y marca de compilación. -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top">
+                        <Border CornerRadius="4" Padding="9 3" Background="{ThemeResource AccentBrushOpacity20}" BorderThickness="1" BorderBrush="{ThemeResource AccentDarkBrush}">
+                            <TextBlock FontSize="12" Foreground="{ThemeResource AccentLightBrush}" Text="{Binding VersionText}"/>
+                        </Border>
+                        <Border CornerRadius="4" Padding="9 3" Background="{ThemeResource AccentBrushOpacity20}" BorderThickness="1" BorderBrush="{ThemeResource AccentDarkBrush}">
+                            <TextBlock FontSize="12" Foreground="{ThemeResource AccentLightBrush}" Text="{Binding BuildText}"/>
+                        </Border>
+                    </StackPanel>
                 </Grid>
                 <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="21" Foreground="{ThemeResource TextBrush}" Text="{loc:Str Key=AboutSettings_Description_Text}"/>
             </StackPanel>

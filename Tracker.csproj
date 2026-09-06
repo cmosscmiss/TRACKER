@@ -5,6 +5,10 @@
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
 		<RootNamespace>Tracker</RootNamespace>
 		<AssemblyName>Tracker</AssemblyName>
+		<!-- Versión de la app: la muestra la pastilla de la pestaña About. Mantener sincronizada con el
+		     #define AppVersion de build\Tracker.iss (el instalador declara la suya por su cuenta). -->
+		<Version>1.0.0</Version>
+		<InformationalVersion>1.0 RC 1</InformationalVersion>
 		<!-- Icono embebido en el .exe: lo usan la barra de tareas y, vía ExtractIcon, el icono de la bandeja. Sin esto
 		     Windows muestra el icono genérico por defecto. -->
 		<ApplicationIcon>Assets\TRACKER.ico</ApplicationIcon>

@@ -99,7 +99,8 @@ public partial class App : Application
 
             // Converters
             services.AddSingleton<LogEntrySeverityToBrushConverter>();
-            services.AddSingleton<PurchasedToTextBrushConverter>();
+            services.AddSingleton<ListTextToneToBrushConverter>();
+            services.AddSingleton<PriceHighlightToTextBrushConverter>();
 
             // Services
             services.AddSingleton<WindowService>();
@@ -325,9 +326,13 @@ public partial class App : Application
         logEntrySeverityToBrushConverter.ThemeService = themeService;
         Application.Current.Resources["LogEntrySeverityConverter"] = logEntrySeverityToBrushConverter;
 
-        var purchasedToTextBrushConverter = Host.Services.GetRequiredService<PurchasedToTextBrushConverter>();
-        purchasedToTextBrushConverter.ThemeService = themeService;
-        Application.Current.Resources["PurchasedTextBrushConverter"] = purchasedToTextBrushConverter;
+        var listTextToneToBrushConverter = Host.Services.GetRequiredService<ListTextToneToBrushConverter>();
+        listTextToneToBrushConverter.ThemeService = themeService;
+        Application.Current.Resources["ListTextToneConverter"] = listTextToneToBrushConverter;
+
+        var priceHighlightToTextBrushConverter = Host.Services.GetRequiredService<PriceHighlightToTextBrushConverter>();
+        priceHighlightToTextBrushConverter.ThemeService = themeService;
+        Application.Current.Resources["PriceHighlightTextConverter"] = priceHighlightToTextBrushConverter;
 
         // Resolve application settings configured in DI and store them in a property
         _appSettings = Host.Services.GetRequiredService<IOptions<AppSettings>>().Value;

@@ -273,23 +273,23 @@
     <!-- PointerOver -->
     <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver" Color="{ThemeResource AccentLightColor}" />
     <SolidColorBrush x:Key="ComboBoxItemBorderBrushPointerOver" Color="{ThemeResource AccentLightColor}" />
-    <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver" Color="{ThemeResource TextOnAccentLightColor}" />
     <!-- Pressed -->
     <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed" Color="{ThemeResource AccentLightColor}" />
     <SolidColorBrush x:Key="ComboBoxItemBorderBrushPressed" Color="{ThemeResource AccentLightColor}" />
-    <SolidColorBrush x:Key="ComboBoxItemForegroundPressed" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPressed" Color="{ThemeResource TextOnAccentLightColor}" />
     <!-- Selected -->
     <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{ThemeResource AccentColor}" />
     <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelected" Color="{ThemeResource AccentColor}" />
-    <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{ThemeResource TextOnAccentColor}" />
     <!-- Selected + PointerOver -->
     <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="{ThemeResource AccentLightColor}" />
     <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedPointerOver" Color="{ThemeResource AccentLightColor}" />
-    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver" Color="{ThemeResource TextOnAccentLightColor}" />
     <!-- Selected + Pressed-->
     <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="{ThemeResource AccentLightColor}" />
     <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedPressed" Color="{ThemeResource AccentLightColor}" />
-    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="{ThemeResource TextColor}" />
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed" Color="{ThemeResource TextOnAccentLightColor}" />
 
     <!-- Caja cerrada (el ComboBox en sí, no los items del popup). El sistema NO adapta su foreground a nuestro tema
          oscuro, así que el valor seleccionado salía en color oscuro sobre fondo oscuro = invisible. Se fuerza aquí. -->

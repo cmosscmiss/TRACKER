@@ -23,10 +23,10 @@
                 </Grid.ColumnDefinitions>
                 <!-- Recuadro del precio: verde si bajó, rojo si subió, azul si es el mínimo histórico, gris si neutro. -->
                 <Border Grid.Column="0" Background="{x:Bind ListPriceHighlight, Converter={StaticResource PriceHighlightToBrushConverter}, Mode=OneWay}" CornerRadius="6" Padding="6 2" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind ListPriceText, Mode=OneWay}" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock Text="{x:Bind ListPriceText, Mode=OneWay}" Foreground="{x:Bind ListPriceHighlight, Converter={StaticResource PriceHighlightTextConverter}, Mode=OneWay}" FontSize="12" FontWeight="SemiBold"/>
                 </Border>
-                <!-- Título: los comprados van en color secundario (para que el tachado se distinga del texto normal). -->
-                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{x:Bind IsPurchased, Converter={StaticResource PurchasedTextBrushConverter}, Mode=OneWay}" TextDecorations="{x:Bind IsPurchased, Converter={StaticResource StrikethroughIfTrueConverter}, Mode=OneWay}" />
+                <!-- Título: el tono lo decide el modelo (comprado -> secundario; fila seleccionada -> sobre el acento). -->
+                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" Foreground="{x:Bind ListTitleTone, Converter={StaticResource ListTextToneConverter}, Mode=OneWay}" TextDecorations="{x:Bind IsPurchased, Converter={StaticResource StrikethroughIfTrueConverter}, Mode=OneWay}" />
                 <!-- Iconos tras el título. -->
                 <Grid Grid.Column="2" VerticalAlignment="Center" Margin="4 0 0 0">
                     <Grid.ColumnDefinitions>
@@ -37,17 +37,17 @@
                         <ColumnDefinition Width="18"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
+                    <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="14" Foreground="{x:Bind ListIconTone, Converter={StaticResource ListTextToneConverter}, Mode=OneWay}" HorizontalAlignment="Center"
                               help:Help.Key="Product_Preorder_Tooltip" Visibility="{x:Bind IsPreorder, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="1" Glyph="&#xE7ED;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
+                    <FontIcon Grid.Column="1" Glyph="&#xE7ED;" FontSize="14" Foreground="{x:Bind ListIconTone, Converter={StaticResource ListTextToneConverter}, Mode=OneWay}" HorizontalAlignment="Center"
                               help:Help.Key="PriceChart_BelowAlert_Tooltip" Visibility="{x:Bind IsBelowAlert, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="2" Glyph="&#xE7BA;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
+                    <FontIcon Grid.Column="2" Glyph="&#xE7BA;" FontSize="14" Foreground="{x:Bind ListIconTone, Converter={StaticResource ListTextToneConverter}, Mode=OneWay}" HorizontalAlignment="Center"
                               help:Help.Key="Product_Issues_Tooltip" Visibility="{x:Bind HasIssues, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="3" Glyph="&#xE7B8;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
+                    <FontIcon Grid.Column="3" Glyph="&#xE7B8;" FontSize="14" Foreground="{x:Bind ListIconTone, Converter={StaticResource ListTextToneConverter}, Mode=OneWay}" HorizontalAlignment="Center"
                               help:Help.Key="PriceChart_Shipping_Tooltip" Visibility="{x:Bind HasShipping, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="4" Glyph="&#xE735;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center"
+                    <FontIcon Grid.Column="4" Glyph="&#xE735;" FontSize="14" Foreground="{x:Bind ListIconTone, Converter={StaticResource ListTextToneConverter}, Mode=OneWay}" HorizontalAlignment="Center"
                               Visibility="{x:Bind IsFavorite, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
-                    <FontIcon Grid.Column="5" Glyph="&#xE73E;" FontSize="14" Foreground="{ThemeResource TextBrush}" HorizontalAlignment="Center" Width="18" help:Help.Key="PriceChart_Purchased_Tooltip" Visibility="{x:Bind IsPurchased, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
+                    <FontIcon Grid.Column="5" Glyph="&#xE73E;" FontSize="14" Foreground="{x:Bind ListIconTone, Converter={StaticResource ListTextToneConverter}, Mode=OneWay}" HorizontalAlignment="Center" Width="18" help:Help.Key="PriceChart_Purchased_Tooltip" Visibility="{x:Bind IsPurchased, Converter={StaticResource VisibleIfTrueConverter}, FallbackValue=Collapsed, Mode=OneWay}"/>
                 </Grid>
             </Grid>
         </DataTemplate>

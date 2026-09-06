@@ -36,14 +36,19 @@ public class DialogsService
 
     /// <summary>
     /// Editor de colores del tema EN CALIENTE, en un diálogo estándar de la app (overlay transparente + arrastrable).
-    /// Los colores se cambian en caliente; "OK" persiste los overrides y cierra, "Cancelar" (o Esc/clic fuera) deshace
-    /// los cambios de la sesión. Devuelve true si se pulsó OK.
+    /// Los colores —y el ajuste de texto por contraste, que se edita en el pie de este mismo diálogo— se cambian en
+    /// caliente; "OK" los persiste y cierra, "Cancelar" (o Esc/clic fuera) deshace los cambios de la sesión. Devuelve
+    /// true si se pulsó OK.
     /// </summary>
     public async Task<bool> ShowThemeColorsAsync(XamlRoot xamlRoot)
     {
         ThemeService theme = App.GetService<ThemeService>();
         // Instantánea del estado al abrir, para poder deshacerlo con "Cancelar".
         Dictionary<string, string> snapshot = new(theme.CurrentOverrides);
+
+        // El ajuste de texto por contraste también se edita aquí (y en caliente), así que entra en la instantánea.
+        AppSettings.ThemeSettings themeSettings = App.GetService<IOptions<AppSettings>>().Value.Theme;
+        bool contrastTextSnapshot = themeSettings.UseContrastText;
 
         Tracker.Controls.Views.ThemeColorEditorControl content = new();
         AppDialog dialog = new();
@@ -60,6 +65,13 @@ public class DialogsService
 
         // Cancelar / Esc / clic fuera: deshace en caliente los cambios de esta sesión de edición (vuelve a la instantánea).
         theme.RestoreOverrides(snapshot);
+
+        if (themeSettings.UseContrastText != contrastTextSnapshot)
+        {
+            themeSettings.UseContrastText = contrastTextSnapshot;
+            theme.RefreshThemeResources();
+        }
+
         return false;
     }
 
